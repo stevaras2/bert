@@ -322,6 +322,7 @@ def read_examples(input_file):
   unique_id = 0
   with tf.gfile.GFile(input_file, "r") as reader:
     while True:
+      print(input_file)
       line = tokenization.convert_to_unicode(reader.readline())
       if not line:
         break
@@ -357,6 +358,8 @@ def main(_):
           num_shards=FLAGS.num_tpu_cores,
           per_host_input_for_training=is_per_host))
 
+  print(FLAGS.input_file)
+  print(FLAGS.output_file)
   examples = read_examples(FLAGS.input_file)
 
   features = convert_examples_to_features(

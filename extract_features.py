@@ -22,6 +22,7 @@ import codecs
 import collections
 import json
 import re
+import numpy as np
 
 import modeling
 import tokenization
@@ -409,7 +410,19 @@ def main(_):
         features["token"] = token
         features["layers"] = all_layers
         all_features.append(features)
-      output_json["features"] = all_features
+
+      sentence_emb = np.zeros(768)
+      average_sentence_emb = np.zeros(768)
+      sentence_size = 0
+      sentence = ""
+      for feat in all_features:
+          average_sentence_emb +=  np.asarray(feat['layers'][0]['values'])
+          sentence_size += 1
+          sentence += feat['token']+" "
+
+      average_sentence_emb /= sentence_size
+      output_json["sentence"] = sentence[:-1]
+      output_json["features"] = list(average_sentence_emb)
       writer.write(json.dumps(output_json) + "\n")
 
 

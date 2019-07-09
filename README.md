@@ -6,5 +6,4 @@ Layer -3: https://drive.google.com/open?id=17zD9KJA5MsWOl5JfY9n8nkai3Y8mgQZd <br
 Layer -4: https://drive.google.com/open?id=1CPomvoNJd2eJcFD9iBy5N5j4cBH7KE_l <br /> 
 
 
-The fine-tuned model could be found here: 
 

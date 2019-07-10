@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reducing the ATHENA WFI background Motivation and Overview</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuehao</forename><surname>Ding</surname></persName>
+							<email>xhding@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Reducing the ATHENA WFI background Motivation and Overview</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• WFI: Detector system on Athena (an satellite observatory) • Purpose: Distinguish between particles (protons) and X-ray photons. Eliminate particle background.</p><p>• Input: 500 by 500 gray scale image • Output: 500 by 500 gray scale image</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>• GEANT4: Particle simulation database <ref type="bibr" target="#b0">[1]</ref> • SIXTE: X-ray photon simulation database <ref type="bibr" target="#b1">[2]</ref>  • Core point: A point that has at least minP ts neighbor points within its radius.</p><p>• Border point: A point within the radius of a core point but has less than minP ts other points within its own radius.</p><p>• Noise point: A point that is neither a core point or a border point.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Second</head><p>Step Activation: Sigmoid</p><formula xml:id="formula_0">a [1] = max{0, W [1]T x f lat } (1) p(y = 1) = 1 1 + exp(−W [2]T a [1] )<label>(2)</label></formula><p>Experiment 1000 test samples, averaged error: 0.028 <ref type="figure">Figure:</ref> The left panel shows the image before processing, the right panel shows the image after processing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussions</head><p>The energy deposit of a particle is most probably much higher than that of a X-ray photon. The step function preprocessing tremendously improves the accuracy of the neural network, which suggests that shape is the key feature for the network to distinguish between particles and photons. In contrast, most existing works use classical algorithms that pay more attention to the energy value of pixels to distinguish <ref type="bibr" target="#b4">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>• Run the algorithm on real dataset • Analyze overlapping photon and particles.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure</head><label></label><figDesc>Figure: Typical X-ray Photon patterns</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Last Layer: Fully Connected Layer. 1 Node.</figDesc><table>: Neural Network [4] 
+
+• Preprocessing: Heaviside step function H(x) 
+• First Layer: Flatten Layer. 2d → 1d 
+• Second Layer: Fully Connected Layer. 256 
+Nodes. Activation: Relu 
+• </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Nuclear instruments and methods in physics research section A: Accelerators, Spectrometers, Detectors and Associated Equipment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Agostinelli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sea</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003" />
+			<biblScope unit="volume">506</biblScope>
+			<biblScope unit="page" from="250" to="303" />
+		</imprint>
+	</monogr>
+	<note>GEANT4-a simulation toolkit</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">ATHENA end-to-end simulations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jorn</forename><surname>Wilms</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Society for Optics and Photonics</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="volume">9144</biblScope>
+		</imprint>
+	</monogr>
+	<note>Ultraviolet to Gamma Ray.</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A density-based algorithm for discovering clusters in large spatial databases with noise</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><surname>Ester</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Kdd</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">34</biblScope>
+			<date type="published" when="1996" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Neural networks and physical systems with emergent collective computational abilities</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">J</forename><surname>Hopfield</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the national academy of sciences 79</title>
+		<meeting>the national academy of sciences 79</meeting>
+		<imprint>
+			<date type="published" when="1982" />
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="2554" to="2558" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Evaluation of the Athena/WFI instrumental background</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Von Kienlin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Andreas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Society for Optics and Photonics</title>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="volume">10699</biblScope>
+		</imprint>
+	</monogr>
+	<note>Ultraviolet to Gamma Ray.</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

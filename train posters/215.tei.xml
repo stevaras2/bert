@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Bismuth Vanadate (111) facet detection</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wanling</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zixi</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiyao</forename><surname>Yuan</surname></persName>
+						</author>
+						<title level="a" type="main">Bismuth Vanadate (111) facet detection</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction &amp; Motivation</head><p>Nowadays, solving the energy challenge by harvesting the energy directly from sunlight through photosynthesis has become an attractive way. Bismuth Vanadate (BiVO 4 ) came out as the most promising material as its chemical reaction can be used as a photoanode that oxidizes solar water to O 2 in the photoelectrochemical cells. Research shows that higher percentage of (111) facet of BiVO 4 increases the efficiency of charge separation and helps save more energy. Subsequently, identification of (111) facet of BiVO 4 becomes important. Therefore, this project is focusing on the identification of (111) facet of BiVO 4 from SEM images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>Our dataset contains around 3000 SEM images from experiments. Due to the relatively small dataset, data augmentation is an essential part of this project. Data augmentation methods that we mainly used include cropping, scaling and flipping/mirroring.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models &amp; Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">SVM:</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion &amp; Discussion</head><p>• Image preprocessing, such as image binarization and edge detection, has negligible effects on the results of our models, because after extracting edge information, features of (111) facets are less obvious compared to noise features.</p><p>• The predictions of SVM method are biased due to biased number of positive and negative training data. To be specific, the output of SVM is of higher probability of predicting negative, resulting in lower recall.</p><p>• SVM method has fewer parameters and simpler structure compared to neural networks. Thus, it computes much faster than neural networks, but the accuracy is much lower.</p><p>• The key of SVM is to find an appropriate feature descriptor that augments features from (111) facets and weakens unrelated features; • We have tried several numbers of layers for ResNet and we find that prediction accuracy for our data does not benefit much from deeper network, which might be because we only have relatively limited number of data or the network structure is not very suitable for our data.</p><p>• Due to the relatively small dataset, we tried using transfer learning on pretrained models. As a result, the test accuracy was improved around 10% compared to not pretrained models.</p><p>• After tuning parameters, shallow CNN as described previously can reach the test accuracy of around 87%, which is the best accuracy we currently get. And thus, this structure might be more suitable for our data and we may further modify it and try its deeper version.</p><p>• Since we manually labeled the dataset, even supervised by experienced people in this area, there are still some ambiguous facets that are hard to determine whether they are (111) or not due to several reasons (for example, the quality of SEM images, the point of view and magnification of particles, and various shapes of particles), which might influence the accuracy of the models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future</head><p>In terms of applications:</p><p>• Extending (111) facet detection to other kinds of facets detection;</p><p>• Transferring classification problem to regression problem, i.e. determining the proportion of (111) facets in BiVO 4 SEM images;</p><p>In terms of methods:</p><p>• Considering other feature descriptors, such as SIFT, SURF, ORB;</p><p>• Tuning parameters such as learning rate, step sizes for better performances of neural networks; • Further modifying the structure of neural networks;</p><p>• Continuing experiments to gain more high-quality data.  Moreover, this project also tested the effect of edge detection, applying canny edge detection, probabilistic Hough and adaptive thresholding:  There are around 3000 samples, including approximately 60% training data and 40% testing data. All inputs are images with 160 x 215 pixels.</p><p>In addition, due to the different magnifications of SEM images, we separated our dataset into three groups, and cropped them in different ways (see <ref type="figure" target="#fig_3">Fig.3</ref>).</p><p>Dataset was labeled manually by judgement from experts as either positive (image contains (111)) or negative (no observation of <ref type="formula">(111)</ref>). Data was then saved into either positive or negative folder so that the label of images could be read by the algorithms based on the name of the folder. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Reference [ 1 ]</head><label>1</label><figDesc>Yiseul, P., Kenneth, J., McDonald, B., &amp; Kyoung, S.C. (2013). Progress in bismuth vanadate photoanodes for use in solar water oxidation. Chemical Society Reviews, Issue 6. [2] Li, G.L. (2017). First-principles investigation of the surface properties of fergusonite-type monoclinic BiVO4 photocatalyst. RSC Advances. Issue 15. [3] He, K.M., Zhang,X.Y. Ren, S.Q., &amp; Sun, J.(2016). Deep residual learning for image recognition. Proceedings of the IEEE conference on computer vision and pattern recognition. pages 770-778.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig 1 .</head><label>1</label><figDesc>SEM image of BiVO 4</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig 2 .</head><label>2</label><figDesc>Theoretical</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig 3</head><label>3</label><figDesc>215-pixel, three-channel images; Number of layers: 18, 34, 50, 101, 152 Optimization algorithm: SGD, Adam Loss function: Cross entropy loss Addition: Transfer learning, image transformation (e.g. resizing, cropping) Input: 160 x 215-pixel, three-channel images; Structure: see Fig 8.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

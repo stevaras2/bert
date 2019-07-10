@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Material decomposition using neural network for PCDs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Picha</forename><surname>Shunhavanich</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Material decomposition using neural network for PCDs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>X-ray source Detector</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input</head><p>Photon coun)ng detectors (PCDs) detect individual photons and discriminate them into mul)ple energy bins. This energy informa)on provide benefits including improved image quality and be@er )ssue characteriza)on. A major problem with PCDs is the slow count rate, resul)ng in count rate loss (photons arriving too close in )me are recorded as only one event) and pulse pileup (detected energy of that event is incorrectly higher or lower) These effects cause spectral distor)on, which impairs material decomposi)on accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural network</head><p>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural network</head><p>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>We want to es)mate basis material thickness from distorted measured spectra. Input x : Measured spectrum (assume 5 energy bins) Output y :Thickness of basis materials (water and calcium)</p><p>Cost func)on :</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulations</head><p>Two phantoms are scanned to acquire projec)on measurements (180 views, fan--beam geometry).</p><p>The measured spectra are then distorted using our implementation of an analy)cal model of pulse pileup effect [1].</p><p>Phantoms : water phantom with 8 inserts of calcium with density from 0 to 1.550 g/cm 2</p><p>Training data</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Water thickness(cm) Calcium thickness(cm)</head><p>Tes)ng data</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Projec)on Phantom</head><p>Test different number of elements in hidden layer (for network with one hidden layer) by cross validation with 3060 examples</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>So, choose 13 for number of elements water density bias -0.0011 water density bias -0.0015 Network with 2 hidden layers (#elements of hidden layer = 3, lambda=0.01) Network with 1 hidden layer (#elements of hidden layer = 13)</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

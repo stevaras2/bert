@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">AI is the New Electricity</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><surname>Hu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shagun</forename><surname>Goel</surname></persName>
+						</author>
+						<title level="a" type="main">AI is the New Electricity</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Category: Physical Sciences</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The three major fossil fuels -petroleum, natural gas, and coal -combined accounted for about 77.6% of the U.S. primary energy production in 2017. In fact, at current usage levels, oil will run out in 53 years, natural gas in 54, and coal in 110. Clearly, there is a need to move towards a society that refrains from exploiting unreplenishable natural resources.</p><p>Consequently, the world is evolving in the direction of renewable energy sources. While solar power and wind energy are rapidly gaining acceptance across the globe, a limiting factor to these resources is their dependency on climate conditions. In order to evaluate the efficiency of the aforementioned renewable sources, we built a machine learning model to predict solar and wind energy outputs at a given location, using local weather data. This, in turn, allows us to determine the optimal renewable energy source for a given location.</p><p>The input to our algorithm is weather data for a particular location. We then use one of four supervised learning models -linear regression, an SVM, an artifical neural network, and a generalized additive model (GAM) -to output the predicted solar energy output per unit area of the solar cell and/or the predicted wind energy output per unit area swept by the wind turbine.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>In general, previous attempts at solar and wind energy output predictions can be largely grouped into three categories: those utilizing artificial neural networks, those using linear formulas, and those using nonlinear formulas. <ref type="bibr">Khatib et al.</ref> [1] are a prime example of attempts to use ANNs to make energy predictions. Rather than directly making energy predictions, however, they calculate a measure of solar irradiance through their ANN, which serves as an indicator of the energy production. In our paper, we will directly be predicting energy output per unit area, but this prediction is for standard photovoltaic cells. By measuring the solar irradiance, Khatib et al. ensure that their output can be utilized by any solar power generator. Mellit et al. <ref type="bibr" target="#b2">[2]</ref> also utilize ANNs in order to forecast solar irradiance, but for a period of 24 hours only. They utilize solar irradiance and air temperature data as inputs to the ANN, which seems to limit the information they are providing to their model. In contrast, we attempt to provide a representative set of features that could empower a supervised learning model to make more accurate predictions.</p><p>Cammarano et al. <ref type="bibr" target="#b3">[3]</ref> make a unique attempt at energy forecasting using nonlinear methods. Their paper is different from other such attempts since rather than focusing on short-term predictions, they aim to provide energy predictions for dynamically chosen horizons. Moreover, they do so for networks served by any ambient energy source like wind or solar energy, as opposed to our model which currently works for only solar and wind energy. Flocas <ref type="bibr" target="#b4">[4]</ref> also uses a non-linear formula for making predictions by deducing the value of certain constant empirically from graphs. Despite these papers, Sayigh <ref type="bibr" target="#b5">[5]</ref> contends that formulas for estimating solar radiation are ineffective, while leads us to believe that relying on machine learning techniques is indeed the right path.</p><p>Finally, Yang et al. <ref type="bibr" target="#b6">[6]</ref> introduce the notion of using adaptive neural networks that use techniques like sliding window to adapt to unexpected changes in input data and better respond to real-time fluctuations. This is definitely an approach to be kept in mind for the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>Keeping the objective of predicting solar and wind energy outputs using weather conditions in mind, there are three datasets relevant to our project. The first is an online weather API <ref type="bibr" target="#b7">[7]</ref> that provides weather data for a given region (defined by a set of coordinates and a radius) over a given period of time. The second is a solar power dataset <ref type="bibr" target="#b8">[8]</ref> which contains energy production data of photovoltaic cells across approximately 40 states in the United States measured at 5 minute intervals over an entire year. Finally, there is a wind energy dataset <ref type="bibr" target="#b9">[9]</ref> which contains the average output of over 40,000 wind turbines across the United States in the years 2014 and 2017.</p><p>Note that it is necessary to synchorize these datasets. In particular, to construct a solar training example that uses certain weather values as input features and the solar production as the output value, we used the coordinates and time component of the solar data to request the relevant weather data. Similarly we again used the coordinates and the time component of the wind data to harmonize the wind dataset with the weather API.</p><p>The weather API response is represented as a JSON object that includes weather data for zero or more stations situated in the geographical region defined by the request. Data for each stations is typically indexed with respect to a list of timestamps that fall in the time period defined by the request. <ref type="figure" target="#fig_0">Figure 1</ref> gives a graphical representation of the variation in a few weather features returned by a sample request.  <ref type="bibr" target="#b7">[7]</ref> Note that weather data is quite inconsistent across the United States, i.e. often the field values are missing or invalid. In other words, there are very few features that have consistently valid values. This is why we decided to choose only 4 weather factors to serve as our input features for both solar and wind datasets: air temperature, relative humidity, wind speed, and pressure. However, we also do use an SVM implementation utilizes the Gaussian kernel. This is in order to extract hidden relationships between these input features, which is why projecting to infinite-dimensional space is a reasonable idea.</p><p>The solar data is also in the form of a timeseries discretized into 5-minute intervals over a full year. To process the solar dataset, we decided to average the energy production over a day and utilize any weather timestamps that fall in that range to serve as the input features. We also normalized these features by subtracting the mean and dividing by the standard deviation since they have widely differing ranges: pressure values of 10 5 Pascals are very common while temperature is generally within the range [−50, 100] Celsius. In the end, we had 962,162 examples, which we shuffled and divided as 98%/1%/1% into the training, validation, and test sets.</p><p>Finally, the wind data is presented as the average energy output for wind turbines over an year, so we average the weather data over the same year to use as the representative input features. Once again normalization of inputs was key due to the same reasons as given above for the solar dataset. In this case we had 29,315 total examples, which we shuffled and divided as 70%/15%/15% into the training, validation, and test sets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>For each of solar and wind energy, we implemented four machine learning models -linear regression, SVM, artifical neural network, generalized additive model -that were trained, validated, and tested independently. In the next few sections we describe each of these models in greater detail.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Linear Regression</head><p>We used linear regression with mini-batch gradient descent as our baseline model to train a set of parameters for our four features discussed previously. At each iteration the update rule for the j th parameter using mini-batch gradient descent is:</p><formula xml:id="formula_0">θ j := θ j + α m m i=1 (y (i) − h θ (x (i) ))x (i) j</formula><p>where α is the learning rate and m is the batch size. Essentially, the linear regression algorithm finds a hyper-plane (in high dimensional space) that minimizes the root mean squared error of the predictions and the actual labels. At each step in the gradient descent, we update our parameter according to the computed gradient which further reduces the loss. This is repeated until convergence to give us the optimal parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">SVM</head><p>We also built an SVM model using the Gaussian kernel and L 1 regularization. SVM is a reasonable model because there can be many hidden, complex, and non-linear interaction between the weather features which cannot be captured by a simple linear model. In particular, because we only have four raw input features, the projection of our data into an infinite dimensional space using the Gaussian kernel is extremely powerful and can reveal valuable insights into the behaviour of the data.</p><p>In class, we learned about using SVM in a classification setting; but in our model, SVM is used to perform regression. As such, there is a slight change in the constraints of the optimization problem, which is shown below. In order to train the model parameters, we would like to</p><formula xml:id="formula_1">min γ,w,b 1 m ||w|| 2 + C m i=1 ξ i</formula><p>subject to the constraints</p><formula xml:id="formula_2">|y (i) − w T x (i) − b| ≥ 1 − ξ i ξ i ≥ 0 for i = 1, . . . , m</formula><p>The idea of SVM is to find a hyper-plane in high dimensional space that fit the data which maximizes the functional margin. As it is extremely improbable for that all the data points to lie exactly on the hyper-plane, we will ignore the error for points that lie within a small, fixed distance of their true values. And if the data is non-linear (cannot be modeled by hyper-planes), we project the data into a higher dimensional feature space using kernels, where the projected data becomes linear. In this case, we used the Gaussian Kernel to project the data into an infinite dimensional space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Artificial Neural Network</head><p>We also implemented a fully connected neural network to model our data. We decided to use a fully connected neural network because the features are all highly interconnected and the connected layers allow us to model their unseen interactions with one another. Moreover, we decided to use ReLU as the activation function of the output layer because the energy output must be non-negative.</p><p>Deep learning and neural network is a powerful tool because it enables us to capture complex relationships between the features that we may not be able to reason without the aid of machines. Each of the links between two neurons models some hidden dependency between them. While fully connected layers may sacrifice run-time, it weighs the influence of all of the neurons in the previous layer when performing forward propagation. And in order to find the parameters (bias and weight matrices) of the neural network, we use a method called back propagation. Similar to gradient descent, at each iteration we update the parameters by taking the gradient of the loss with respect to the parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Generalized Additive Model (GAM)</head><p>Finally, we conducted some research and found that a Generalized Additive Model may model our data well. Similar to General Linear Models (GLM), a GAM assumes that y follows some exponential family distribution. However, instead of trying to fit the data to some set of parameters θ, the goal of GAM is to model the output as a sum of functions of the inputs. That is, we want to find β 0 and smooth functions f 1 , . . . , f M such that:</p><formula xml:id="formula_3">g(E[y|X]) = β 0 = f 1 (X 1 ) + f 2 (X 2 , X 3 ) + · · · + f M (X n )</formula><p>GAM is a compelling model because it segregates the effects on the output from each of the input features. The use of arbitrary smooth functions f i allows us to model arbitrary relationships between the input features and the output. Its additive nature also allows us to visualize individual relationships through dependency plots, as shown in the results section. In this particular case, our functions f i 's are all single variable, whose domains are a single input feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Linear Regression</head><p>Due to the fact that we have more solar data than wind data, we implemented mini-batch gradient descent on the solar and wind data with batch sizes of 1000 and 100, respectively. In addition, after testing a range of learning rates, we found that its optimal value for both solar energy and wind energy data is α = 5 × 10 −10 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">SVM</head><p>After testing a range of values for C and ξ, we found that the optimal values for the solar data are C = 1 and ξ i = 0.1 for all i. Meanwhile, the optimal values for wind data are C = 7 and ξ i = 0.05 for all i.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Artificial Neural Network</head><p>The architecture of our fully connected neural network is shown in the diagram below. The neural net has an input layer consisting of the four raw input features, three hidden layers both with ten neurons and sigmoid as their activation functions, as well as an output layer that uses ReLU as its activation function. The model is run with 1000 epochs, using a batch size of 10000 for solar data and a batch size of 100 for wind data. We initially implemented a neural net with two hidden layers, each with five neurons. However, the resulting models had abysmal accuracy, with training and test error that are approximately three orders of magnitude above the other models. As such, we deduced that our neural network is lacking depth and adjusted the architecture by adding an additional layer and increasing the number of neurons. We also tested different activation functions for the hidden layers, but sigmoid yielded the optimal performance so we left it as the activation function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Generalized Additive Model</head><p>In GAM, the smoothness of the functions f i can be adjusted using the number of splines (which is a way to estimate functions).</p><p>Smoothing the functions allow us to capture the general trend while eliminating noise or fluctuations which can negatively effect our predictions. The details of the estimation will not be discussed, but the greater the number of splines, the smoother the functions will be. We played around with the spline numbers and found that num splines = (4, 20, 4, 100) for solar data and num splines = (5, 18, 10, 30) for wind data produces the highest accuracy. The four components corresponds to the features (wind speed, air temperature, relative humidity, pressure).  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Results and Discussion</head><p>Since we have designed multiple regression models, the primary metric we use to measure the performance of a model is the average error. In particular, we utilize the root mean square error (RMSE) as our primary metric. Note that the RMSE is defined as:</p><formula xml:id="formula_4">RM SE = 1 m m i=1 (y (i) −ŷ (i) ) 2</formula><p>where m is the number of testing examples, y (i) is the true output of example i, andŷ (i) is the predicted output of example i by the model. <ref type="table">Table 1</ref> displays the RMSE values for each of the four aforementioned models for both solar and wind energy. Interestingly, a few key values have drastically changed over the past few days. The neural network initially looked to be quite ill-suited for energy predictions as it had significantly worse RMSE for both solar and wind energies. However, we hypothesized that this could be because the training set is quite sparse. In particular, notice that during a day, solar energy is only available from somewhere around 8 AM to perhaps 6 PM. But for the remaining 14 hours, i.e. the majority of the day, solar energy is unavailable, which is why the training set might have a large number of zero outputs. After getting rid of these zero entries, modifying the structure of the neural network to include a third hidden layer and have more neurons in each layer, and finally using the Adam optimization algorithm to utilize an adaptive learning rate, we were able to achieve much better performance.</p><p>It is, however, interesting to note that while the neural network achieves low training error for wind energy, it has a relatively high test error. This indicates that the neural network is overfitting to the training data in the case of wind energy. Similarly, note that while the training error is fairly low for all models in the case of solar energy, each of the models ends up having a much higher test error (relatively). This indicates that the models are once again overfitting in the case of solar energy. This could be so since the training set is so large while the validation and test sets are relatively small. For this purpose, we introduced regularization into our code, but it did not have a significant impact.</p><p>Most interesting, perhaps, is the performance of the generalized additive model (GAM). From <ref type="table">Table 1</ref> it is evident that both in terms of training and test error, GAMs are the optimal model out of those discussed so far for predicting renewable energy outputs. GAMs are unique since their additive nature allows us to explore and interpret individual features by holding others at their mean. <ref type="figure">Figures 3  and 4</ref> show the original relationship between each individual feature and the energy output for both solar and wind energy.</p><p>Partial dependency plots allow us to gain a visual intuition on how features affect the output value. For instance, by looking at the solar output vs. relative humidity graph in <ref type="figure">Figure 3</ref>, one can easily deduce that, from the given data, an increase in relative humidity tends to lead to a downfall in solar energy output. Similarly the solar output vs. air temperature graph in <ref type="figure">Figure 3</ref> seems to suggest, as one would expect, that an increase in air temperature leads to higher solar energy output. Another intriguing feature of GAMs is that since some of the graphs in <ref type="figure">Figure 3</ref> seem to fluctuate a lot, we can actually 'smooth' over these functions by increasing the number of splines to be used in order to evaluate these functions. As shown in <ref type="figure">Figure 4</ref>, this leads to a smoother and more consistent relationship between the input features and the output. Now even more relationships can be visually inferred! In particular, the wind output vs. pressure graph in <ref type="figure">Figure 4</ref> seems to suggest that, at least initially, there's a largely linear relationship between pressure and wind energy output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion and Future Work</head><p>Over the course of this report, we have described the set up and utilization of four distinct supervised learning models in order to predict renewable energy outputs per unit area given the weather data for a particular location. During the training and testing process, GAMs produced the best performance for both solar and wind energy, albeit with close competition from neural networks in the former category and SVMs in the latter.</p><p>The success of GAMs might very well stem from the fact that they allow us to model arbitrarily complex relationships between individual features and the output. This might also serve as justification for the neural network's performances, as it also allows us to glean and model increasingly complex interactions between the input features. Meanwhile, the fact that the SVM with its Gaussian kernel did not produce stellar results for solar energy suggests that the selected input space is reasonably representative of the features that affect solar energy output. At the same time, close competition from the SVM and its derived features in the case of wind energy leads us to believe that we may need to utilize additional features in the case of wind energy since the relationship between the chosen features and the output definitely does not seem linear.</p><p>Given more time and resource, we would like to develop more complicated models that perhaps combine the advantages of the models we have discussed in this paper. At a higher level, we would also like to extend our application to even more renewable energy sources. The end goal here is to determine the most efficient renewable energy source for any given location by utilizing not just weather data, but also information like proximity to resources (water bodies for hydro power generation for instance).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Sample weather timeseries data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Neural</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :Figure 4 :</head><label>34</label><figDesc>GAM original dependency plots for solar and wind energy Figure 4: GAM smoothed over dependency plots for solar and wind energy</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Shagun Goel worked on the solar data collection, the neural network, and the GAM implementation. The weather API was discovered and utilized jointly</title>
+		<imprint/>
+	</monogr>
+	<note>Kevin Hu worked on the wind data collection, the linear regression model, and the SVM implementation</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Solar energy prediction for Malaysia using artificial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Khatib</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tamer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Photoenergy</title>
+		<imprint>
+			<biblScope unit="page">2012</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A 24-h forecast of solar irradiance using artificial neural network: Application for performance prediction of a grid-connected PV plant at Trieste, Italy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adel</forename><surname>Mellit</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alessandro</forename><forename type="middle">Massi</forename><surname>Pavan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Solar Energy</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="page" from="807" to="821" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Pro-Energy: A novel energy prediction model for solar and wind energy-harvesting wireless sensor networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alessandro</forename><surname>Cammarano</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chiara</forename><surname>Petrioli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dora</forename><surname>Spenza</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE 9th International Conference on Mobile Ad-Hoc and Sensor Systems</title>
+		<meeting><address><addrLine>MASS</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Estimation and prediction of global solar radiation over Greece</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Flocas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Solar Energy</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="63" to="70" />
+			<date type="published" when="1980" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Solar energy availability prediction from climatological data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Sayigh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Space Environment and the Earth</title>
+		<imprint>
+			<biblScope unit="page" from="61" to="82" />
+			<date type="published" when="1977" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">On-line building energy prediction using adaptive artificial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jin</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hugues</forename><surname>Rivard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Radu</forename><surname>Zmeureanu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Energy and buildings</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="1250" to="1259" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Mesonet API | Synoptic Data PBC, developers.synopticdata</title>
+		<imprint/>
+	</monogr>
+	<note>Synoptic Developers</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Solar Power Data for Integration Studies</title>
+		<ptr target="www.nrel.gov/grid/solar-power-data.html" />
+		<imprint/>
+		<respStmt>
+			<orgName>NREL, National Renewable Energy Laboratory ; National Renewable Energy Laboratory (NREL) Home Page</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">United States Wind Turbine Database (USWTDB)</title>
+		<ptr target="https://drive.google.com/drive/folders/1_cANvcEUAxu9MPX-11jt0Wj_R6odrmpW?usp=sharing" />
+		<imprint/>
+		<respStmt>
+			<orgName>United States Geological Survey, Berkeley Lab</orgName>
+		</respStmt>
+	</monogr>
+	<note>United States Geological Survey Home Page</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

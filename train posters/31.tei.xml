@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:18+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Background</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Gotlin</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Apurva</forename><surname>Pancholi</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Umang</forename><surname>Agarwal</surname></persName>
+						</author>
+						<title level="a" type="main">Background</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Note: Due to massive data volume, some models were built on randomized subsets of data to avoid memory overload Problem Statement: Several prominent pathologies (Cerebral Palsy, Parkinson's and Alzheimer's) can manifest themselves in an abnormal walking gait. Gait Deviation Index (GDI) indicates the extent of gait pathology and is currently measured through a cumbersome and expensive marker-based motion capture process.</p><p>Model Inputs/Outputs: Patient video is captured by commodity devices and analyzed by machine learning algorithm to predict GDI.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Approach:</head><p>We leverage DensePose to featurize each frame of video which is then passed through a machine learning model to minimize root mean square error (RMSE) of GDI prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results:</head><p>The highest performing model passed each frame in a 10-frame video through a 2D CNN, then passed the featurized frame-vectors into an LSTM for GDI prediction. The final model predicted GDI with an RMSE of 3.6.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GDI-Net</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Processing</head><p>We use 3,249 videos of patients walking in a room at Gillette Children's Hospital. The videos have a resolution of 640x480 and are processed using DensePose, which maps all human pixels of an RGB image to the 3D surface of the human body.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Score:</head><p>0 -100</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DensePose</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GDI-Net</head><p>DensePose-RCNN finds dense correspondence by partitioning the human body surface, assigning each pixel to a body partition and determining the pixel location in 2D parameterization (UV coordinates) of the body part.</p><p>The parametric surface model that DensePose fits is the Skinned Multi-Person Linear (SMPL) model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sequence of DensePose Images</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>Methods Detailed:</p><p>• Monocular video footage of patient gait is captured by physician during a session in a motion analysis lab • Video footage is processed by DensePose and transformed to IUV coordinates • Frame(s) are sent through a deep neural network consisting of spatial and temporal components • GDI predictions are made for each batch; loss is calculated using mean squared error compared to physician's score • Overall model performance is judged on RMSE of GDI prediction and tuned accordingly</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experiments</head><p>Our results are promising, and can be enhanced by:</p><p>• Featurizing input data to spatial X, Y, Z components using the SMPL human body model</p><p>• Incorporating 3D convolution blocks in earlier layers to capture lower level temporal features</p><p>• Leveraging chunking and other memory-saving methods to train on a larger dataset</p><p>• Training a classification model and take probabilityweighted average of class values to calculate GDI </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LSTM GDI</head><p>• Conv-ReLU-BNorm </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Hanson, Nick. "Kids Health Matters." Gillette Children's Specialty Care, 1 Feb. 2017, www.gillettechildrens.org/khm/topics/gait-analysis.Rıza Alp Guler, Natalia Neverova, and Iasonas Kokkinos. Densepose: Dense human pose estimation in the wild. arXiv:1802.00434, 2018.</figDesc><table>(#Examples, #Frames, Height, Width, 
+Channels) 
+
+Spatial Component 
+VGG-16 | 2D CNN 
+
+(Height, Width, Channels) 
+
+GDI Prediction 
+
+[0, 100] 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Temporal ComponentLSTM | 1D CNN(Frames, Spatial Model Output)   </figDesc><table>• Implementing 
+grid search 
+for 
+systematic 
+hyperparameter tuning 
+
+Models 
+Input Type 
+Training 
+Error 
+
+Validation 
+Error 
+
+Guess Mean 
+Frame 
+-
+13.7 
+
+Linear 
+Regression 
+Frame 
+-
+13.0 
+
+VGG16 
+Frame 
+10.1 
+9.5 
+
+CNN 
+Frame 
+8.1 
+8.2 
+
+CNN + LSTM 
+Video 
+2.3 
+4.9 
+
+CNN + 1D-CNN 
+Video 
+4.2 
+11.3 
+
+CNN + LSTM Architecture 
+
+Learning Curve 
+
+Regression Plot 
+
+Frame 1 
+
+Frame 2 
+
+Frame 10 
+
+. 
+. 
+. 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">{agotlin,apurva03,uagarwal}@stanford.edu    I'll Have the "CNN-Three-Ways" Please!Automated Identification of Human Gait AbnormalitiesWe would like to extend a special thanks to Lukasz Kadzinski of the Stanford Mobilize Center, who was our advisor for this project, as well as the CS 229 teaching team.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

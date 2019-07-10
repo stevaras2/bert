@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Combining CNN and Classical Algorithms for Music Genre Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haojun</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of CS</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siqi</forename><surname>Xue</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">ICME</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jialun</forename><surname>Zhang</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">ICME</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Combining CNN and Classical Algorithms for Music Genre Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-In this study, we combine Convolutional Neural Networks and classical classification algorithms such as Softmax Logistic Regression, SVM, GDA, and Random Forests for music genre classification. By training a Dilated CNN as a feature extractor for classical algorithms, we obtain a comparison of different classical algorithms using different input features (which corresponds to the different layers of the Dilated CNN). We find that this method allows us to greatly improve the performance of classical algorithms, even allowing them to exceed the the performance of the Dilated CNN. We noticed that classical algorithms have a regularization effect so even with a non-optimal CNN we can improve its performance by feeding the layer outputs as features to classical algorithms.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Music is becoming more and more easy to access through internet and musical apps. With the increasing amount of music available digitally online, there is a growing demand for systematical organization of audio files and thus a rising interest in automatic music genre classification. Moreover, detecting and grouping music of similar genre is a keen part in music recommendation system and playlist generator.</p><p>There are indeed widely accepted rules in music theory that help human classification, such as chords and rhythmic structures, instrumental arrangement, etc. However, in general, musical content is complex and music genres are not well defined, making it a challenging machine learning problem, and distinguish it from many other classification problems.</p><p>The goal of this paper is to improve the performance of classical algorithms, including Logistic Regression (LR), Gaussian Discriminant Analysis (GDA), Random Forest (RF) and Support Vector Machine (SVM), by combining them with a dilated convolutional neural network (Dilated CNN, or DCNN). The methodology is structured as follows. We transfer the raw music inputs in wave format into 2D MFCC features at each timestamp. As a baseline, the 2D arrays are flattened and feature selected through PCA. This is then fed directly into the classical algorithms described above. To improve prediction, we pass the same 2D arrays into a 2-layered, 1-dimensional Dilated CNN, and train it for reasonable performance. The activation of each convolution layer are extracted as inputs to the classical classification algorithms. All outputs of the models are probabilities from a softmax layer denoting the probability of the example being in a specific genre. <ref type="bibr" target="#b0">1</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORKS</head><p>Music genre classification, as a branch of audio and speech processing, has been studied by many. A standard approach consists of two steps, feature extraction and classification.</p><p>Most of the genre classification studies focuses on finding the best set of temporal features, transformations, and filters that best represent the music. <ref type="bibr" target="#b6">[7]</ref> The author of the dataset we are using also attempted to find the set of features that best represent a music. <ref type="bibr" target="#b4">[5]</ref> Other studies will try to find combinations of well known music theories such as rythm analysis to add new features to the classification problem. <ref type="bibr" target="#b5">[6]</ref> We believe that this significantly limit the performance of models because these features are ultimately extracted by humans and we will be missing some important features that could be extracted by a neural network.</p><p>Other studies have tried to use some AI/Machine learning techniques such as Hidden Markov Model to classify music genres <ref type="bibr" target="#b8">[9]</ref>, and even SVM <ref type="bibr" target="#b2">[3]</ref>. However, they still have limited performance. In recent years, deep learning and neural networks have also been widely applied to classifications problems, including music genre classification. More specifically, using CNN as a music feature extractor was studied by T. LH. Li, A. B. Chan, and A. HW. Chun <ref type="bibr" target="#b3">[4]</ref>. They used MFCC audio representation and trained a music pattern extractor to classify music genre. There are also LSTM music genre classification works being done <ref type="bibr" target="#b7">[8]</ref> but mostly focused on lyrics.</p><p>In this study, we will build on top of the works done before and see if we can improve them by combining classical algorithms with neural networks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND REPRESENTATIONS</head><p>The dataset we used is taken from GTZAN <ref type="bibr" target="#b1">[2]</ref>, which is the same dataset used by G. Tzanetakis and P. Cook in their paper <ref type="bibr" target="#b4">[5]</ref>. It consists of 1000 30-second audio tracks, which break down into 10 genres. Each genre contains 100 pieces of music in .wav format. We will use only 5 genres from the 10, namely classical, hiphop, metal, pop, and blues. Therefore we have only 500 music pieces. We then split them into 400 training pieces and 100 test pieces.</p><p>Using the LibROSA library in Python, the data is pre-  The figures above shows a heat map of classical and metal MFCC features. As we can see there are already some interesting but subtle differences that we can see with our eyes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. MODELS</head><p>Before any training experiments, the dataset is split into train and test sets with a 80/20 ratio, and they will stay the same throughout the whole project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Classical Baseline Models</head><p>We investigated the performance of four classical classification algorithms: Softmax Regression (SR), Gaussian Discriminant Analysis (GDA), Random Forest (RF) and Support Vector Machine (SVM). For the equations in this section, we will always use x to denote the input feature and y to denote the labels. Moreover, we will use x (i ) to denote the training examples and y (i ) to denote the true class for x (i ) , andŷ (i ) as the predicted class for x (i )</p><p>• For softmax logistic regression, the model is</p><formula xml:id="formula_0">h θ (x) = 1 K j =1 exp θ ( j ) x       exp θ (1) x exp θ (2)T x . . . exp θ (K ) x       ,</formula><p>with the corresponding cost function</p><formula xml:id="formula_1">J (θ) = − i k 1{y (i ) = k} logŷ i</formula><p>where 1{y (i ) = k} is the indicator of whether a class actually belongs in class k andŷ i = h θ (x) i is the predicted probability of whether a class belongs in k.</p><p>• For GDA, the model assumes that the class labels y is a multinomial distribution with 5 values with parameters</p><formula xml:id="formula_2">p(y = k) = φ k . Moreover, we assume that x|y = k ∼ N (µ k , Σ), where N (µ k , Σ)</formula><p>is the multivariate Gaussian with the density function</p><formula xml:id="formula_3">1 (2π) n/2 |Σ| 1/2 exp − 1 2 x − µ k T Σ −1 x − µ k .</formula><p>The parameters µ k , φ k and Σ are calculated by maximizing the log-likelihood of the given data</p><formula xml:id="formula_4">φ, µ, Σ = log m i =1 p x (i ) , y (i ) ; φ, µ, , Σ = log m i =1 p x (i ) |y (i ) ; µ, Σ p y (i ) ; φ .</formula><p>• A comprehensive review of random forests can be found in sections 9.2 and 15.1 in <ref type="bibr" target="#b9">[10]</ref> . Roughly speaking, random forests is an ensemble method that applies bootstrap aggregating (bagging) to decision trees so that the final model is better at avoiding overfitting. The error that we choose for the splitting method is the Gini index. For a particular region R with N observations, it is defined as</p><formula xml:id="formula_5">K k=1p k (1 −p k ), wherep k = 1 N x i ∈R I (y i = k)</formula><p>is the percentage of examples in class k in the region R. In our implementation, we choose a maximum depth of 7. We observed that choosing a greater depth with allow us to fit to the training data with 100% accuracy, but this will also result in high test error.</p><p>• Traditionally, SVMs work naturally as two-class classifiers. In particular, we are solving the following optimization problem:</p><formula xml:id="formula_6">min w,b 1 2 w 2 s.t. y (i ) w T x (i ) + b ≥ 1, i = 1, . . . , m</formula><p>For the multiclass classification problem with |C | classes, we extend the two classifier by constructing |C |(|C |−1)/2 classifiers for each pair of classes. Then for each x (i ) we choose its class by setting y (i ) to be the class that x (i ) appeared in the most number of times. Finally, we note that in practice we use a kernalized version of SVM, where the kernel is given by the radial basis function</p><formula xml:id="formula_7">K x, x = exp −γ x − x 2 ,</formula><p>and γ is scaled inversely by the number of features and the standard deviation of the inputs. This will map the input features to a high dimensional feature space, allowing us to generate more complex boundaries.</p><p>As a baseline, we flattened the raw 2D MFCC arrays into 1D vectors, and feed them to the 4 above-described classification algorithms. The flattened vectors are of length 25800. For classical algorithms, a 25800 dimensional input can be quite high and susceptible to overfitting. A preliminary idea is to apply principle component analysis (PCA) to extract the top 50 principle components. However, we must take caution when applying PCA since it does not always improve the test accuracy. Classification results for both the origin input and the input after PCA is compared in the results section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Dilated Convolutional Neural Network (DCNN)</head><p>After we have established our baseline model, we then trained multiple dilated Convolution Neural Networks and compared results. The main difference between a Dilated CNN and original CNN is that each input unit is seen by a filter with gaps between them. A simple illustration for DCNN can be found in <ref type="figure">Figure IV</ref>   Simply put, the architecture has a 1D dilated Convolution Layer followed by a average pool layer (with dropout) and a batch norm layer, forming a dilated convolution unit. This is then repeated with different parameters, and finally connected to a fully connected layer with softmax activation, which outputs a probability among 5 classes.</p><p>For optimization, we use the categorical cross entropy loss defined by</p><formula xml:id="formula_8">J (Θ, B ) = − i k 1{y (i ) = k} logŷ i ,</formula><p>where Θ is the weights in our neural network and B is the bias terms. We optimize over Θ and B using the adam optimizer, which combines gradient descent with momentum and RMSprop.</p><p>We tried many models.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Combining DCNN and Classical Algorithms</head><p>Lastly and most importantly , we will use the dilated CNN model as a feature extractor for the classical classification algorithms.</p><p>Having our DCNN model trained, we take the activation outputs of the two convolution layers, flatten them, and feed them into the four classical algorithms that we described above.</p><p>To summarize, we will use (1) flattened MFCC vector, (2) PCA reduced MFCC vector, (3) convolution layer 1 output (light green in figure IV.2) and (4) convolution layer 2 output (dark blue in figure IV.2) vectors as the input features of the four classical algorithms.</p><p>To better visualize the these high dimensional feature vectors, they are reduced into 3D using PCA and plotted in <ref type="figure">Figure IV</ref>.3, where each data point is colored by its true genre label. Features (1) and (2) are essentially the same under PCA transform, therefore only three plots are presented. We can make several observations from this figure.</p><p>• In terms of raw flattened MFCC features, classical, blues, and pop music tend to stand alone by themselves, but hip-hop and metal are mixed together in the middle of the data points.</p><p>• In terms of DCNN layer 1 features, pop music separates itself away from the others on the right "branch". Also, on the left branch, hip-hop music now is separated from metal music, although metal music now seem even more mixed up with all the other music genres.</p><p>• Although no dicision boundary can be seen seen directly from PCA of layer 2, all of the five genres has a clear tendency of clustering. Moreover, compared with the other two features, the points are more condensed. It is worth noticing that these observations are based only on a 3D reduction of these features. Points could be well separated in higher dimensions, even if the points seem not clearly separated apart in 3D.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS AND DISCUSSION 2</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dilated CNN Modeling</head><p>After some hyperparameter tuning, we decided to use the Adam optimizer with standard parameters and learning rate 0.001. Here we investigate whether the number of layers in the model will impact on the performance of the DCNN by comparing a 2-layer model and a 3-layer model. Both networks have trained with well selected parameters. We used drop off in both with rate 50% to reduce overfitting. The results are presented in  As the table shows, the training error of both 2-layer and 3-layer models are around 91%, but the difference between train and test accuracy for a 3-layer model is larger than that of a 2-layer model, suggesting that the 3-layer model suffers from overfit the data much more than 2-layer model. <ref type="bibr" target="#b1">2</ref> All experiments here are part of the repository https://github.com/ LithiumH/CS229-Music-Classification</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1) Filter size and Pool size:</head><p>Here we investigated whether the filter size and pool size make a difference in our predicting performance of the model. We iterated on only 2-layer Dilated networks because they have the best test results from the previous part. The results are presented in <ref type="table" target="#tab_2">Table V</ref>.2. The first two columns encode information about the two dilated convolution layers: the four numbers in each cell, separated by a comma, are the number of filters, size of filters, dilation rate, and pool size, respectively. The prefix "d" denotes that a drop off of 50% was applied to the input of the layer. We noticed that increasing the number of filters, filter sizes, and average pool size definitely improves test accuracy. We suspect this is due to the fact that music features are consistent throughout multiple section of the music, and the higher number of filter and filter sizes allows us to better extract the feature.</p><p>We eventually settled on the best set of parameters of the the simplest model with 0.84 test accuracy since test accuracy start to flat out. The confusion matrix of the model is shown below:</p><formula xml:id="formula_9">Figure V.1: DCNN confusion Matrix</formula><p>Not surprisingly Metal is the hardest one to identify, while classical music can be identified with almost 100% accuracy</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Classical Algorithms</head><p>In this section, we present the classification outcomes from the four classical algorithms, LR, GDA, random forest and SVM, with three different sets of input features: the baseline model using flattened MFCC matrix and combined models using two convoluted layer output features.</p><p>The final classification accuracy of our baseline model and the combined model can be found in <ref type="table" target="#tab_2">Table V</ref> • The performance of GDA is very abnormal compared to the other algorithms. Using the raw input, it fails to achieve 100% accuracy on the training set while all the other three algorithms achieved this. We suspect this is because GDA makes strong underlying assumptions of the data to come from a Gaussian Distribution, while music temporal data generally does not follow a Gaussian Distribution. We also observe that after the feature extraction, GDA tend to perform better on the later layers of the CNN, which has a smaller number of activations. This is likely because GDA tend to perform better on low dimensional data. Also, that GDA works better in layer 2 than layer 1 corresponds to our observation from <ref type="figure">Figure IV</ref>. <ref type="bibr">3(c)</ref>, that the data points of each genre tend to cluster together in convolution layer 2.</p><p>• The performance of logistic regression and RF improved after PCA, and improved further with layer 1 and 2 of the Dilated CNN features. Interestingly, they out performed the DCNN, which was used to extract the features! We believe that there a few possible reasons. First, our neural network architecture might not yet be optimized for this problem, since there is still a gap between the training and test accuracy. Second, classical algorithms have much fewer parameters compared to the neural network, so they may actually have a regularizing effect on the activations of the neural network, thus helping us get higher test accuracy.</p><p>• The column of results for SVM is particularly interesting.</p><p>We see that SVM performs extremely poorly when applied to the raw input. There is a huge gap between the train and test accuracy, which indicates severe overfitting. This is likely because the kernalized SVM has very strong predictive powers and will end up fitting very complex boundaries to the raw input in a high dimensional space that do not generalize to the test data. However, after PCA, SVM performs even worse.</p><p>Compare this with the three other algorithms, whose performance increases after PCA. These results lead us to suspect that dimension reduction on the data does not help with the performance of SVM. However, when we use the layers of the DCNN as input, the performance of SVM increases dramatically. This indicates that the DCNN extracts low dimensional features from the raw input in a way that is fundamentally different from PCA. As we can see from the plots, there is a blue dot among a sea of reds, indicating that there was a classical music that had features (extracted from DCNN) that is very similar to pop music. Thus, it made sense for LR and other algorithms to classify it wrongly as a pop music as you can see on the figure on the right. We hypothesis that even though logistic regression have a slight regularization effect, it is ultimately constrained by how well the DCNN extract the features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONCLUSIONS</head><p>We have successfully improved the accuracy of classical classification algorithms by using a Dilated Convolutional Neural Network as our feature extractor. In some cases, the performance of the classical algorithm can even exceed that of the neural network. In practice, this will allow us to use a pre-trained neural network as a feature extractor and improve both the performance and speed of classical algorithms. We have also made a few interesting observations regarding the results in <ref type="table" target="#tab_2">Table V</ref>.3 and attempted to give an explanation. We are particularly impressed by the dramatic increase in performance when combining SVMs with the DCNN.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. FUTURE WORK</head><p>There are several directions that would be interesting to pursue in the future. In our work we used a Dilated CNN as our feature extractor. However, since music data is inherently sequential, other network structures such as LSTM (long short term memory) and GRU (gated recurrent unit) will likely achieve better performance. Moreover, if we are able to train a much deeper network that attains high accuracy, it would be interesting to plot the accuracy of a classical algorithm using different activation layers. Additionally, we still do not have a full understanding of the results in <ref type="table" target="#tab_2">Table  V.</ref>3. It would require some theoretical work to explain the observations that we have made.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>processed into MFCC (mel-frequency cepstral coefficients) features. MFCC features are commonly used in sound processing and music classification. It allow us to represent each music wave file as a 2D numpy array (Figure III.1),with its x axis as time, and the y axis as MFCC features.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure</head><label></label><figDesc>III.1: 2D MFCC array of a classical and a metal music piece from the dataset, with the horizontal axis as time, and the vertical axis as MFCC values.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>. 1 .</head><label>1</label><figDesc>With a dilation rate of 4 and filter size 2, each filter will see 2 input units that are 4 distance apart.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure</head><label></label><figDesc>IV.1: A dilated convolution layer, illustrated with filter size 2 and dilation rate 4. The light yellow nodes have 20 channels of MFCC features, and each blue node has number of channels equal to the number of filters used.The architecture that we end up with is shown inFigure IV.2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure IV. 2 :</head><label>2</label><figDesc>Dilated convolution neural network architecture used in this project.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure IV. 3 :</head><label>3</label><figDesc>Three different feature vectors of the test set data points (music pieces), with the vectors reduced to 3D using PCA. The colors represent true genre labels of each test data point.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>The table of comparison is shown in Table IV.1.</figDesc><table>Model 
+Training Accuracy 
+Test Accuracy 
+C M F O 
+0.8475 
+0.78 
+DC M F O 
+0.94 
+0.8 
+C A F O 
+0.94 
+0.81 
+DC A DC A O 
+0.99 
+0.86 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table IV .</head><label>IV</label><figDesc></figDesc><table>1: Comparison of different model architectures: 
+C denotes a convolution layer, DC denotes a dilated 
+convolution layer, M denotes a max pooling layer, A denotes 
+an average pooling layer, and F denotes a fully connected 
+layer; O denotes the output of the model. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table V .1.</head><label>V</label><figDesc></figDesc><table>Model 
+Train Accuracy 
+Test Accuracy 
+2-layer Dilated CNN 
+0.915 
+0.87 
+3-layer Dilated CNN 
+0.9125 
+0.79 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table V .</head><label>V</label><figDesc></figDesc><table>1: Different Model architecture's comparison 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5" validated="false"><head>. 3 .</head><label>3</label><figDesc>UsingTable V.3, we make several observations.</figDesc><table>Features (length) 
+
+Classical Algs 
+LR 
+GDA 
+RF 
+SVM 
+
+Raw input (25800) 
+train 
+1.0 
+0.8875 
+1.0 
+1.0 
+test 
+0.77 
+0.77 
+0.76 
+0.28 
+
+PCA reduces raw input (50) 
+train 
+0.925 
+0.84 
+1.0 
+1.0 
+test 
+0.81 
+0.79 
+0.77 
+0.21 
+
+DCNN layer 1 (320) 
+train 
+0.99 
+1.0 
+0.99 
+0.92 
+test 
+0.87 
+0.61 
+0.86 
+0.87 
+
+DCNN layer 2 (48) 
+train 
+0.95 
+0.94 
+0.98 
+0.94 
+test 
+0.84 
+0.80 
+0.87 
+0.84 
+
+Table V.3: Comparison: Train and test accuracy of the four 
+classical algorithms, using different feature inputs. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6" validated="false"><head></head><label></label><figDesc>In particular, compare the results of PCA and DCNN layer 2. One has 50 features and the other 48 features, but the accuracy is 0.21 compared to 0.84. VI. VISUALIZATION We run PCA with true and predicted labels of Logistic Regression of the first layer features. The plots are shown in VI.1 Figure VI.1: LR on First Layer of DCNN of test data with true (left) and predicted (right) genres</figDesc><table></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Disclosure: We will use the same technique to extract features for our CS230 project, but we did not use the same data set and we did not use the same input/output or code</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sergey</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ICML</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Data Sets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><forename type="middle">G</forename><surname>Marsyas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Genre</surname></persName>
+		</author>
+		<ptr target="http://marsyasweb.appspot.com/download/data_sets/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Musical Genre Classification Using SVM and Audio Features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mutiara</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Refianti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mukarromah</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing Electronics and Control)</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">1024</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+	<note>TELKOMNIKA (Telecommunication</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Automatic musical pattern feature extraction using convolutional neural network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">Lh</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">B</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hw</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Chun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of the Int. MultiConf. of Engi-neers and Computer Scientists (IMECS)</title>
+		<meeting>of the Int. MultiConf. of Engi-neers and Computer Scientists (IMECS)<address><addrLine>Hong Kong</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010-03" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Musical genre classification of audio signals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Cook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Speech and Audio Processing</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="293" to="302" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Evaluation of feature extractors and psycho-acoustic transformations for music genre classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Lidy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreas</forename><surname>Rauber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ISMIR</title>
+		<imprint>
+			<date type="published" when="2005" />
+			<biblScope unit="page" from="34" to="41" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Classifying Music Audio with Timbral and Chroma Features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pw</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">In Ismir</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="339" to="340" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Lyrics-based music genre classification using a hierarchical attention network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandros</forename><surname>Tsaptsinos</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1707.04678</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Hidden Markov classification for musical genres</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Igor</forename><surname>Karpov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Devika</forename><surname>Subramanian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Course Project</title>
+		<imprint>
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">The elements of statistical learning: data mining, inference, and prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hastie</forename><surname>Trevor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tibshirani</forename><surname>Robert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Friedman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ix</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Contributions</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Dilated CNN modeling and experiments. Feature extraction. Drawing and generating pretty pictures</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>• Haojun -Pre-Processing</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">• Jialun -Classical algorithms and experiments. Result inferences</title>
+		<imprint/>
+	</monogr>
+	<note>Poster lead</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">• Siqi -Classical algorithms and experiments</title>
+		<imprint/>
+	</monogr>
+<note type="report_type">Report lead</note>
+	<note>Result discussions</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of Hand Gestures using Surface Electromyography Signals for Upper Limb Amputees</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Luppescu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Lowney</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Raj</forename><surname>Shah</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Classification of Hand Gestures using Surface Electromyography Signals for Upper Limb Amputees</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>METHODOLOGY Filtering &amp; Windowing •</head><p>A cascade of five filters -20Hz high-pass filter, 450Hz low-pass filter, notch filters with stop bands centered at 50Hz, 150Hz, &amp; 250Hz.</p><p>• EMG signals were segmented into windows of length 300ms with 50% overlap.</p><p>Feature selection • A forward feature selection with 5-fold cross validation was run on each subject. A voting scheme was used to find the best features across all subjects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DATASET &amp; FEATURES</head><p>• Our dataset consists of raw EMG signals recorded from four transradial amputees.</p><p>• The subjects performed 6 different hand gestures at 3 different force levels. Ten channels were used per subject.</p><p>• Eighteen features were used to classify signals. Six features were Time Dependent Power Spectrum Density (TD-PSD) features, three features were from the frequency domain, and nine were from the time domain.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MOTIVATION</head><p>Approximately 38 to 50 percent of patients with upper-limb amputations discontinue use of their prosthetic because the cost of carrying it outweighs its (limited) usage. After a patient loses a limb, they still contain all the necessary nerves to control their non-existing limb. By using EMG to measure the electrical signals sent through these nerves, amputees can potentially control a robotic prosthetic in the same way that they once controlled their original limb.</p><p>(1) Linear Discriminate Analysis <ref type="bibr">6,</ref><ref type="bibr">10,</ref><ref type="bibr">4,</ref><ref type="bibr">11,</ref><ref type="bibr">5,</ref><ref type="bibr">3,</ref><ref type="bibr">5,</ref><ref type="bibr">14</ref> </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Confusion matrix for NO FORCE procedureConfusion matrix for NO FORCE procedure</figDesc><table>, 1, 3 
+
+Procedure 
+Training 
+accuracy 
+
+Testing 
+accuracy 
+NO FORCE 
+96.53% 
+96.18% 
+
+FORCE 
+93.99% 
+93.11% 
+
+Confusion matrix for NO FORCE procedure 
+
+Procedure 
+Training 
+accuracy 
+
+Testing 
+accuracy 
+NO FORCE 
+79.09% 
+78.65% 
+
+FORCE 
+77.59% 
+76.86% 
+
+Multi-Class SVM 
+
+Features used -11, 3, 1, 4, 10, 7, 5 
+
+Procedure 
+Training 
+accuracy 
+
+Testing 
+accuracy 
+NO FORCE 
+100% 
+88.76% 
+
+FORCE 
+99.94% 
+86.53% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

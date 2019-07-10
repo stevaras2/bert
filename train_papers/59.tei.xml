@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">NEURAL CAPTION-IMAGE RETRIEVAL</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junyang</forename><surname>Qian</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Giacomo</forename><surname>Lamberti</surname></persName>
+						</author>
+						<title level="a" type="main">NEURAL CAPTION-IMAGE RETRIEVAL</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>In the modern era, an enormous amount of digital pictures, from personal photos to medical images, is produced and stored every day. It is more and more common to have thousands of photos sitting in our smart phones; however, what comes with the convenience of recording unforgettable moments is the pain of searching for a specific picture or frame. How nice it would be to be able to find the desired image just by typing one or few words to describe it? In this context, automated captionimage retrieval is becoming an increasingly attracting feature, comparable to text search.</p><p>In this project, we consider the task of content-based image retrieval and propose effective neural network-based solutions for that. Specifically, the input to our algorithm is a collection of raw images in which the user would like to search, and a query sentence meant to describe the desired image. The output of the algorithm would be a list of top images that we think are relevant to the query sentence. In particular, we train a recurrent neural network to obtain a representation of the sentence that will be properly aligned with the corresponding image features in a shared highdimensional space. The images are found based on nearest neighborhood search in that shared space.</p><p>The paper is organized as follows: first, we briefly summarize the most relevant work related to our task; then, we describe the dataset employed for training and the features of our problem. Subsequently, we introduce our models, namely a multi-response linear regression model and a deep learning method inspired by <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref>. In the results section, we evaluate the accuracy of the different models by computing the Recall@K measure, i.e. the percent of queries for which the desired image is among the top K retrieved ones. We also perform some error analysis to study the influence of the length of the caption to the accuracy of the results. Finally, we conclude with some remarks and ideas for future research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORK</head><p>Under the umbrella of multimodal machine learning, caption-image retrieval has received much attention in recent years. One main class of strategies is to learn separate representations for each of the modalities and then coordinate them via some constraint. A natural choice of constraint is similarity, either in the sense of cosine distance <ref type="bibr" target="#b13">(Weston et al., 2011;</ref><ref type="bibr" target="#b2">Frome et al., 2013)</ref> or the Euclidean distance. Recent advancement of neural networks enables one to build more sophisticated language and images models based on more informative embeddings. For example,  exploits dependency tree RNN to capture compositional semantics.</p><p>A different class of constraint considered in <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref> is order embedding. There the features are constrained to have non-negative values, and the smaller the feature values are, the more abstract that corresponding concept is. For example, the universe is assumed to be at the origin. In the context of caption-image retrieval, a caption is assumed to be an abstraction of the image and should be enforced to have smaller feature values. That is particularly useful for hypernym prediction. For caption-image retrieval, however, the performance isn't much different from the normal Euclidean distance and it doesn't seem very robust to different architectures and specifications in our experiments.</p><p>More recently, there is another line of work that tries to improve retrieval performance with the use of generative models. In <ref type="bibr" target="#b3">Gu et al. (2018)</ref>, they propose an "imagine" step where the target item in the other modality is predicted based on the query and then a more concrete grounded representation is obtained. However the training would be much slower compared with previous methods.</p><p>Under the hood of most state-of-the-art models, the choice of pretrained features/embeddings plays an important role. We use VGG-19 <ref type="bibr" target="#b10">(Simonyan &amp; Zisserman, 2014)</ref> as used by <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref>. <ref type="bibr" target="#b3">Gu et al. (2018)</ref> claims ResNet-152 <ref type="bibr" target="#b4">(He et al., 2016)</ref> can further improve the retrieval performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DATASET AND FEATURES</head><p>We train our models using the Microsoft COCO dataset <ref type="bibr" target="#b7">(Lin et al., 2014)</ref>, which contains 123, 287 images in total. Each image is associated with 5 human-annotated captions. We use the same split as in <ref type="bibr" target="#b5">Karpathy &amp; Fei-Fei (2015)</ref>: 113, 287 for training, 5, 000 for validation and test respectively. An example from the dataset is shown below.</p><p>• Three teddy bears laying in bed under the covers.</p><p>• A group of stuffed animals sitting next to each other in bed.</p><p>• A white beige and brown baby bear under a beige white comforter.</p><p>• A trio of teddy bears bundled up on a bed.</p><p>• Three stuffed animals lay in a bed cuddled together.</p><p>To represent images, a common choice is to use a pretrained image model as a feature extractor and use the last layer of the forward pass as the representation. In the present work, we employ the f c7 features of the 19-layer VGG network <ref type="bibr" target="#b6">(Klein et al., 2015)</ref>. In particular, each image is cropped to generate 10 images, which are then passed through the VGG network; the resulting outcomes are averaged to produce a single high-dimensional feature vector. For text, or specifically words, a widely used representation is pretrained word vectors, such as the skip-gram model  or the GloVe model <ref type="bibr" target="#b9">(Pennington et al., 2014)</ref>. In our case, we employ the GloVe word vectors to represent each word of the caption.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">METHODS</head><p>In this section, we describe the methods that we use for this task. They include a traditional supervised method based on multiple-response linear regression, and methods based on neural networks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">BASELINE METHOD</head><p>In multimodal machine learning, a common approach is coordinating the representations of different modalities so that certain similarity among their respective spaces are enforced. Our task involves texts and images. To represent the captions, we simply average the GloVe vectors relative to the words of the sentence, though more sophisticated methods exist. Let f GloVe be the sentence features and f VGG be the image features coming from the VGG network. In order to encourage similarity between these two different types of representation, we would like to find a weight matrix such that:</p><formula xml:id="formula_0">W c,i = arg min W k f VGG (i k ) − W · f GloVe (c k ) 2 2 .</formula><p>This is known as multi-response linear regression. As a generalization of linear regression, it has closed-form solution or can be solve by stochastic gradient descent when we have a large dataset. At test time when we are given a caption c (t) , we compute the caption feature vector f GloVe (c (t) ), and find the image(s) closest to that:</p><formula xml:id="formula_1">i (t) = arg min i f VGG (i ) −Ŵ c,i · f GloVe (c (t) ) 2 2 .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">MULTIMODAL NEURAL NETWORK METHODS</head><p>Our method is inspired by <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref> where they use RNN for language modeling and a pretrained VGG model to generate static image features. We borrow some notations from that paper. Given a set of image-caption pairs, the goal is to learn a similarity score between an image (i) and its caption (c):</p><formula xml:id="formula_2">S(i, c) = − f i (i) − f c (c) 2 2 ,<label>(1)</label></formula><p>where f i and f c are embedding functions for images and captions, respectively. There is a negative sign since we would like larger S to indicate more similarity. For the purpose of contrasting correct and incorrect matches, we introduce negative examples that comes handy in the same training batch. The cost can thus be expressed as</p><formula xml:id="formula_3">(c,i) c max{0, α − S(c, i) + S(c , i)} + i max{0, α − S(c, i) + S(c, i )} ,<label>(2)</label></formula><p>where (c, i) is the true caption-image pair, c and i refer to incorrect captions and images for the selected pair. Therefore, the cost function enforces positive (i.e. correct) examples to have zeropenalty and negative (i.e. incorrect) examples to have penalty greater than a margin α.</p><p>Feature extraction for both modalities is similar to the baseline. The embedding function f i is obtained by opportunely weighting the outcome before the output layer of the VGG network and f c takes the last state of a recurrent neural network (RNN) with gated recurrent unit (GRU) activation functions <ref type="bibr" target="#b1">(Cho et al., 2014)</ref>, i.e.</p><formula xml:id="formula_4">f i (i) = W i · f VGG (i), f c (c) = f GRU (c).<label>(3)</label></formula><p>where W i is a n × 4096 matrix of weights to be trained and n is the number of features of the embedding space. The embedding function f c is now the outcome of a recurrent neural network (RNN) with gated recurrent unit (GRU) activation functions <ref type="bibr" target="#b1">(Cho et al., 2014</ref>):</p><p>Figure 2: Recurrent neural network to process captions.</p><p>We observe that in <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref>, all word embeddings are treated as parameters and trained from scratch. The training can adapt the embedding parameters to this specific task, but it is also limited by the semantic information contained in the training corpus. We find that the captions in the training set are mostly short phrases or sentences. As a result, the trained embeddings can miss more sophisticated implication within and between the words. Instead, pretrained word vectors on a larger corpus like Wikipedia enables one to exploit richer information encoded in a variety of contexts. Moreover, we can either use them as fixed, non-trainable embeddings or use them as an initialization and fine tune them for our specific task. The latter one is adopted in our method.</p><p>In addition, we explore the usage of a different modules in the RNN, namely long short-term memory (LSTM) and different RNN architectures such as stacked bidirectional RNNs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">EXPERIMENTS</head><p>Metric The metric we use in this project is Recall@K (R@K). Given a list of predicted rankings r i (1 ≤ i ≤ m) for m images based on their corresponding input captions, we define</p><formula xml:id="formula_5">R@K = 1 m m i=1 I{1 ≤ r i ≤ K}.</formula><p>We should notice that this metric also depends on the size of the image database. For example, searching over a one-million-image database is clearly harder than a one-hundred database. In this project, we focus on the size of 1K images. In addition, we will also look at some conditional metrics, such as the length of the caption, to better understand the results.</p><p>Hyperparameters We started with a set of hyperparameters suggested in <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref>, experimented other combinations and chose the optimal based on the performance on the validation set. We train all the models at most 50 epochs and do early stopping when necessary, i.e. the model appears to overfit. Specifically, the training data are divided into random mini-batches of 128 examples and trained using Adam optimizer with a learning rate of 0.05. Moreover, the CNN output has 4, 096 dimensions and the word vectors has 300 dimensions. The shared embedding space for both captions and images has 1, 024 dimensions. In the experiments, a margin of 0.1 in (2) helps us achieve the best performance.</p><p>Results In <ref type="table">Table 1</ref>, we show the performance of different methods evaluated on the test set. The Mean r column computes the average rank of the correct image match. We've listed two baseline results. The pure baseline is based on the method described in the previous section. The Baseline + Weight method computes the average feature vectors of all five heldout captions for each test image, while the other methods only use one of them. Although it is a little unfair to the other methods in comparison, it could still be an option in practice. Such averaging in the baseline method is equivalent to assigning different weights to the words and the key words that appear repeatedly in the five captions are automatically highlighted. It is worth considering how to incorporate a userprovided weighting in other nonlinear methods. We see that GRU-RNN with GloVe initialization does the best, LSTM-RNN the second, and both better than the results reported in <ref type="bibr" target="#b12">Vendrov et al. (2015)</ref>. Their architectures are very similar, and we see that using pretrained word vectors indeed help improve the retrieval quality. <ref type="figure" target="#fig_1">Figure 3</ref> on the left shows the evolution of the R@10 measure over the epochs; both GRU and LSTM models have similar behavior: after just a single epoch the accuracy is already higher than the baseline method, and after ∼ 30 epochs both curves seem to have reached a plateau. On the right, we compare the sensitivity of the methods on the length of the caption. Initially we thought that long sentences would be a challenge for the RNN and the retrieval quality would significantly degrade as the input sentence becomes longer. The baseline method clearly fails, as the average of all feature vectors will mask the real important ones. From the plot, we see the GRU/LSTM networks, however, are capable of dealing with long sequences. One possible explanation is that in this dataset, it is rare to have a caption that is unnecessarily long. Long captions there usually carries more information about the image, and in this sense will help the model to identify the correct image. It is likely that the curve on the right shows such two-sided tradeoff by long sequences.</p><p>We also compare the baseline method and the neural network solution through some real examples. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GRU-CNN</head><p>We see that the baseline model works well for simple queries like single-word object names. However for longer captions as in <ref type="figure">Figure 5</ref>, it is unable to capture multiple objects and their interactions. The architecture of RNN with GRU/LSTM has the mechanism of adaptively memorizing the words it has seen. That can help identify minor details and complex relationship within the image.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">FUTURE WORK</head><p>In this project, our emphasis is more on language models because as a first step we would like to accurately identify the semantics implied by the query. On the image side, we only represent each by its features extracted from a pretrained network. Although we see the image feature is able to capture small details in the image, it can still be the bottleneck as our language model becomes more sophisticated. In the future, we would like to endow a dynamic attention mechanism so that the model will be able to choose adaptively the region(s) to focus on in the image. This might be done either by including some pretrained features in the lower layers or by computing features on sub-regions of the image. There are some initial attemps in this direction such as <ref type="bibr" target="#b0">Chen et al. (2017)</ref> and we would like to further develop on that. Another direction we are interested in but don't have enough time to explore in this project the use of generative model to improve retrieval performance. As mentioned in <ref type="bibr" target="#b3">(Gu et al., 2018)</ref>, that can help us learn more local grounded features than global abstract features.</p><p>Link to the code: https://github.com/giacomolamberti90/CS229_project</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>19-layer VGG network, without last fully-connected layer</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>R@10 measure variation throughout the epochs (left), and its dependency on the length of the caption (right).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :Figure 5 :</head><label>45</label><figDesc>Query: [dog] Baseline GRU-CNN Figure 5: Query: [a guy riding a bike next to a train] Baseline</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Amc: Attention guided multi-modal correlation learning for image search</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kan</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trung</forename><surname>Bui</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chen</forename><surname>Fang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhaowen</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ram</forename><surname>Nevatia</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.00763</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Learning phrase representations using rnn encoder-decoder for statistical machine translation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyunghyun</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bart</forename><surname>Van Merriënboer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Caglar</forename><surname>Gulcehre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dzmitry</forename><surname>Bahdanau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fethi</forename><surname>Bougares</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Holger</forename><surname>Schwenk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1406.1078</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Devise: A deep visual-semantic embedding model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrea</forename><surname>Frome</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jon</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samy</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeff</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="2121" to="2129" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Look, imagine and match: Improving textual-visual cross-modal retrieval with generative models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiuxiang</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jianfei</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shafiq</forename><surname>Joty</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Li</forename><surname>Niu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gang</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="page" from="7181" to="7189" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaoqing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Deep visual-semantic alignments for generating image descriptions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrej</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Li</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="3128" to="3137" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Associating neural word embeddings with deep image representations using fisher vectors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Klein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guy</forename><surname>Lev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gil</forename><surname>Sadeh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lior</forename><surname>Wolf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="4437" to="4446" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Microsoft coco: Common objects in context</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tsung-Yi</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Maire</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Serge</forename><surname>Belongie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Hays</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pietro</forename><surname>Perona</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Deva</forename><surname>Ramanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C Lawrence</forename><surname>Zitnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European conference on computer vision</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="740" to="755" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1301.3781</idno>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP)</title>
+		<meeting>the 2014 conference on empirical methods in natural language processing (EMNLP)</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Very deep convolutional networks for large-scale image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karen</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1409.1556</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Grounded compositional semantics for finding and describing images with sentences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrej</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Quoc</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew Y</forename><surname>Manning</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Transactions of the Association of Computational Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="207" to="218" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ivan</forename><surname>Vendrov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Kiros</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1511.06361</idno>
+		<title level="m">Sanja Fidler, and Raquel Urtasun. Order-embeddings of images and language</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Wsabie: Scaling up to large vocabulary image annotation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><surname>Weston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samy</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicolas</forename><surname>Usunier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IJCAI</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="2764" to="2770" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

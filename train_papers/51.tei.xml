@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Autonomous R/C Car Behavioral Cloning Optimization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joon</forename><surname>Jung</surname></persName>
+							<email>joonjung@stanford.edu</email>
+						</author>
+						<author>
+							<affiliation>
+								<orgName>1 Introduction</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Autonomous R/C Car Behavioral Cloning Optimization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Behavioral cloning <ref type="bibr" target="#b0">[2]</ref> is relatively simple to implement but yields optimal result efficiently. In this project I have used behavioral cloning to train a CNN supervised classifier autopilot, based on an open source platform know as Donkey Car <ref type="bibr" target="#b2">[4]</ref>. The goal of the project is to model and optimize the autopilot in a real world setting, other than a simulated one, trying to gain valuable insights to launch a real world machine learning agent. In order to improve the autopilot's performance, I have employed Data Aggregation <ref type="bibr" target="#b1">[3]</ref> to augment the training process.</p><p>The model car is equipped with a mono frontal wide angle camera, capturing 120x160 RGB images, which are used for the training and testing inputs for the autopilot. In addition, the model car's steering angle and motor throttling values are used for the classification labels, so the autopilot can estimate and output the best steering angle and throttling output given an input image in the testing phase.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Works</head><p>Bojarski et all.</p><p>[1] have shown that it is possible to use a CNN based supervised model to drive a car. The work has used three frontal cameras, using the middle camera as the main source for the agent's inputs and using the side cameras to compensate the car's shift and rotation movements. It basically has relied only on the frontal captured images to classify the right steering angle to keep the car on the track. This modeling is quite simple to come up with a decent performance, if it is trained with sufficient amount of data. However, the biggest problem is that once it encounters a state which it has not seen before, it is very easy for the agent to drift away significantly <ref type="figure" target="#fig_2">(Fig. 1</ref>).</p><p>Figure 1: Behavioral Cloning trajectory drifting, Image from <ref type="bibr" target="#b4">[6]</ref> As shown by Ross et all. <ref type="bibr" target="#b1">[3]</ref>, using a supervised learning to mimic the expert optimal policy π * based on its state distribution d π * , therefore ignoring its own state distribution, can only guarantee to achieve a bound of O(T 2 ) for its cost function J(π) compared to the optimal policy cost function J(π * ), where T designates its time varying trajectory. That is, letting</p><formula xml:id="formula_0">E s∼d π * [(l(s, π)] = , then J(π) ≤ J(π * ) + T 2 .</formula><p>where l(s, π) is the 0-1 loss of π with respect to π * in state s.</p><p>As to optimize the bound of this approach, the same work has suggested Data Aggregation which can achieve the cost J(π) to be bounded linear to the trajectory T , as shown from the following theorem from the same work.</p><p>Letting N to designates the number of iteration to perform the data aggregation (Section 5.3), if N is O(uT ), then there exists a policyπ ∈π 1:N such that</p><formula xml:id="formula_1">J(π) ≤ J(π * ) + uT N + O(1).</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Donkey Car</head><p>Our model car has a mono wide angle camera, a servo controlled steering and a thrust motor <ref type="figure" target="#fig_0">(Fig.  2)</ref>. The model car's brain is a raspberry pi portable computer, capable of running Keras models with Tensorflow backend. The car is trained on an indoor track, constructed simply with white tapes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Dataset and Features</head><p>The primary inputs for the training and testing are the 120x160 RGB images captured from the frontal camera, classifying the best matching steering angles and the throttling values. The agent has performed about total 200 wraps of running on the indoor track in multiple sessions, each wrap equaling to capturing about 520 images, their corresponding steering angles and throttling values. The training and validation is performed with split ratio of 0.8:0.1:0.1 between the training, developing and validation sets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">CNN Autopilot</head><p>The <ref type="figure" target="#fig_1">Figure 3</ref> shows the architecture of the autopilot. It is consisted of 5 convolution layers, followed by a flattening layer, and 3 fully connected layers. Also after each fully connected layers, there is a dropout layer for regularization which is not shown in the figure. Also not shown in the figure, there is another fully connected layer at the end connected in parallel to the second dropout. These two end full layers classify the given input image(120 x 160 RGB) with the best matching steering angle and throttling values in each.</p><p>The image on the right in the same figure shows an input image, super imposed with a masking to show the image segments activating the CNN most <ref type="bibr" target="#b3">[5]</ref>. Then by collecting the τ * from the expert policy π * , we can set the learning objective function as</p><formula xml:id="formula_2">argmin θ E (s,a * )∼P * L(a * ,π θ (s))</formula><p>where P * = P (s|π * ) designating the distribution of states visited by the expert.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Data Aggregation</head><p>In order to improve the baseline autopilot policy π, I have employed Data Aggregation <ref type="bibr" target="#b1">[3]</ref>. Given the expert policy estimated distribution π * , we train the first policy For this project, β 1 is set to 1 and β i is set to 0 for i &gt; 1.</p><p>Also specific to this project, π * (s) in the iteration i is achieved by the expert manually modifying the actions by its best estimation. For a specific example, <ref type="figure">Figure 5</ref> shows one instance section of the actual D i with π i being modified, with which originally the agent failed to stay on the track.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Experiment Results</head><p>The table in <ref type="figure">Figure 5</ref> summarizes the experiment results. As the metric, it has used the average number of times the agent going out of the track in percentage.</p><p>The first row of the table shows the failure rates of each individual policy π i without merging all the datasets from each iterations, that is not performing D = D ∪ D i for the next training dataset. The first column shows the failure rate of the human driver. π 1 is the first policy trained with the training data collected from the human driver. π 2 is the first policy which is generated by manually modifying the misbehavior using π 1 . π 3 is the next iteration policy generated from π 2 .</p><p>The second row shows the case of the dataset being merged, as D = D ∪ D i . Only the first iteration is conducted stopping early as the agent failed to track from the start with the given policy.</p><p>The <ref type="figure">Figures 6 thorough 9</ref> show the scatter plots and the trending graphs between the actual and predicted steering values for each policies.  The isolated π 2 has achieved the best performance while the isolated π 3 has failed to detect the track at all, even though the scatter plot and trending graph seem to show better correlations. This might be indicating that the failure reason for π 3 is not actually its trending capability with the actual values, but something else. On the other hand, the case for π 1 merged shows a complete failure of correlating with the actual values. Just by referring the trending graphs, it might be the case that π 3 could have performed better than all of its predecessors. On the other hand, for the merged policy case, I am not certain what destroyed its modeling completely. These will have to be for the future works.</p><p>Also If I had more time, I would have tried modeling the policy through a reinforcement learning model other than an imitation learning tried here. Even though I don't have any quantitative data to support, after training the autopilot many times, it seems like confirming the fact that the dependency of current state to its past states plays very important role for the agent's robustness (Section 2). Launching a real world agent using a reinforcement learning, taking it out of the simulated environment will pose very interesting challenging problems.</p><p>8 References </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Donkey car</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>CNN autopilot5.2 Behavioral CloningAs disscussed by Yue et all.<ref type="bibr" target="#b0">[2]</ref>, we can model the supervised classification CNN autopilot using Makov Decision Process. The frontal captured camera image inputs, the steering angles and the motor throttling values together form the states of the agent. The sequence of the states is designated as s. The steering and throttling also form each action the agent can exert in the states. The sequence of actions is designated as a. The collected timed sequence of the tuple of s and a is D = {τ := (s, a)}.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>π 1</head><label>1</label><figDesc>from the training examples of D * . Then the policy π 1 gets deployed to collect another example set D 1 . Next the collected D 1 gets modified by the expert to be D 1 = {(s, π * (s)}. Here the state sequence s designates the state sequence collected in D 1 . Then the process iterates, merging each D i to form the super set D. The following lists Data Aggregation algorithm. D = {} Train first policy π 1 based on D * for i = 1 to N do Let π i = β i π * + (1 − β i )π * . Sample T step trajectories using π i . Get dataset D i = {(s, π * (s)} of visited states by π i and actions given by expert. Aggregate D = D ∪ D i . Train π i+1 on D. end for Return best policy π i on validation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :Figure 5 :</head><label>45</label><figDesc>Manual action correction by expert Figure 5: Experiment results</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>vs. actual scatter plot (b) predicted and actual trending plot</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 : π 1</head><label>61</label><figDesc>Figure 6: π 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 : π 2 (Figure 8 : π 3 (Figure 9 :</head><label>72839</label><figDesc>a) predicted vs. actual scatter plot (b) predicted and actual trending plot Figure 8: π 3 (a) predicted vs. actual scatter plot (b) predicted and actual trending plot Figure 9: π</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>[ 1 ]</head><label>1</label><figDesc>Bojarski, M., Del Testa, D., Dworakowski, D., Firner, B., Flepp, B., Goyal, P., . . . Zhang, X. (2016). End to end learning for self-driving cars. arXiv preprint arXiv:1604.07316.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yisong</forename><surname>Yue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hoang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Le</surname></persName>
+		</author>
+		<title level="m">ICML2018: Imitation Learning</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">No-Regret Reductions for Imitation Learning and Structured Prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stéphane</forename><surname>Ross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">Andrew</forename><surname>Bagnell</surname></persName>
+		</author>
+		<idno>CoRR abs/1011.0686</idno>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Donkey</forename><surname>Car</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Keras Salient Object Visualization</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Supervised Learning of Behaviors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sergey</forename><surname>Levine</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Project Source Codes</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

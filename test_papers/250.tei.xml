@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Eluding Mass Surveillance: Adversarial Attacks on Facial Recognition Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Milich</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Computer Science Department</orgName>
+								<orgName type="department" key="dep2">Computer Science Department</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Karr</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Computer Science Department</orgName>
+								<orgName type="department" key="dep2">Computer Science Department</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Eluding Mass Surveillance: Adversarial Attacks on Facial Recognition Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Our project analyzes the sensitivity of a deep neural network (DNN) for facial recognition to adversarial input images. We began by modifying a transfer-learned DNN that performs facial recognition using weights from a pre-trained Inception ResNet v1 model. Then, we created methods for generating adversarial input images, such as adding random noise or obscuring facial landmarks (ears, eyes, nose, and mouth). Unsurprisingly, our results indicated that adding random noise to an image reduced model performance. In most cases, clustering random noise around facial landmarks further reduced model prediction accuracy, thereby suggesting that these landmarks play an important role in facial recognition. Finally, we tested whether adversarial training, or including perturbed input images in model training, could increase model accuracy on our adversarial dataset. This defense technique did not prove particularly effective. Thus, our results suggest that these black-box attack mechanisms effectively reduced the accuracy of facial recognition models.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Recent academic literature has demonstrated that deep learning models for image classification are often highly sensitive to small perturbations in input images <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b9">[10]</ref>. Past experiments have demonstrated that a variety of attack mechanisms, from changing a single pixel <ref type="bibr" target="#b16">[17]</ref> to recoloring an image in the direction of the gradient of the loss function (an attack known as FGSM, or the fast gradient sign method), can significantly impact test accuracy <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b8">[9]</ref>. We sought to study this problem in the context of facial recognition. Are deep learning models for facial recognition more sensitive or robust to single-pixel, random noise, or FGSM attacks?</p><p>We were particularly interested in this project due to its timely political relevance: Facial recognition has proven a cornerstone of new deep learning mass surveillance applications, and journalists, technology executives, and think tanks have recently argued that facial recognition should be regulated or controlled by the government <ref type="bibr" target="#b15">[16]</ref>.</p><p>Prior to this project, neither of our group members had any exposure to training or testing deep learning models. In completing this project, we hoped to make a novel and timely contribution to analyzing adversarial perturbations while learning how to perform deep learning research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. LITERATURE REVIEW</head><p>Generating adversarial examples to confuse DNNs has become a fast-growing field within deep learning. Ian Goodfellow's 2014 paper "Explaining and Harnessing Adversarial Examples" outlined the fast gradient sign method (FGSM) for perturbing sample images; this paper also relied on random perturbations as control experiments for comparing performance. Since then, researchers have released open-source software for generating adversarial images, such as the library Cleverhans <ref type="bibr" target="#b2">[3]</ref> and DeepFool <ref type="bibr" target="#b12">[13]</ref>. Other studies have presented algorithms for generating adversarial examples from real-world or live images; one paper presents an "adversarial patch" that, when added to images, can confuse the output of DNNs <ref type="bibr" target="#b1">[2]</ref>.</p><p>As attack mechanisms have become increasingly sophisticated, other papers have proposed defenses. In 2018, the paper "PixelDefend: Leveraging Generative Models to Understand and Defend against Adversarial Examples," written <ref type="figure">Fig. 1</ref>: On the left, the "adversarial patch" is placed next to a banana, causing classifier to predict (with high confidence) that the image contains a toaster <ref type="bibr" target="#b1">[2]</ref>.</p><p>by Yang Song and Stefano Ermon, proposed a method for using a generative model to detect and purify perturbations <ref type="bibr" target="#b14">[15]</ref>. In our project, we decided to focus on black-box attacks where an attacker would not have access to the internal mechanics of a DNN <ref type="bibr" target="#b13">[14]</ref>. This setting seemed more appropriate given our interest in the broader political ramifications of interfering with facial recognition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATA</head><p>Our facial recognition model is trained on the Labeled Faces in the Wild (LFW) dataset, which contains over 13,000 images of over 5,000 individuals <ref type="bibr" target="#b7">[8]</ref>. However, while some individuals are associated with only one or two photographs, others have far more training samples (for example, the LFW dataset contains 522 pictures of George W. Bush and 139 of Tony Blair). Given this discrepancy in training data, we restricted our model to train on individuals with more than 20 training samples. We also ran experiments where we trained our model on the same number of training samples per individual. In order to detect facial landmarks, we trained another DNN on a Kaggle dataset of 7,049 images with facial landmarks identified by (x, y) position. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. FACIAL RECOGNITION MODEL</head><p>We began by developing a facial recognition model that could be used for testing adversarial inputs. We found that modifying a model developed by Cole Murray <ref type="bibr" target="#b11">[12]</ref> provided a good fit for this project as we could easily modify training images, input dimensions, and classification parameters. In this section, we briefly describe how this model breaks down the facial recognition pipeline into three key steps: Preprocessing, learning, and classification <ref type="bibr" target="#b8">[9]</ref>. In the preprocessing step, the model prepares images for facial recognition, which involves several steps. The first of which, segmentation, occurs by identifying the largest face present in any image, which is followed by the second stepcropping the image. The face identification step is conducted using Carnegie Mellon University's facial landmark predictor <ref type="bibr" target="#b0">[1]</ref>. The image is subsequently rotated and aligned so that each image has its respective facial features in the same pixelregion of the image.</p><p>The learning step of the model takes the preprocessed image and uses it to update weights in order to classify individual faces. This is done by generating 128-dimensional embeddings for each face. In order to create these embeddings, we use the Inception ResNet v1 (a convolutional neural network that is similarly complex to Inception v3 but requires less computing power when using a batch size of 128). This was desirable to us since the ability to use Batch-Norm on the auxiliary classifiers was favorable to our facial recognition task primarily for the purpose of regularization, as we wanted to avoid overfitting, especially towards the end of our training process <ref type="bibr" target="#b3">[4]</ref>. Since we did not have the resources nor the time to fully train the Inception model from scratch, we used a set of pre-trained weights for our model <ref type="bibr" target="#b5">[6]</ref>.</p><p>Classification is subsequently performed by using 128-dimensional image embeddings as inputs to the Scikit-learn SVM classifier. The classifier uses a linear kernel and outputs a probability for each person (i.e. each class) in our dataset. The model then chooses the highest probability class as its final prediction. These steps are shared with Cole Murray's facial recognition model; however, we have experimented with modifications to the SVM classifier (such as using a different kernel function) and modifications to the input and preprocessing steps (we tried switching from the CMU to the OpenCV facial cropper, which did not perform as well).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. ATTACK METHODS</head><p>In <ref type="figure" target="#fig_3">Figure 5</ref>, we provide an overview of the two types of attacks used to generate adversarial examples. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Random noise</head><p>We wrote a script that adds random noise to images. We experimented with two types of noise: Gaussian Noise, which perturbs images at a given location based on sampling from a Gaussian distribution, and salt-and-pepper noise, which recolors randomly chosen pixels as white or black. Ultimately, we decided to use a modification of salt-and-pepper noise as our baseline attack mechanism; in this algorithm, pixels are randomly chosen and recolored as solid red, green, or blue. As outlined in <ref type="figure" target="#fig_3">Figure 5</ref>, this attack mechanism runs an image from our dataset through a random noise generator before using it as input to our classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Obscured facial landmarks</head><p>This more sophisticated attack mechanism requires two steps: Identifying facial landmarks in an input image using a DNN, and then using random noise to perturb these landmarks. Below, we provide greater detail about each step in this process.</p><p>1) Identifying facial landmarks: We experimented with multiple DNNs to identify facial landmarks in the Kaggle facial keypoints dataset, including using 1D and 2D convolution layers. Ultimately, we saw the best performance (including reasonable training times) from a network that uses one max pooling layer, a flattening layer, two pairs of fully connected and dropout layers, and an additional fully connected layer. This model results in an average loss of 2.99 pixels from predicted to actual facial landmark locations. However, we also found that this network configuration -particularly our use of dropout layers -allowed our model to generalize well: It achieves relatively low test error on the Kaggle dataset as well as good results on images from the LFW dataset. We discuss the performance of our facial landmark DNN further in the Results section. 2) Perturbing facial landmarks: Our facial landmark identifying DNN outputs a list of points p = [(x 1 , y 1 ), . . . , (x n , y n )] that represent bounds for facial features; for example, three points define each eyebrow and four points outline an individual's mouth. We then made a modification to our random noise generator in order to generate noise clustered around these points. The facial landmark noise generator used a multivariate Gaussian with a scaled identity covariance matrix. We generated the noise by sampling Gaussian noise from this distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. DEFENSE MECHANISMS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Adversarial training</head><p>Adversarial training -one technique for defending DNNs against perturbed inputs <ref type="bibr" target="#b9">[10]</ref> -involves including perturbed images in the training set. To perform adversarial training on our model, we expanded our training set to include copies of each image with random perturbations and with obscured facial landmarks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. RESULTS</head><p>Our facial recognition model was able to achieve an overall accuracy of 94.6% across all classes. We used a 0.7-0.3 train test split on the LFW dataset, and the model was trained using the Google Cloud Compute Engine on a machine equipped with tensor processing units (TPUs). Below, we present model performance on adversarial inputs.    <ref type="table" target="#tab_1">Table IV</ref>: Average confidence of predictions on raw images, noisy images, images and images with obscured landmarks. This model was trained under the same conditions as reported in <ref type="table" target="#tab_1">Table I</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Class name</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Raw model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Noisy images</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Obscured landmarks</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bill</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. DISCUSSION</head><p>We begin by discussing the performance of our model trained on imbalanced classes -i.e. the results in <ref type="table" target="#tab_1">Table I</ref>. As we initially hypothesized, adding random noise to input images reduced model accuracy. In some cases, such as John Negroponte, the decrease in performance when subjected to random noise is dramatic (37%); in others -such as George W. Bush -our facial recognition model did not demonstrate significantly lower accuracy for inputs with random noise. For the majority of classes in <ref type="table" target="#tab_1">Table I</ref>, clustering noise around facial landmarks resulted in additional accuracy drops; while accuracy decreased notably in some cases (17% for Hamid Karzai and for Bill Clinton), there was not a significant decrease for others; accuracy remained the same for John Negroponte and actually increased 2% for Tony Blair. Initially, we believed that our model highly weighted features from facial landmarks, such as an individual's eyes, nose, and mouth; this would suggest that clustering noise around landmarks would reduce model accuracy. Although this hypothesis was validated in some cases, the effects were not as pronounced as initially anticipated.</p><p>One explanation for this attack's limited effectiveness is our use of different datasets to train and test our facial landmark recognizer. While the facial landmark DNN was trained on the Kaggle facial keypoint dataset <ref type="bibr" target="#b6">[7]</ref>, it is run on scaled images from the LFW dataset to generate inputs for our facial recognition model. Although this generally produced reasonable-looking output (see <ref type="figure" target="#fig_4">Figure 6</ref>), it may partially explain why our facial landmark attack did not achieve as dramatic results as expected.  Another possible explanation for the lowerthan-expected effectiveness of our facial landmark attack is limitations in the Kaggle facial keypoints training data. For example, individuals with beards in the LFW dataset (such as Hamid Karzai) often had facial landmarks classified incorrectly, as facial landmarks around their mouth were generally confused with the individual's beard (see <ref type="figure" target="#fig_5">Figure 7)</ref>. Furthermore, since images are relatively small (160 × 160 in the LFW dataset and 96×96 in the Kaggle facial keypoints dataset), and were scaled down as inputs to our facial landmark recognizer, the OpenCV scaling algorithm used to input LFW images to our landmark DNN could have have had relatively minor effects on the accuracy of this step.</p><p>Given the relatively small drop in accuracy for George W. Bush when testing on obscured facial landmarks, we also hypothesized that classes with a higher number of training samples (such as George W. Bush) would not be as susceptible to attack. To test this hypothesis, we decided to retrain our model on only 20 images per class. <ref type="table" target="#tab_1">Table II</ref> presents these results. Unsurprisingly, this retrained model achieved lower accuracy on raw images; this is likely due to our use of a much smaller training set for some individuals. Accuracy decreases even more dramatically in <ref type="table" target="#tab_1">Table II</ref> for noisy images and obscured landmarks, thereby suggesting that limiting training data increases susceptibility to attack.</p><p>In <ref type="table" target="#tab_1">Table III</ref>, we present the results of performing adversarial training on our model. Generally, this model resulted in unexpectedly low accuracy in some cases (such as classifying raw images for almost all classes) and surprisingly high accuracy in others (such as relatively high performance on data with obscured landmarks across). Our use of randomness in both attack mechanisms may explain these results: Inconsistency in random noise across training samples may have made it difficult for our model to highly weight features not associated with any perturbations. As a result, our adversarial training model yielded low accuracy on inputs with random noise but higher accuracy on perturbed landmarks.</p><p>Finally, it is important to emphasize the difference between high classification accuracy and highly confident predictions. While classification accuracy may be relatively high in some cases, our model's confidence in each prediction (as reported in <ref type="table" target="#tab_1">Table IV)</ref> is generally significantly lower when testing on adversarial inputs. Our model outputs a final classification for each image based on the highest probability class, where each class indicates a specific individual. Thus, a prediction that an image x contains individual y with confidence 25% may still lead the model to classify x as y if no other classes have a higher confidence. <ref type="table" target="#tab_1">Table IV</ref> illustrates that our model's confidence decreased for both attack mechanisms, thereby suggesting that they were effective in reducing prediction confidence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IX. FUTURE WORK</head><p>When initially planning our project, we hoped to examine whether clustering algorithms, such as K-means, could provide effective defenses against random perturbations. However, as K-means has a relatively high and inefficient runtime, we chose to focus on developing additional attack mechanisms and testing adversarial training. However, this could provide an additional method of defending against the attacks tested in this paper.</p><p>Although we sought to study black-box attacks, testing our model on inputs generated with FGSM may have permitted a closer examination of whether adversarial training can defend facial recognition DNNs. However, while this is a promising direction for future research, we chose not to focus on FGSM attacks given our desire to understand how an individual could undermine facial recognition without knowledge of a model's internal parameters.</p><p>Thus, given the political relevance of this topic, we also hoped to explore the possibility of creating a physical "adversarial patch" that could be worn to confuse facial recognition DNNs. As our results suggest that facial landmarks are relevant to classification -and particularly so for models with less training data, perhaps an individual could wear a patch near their nose or mouth to evade recognition <ref type="bibr" target="#b1">[2]</ref>.</p><p>X. LINK TO GITHUB REPOSITORY Our GitHub repository is available at https:// github.com/amilich/face.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2 :</head><label>2</label><figDesc>Example photo from the LFW dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3 :</head><label>3</label><figDesc>Training sample from the Kaggle facial keypoints dataset<ref type="bibr" target="#b6">[7]</ref>.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Non-adversarial training flow.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Two different attack mechanisms were used: Random perturbations, and adding noise to facial landmarks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 6 :</head><label>6</label><figDesc>An training image from the LFW datasert with noise clustered near facial landmarks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 7 :</head><label>7</label><figDesc>Facial landmark recognition achieves limited success on Hamid Karzai, potentially due to his beard.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table I :</head><label>I</label><figDesc>Model performance on raw images, noisy images, images and images with obscured landmarks. This model was trained on all training images and thus had imbalanced class sizes (such as George W. Bush, which contained 500+ images, and others that had only 20).</figDesc><table>Class 
+name 
+
+Raw 
+model 
+
+Noisy 
+images 
+
+Obscured 
+landmarks 
+
+Bill Clinton 
+0.88 
+0.86 
+0.50 
+
+George 
+W. Bush 
+0.92 
+0.41 
+0.15 
+
+John 
+Negroponte 
+0.75 
+0.38 
+0.13 
+
+Hamid 
+Karzai 
+1.0 
+1.0 
+0.50 
+
+Tony Blair 
+0.93 
+0.46 
+0.36 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table II :</head><label>II</label><figDesc>Model performance on raw images, noisy images, images and images with obscured landmarks. This model was trained on classes limited to 20 images each. Class name Raw model Noisy images Obscured landmarks Bill Clinton 0.63 0.56 0.29 George W. Bush 0.98 0.88 0.60 John Negroponte 1.0 0.50 0.75 Hamid Karzai 0.83 0.58 0.60 Tony Blair 0.88 0.58 0.73Table III: Adversarial training model performance on raw images, noisy images, and obscured landmarks. This model was trained on both raw and perturbed inputs.</figDesc><table>Class 
+name 
+
+Raw 
+model 
+
+Noisy 
+images 
+
+Obscured 
+landmarks 
+
+Bill Clinton 
+0.63 
+0.56 
+0.29 
+
+George 
+W. Bush 
+0.98 
+0.88 
+0.60 
+
+John 
+Negroponte 
+1.0 
+0.50 
+0.75 
+
+Hamid 
+Karzai 
+0.83 
+0.58 
+0.60 
+
+Tony Blair 
+0.88 
+0.58 
+0.73 
+
+Model name Average confidence 
+
+Raw 
+images 
+0.73 
+
+Noisy 
+images 
+0.65 
+
+Obscured 
+landmarks 
+0.51 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">OpenFace: A general-purpose face recognition library with mobile applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brandon</forename><surname>Amos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bartosz</forename><surname>Ludwiczuk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mahadev</forename><surname>Satyanarayanan</surname></persName>
+		</author>
+		<ptr target="https://github.com/cmusatyalab/openface" />
+	</analytic>
+	<monogr>
+		<title level="j">CMU</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tom</forename><forename type="middle">B</forename><surname>Brown</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1712.09665" />
+		<title level="m">âȂIJAdversarial Patch.âȂİ ArXiV, December 2017</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Cleverhans: An adversarial example library for constructing attacks, building defenses, and benchmarking both</title>
+		<ptr target="https://github.com/tensorflow/cleverhans" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sergey</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1502.03167v3.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2015-02" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Explaining and Harnessing Adversarial Examples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathon</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><surname>Szegedy</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1412.6572" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2014-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Inception in TensorFlow</title>
+		<ptr target="https://github.com/tensorflow/models/tree/master/research/inception" />
+	</analytic>
+	<monogr>
+		<title level="j">GitHub</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Basic Fully Connected NN</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaggle</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/madhawav/basic-fully-connected-nn/data" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">âȂIJLabeled Faces in the Wild</title>
+		<ptr target="http://vis-www.cs.umass.edu/lfw/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Towards Deep Learning Models Resistant to Adversarial Attacks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aleksander</forename><surname>Madry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aleksandar</forename><surname>Makelov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ludwig</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dimitris</forename><surname>Tsipras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrian</forename><surname>Vladu</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1706.06083.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2017-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Towards Deep Learning Models Resistant to Adversarial Attacks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aleksandar</forename><surname>Makelov</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1706.06083.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2017-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Medium-Facenet-Tutorial</title>
+		<ptr target="https://github.com/ColeMurray/medium-facenet-tutorial" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Building a Facial Recognition Pipeline with Deep Learning in Tensorflow</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cole</forename><surname>Murray</surname></persName>
+		</author>
+		<ptr target="https://hackernoon.com/building-a-facial-recognition-pipeline-with-deep-learning\-in-tensorflow-66e7645015b8" />
+	</analytic>
+	<monogr>
+		<title level="j">Hacker Noon</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">DeepFool: a simple and accurate method to fool deep neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Moosavi-Dezfooli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alhussein</forename><surname>Seyed-Mohsen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pascal</forename><surname>Fawzi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Frossard</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1511.04599" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2016-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Simple Black-Box Adversarial Perturbations for Deep Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nina</forename><surname>Narodytska</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shiva</forename><surname>Prasad Kasiviswanathan</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1612.06299.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2016-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">PixelDefend: Leveraging Generative Models to Understand and Defend against Adversarial Examples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yang</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Taesup</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sebastian</forename><surname>Nowozin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefano</forename><surname>Ermon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nate</forename><surname>Kushman</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1710.10766" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Microsoft Urges Congress To Regulate Facial Recognition Technology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alina</forename><surname>Selyukh</surname></persName>
+		</author>
+		<ptr target="https://www.npr.org/2018/12/06/674310978/microsoft-\urges-congress-to-regulate-facial-recognition-technology" />
+	</analytic>
+	<monogr>
+		<title level="j">NPR</title>
+		<imprint>
+			<date type="published" when="2018-12-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">One pixel attack for fooling deep neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiawei</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Danilo</forename><forename type="middle">Vasconcellos</forename><surname>Vargas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sakurai</forename><surname>Kouichi</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1710.08864" />
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2017-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

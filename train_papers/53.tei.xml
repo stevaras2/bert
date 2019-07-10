@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">SongNet: Real-time Music Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chi</forename><surname>Zhang</surname></persName>
+							<email>czhang94@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yue</forename><surname>Zhang</surname></persName>
+							<email>yzhang16@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chen</forename><surname>Chen</surname></persName>
+							<email>chen2@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">SongNet: Real-time Music Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this work, we implemented and trained an end-to-end deep neural network, SongNet, to perform real-time music genre classification. Music can be represented in various forms: time-series decimals, spectrum in frequency domain and spectrograms, etc. The spectrogram stands out as the most popular choice since it incorporates time and frequency information. In this project, we used the convolutional recurrent neural network (C-RNN) to classify music. The convolutional network extracts features of spectrogram before feeding them into recurrent network which then performs classification considering both transient and overall characteristics of music. Taking only raw audio as input, the C-RNN achieved 65.23% accuracy on fma-small dataset, beating the best baseline by 41%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>With the enormous growth of music released online, managing music library manually has become more and more challenging not only for users but also audio streaming service companies, such as Spotify and iTunes. Fast and accurate music classification is in high demand while it is non-trivial for machines to perform the task automatically at human level.</p><p>Besides, music genre classification is an essential backbone for music recommendation and unknown soundtrack recognition, which will benefit music service platforms a lot. Building a robust music classifier using machine learning techniques is essential to automate tagging unlabled music and improve users' experience of media players and music libraries.</p><p>In recent years, convolutional neural networks (CNNs) have brought revolutionary changes to computer vision community <ref type="bibr" target="#b8">[9]</ref>. Meanwhile, CNNs have been widely used for music information retrieval, especially music genre classification <ref type="bibr" target="#b2">[3]</ref>. Recently, it became increasingly popular to combine CNNs with recurrent networks (RNNs) to process audio signals, which introduce time sequential information to the model. In convolutional recurrent networks (C-RNNs), the CNN component is used to extract feature while the RNN plays the role of summarizing temporal features. The inputs of C-RNNs are soundtrack spectrograms and the outputs are probabilities of each genre at each timestep when performing real-time classification. In the training process, the genre is predicted as mean of all transient predictions over time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related work</head><p>Music genre classification has been actively studied since the early days of the Internet. Tzanetakis and Cook <ref type="bibr" target="#b6">[7]</ref> used k-nearest neighbor classifier and Gaussian Mixture models with a comprehensive set of features. Those features could be summarized into three categories: rhythm, pitch and temporal structure. Support vector machine (SVM) was used by Mandel and Ellis <ref type="bibr" target="#b5">[6]</ref> to classify music genre. Deshpande et al. <ref type="bibr" target="#b3">[4]</ref> compared k-nearest neighbor, Gaussian Mixtures, and SVM to classify the music into three genres, which are rock, piano, and jazz.</p><p>In recent years, using audio spectrogram has become mainstream for music genre classification. Spectrogram encodes time and frequency information of a given music as a whole. Wyse <ref type="bibr" target="#b7">[8]</ref> used spectrogram as input to train convolutional neural networks. Li et al. <ref type="bibr" target="#b4">[5]</ref> built a CNN to classify music genre by using Mel-frequency cepstral coefficients (MFCCs) as features.</p><p>This work aims to train a C-RNN model with melspectrogram as the only feature, and compare this model with the traditional machine learning classifiers that need to be trained with hand-crafted features and metadata.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Free Music Archive [2]</head><p>The dataset used for this project is the Free Music Archive (FMA), an interactive library of high-quality, legal audio downloads direct by WFMU. Furthermore, it provides music's associated information including precomputed features, user-level metadata, etc. To ensure data is balanced among different genres, we only use a small subset fma-small for the scope of this project. It con- The FMA provided fine genre information for each track with built-in genre hierarchy, which is claimed by the artists themselves. In each of the track table, the ids of all the genres indicated by artists are included, and the root genres are provided in genre top column.</p><p>The preprocessed dataset is split into 70% training, 20% validation, 10% test sets, respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Features</head><p>A popular representation of sound is the spectrogram which captures both time and frequency information. In this study, we used mel-spectrogram as the only input to train our nerual network. A mel-spectrogram is a spectrogram transformed to have frequencies in mel scale, which basically is a logarithmic scale, more naturally representing how human actually senses different sound frequencies. It is simple to implement thanks to Librosa <ref type="bibr" target="#b0">[1]</ref>.</p><p>Aside from the music features extracted by Librosa, FMA also provides music metadata such as release year, number of listens, composers, durations, etc. There are 140 features in total that could be used for training. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Method 4.1. Baseline Classifiers</head><p>We trained four traditional classification models on the dataset as baseline classifiers, including k-nearest neighbors, logistic regression, multilayer perception, and linear support vector machine. It was found that baseline models could achieve no higher than 50% accuracy. Since these models were merely used for comparison, we adopted the default implementation and parameters in scikit-learn library. The input features include all 140 features provided by FMA.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">SongNet Architecture</head><p>As shown in <ref type="figure" target="#fig_0">Fig.1</ref>, SongNet consists of three-layer convolutional neural network (CNN) which is followed by a recurrent neural network (RNN). The one obvious decision, which is present across related literature and our work is using convolutional layers to extract features from a song. The reason is straightforward: the network should not be constrained to use hand-crafted features but extract useful features as it needs. The output of CNN is a pretty long sequence in which every timestep strongly relies on both the immediate predecessors and long term structure of the entire song. To capture both transient and overall characteristics of a song, RNN becomes a natural choice. We initially used LSTM but found that TimeDistributedLayer in Keras worked better.</p><p>To start, features are extracted from the spectrograms using convolutional layers. It is important to point out that the features are translation-invariant only in time domain: frequencies do matter and needs to be distinguished. Thus, 2-D convolution seems unsuitable in this case: we are interested in changes across time -every convolutional layer should look at a small period of time as a whole, extract the most valuable information and create a feature map that is still a sequence over time. Then one dimensional convolutions across the time axis were adopted. Each convolution is followed by ReLU activation and 1-D max pooling. To regularize the model, we added Dropout to every convolutional layers.</p><p>The CNN outputs a sequence of features and it is then fed to RNN represented by a time-distributed fully connected layer with softmax activation, essentially giving us a sequence of 8-dimensional vectors (8 is the number of genres in fma-small) at each timestep. The RNN part is designed to find both dependencies across short period of time, and a long term structure of a song. These vectors are interpreted as the networks belief of the music genre at the particular point of time, i.e. probability distributions. To reduce the time series of 8-D probability vectors into a single one genre probability distribution, we simply take the mean. It is the most intuitive way to tackle the disproportion problem of inferring music genre per timestep versus just one label for the whole song, but it turns out to very effective.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Performance</head><p>The accuracies of baseline classifiers and SongNet are reported in the table below. It can be observed that our C-RNN model outperforms the best baseline by 41%. The validation set was used to help us tune hyperparameters of SongNet. During training, the learning rate was initially set to 0.001 and further decayed subject to ReduceLROnPlateau scheduler. The reported numbers are accuracies with respect to the test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Accuracy</head><note type="other">Random Guessing 0.1250 K Nearest Neighbors 0.3638 Logistic Regression 0.4225 Multilayer Perceptron 0.4488 Support Vector Machine 0.4638 C-RNN 0.6523</note><p>It is worth mentioning that all of our baseline models were trained and tested with "rich" features including music metadata (year, artist, etc.). However, in the current C-RNN model setting we decided not to incorporate metadata for simpler training setup. The fact that C-RNN model still beats the best baseline by a significant amount even without metadata demonstrates the power of deep learning models on classification tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Error Analysis</head><p>To further interpret the results and guide future work, we plotted the confusion matrix <ref type="figure" target="#fig_2">(Fig.3)</ref> of SongNet. It is shown that 6 out of the 8 genres can be classified accurately. However, the model does not perform well on Experimental and Pop. Of particular interest is the Experimental genre. By definition, Experimental music is a general label for any music that pushes existing boundaries and genre definitions, be it in rock, jazz, modern composition or any other style. Thus it inherently contains features of many different genres. This can make it difficult to be classified correctly based on raw audio. Similarly, Pop has misclassification issues as well. By definition, pop music is a genre of music that is often regarded as the softer alternative to rock. We can then infer that these two genres must share features as well. Thus the model might be confused as well. One possible solution to these issue is to include music metadata for reasons to be discussed in Future Work section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">Kernel Clips</head><p>In computer vision, convolutional layers are used to extract features from images. Low level kernels can detect edges or corners and higher level kernels can capture more sophisticated structures. In our setting, we also expect convolutional layers to do similar things. SongNet has 3 convolutional layers so we expect kernels to extract different levels of music genre kernels. It would be straightforward and much clearer if kernel numbers are converted to music clips. After "listening" to some of kernels, we found that kernel clips in the first convolutional layer are mainly basic beats and elements of music. The clips from the last convolutional layer, however, are already human-listenable syn- thesized music clips of certain genres. We demonstrated the kernel clips during the poster session, and uploaded them to Google Drive (link) for grading purposes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4.">Real-time</head><p>The ultimate goal of SongNet is real-time genre classification as the soundtrack plays. This is the reason why we combined recurrent network with convolutional neural network in our architecture. As discussed in the architecture section, for each timestep, the model outputs a probability distribution vector among 8 different genres so it enables real-time classification. It is better to show this functionality with a GUI. Due to limited timeline, we did not implement it yet, but it could be an interesting extension in future work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Future Work</head><p>Following our discussion above, we conclude two possible extensions of current work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">To further increase the test accuracy, it is essential</head><p>to solve the Experimental genre issue because it contributes a lot to the loss. It is worth trying to incorporate music metadata. We expect the metadata to help increase the performance because even though this music itself shares some features with other genres such as rock and electronic, additional information such as artists and album years will be able to help the model better classify this genre.</p><p>2. Build a graphical user interface to allow users upload a music clip and then visualize the real-time classification. This is fun as well as beneficial for further tuning the model. It's fun because users can have a better way of interaction with the model. As users upload more songs, we could collect more data to improve the model.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Convolutional Recurrent Neural Network (C-RNN)    tains 8000 tracks of 30-second clips with 8 balanced genres. Compared to the GTZAN Genre Collection released around 18 years ago, FMA is more updated and suitable in terms of genre completeness and audio quality.The full FMA dataset includes 161 genres, unbalanced with 1 to 38, 154 tracks per genre and up to 31 genres per track. Considering limited computational resources and it is tricky to overcome class imbalance, we only used a small subset of FMA organized and selected by Michal Defferrard et al.<ref type="bibr" target="#b1">[2]</ref>, fma small. The small subset contains 8000 30- second clips from top 8 genres, with 1000 clips per genre. The 8 genres are showing as follow:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Spectrogram. Orange dots stand for the peaks of power over time (horizontal axis) and frequency (vertical axis). The brighter dots are, the more powerful.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Confusion matrix on test set. Horizontal axis represents predicted labels of SongNet. Vertical axis represents the ground- truth. Diagonal numbers indicate correctly classified samples.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Librosa</surname></persName>
+		</author>
+		<ptr target="https://librosa.github.io/librosa/.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">FMA: A dataset for music analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Benzi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Defferrard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Vandergheynst</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Bresson</surname></persName>
+		</author>
+		<idno>abs/1612.01840</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Convolutional recurrent neural networks for music classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Fazekas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">B</forename><surname>Sandler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Cho</surname></persName>
+		</author>
+		<idno>abs/1609.04243</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Classification of music signals in the visual domain</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Deshpande</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Singh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Automatic musical pattern feature extraction using convolutional neural network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">B</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">H</forename><surname>Chun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. IMECS</title>
+		<meeting>IMECS</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Song-level features and support vector machines for music classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mandel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">I</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Ellis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Musical genre classification of audio signals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Cook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Speech and Audio Processing</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="293" to="302" />
+			<date type="published" when="2002-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Audio spectrogram representations for processing with convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Wyse</surname></persName>
+		</author>
+		<idno>abs/1706.09559</idno>
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Convolutional recurrent neural networks: Learning spatial dependencies for image representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Zuo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Shuai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)</title>
+		<imprint>
+			<date type="published" when="2015-06" />
+			<biblScope unit="page" from="18" to="26" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

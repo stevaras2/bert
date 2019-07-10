@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Data Set and Features Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Data Set and Features Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>-Scrape a portion of the user ids (randomly) and their starred dishes from Xia Chu Fang, a community where users can publicly post recipes of dishes, and save dishes they are interested in -Utilize parallel crawling and proxies to fetch data more efficiently, and ran a spider on Google Cloud -Scraped ~230,000 valid users and 2.5 million dishes in their starred list (~12,000 unique dishes names)</p><p>Dish Name Mapping </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>ResultsSkip-Gram-Creates t-SNE graphs to represent similarity between dish names -The closer the dishes are, the more similar they are</figDesc><table>-Map dishes to an online database of 
+Chinese dish names with English 
+translations as a dictionary 
+
+Food χ: Building a Recommendation System for Chinese Dishes 
+
+Yogi Huang, Yiting Ji, Yu Zeng 
+
+{yhua6742, yj022011, zengyu} @stanford.edu 
+
+Objective 
+
+-Obtain user and dish data from the 
+web, and provide English translation 
+-Build a recommendation system for 
+dishes through rating predictions 
+-Examine the prediction performance 
+of our selected algorithms 
+-Focus on Chinese food for 
+specialization 
+
+-SVD RMSE 
+
+-Error comparison between 
+NMF and SVD 
+
+-SVD performs better 
+
+-Use Jaro-Winkler distance for 
+mapping and reduced number of 
+unique dishe names to 1,628. 
+
+Ratings 
+
+-User ratings are necessary to 
+implement methods such as 
+collaborative filtering 
+-Rating is defined as 
+
+-Ratings from 5 to 10 is kept for 
+simplification 
+
+Conclusions 
+
+-Word2Vec directly gives 
+recommendations, but it is 
+hard to conceptualize or 
+quantify errors 
+-SVD model performs the best 
+for CF as it has the lowest 
+RMSE and highest Recall on 
+dev set, and the test set error 
+is close to the dev set error, 
+which means it does not 
+overfit and is fairly robust 
+
+Future Work 
+
+-try other recommendation 
+systems (hybrid system, 
+item-based CF, memory based 
+algorithm, ...) 
+-obtain data from other dish 
+websites to examine stability 
+-create user interface 
+-References available upon 
+request 
+
+Methods 
+Word2Vec -Skip Gram 
+
+-Trains a neural network with a single 
+hidden layer to perform, and 
+outputs words most relevant to the 
+input 
+-Minimizes the loss function E in each 
+training iteration: 
+
+-Returns a similarity score for each 
+output word 
+
+Collaborative Filtering 
+
+-Matrix-factorization (MF)-based 
+approaches prove to be highly 
+accurate and scalable in addressing 
+CF problems 
+-Implements non-negative matrix 
+factorization (NMF) and singular 
+value decomposition (SVD) for 
+comparison 
+-NMF 
+-Utilizes Python library 'Surprise' 
+-Uses regularized stochastic 
+gradient descent update rule 
+-Uses λi = 0.06 and λk = 0.06 
+
+-SVD 
+-Minimizes by gradient descent 
+
+-Uses learning rate γ = 0.005 and 
+regularization factor λ = 0.02 
+
+NMF Predictions 
+
+SVD Predictions 
+
+Error Analysis 
+
+-RMSE 
+
+-Recall </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

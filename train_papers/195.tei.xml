@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Fine-Grained Sentiment Analysis of Restaurant Customer Reviews in Chinese Language</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Suofei</forename><surname>Feng</surname></persName>
+							<email>suofeif@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eziz</forename><surname>Durdyev</surname></persName>
+						</author>
+						<title level="a" type="main">Fine-Grained Sentiment Analysis of Restaurant Customer Reviews in Chinese Language</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Index Terms-Chinese language</term>
+					<term>NLP</term>
+					<term>LSTM</term>
+					<term>SVM</term>
+					<term>XGBoost</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Chinese language processing is a challenging topic in the well-developed area of sentiment analysis. In this project we implement 3 types of 4-class classification models (SVM, XGBoost, LSTM) for the fine-grained, or aspect-level sentiment analysis of restaurant customer reviews in Chinese language. There are 20 aspects for classification, each representing one type of target information in the reviews. We separately train one model for each element. The overall results of the models on the 20 aspects shows that XGBoost has the best performance, based on the average accuracy, weighted F1 score, and efficiency.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>T HE era of information explosion, brings an increasing demanding on the ability to extract core message from billions of records of data. Sentiment analysis, or opinion mining, is widely applied to extracting and studying subjective information in texts. By quantifying the opinions or attitudes in a large bulk of texts in a few minutes, sentiment analysis has gained popularity in various business scenarios for retrieving customer responses. In recent decades, considerable progress has been achieved in sentiment analysis of English language. At the same time, a similar development comparable to the growth of market has not be seen in the scenario of Chinese language <ref type="bibr" target="#b0">[1]</ref>. In our project, we propose to implement a fine-grained (aspect-level) sentiment analysis of restaurant customer reviews in Chinese language. The topic and data come from the 2018 AI Challenger competition.</p><p>The inputs are reviews about restaurant in Chinese language. The task is to classify each piece of review text into 4 classes ("not mentioned" <ref type="bibr">[-2]</ref>, "negative"[-1], "neutral" <ref type="bibr">[0]</ref>, "positive" <ref type="bibr" target="#b0">[1]</ref>) under 20 aspects. Each aspect (or element) represents one type of information about the business. We develop and train 3 types of models-LSTM (Long Short-Term Memory), SVM (Support Vector Machine), and XGBoost (eXtreme Gradient Boosting)-for each of the aspect.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Machine Learning in Sentiment Analysis</head><p>Pang and Lee <ref type="bibr" target="#b1">[2]</ref> briefly summarize the history of sentiment analysis, and describe the related works as computational treatment of "opinion, sentiment, and subjectivity in text" (p8). Early machine learning approaches towards sentiment classification use unigrams (single words) and n-gram as features for subjectivity detection, and SVM, MNB (Multinomial Naïve Bayes) for classification <ref type="bibr" target="#b2">[3]</ref>  <ref type="bibr" target="#b3">[4]</ref>.</p><p>SVM has longer history with sentiment analysis comparing to the gradient boosting and LSTM. It is one of the most used classification methods in sentiment analysis due to its ability to" generalize well in high dimensional feature spaces" <ref type="bibr" target="#b5">[5]</ref>. Pang et al <ref type="bibr" target="#b6">[6]</ref> applied Naïve Bayes, maximum entropy classification, and support vector machines in classifying IMDb reviews by sentiment, determining whether a review is positive or negative. Although the differences were not large, SVMs achieved higher three-fold cross validation accuracy, 0.829 than Naïve Bayes, 0.804 and maximum entropy classification, 0.81. As this movie review sentiment analysis is comparable to our restaurant review sentiment analysis, we decide to build SVMs to classify sentiments in 20 elements in our project.</p><p>On the other hand, although gradient boosting is one of the most applied "off the shelf" methods in general classification tasks, surprisingly, application of boosting ensemble method is not common in text classification. Ehrentraut et al <ref type="bibr" target="#b8">[7]</ref> applied SVM and gradient tree boosting in classification of Swedish patient records (texts) to detect hospital-acquired infections. Gradient tree boosting achieved higher performance over SVM in precision, recall, and F1 score. Chen and Guestrin <ref type="bibr" target="#b9">[8]</ref> proposed XGBoost, a scalable and regularized version of gradient tree boosting. Encouraged with these results and improvements, we decide to apply XGBoost in our project as we needed a scalable method to classify 20 elements in Chinese restaurant review data.</p><p>Recent years have seen a substantial progress in NLP tasks with neural network approaches. LSTM is popular in sequence modeling for sentiment classification because of its advantage against gradient vanishing or exploding issues in long texts. Wang et al. <ref type="bibr" target="#b10">[9]</ref> proposed an attention-based LSTM model with aspect embedding for aspect-level sentiment classification. They experimented with restaurant customer reviews in English, and implemented a 3-class (positive, negative, neutral) classification on 5 aspects: food, price, service, ambience, anecdotes/miscellaneous. The accuracy of this model improved by 2% compared with standard LSTM model. However, considering the different natures of Chinese language, and the large number of aspects for classification (20), we decide to start with standard LSTM model for the neural network approach in this project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Chinese NLP Researches</head><p>A review of sentiment analysis in Chinese language was given by Peng et al <ref type="bibr" target="#b11">[10]</ref>. Apart from conducting sentiment analysis directly on Chinese language, there is another approach: transform the task to sentiment analysis on English language by machine translation. In our project, we conduct a mono-lingual experiment by directing extracting features from original Chinese language. This is mainly because that the style of our input texts is highly colloquial and context-specific, which might lose information in the process of machine translation. According to this article, good results were gained from a combination of neural network (word2vec) for word representation and SVM for classification.</p><p>Peng et al. also mentioned the different techniques for segmentation. As Chinese language does not have space between words, it is necessary to use segmentation tools to extract words as the basic units of semantic meaning. They summarized that Jieba had a high speed and good adaptation to different programming languages. For these reasons, we decide to use Jieba as our segmentation tool.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dataset</head><p>We use the data sets provided by AI challenger official <ref type="bibr" target="#b12">[11]</ref>. The training and validation data are manually labelled. They also provided test dataset without labels. In the training dataset, there are 105,000 records of reviews, with labels of 4 classes {"positive" <ref type="bibr" target="#b0">[1]</ref>, "neutral"[0], "negative"[-1], "not mentioned"[-2]} on 20 aspects/elements under 6 categories. The validation set has 14998 records of reviews. For the aim to evaluate our models by ourselves, we split the validation set into a smaller validation set (first 7500 records in the original validation set) and a test set (rest 7498 records in the validation set) with true labels. We make 20 plots for class distributions of each of the three datasets, which show that the class distributions are very similar across all three datasets. A glance of Google Translation: "Hey, the lollipop of the dead man, the overlord meal of the public comment, so cute..."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Extraction</head><p>The main challenge in our project is preprocessing our data. Chinese language is difficult to accurately segment because of absence of space, variant lengths of words, and high flexibility of making new words. We apply same preprocessing approaches to the training, validation, and test dataset. With reasons presented in the related work section, we use Jieba cut for segmentation. After segmentation, we gain three lists of word lists produced by segmenting the lists of sentences. We then train a Word2Vec model following the instructions in <ref type="bibr" target="#b13">[12]</ref>, and produce a vocabulary and embedding matrix of the same word order with the vocabulary. Pad token and unknown-word token are added to the vocabulary as well as the embedding matrix. The next step is to digitalize  The following is a graph showing the procedures of preprocessing training data <ref type="figure">(Fig.1</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. CLASSIFICATION MODELS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Baseline</head><p>The baseline model is provided by AI Challenger official <ref type="bibr" target="#b14">[13]</ref>. The feature is extracted by TF-IDF framework, whose values for representation are based on the frequency of a word in a given document. The classification model is RBF SVC. The average F1 score across the 20 elements is around 0.2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. LSTM</head><p>LSTM, or Long Short-term Memory network, is a type of recurrent neural network (RNN) to process sequence of information, by feeding the output of preceding neurons to subsequent neurons. Unlike traditional RNN, LSTM networks are not vulnerable to gradient explosion </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 1: Preprocessing Flowchart</head><p>or vanishing when dealing with long sequences of data. This is achieved by forget gate, input gate, and output gate in each hidden unit. These gates decide how much information to let through, and therefore can connect information with a wide gap between <ref type="bibr" target="#b15">[14]</ref>.</p><p>We build a many-to-one LSTM model for each of the 20 elements. <ref type="figure" target="#fig_1">Fig.2</ref> shows the structure of the model. The inputs are the output indices from preprocessing step. The labels are transformed to one-hot vector, each as a (1, 4) row vector. The embedding matrix is used as the weights for the embedding layer, which is not trainable. We add arbitrary class weights to address the class imbalance problem. The loss function is categorical cross-entropy:</p><formula xml:id="formula_0">L(θ) = − 1 n n i=1 4 j=1 y ij log(p ij )<label>(1)</label></formula><p>with n the number of examples, j the class ID, y the true label, and p the predicted probability. Accuracy and weighted F1 score are the evaluation metrics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Support Vector Machine</head><p>SVM classifier is one of the most preferred classification method among classic machine learning methods </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. XGBoost</head><p>We feed our XGBoost models with the same input with SVM models. We use GridSearchCV function from sklearn package in python progaramming language to tune for parameters 'learning rate': [0.01, 0.05, 0.1] and 'max depth': <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b5">5]</ref> with 5 and 10 fold cross validation. With both 5 and 10 fold cross validation, we get the best XGBoost parameters as learning rate=0.1 and max depth=5. Although XGBoost is not a highly preferred method in text classification, it yield the best results based on test set accuracy and F1 score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS AND DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Results</head><p>After tuning on a subset of 500 training records and 100 validation records, we choose 0.5 for LSTM layer dropout and recurrent dropout, 128 for number of hidden units, 128 for batch size, and Adam for optimizer with learning rate of 0.001, β 1 of 0.9, β 2 of 0.999. At the beginning we tried 50 epochs for all the elements, and found most of them converge after around 14 to 15 epochs. We therefore decide to train for 20 epochs. As we have 105k records in the training dataset, batch size of 128 will make the training process comparatively fast. Adding different arbitrary class weights to different elements does not have clear improvement. Here is the plot <ref type="figure" target="#fig_2">(Fig.3)</ref> of the accuracies and losses of training and validation of the first element. To make this report Generally the LSTM model performs well when sentiment features are apparent:   <ref type="figure">(Fig.4)</ref>. XGBoost yields better results in terms of test accuracy and F1 Scores. <ref type="figure">Fig.5</ref> shows test accuracies across 20 elements with LSTM, SVM, and XGBoost. According to the graph, LSTM has the most fluctuating performance over the 20 elements, while XGBoost is relatively more stable with higher accuracies. However, we observed in the original datasets that the class imbalance problem is serious, we cannot rely on accuracies to evaluate our models. Weighted F1 scores are investigated for a better knowledge of the performances. We also check confusion matrices from XGBoost, which are presented as following. The models are biased towards dominating classes (such as -2 in E13, and 1 in E15). In both matrices, columns represent true labels -2, </p><formula xml:id="formula_1">"一直经过这条路第一次进去拔草还是通过看美 食节目首先说说环境还是很不错的感觉很适合 小情侣来很温馨的感觉喝喝下午茶感觉特别好 服务也很好哦都很勤快可能不是周末中午人不 多很安静非常喜欢这样的气氛再说说美食点了 一个新款黄桃冰激凌披萨薄薄的披萨真的蛮好 吃也以前一直吃厚的现在发觉薄的也不错下次 试试榴莲披萨日式猪排饭真的量好多比图片看 起来还多就是有点偏咸了意式千层面咬起来都 是芝士的味道厚厚的感觉好吃小食还行量挺大 玫瑰巧克力和榛果海盐拿铁真的都好好喝噢下 次再去必点目前大众点评买单还能享受95折真 的挺划算以后还会经常光顾的"</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. General Discussion</head><p>We use weighted F1 score along with accuracy because of the imbalance in class distributions which is prevalent across the elements. The confusion matrix of element 13 ("space") reveals the problem in XGBoost model, which also exists across all models. Class weights might be a good strategy, though in LSTM it does not show clear advantage. On the one hand, the situation </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSIONS AND FUTURE WORKS</head><p>In general, XGBoost yield better results in terms of F1 scores and test accuracies. Our models improve from baseline model partially due to better preprocessing, and partially due to better-tuned hyperparameters. Apart from the aspects mentioned in the Discussion section, this task can be improved in the following ways: 1.) collect data with higher label quality (some examples are difficult to classify even for human beings); 2.)improve the quality of language models with contextual representation, e.g. BERT; 3.) Moreover, we might benefit from applying attention mechanism for long input texts. <ref type="bibr" target="#b6">6</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONTRIBUTIONS</head><p>The team members contribute equally to the project. Suofei was responsible for the training of baseline model, data preprocessing, and the construction and training of LSTM model. Eziz contributed to the construction and training of SVM and XGBoost models. Two members both worked on poster making and report writing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. CODE</head><p>The code can be found at:</p><p>https://github.com/suofeif/CS229-Project.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>texts. We replace the words in each sentence (after segmented) with their indices in the vocabulary. All the sentences are padded or cut to a length of 350 for SVM and XGBoost, and 400 for LSTM. The outputs are three matrices for train (105000, 350 or 400), val (7500, 350 or 400), and test data (7498, 350 or 400).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Two-Layer LSTM Model since they generalize well in high dimensional feature spaces. We first extract the embedding vectors for each word in a sentence through indices, to form a sentence matrix. Then we create sentence feature vectors for train- ing, validation, and test sets by averaging the sentence matrix along the vertical axis to get a vector. Each observation is a vector of size (1, 300). With 10 fold cross validation error, we get the best kernel as "linear".</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 :</head><label>3</label><figDesc>Training and validation losses &amp; accuracies of 1st element concise and short, we will not report all the training details and statistics of all the 20 elements here.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>(</head><label></label><figDesc>Rough) Translation: "Always walk through this road. This is my first time walk in the restaurant. Know it through TV show. Environment is pretty good, suitable for couples, warm feeling. It's nice to have afternoon tea. Service is good, too...Maybe because it's not weekend, not so many people in the noon. It's quiet. Really like the atmosphere. About food, ... pizza really good, wanna try another type next time... The pork combo has a large portion, just a little too salty...Drinks are tasty. Must try next time. Using Dazhongdianping will give you 5% discount, a good bargain. Will come often in the future." The predictions results are shown in Table II. Our linear kernel SVM models with the new sen- tence features vectors showed great improvement over baseline model. SVM model prediction F1 scores and</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>-1, 0, and 1 from left to right, and row values represent predicted values for the actual values</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 4 Fig. 5 :</head><label>45</label><figDesc>Test set accuracy across 20 elements with LSTM, SVM and XGBoost might be improved through more precise assignments of class weights, e.g. 1/(number of class-j examples in the training data). On the other hand, data augmentation such as bootstrapping minor classes might help. Because of the demand on the integrity of context to judge about the sentiment, cropping is not suitable in this case. Changing the key feature words might also worth trying.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Table I shows all the elements and corresponding categories. Here is an example input text. Because of the limited space, we just put part of the review and its translation here: "吼吼吼，萌死人的棒棒糖，中了大众点评的霸 王餐，太可爱了。一直就好奇这个棒棒糖是怎 么个东西，大众点评给了我这个土老冒一个见 识的机会。看介绍棒棒糖是用德国糖做的，不 会很甜，中间的照片是糯米的，能食用，真是 太高端大气上档次了..." Translation: "Ha ha ha, the lollipop is soooo cute. I won the 'free meal prize' on Dazhongdianping [author's comment: similar to Yelp], this is so cute. I have been always curious about what the lollipop is like. Dazhongdianping gave me the bumpkin this opportunity to open my eyes. The introduction said it was made using German candy, not too sweet. The photo in the middle is made of glutinous rice, edible. It is really high-end..."</figDesc><table>"吼吼吼，萌死人的棒棒糖，中了大众点评的霸 
+王餐，太可爱了。一直就好奇这个棒棒糖是怎 
+么个东西，大众点评给了我这个土老冒一个见 
+识的机会。看介绍棒棒糖是用德国糖做的，不 
+会很甜，中间的照片是糯米的，能食用，真是 
+太高端大气上档次了..." 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Elements</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Predictions of the Example Text.</figDesc><table>1: -2 
+2: -2 
+3: -2 
+4: -2 
+5: 1 
+6: -2 
+7: -2 
+8: -2 
+9: -2 10: 1 
+11: -2 12: 1 
+13:-2 
+14:-2 
+15:1 
+16: 1 17: -2 18: -2 19: 1 20: 1 
+
+test accuracy for each 20 elements range from 0.44 to 
+0.94 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="false"><head>TABLE III :</head><label>III</label><figDesc>Weighted F1 scores of Test Dataset for 3 Topics</figDesc><table>Models 
+Dish Recomm. Wait Time Traffic Convenience 
+LSTM 
+0.6524 
+0.8776 
+0.8389 
+SVM 
+0.7561 
+0.8381 
+0.8563 
+XGBoost 
+0.7582 
+0.8326 
+0.8382 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Department of East Asian Languages and Cultures, Stanford University.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A review of sentiment analysis research in chinese language</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Cambria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hussain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Computation</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="423" to="435" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Opinion mining and sentiment analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends R in Information Retrieval</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="1" to="135" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A machine learning approach to sentiment analysis in multilingual web texts</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Boiy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Moens</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Information Retrieval</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="526" to="558" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">P</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Introduction to information retrieval</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">H</forename><surname>Manning</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename></persName>
+		</author>
+		<idno>ch. 13</idno>
+		<imprint>
+			<date type="published" when="2008" />
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Text categorization with support vector machines: Learning with many relevant features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Joachims</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2005" />
+			<biblScope unit="volume">1398</biblScope>
+			<biblScope unit="page" from="137" to="142" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">L</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Thumbs up?: sentiment classification using machine learning techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><forename type="middle">S</forename><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ACL-02 conference on Empirical methods in natural language processing</title>
+		<meeting>the ACL-02 conference on Empirical methods in natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2002" />
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="79" to="86" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Detecting hospitalacquired infections: A document classification approach using support vector machines and gradient tree boosting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">M T H T J D H</forename><surname>Ehrentraut</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Health informatics journal</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="24" to="42" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Xgboost: A scalable tree boosting system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">C</forename><surname>Xgboost</surname></persName>
+		</author>
+		<ptr target="http://dmlc.cs.washington.edu/data/pdf/XGBoostArxiv.pdf" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Attention-based lstm for aspectlevel sentiment classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">M</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 conference on empirical methods in natural language processing</title>
+		<meeting>the 2016 conference on empirical methods in natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="606" to="615" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A review of sentiment analysis research in chinese language</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">E</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hussain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cognitive Computation</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="423" to="435" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ai</forename><surname>Challenger</surname></persName>
+		</author>
+		<ptr target="https://challenger.ai/competition/fsauor2018" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Chinese word vectors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Gong</surname></persName>
+		</author>
+		<ptr target="https://primer.ai/blog/Chinese-Word-Vectors/" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Ai challenger 2018 baseline</title>
+		<ptr target="https://github.com/AIChallenger/AIChallenger2018" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Understanding lstm networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Olah</surname></persName>
+		</author>
+		<ptr target="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

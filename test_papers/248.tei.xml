@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">StockAgent: Application of RL from LunarLander to stock price prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Caitlin</forename><surname>Stanton</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Beite</forename><surname>Zhu</surname></persName>
+						</author>
+						<title level="a" type="main">StockAgent: Application of RL from LunarLander to stock price prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-This work implements a neural network to run the deep Q learning algorithm on the Lunar Lander arcade game (as in <ref type="figure">figure I</ref>), and then adapts this model to instead run on stock data. Our agent learns-on stock data from tech companies such as Google, Apple, and Facebook-when it should buy or sell a stock, given features related to the recent stock price history. Furthermore, our model allows the agent to opt to buy and sell smaller amounts of the stock instead of larger amounts (what we refer to as "soft" buying/selling and "hard" buying/selling, respectively), which increases the nuance and complexity of our model's decision-making.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Reinforcement learning has been at the core of many of the most exciting recent developments in AI. For example, while computers have been relatively successful at playing chess for many years-notably, the computer Deep Blue was able to defeat the reigning world chess champion Garry Kasparov in 1996-the game of Go was considered much harder; it wasn't until reinforcement learning techniques were used in 2015 that the program AlphaGo was finally able to beat a professional human Go player.</p><p>Here we use deep Q learning to train an agent to learn the arcade game Lunar Lander, a game where the goal is to steer a landing module and successfully land it on the surface of the moon. After understanding how to apply this model to Lunar Lander, we then use this same technique to a less conventional application of reinforcement learning techniques: investing in the stock market. We rephrase stock market investment as a "game" where states involve data such as recent change and volatility of a stock, and discretize the possible investment amounts in order to create a finite set of actions at each state. In this way, we apply our deep Q learning algorithm from our Lunar Lander model to the problem of stock market prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Reinforcement learning techniques have already been applied to the Lunar Lander game. Garza implements a Policy Gradient Descent model in <ref type="bibr" target="#b0">[1]</ref>. For this method, as developed in <ref type="bibr" target="#b1">[2]</ref>, the goal is to learn an ideal policy by training a neural network whose input is a state, and whose output is a probability distribution on the possible actions. For our model, we abandoned Policy Gradient Descent in favor of trying deep Q learning.</p><p>Predicting stock prices based on past stock data is appealing for obvious reasons. There is even a competition *This work was not supported by any organization 1 Department of Mathematics, Stanford University, SUNetID: stanton1 2 Department of Mathematics, Stanford University, SUNetID: jupiterz released on Kaggle (starting September 25, 2018 and ending January 8, 2019) by the company Two Sigma related to stock prediction <ref type="bibr" target="#b2">[3]</ref>. The goal of this competition is to predict stock prices based on both previous stock data (including market information such as opening price, closing price, trading volume, etc), and news data (including news articles and alerts published about assets, such as article details, sentiment, and other commentary). Unlike our project, the goal for this competition is not to tell an agent when to buy or sell (and how much to buy or sell), but rather to predict whether stock prices will go up or down.</p><p>This seems to be a common feature for current applications of machine learning to the stock market: most models wish to predict stock prices, and not directly tell us an investment strategy. For instance, in <ref type="bibr" target="#b3">[4]</ref>, Jae Won Lee uses reinforcement learning (specifically, TD algorithms) to model stock price behaviour. When referencing the relationship between his research and the problem of how to invest, he writes: "Though the ultimate purpose of reinforcement learning is to get an optimal policy, that is to resolve control problem, the use of TD algorithm in this paper is confined to the prediction problem because the policy in stock market is assumed to be determined by each investor and to be beyond the scope of learning here." Some sources have, however, opted to train an agent to actually develop an investment strategy. In <ref type="bibr" target="#b4">[5]</ref>, they develop a reinforcement learning algorithm to train an agent to play the stock market. However, unlike our model, their model only allows for three actions: sell, hold, or buy. This eliminates some of the nuance from our model, where our agent has some control over the quantity that gets bought or sold, and not just the fact of buying or selling. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATA A. Lunar Lander Environment</head><p>The Lunar Lander environment was provided by OpenAI gym https://gym.openai.com/ <ref type="bibr" target="#b5">[6]</ref> . There was no additional processing needed. The provided states for the simulation consist of length-8 vectors, containing the following information about the lunar landing module: position in space, orientation in space, velocity, angular velocity, whether the right foot is in contact with the ground, and whether the left foot is in contact with the ground.</p><p>There are four actions allowed at any given point in the game: firing the main engine, firing the right engine, firing the left engine, or doing nothing. There are rewards for landing with feet down, and penalties for wasting time, landing far away from the pad, and wasting fuel.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Stock Dataset</head><p>We used IEXs API to download 5 years worth of stock data from Apple and Google. This included the daily price (opening, closing, high and low) of the stock. To simplify our model, we just considered the closing price of the stock on any given day. We also wanted to predict stock prices on a slightly longer time scale, so we restricted to looking at stock prices each week (choosing the closing price on the previous Friday as the stock's price at the beginning of the following week).</p><p>We did, however, save some data about how the stock changed in the lead-up to a given week. We added a feature corresponding to the volatility of the stock price in the previous three weeks. More precisely, for week n, the volatility feature for that week is equal to the standard deviation of the daily stock prices from weeks n−3 through n−1, divided by the mean of the stock price during this range. Normalizing by the mean price ensures that this feature is independent of scaling the stock price (as this shouldn't impact how much we choose to invest).</p><p>We also added three features, which we call delta1, delta2, and delta3, that correspond to the weekly net change in stock price from the three preceding weeks. So in total, our data (each row corresponding to one week in our 5 year span) contains 7 features: the volatility of the stock, delta1, delta2, delta3, the price of that stock at the beginning of the week (i.e. the closing cost from the previous Friday), our current cash on hand, and the value of the stock we own. Our initial state consists of our first line of processed stock data, and the fact that we have $0 in cash and $0 invested into the stock.</p><p>To make our situation similar to the finite-action state from Lunar Lander, we imposed only a finite number of actions that our agent can take when playing the stock market. Specifically, at any given moment in time, we are allowed to do a "hard" buy or sell, a "soft" buy or sell, or do nothing.</p><p>Our default values of hard and soft were $100 and $10 respectively, though we did test different "soft" values later while keeping "hard" fixed (see section V-C for details). By letting "hard" and "soft" correspond to the amount we invest in the stock market on a given week and not to the number of shares, we ensure that our model is independent of the average price of the stock; our model just cares about how the stock price fluctuates from week to week, and not the absolute price of the stock. Notice also that for simplicity of our model, we allow negative cash and negative stock value in our portfolio. Some of this even makes sense (for instance, "negative cash" could correspond to taking out a loan so as to invest more in the stock market).</p><p>Our reward function is just the change in portfolio value each week.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Deep Q Learning</head><p>For both Lunar Lander and the stock market, we used deep Q learning to train our agent. The goal here is to learn the Q function, which gives our total maximum expected reward if we start at state s and take action a. Thus Q should satisfy the optimal Bellman equation:</p><formula xml:id="formula_0">Q(s, a) = R(s, a) + γ · max a ∈A Q(s , a ),</formula><p>where s is the state after taking action a from s, and γ is the discount factor (intuitively, it parametrizes how much we value future versus current reward).</p><p>For deep Q learning, we use a neural network to learn the Q function. Specifically, our network takes in a state s, and outputs a vector of length equal to the number of actions, where each entry corresponds to Q(s, a) for that particular action. Since Q corresponds to net reward, in order to implement a trained network, at state s we would take action a which corresponds to the largest entry in our output from the neural network.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Loss Function</head><p>In order to train our model, we need a loss function. Given a state s and an action a, our loss is just the difference between what our model predicts, and what the optimal Bellman equation should give. In other words, if we letQ be our target function generated viâ</p><formula xml:id="formula_1">Q(s, a) = R(s, a) + γ max a ∈A Q(s, a),</formula><p>our loss is then given by: </p><formula xml:id="formula_2">Loss = Q −Q 2 .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Training</head><p>For the Lunar Lander model, we used a fully-connected neural network of shape (input, <ref type="bibr" target="#b7">8,</ref><ref type="bibr" target="#b7">8,</ref><ref type="bibr" target="#b3">4)</ref>. For stock prediction, we used a fully-connected neural network of shape (input, 10, 10, 5). 500 epochs could be finished on an Apple laptop within a few minutes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Result</head><p>Our base line model as in <ref type="figure">figure III</ref>, StockAgentDeepQNetwork, or SADQN, involves setting "hard" and "soft" to 100 and 10 dollars per transaction, respectively. We set the exploration rate set equal to 0.05. This converges after around 200 epochs. One can see the plot of cost and reward in figure IV. Our model can return 500-2000 dollars of profit in the course of 5 years on a strong stock. The majority of its actions consist of soft buys, and the agent will go into negative cash budget, but with a sizable stock value thus resulting in a positive portfolio.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Hyper-parameter Choices/ Experiments</head><p>All other experiments are conducted around the above base model. Here is what we have tried:</p><p>i. Soft buy/sell tweaking: As we listed out the actions from our base model after training, we realized that our model has a very strong preference for "soft" actions. In other words, the agent is risk-averse.  ii. Less competitive stock testing: When training on Apple and Google stock, we noticed that the agent chose "soft" buy the vast majority of the time. Part of the issue here might be that Google and Apple are relatively stable stocks, and have an upward long-term trend in price. In order to really exhibit the predictive capabilities of our model, it made sense to apply it to stocks that are more volatile, and which maybe don't have such an obvious long-term trend. Staying in the tech realm, three additional stocks we looked at were Facebook, Twitter, and NVIDIA. Using just our baseline model (with 500 epochs, since more volatile stocks take longer to converge), this is how we performed on each of these stocks, as compared to always performing "soft" buy as our action:  We can see that our model performs better than naively performing "soft" buy for Facebook, performs similarly for Twitter, and performs worse for NVIDIA. We don't currently know what is causing these discrepancies, but we think it's likely that our model is too risk-averse. For example for NVIDIA, a highly volatile stock, our model is usually doing nothing, or performing a "soft" buy. iii. Exploration rate tweaking: Having random exploration is important in learning a game like Lunar Lander so that the agent can experience different states of the game and handle various situations. In the Lunar Lander game, our agent in fact grows more 'curious' and explores more as time goes on. However, we felt this is unnecessary in a stock prediction situation, and thus we have experimented with various fixed exploration rates. The result can be seen in figure VII. One can see that unlike the Box2D games, having a reasonable exploration rate like 5 percent actually negatively influences the training. This is probably due to the fact that the process of stock prediction is much more formulated and deterministic. Unlike other games where various actions could lead to different states that could still achieve optimal outcome, if the price is going up, a hard buy is just the absolute best action. Thus, for the best training outcome, one should stick to a minimal exploration rate.</p><p>Exploration rate GOOG AAPL  iv. SADQNbold, the risk rewarding experiment, and γ tuning: As we observed, our agent is highly riskaverse. Even though it can forecast stock behaviour in the long run, it will still choose the soft action instead of the hard one. To encourage our agent to take risks, we have implemented a new model called SADQNbold. SADQNbold has the extra two parameters:</p><formula xml:id="formula_3">volatility_weight exploration_hard_chance.</formula><p>The volatility weight is a variable ν that currently associates reward with volatility using the formula Reward = Profit * (1 + ν) * volatility, thus making a riskier profit more rewarding. The exploration hard chance, or EHC, puts a different weight on hard actions when sampling for an action in the exploration part of training. With a bigger probability of taking hard actions, the agent will see more of the benefits of hard actions. (Note that when ν = 0 and EHC = 0.2 we have the baseline model.) Another related parameter is γ, the discount factor in the Bellman equation for generating ourQ. Making this number closer to 0 will make the agent more short-sighted thus taking bolder actions. In experiments, we found that lowering γ or increasing ν and EHC will indeed encourage more hard actions. On the other hand, it makes the agent highly unstable with respect to different stocks. More volatile stocks could lead to an unprofitable agent.</p><p>In the experiment as in figure VIII on the stock of AAPL, the actions consist primarily of hard buy and sell. The final portfolio value is around 12,000 dollars. VI. CONCLUSION AND FUTURE DIRECTIONS Conclusion By drawing connections between the game of Lunar Lander and stock investment, we have established a baseline structure of a stock predicting agent using the model of deep Q learning. The model is demonstrated to be rather risk averse but can master long term investment strategy with reasonably volatile stocks.</p><p>Future directions, shot term vs. long term: In our data split there is a mismatch, as we are training on approximately 5 years of data and trying to test the agent on 10 weeks of data. However, what the agent picks up from the base model is a long term strategy and is not optimal on a 10 week basis. Thus we tried to implement StockAgentDQNShort. This agent, instead of training the whole 5 year period, trains on several episodes of 10 consecutive weeks (or whatever the test data length) randomly selected from the training data. But as one can observe from figure IX, the randomness we introduced is giving the model a hard time converging, and thus the reward graph is highly fluctuating. One explanation why this approach failed is that, though we match the data with train and test, this is not the traditional way humans predict stock. The historical data is always there for reference whenever one makes a prediction in real life, so somehow restricting our model to training on 10 weeks of data is not a realistic solution to this data mismatch problem.</p><p>One possible solution is to strengthen the model so that it includes more than 3 weeks of data in the past, thus resulting a network that has more input features and thus more complexity in general. Another solution, which is closer to human prediction, is to include real world events to help short term prediction <ref type="bibr" target="#b2">[3]</ref> <ref type="bibr" target="#b6">[7]</ref>. Indeed, news events like the release of new products or the new employment of a CEO can hugely influence stock price in a short span of time. The significance of such events usually outweighs past statistical information of the stock market, and thus should be considered in the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CODE</head><p>The code for this project is available at https:// github.com/zhubeite/CS-229-RL-project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>We would like to thank our mentor, Mario Srouji, for his guidance throughout this project. CONTRIBUTIONS Caitlin: Contributed code for pre-processing data, transition/reward functions, and downloading stock data; contributed to write-up Jupiter: Wrote TensorFlow code to train our neural networks, created overall code architecture, tested hyperparameters, contributed to write-up</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig</head><label></label><figDesc>. I. Lunar Lander environment.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig</head><label></label><figDesc>. II. Processed stock data for Apple.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig</head><label></label><figDesc>. III. Graph of our model, StockAgentDeepQNetwork.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig.</head><label></label><figDesc>IV. Plots of reward and cost against training steps.The first row are the cost and reward of AAPL, and second row are the cost and reward of GOOG. The plummets and spikes are due to the random explorations.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. V .</head><label>V</label><figDesc>Final portfolio value under different soft buy/sell value.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig</head><label></label><figDesc>. VI. Final portfolio value of Facebook, Twitter, and NVIDIA.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig.</head><label></label><figDesc>VII. Final portfolio value under different exploration rates.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig.</head><label></label><figDesc>VIII. Plots of reward against training steps using SADQNbold with ν = 1, γ = 0.8 and EHC = 0.25.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig</head><label></label><figDesc>. IX. Plots of reward and cost against training steps. The stock is based on AAPL</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Deep reinforcement learning -policy gradients -lunar lander!</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gabriel</forename><surname>Garza</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-01" />
+			<biblScope unit="volume">17</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Deep learning in neural networks: An overview</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jürgen</forename><surname>Schmidhuber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural networks</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="85" to="117" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Two sigma: Using news to predict stock movements</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Two</forename><surname>Sigma</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-09" />
+			<biblScope unit="volume">25</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Stock price prediction using reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jae Won</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Symposium on Industrial Electronics Proceedings (Cat. No.01TH8570)</title>
+		<imprint>
+			<date type="published" when="2001-06" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="690" to="695" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Practical deep reinforcement learning approach for stock trading</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhuoran</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiao-Yang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shan</forename><surname>Zhong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hongyang</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anwar</forename><surname>Walid</surname></persName>
+		</author>
+		<idno>abs/1811.07522</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Openai gym</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">News-based trading strategies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Feuerriegel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Helmut</forename><surname>Prendinger</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Human-level control through deep reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Volodymyr</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Koray</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrei</forename><forename type="middle">A</forename><surname>Rusu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joel</forename><surname>Veness</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><forename type="middle">G</forename><surname>Bellemare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><surname>Riedmiller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreas</forename><forename type="middle">K</forename><surname>Fidjeland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georg</forename><surname>Ostrovski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stig</forename><surname>Petersen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Legg, and Demis Hassabis</title>
+		<meeting><address><addrLine>Charles Beattie, Amir Sadik, Ioannis Antonoglou, Helen King, Dharshan Kumaran, Daan Wierstra, Shane</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-02" />
+			<biblScope unit="volume">518</biblScope>
+			<biblScope unit="page">529</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fuli</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Huimin</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiangnan</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ji</forename><surname>Ding</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.09936</idno>
+		<title level="m">Maosong Sun, and Tat-Seng Chua. Improving stock movement prediction with adversarial training</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

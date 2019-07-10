@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learn To Rate Fine Food</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiacheng</forename><surname>Mo</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<region>US</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lu</forename><surname>Bian</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<region>US</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yixin</forename><surname>Tang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<region>US</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Learn To Rate Fine Food</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-We investigate a food review dataset from Amazon with more than 500000 instances, and utilize information from the data set such as the text review, score, helpfulness, etc. Instead of the traditional word representation using frequency, we use skip-gram to train our own word vectors using the pretrained GloVe Twitter word vector as the initialized value. We also use recursive parsing tree to train the vector of the whole sentence with the input of word vectors. After that, we use neural network methods to classify our review text to different scores. We mainly research and compare the performance of Gated Recurrent Unit Network (GRU) and Convolutional Neural Network (CNN) on our data. After tuning the hyper parameters, we get our best classifier as a bi-directional GRU. We also build a Long Short Term Memory Model (LSTM) for text generation, which is able to generate text for each score level. Then we build a recommendation system based on Latent Factor Model, with Stochastic Gradient Descent, and recommend 10 items to selected users. Finally, we use softmax regression to visualize the most important words for a certain score, and design a spam review binary classification based on the helpfulness scores of the reviews.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION AND RELATED WORK</head><p>In recent years, food reviews have become increasingly popular on social media. People are posting their reviews or comments on Facebook, Yelp, Twitter, etc. When selecting local restaurants or food, people also tend to make their decisions based on these reviews. Hence, it is important for both restaurants and individuals to quickly get the information and score of a food item or restaurant from thousands of reviews. It is also beneficial for some platform to provide different customers with their personal recommendations.</p><p>McAuley and Leskovec <ref type="bibr" target="#b0">[1]</ref> have done related work on recommending beer, wine, food, and movies, where they built a latent factor recommendation system that explicitly accounts for each user's level of experience. Here, however, we built a less sophisticated latent factor recommendation system, with the intent to achieve reasonable accuracy.</p><p>Marx and Yellin-Flaherty <ref type="bibr" target="#b1">[2]</ref> have done related work on sentiment analysis of unstructured online reviews using GRU and LSTM model, where they incorporated a relatively small data set. Here, we extend the discussion to a larger data set, and we have used LSTM model for review generation that has never been done before.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. DATASETS AND FEATURES</head><p>Our analysis focus on an Amazon food review database consisting of 568, 454 instances. The data set contains the texts of reviews, scores and helpfulness. In more detail,</p><p>• Product ID: the product that this review is for. The total number of items that are rated is 62, 279. And the average number of reviews for an item is 9.2. • User ID: the user who wrote this review. The total number of users is 178, 554. So the average number of reviews that each user gave is 3.2.</p><p>• Text: the main content of the review.</p><p>• Helpfulness: number of people who find this review helpful.</p><p>• Score: the score this user gave to the food item. The histogram in <ref type="figure" target="#fig_0">Fig. 1</ref> shows that the number of positive reviews is greater than the negative ones. Also, the number of reviews with score 5 is much greater than other reviews. This shows that customers are more likely to give a review when they feel either very satisfied or disappointed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. METHODS</head><p>A. Word to Vectors 1) Skip-Gram: Instead of using the traditional countbased representation of words, we train the word vectors from our own data. First, we download the GloVe Global Vectors for Word Representation which was trained on the crawl data of Twitter(2B tweets, 1.2M vocab) <ref type="bibr" target="#b2">[3]</ref>. We can visualize the vector representation by finding the nearest neighborhood of a certain word through L2 measure. For example, The 7 nearest words of "frog" are "rana", "litoria", etc.</p><p>However, we do not directly use this representation for our final representation of words. Instead, we just use this as an initializer of our self-trained Word to Vector model. We train our word vectors by skip-gram model, which uses the method of predicting the surrounding words in a window of certain length. The objective function is to maximize the log probability of any context word given the current center word:</p><formula xml:id="formula_0">J(θ) = 1 T T t=1 −m≤j≤m,j =0 log(P (w(t + j)|w(t)))</formula><p>where θ represents all variables we optimize and p(w t+j |w t ) is the probability:</p><formula xml:id="formula_1">p(o|c) = exp(u T 0 v c ) W w=1 exp(u T w v c )</formula><p>where o is the outside word vector and c is the inside word vector. Every word in this model has two vectors.</p><p>2) Phrase Vectors: Now we have got the vector representation of each single word. But our aim is to classify the entire review (in sentences). Hence we need to derive a method to vectorize the sentences. A natural approach is to average or concatenate all word vectors in a given sentence. It turns out that this works well and can be very convenient to implement like the <ref type="figure" target="#fig_1">Fig. 2</ref>.</p><p>We are not satisfied so far since neither concatenation nor averaging treats each word equally and neglects the relationship between words and the structure of the sentence. Hence we use a recursive parsing tree to get our sentence vector. Concretely, for every representation of two candidate children, we calculate the semantic representation if the two nodes are merged, as well as a score showing how plausible the new node would be. The score of a tree is computed by the sum of the parsing decision scores at each node. We train our tree by maximizing the max-margin parsing. <ref type="bibr" target="#b3">[4]</ref>   B. Neural Network Methods 1) Gated Recurrent Units: Our first task is to group reviews into 5 classes. The main method we use involve models that are neural network based and are all implemented in tensorflow. We use logistic regression as our baseline model and try to add some layers and more complicated structures to reach a higher accuracy. The state-of-the-art model we implemented for classification is the Bidirectional Gated Recurrent Units (GRU).</p><formula xml:id="formula_2">J = i s(x i , y i ) − max y∈A(xi) (s(x i , y) + ∆(y, y i ))</formula><p>We know that the standard Recurrent Neural Network computes hidden layer at the next time step directly by:</p><formula xml:id="formula_3">h t = f (W hh h t−1 + W hx x t )</formula><p>In GRU, we first compute an update gate according to the current input word vector and the hidden state:</p><formula xml:id="formula_4">z t = σ(W z x t + U z h t−1 )</formula><p>then we compute the reset gate with different weights:</p><formula xml:id="formula_5">r t = σ(W r x t + U r h t−1 )</formula><p>and obtain the new memory content and the final memory: <ref type="figure">Fig. 4</ref> shows the framework of our bidirectional GRU. The difference between the standard GRU and our bidirectional GRU is that for each hidden layer, the information flows not only from the left but also from the right. the concrete formulas of our 3-layers bidirectional GRU are listed below.</p><formula xml:id="formula_6">h t = tanh(W x t + r t • U h t−1 ) h t = z t • h t−1 + (1 − z t ) •h t</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Right direction h</head><formula xml:id="formula_7">(i) t : z (i) t = σ( W (z) (i) x i t + U (r) (i) h (i) t−1 ) r (i) t = σ( W (r) (i) x i t + U (r) (i) h (i) t−1 ) h (i) t = tanh( W (i) x t + r t • U (i) h t−1 ) h (i) t = z (i) t • h (i) t−1 + (1 − z (i) t ) •h (i) t Lef t direction ← − h (i) t : ← − z (i) t = σ( ← − W (z) (i) x i t + ← − U (r) (i) h (i) t−1 ) ← − r (i) t = σ( ← − W (r) (i) x i t + ← − U (r) (i) h (i) t−1 ) h (i) t = tanh( ← − W (i) x t + r t • ← − U (i) h t−1 ) ← − h (i) t = z (i) t • h (i) t−1 + (1 − z (i) t ) •h (i) t Output y t = sof tmax(U [ h (top) t ; ← − h (top) t ] + c)<label>(1)</label></formula><p>By feeding a review into each x, we allow each batch review to influence each other's prediction, an idea that may seem counterintuitive since each review is independent. However, different reviews may have a certain connection with the same food or restaurant. Only through this structure can we explore the deeply connected information of reviews. After we fetch y i from GRU, we use cross entropy loss for the network and train the weights.</p><p>Beyond the 3-layers GRU network, we also obtain good results from a 2-layers GRU, 2-layers Convolutional Neural Network, and 3-layers Convolutional Neural Network. We summarize the accuracy later to compare these models with different hyper-parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 4: 3 Layers GRU</head><p>2) Long Short-Term Memory (LSTM): After the classification, we want our model to automatically generate some reviews. Concretely, we first specify a score representing the rank of the reviews (like 5 means the best and 0 means the worst), and then feed this score to the neural network. We want our neural network to generate the review corresponding to the specified score.</p><p>The model we use is LSTM, which is also a modified version of recurrent neural network but with some reset and forget state. This method selects the most probable word at each time, depending on which class we are in. <ref type="figure" target="#fig_3">Fig. 5</ref> gives us a brief structure of LSTM. </p><formula xml:id="formula_8">h i+1 = F unction above(h i , x i )</formula><p>Choose the largest probability class of h i+1 to be x i+1 (2)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Recommendation System</head><p>We use Latent Factor Model to recommend food items to a user. As shown in <ref type="figure" target="#fig_6">Fig. 8</ref>, the sparse user-item utility matrix R can be decomposed to a user-factor matrix P and a item-factor matrix Q. In our model, we choose the number of factors to be 300. After decomposition, we use Stochastic Gradient Descent (SGD) to decrease the loss, and find the final matrices P and Q, whose product is closest to R. Denote the R iu of the matrix R the rating given by user u to item i. The total error is:</p><formula xml:id="formula_9">E = (i,u)israted (R iu − q i p T u ) 2 + λ( u ||p u || 2 2 + i ||p i || 2 2 )</formula><p>Denote iu the derivative of the error E with respect to R iu , then</p><formula xml:id="formula_10">iu = R iu − q i p T u</formula><p>And the update equations for q i and p u in SGD are:</p><formula xml:id="formula_11">q i ← q i + η( ui p u − λq i ) p u ← p u + η( ui q i − λp u )</formula><p>After 40 iterations of SGD, we obtain the final P and Q. Then, we predict the score the user will rate an unrated item, and recommend 10 items of the highest scores to the user. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Features Visualization and Spam Reviews</head><p>In this part, we use the traditional count based word representation and compare the results with the previous approach. We utilize count vectorizer followed by term frequency-inverse document frequency (tf-idf) <ref type="bibr" target="#b4">[5]</ref> transformation to transform the text into word tokens. Count vectorizer converts a collection of text documents to a matrix of token counts and produces a sparse representation of the counts. The following tf-idf transformation converts the count matrix to a normalized tf-idf representation. In information retrieval, using tf-idf, instead of the raw frequencies of occurrence, can scale down the impact of words that occur very frequently in a given corpus and that are hence empirically less informative than features that occur in a small fraction of the training corpus. For example, words such as "the", "is", etc. can appear in any text in general, and thus are offset by the frequency of the word in the corpus in tf-idf representation.</p><p>For finding the words that contribute the most to each of the five scores of the food reviews, first we use feature selection to select 1000 best informative words out of the 10000 features (from tf-idf). The next step is to build a softmax regression model on these features and to fit between words, x and scores, y. In softmax regression, we maximize the log-likelihood:</p><formula xml:id="formula_12">l(θ) = m i=1 log k l=1 ( e θ T l x (i) k j=1 e θ T j x (i) ) 1{y (i) =l}</formula><p>Finally, we choose the largest 50 coefficients in θ i of the probability of each class y i , and get the corresponding words as the most important words for the score.</p><p>Since the relationship between a word and the helpfulness of the corresponding review is not as clear as the relationship between a word and the score of its corresponding food item, we define an "helpful" review to have a helpfulness score greater or equal to 4, where as an "useless" review has 0 as helpfulness score. Thus, this becomes a binary classification problem, with truncated data set that does not contain reviews with 1, 2, or 3 helpfulness score. We fit the data to softmax regression model, quadratic discriminant analysis model <ref type="bibr" target="#b5">[6]</ref>, as well as the decision tree model <ref type="bibr" target="#b6">[7]</ref>, where we varied the regularization parameter and plotted training and crossvalidation accuracy versus regularization parameter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Neural Network Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1) GRU:</head><p>The results of GRU and CNN model and the loss sequence of 3-layers GRU are summarized in the table below: We list part of our experiments as above. We start with the vanilla neural network of a single layer and its test accuracy is 0.63 which is not bad when we have 5 different  <ref type="table">Table   classes</ref>. Then we use convolutional neural network and tune the learning rate. From the table we find that the learning rate 0.01 is more suitable to reach a better minimum. Finally, we use GRU with two and three layers respectively to train our data. We find 3-Layers GRU can reach a higher accuracy and its top 2 classes (scores 4 and 5) accuracy is 0.93. This is meaningful, because usually we only need a broad idea of whether this food is good or not, instead of a explicit score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2) LSTM:</head><p>Here is an example text generated from our LSTM of score 5 food review. We show the process of picking the highest probability from the last hidden layer and fetching into the next input layer. With the the number of iteration increases, the generated sentence makes more sense to us, including the punctuation. For each class, we select some reasonable generated sentence to present here. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Recommendation System</head><p>In the SGD process, we have changed the learning rate η to get the lowest convergence error after 40 iterations(see <ref type="figure" target="#fig_0">figure  11)</ref>. We finally decide to use 0.02 to get the lowest error. (Another way is to decrease the learning rate as iteration grows.)</p><p>We can get the recommendation for an user by finding the largest scores in the row corresponding to this user in the utility matrix R. There is a sample recommendation for this user shown in <ref type="figure" target="#fig_0">figure 12</ref>. However, the recommendation result is not as good as we thought. There exists a set of products being recommended to many different users. The reason behind this problem may be the fact that our model does not include an item bias, so the scores of some items may be much greater than others for all the users. These  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Features Visualization and Spam Reviews</head><p>After fitting the data to the softmax regression, we compute 50 words that have the largest coefficient and thus are the most significant words for each score. We organize these words into tag clouds <ref type="figure" target="#fig_0">(Fig. 13)</ref>, where the size of each word is based on the relative value of the coefficient. First we fit the data to softmax regression model, and find that the training error as well as cross-validation error are 0.44 and 0.42 respectively. We notice that the softmax regression model failed, possibly due to the non-linearity of the frequency of a word versus the score of the food item.</p><p>We obtain decent training and cross validation accuracy when fitting our data to both QDA and decision tree model. We vary the regularization parameter and plotted training and cross-validation accuracy versus regularization parameter <ref type="figure" target="#fig_0">(Fig. 14)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CONCLUSIONS AND FUTURE DIRECTIONS</head><p>We use multiple neural network models to classify our text. Our results show that bi-directional GRU has the best performance with high efficiency. Another advantage of our GRU is that it is immune to extremely unbalanced data. During our experiments, we find that when the distribution of data is not uniform. For example, when most food items are in level 2, most classifiers will just assign any input to the majority class to reach a high accuracy. However, GRU can still learn it well and not stick to the majority. A natural generalization of our model is to apply it on different review tasks, say, Yelp, Twitter, Walmart, Ikea, etc. This requires our model to automatically choose the hyper parameter and structure, in order to accept the input under different context. This will be our new direction to design a more robust classifier which can be used upon any kinds of customer review.</p><p>Our recommendation system is based on the basic latent factor model. We have reached a relatively low error by changing the learning rate in SGD process, but the recommendation result is not very satisfying. This model can be further improved by adding some terms, such as, user/item bias, implicit feedback, temporal dynamics, user-associated attributes, and confidence level <ref type="bibr" target="#b7">[8]</ref>. Also, if time is allowed, we can develop a better recommendation system. A common way is to use hybrid method and build a system that has many levels filtering <ref type="bibr" target="#b7">[8]</ref>. For instance, we can add a global effect filtering before latent factor model, and after that, add a collaborative filtering(user-user or item-item).</p><p>Softmax regression succeeded in selecting words for a specific score, but it failed in modeling the helpfulness of a word. For the latter task, both QDA and decision tree model fit the data well, mainly due to the non-linearity of the frequency of a word versus the score of the food item.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Distribution of scores of reviews.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Sentence Representation by Averaging Fig. 3: Sentence Representation by Parsing Tree</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3</head><label>3</label><figDesc>shows the illustration of this method on the same sentence.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>LSTM for GenerationOur algorithm for generation can be simplified as:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 6 :</head><label>6</label><figDesc>Latent Factor Model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 7 : 3 -</head><label>73</label><figDesc>Layers GRU Loss Function</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 8 :</head><label>8</label><figDesc>Accuracy</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 9 :</head><label>9</label><figDesc>Level 5 Generation   </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 10 :</head><label>10</label><figDesc>Generated Review</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Fig. 11 :</head><label>11</label><figDesc>Error decreases as iteration grows, different learning rate items, such as trident gums, are much more likely to be recommended than others.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Fig. 12 :</head><label>12</label><figDesc>Recommendation result example</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Fig. 13 :</head><label>13</label><figDesc>Tag cloud for scores from 1 to 5</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Fig. 14 :</head><label>14</label><figDesc>Cross validation accuracy curve for QDA and for DT</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">From amateurs to connoisseurs: modeling the evolution of user expertise through online reviews</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Leskovec</forename><surname>Mcauley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd international conference on World Wide Web. International World Wide Web Conferences Steering Committee</title>
+		<meeting>the 22nd international conference on World Wide Web. International World Wide Web Conferences Steering Committee</meeting>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Aspect Specific Sentiment Analysis of Unstructured Online Reviews</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yellin-Flaherty</forename><surname>Marx</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Glove</forename><surname>Twitter Crawl</surname></persName>
+		</author>
+		<ptr target="http://nlp.stanford.edu/projects/glove/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Learning Structured Prediction Models: A Large Margin Approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Taskar</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Latent dirichlet allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Andrew</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">I</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of machine Learning research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The elements of statistical learning Springer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Friedman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Springer series in statistics</title>
+		<meeting><address><addrLine>Berlin</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Classification and regression trees</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Breiman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1984" />
+			<publisher>CRC press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<title level="m">Mining of Massive Datasets</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

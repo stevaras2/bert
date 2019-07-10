@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Auto grader for Short Answer Questions Pranjal Patil (ppatil@stanford.edu) Ashwin Agrawal (ashwin15@stanford.edu) Dataset and Features References Future Work Background and Motivation</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Short-answer questions can target learning goals more effectively than multiple choice as they eliminate test-taking shortcuts like eliminating improbable answers. However, staff grading of textual answers simply doesn't scale to massive classes. Grading answers has always been time consuming and costs a lot of Public dollars in the US. We start in this project by tackling the simplest problem where we attempt to make an machine learning based system which would automatically grade one line answers based on the given reference answers.</p><p>• We chose the publicly available Student</p><p>Response Analysis (SRA) dataset. Within the dataset we used the SciEntsBank part.</p><p>• This dataset consists of 135 questions from various physical sciences domain. It has a reference short answer and 36 student responses per question.</p><p>• Total size of dataset is 4860 data points.</p><p>• Ground truth labels are available in the dataset whether each student response is correct or incorrect.</p><p>Data pre-processing including tokenization, stemming and spell checking each of the student responses.</p><p>We used the Pre-trained Glove embedding trained on Wikipedia and Gigaword 5 with 400K vocabulary and 300 features. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>• Evaluation of sentence similarity can be improved by providing a sentence similarity index in addition to 0/1 labels.</p><p>• We found in k-NN approach that correct responses are unexpectedly very similar and hence we inserted more reference answers to cover all writing styles and reinforce the algorithm's similarity detection.</p><p>• The hybrid model tend to misclassify long sentences which probably can be improved by using a different attention layer. • The hybrid model also especially misclassifies the sentences which have the keyword missing in them or written in some other form.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Q. What is the relation between tree rings and time?</head><p>Ref: As time increases, number of tree rings also increases. Ans: They are both increasing</p><p>Original Label: Correct Model Result: Misclassified due to missing keywords</p><p>• We created an expansion of the Siamese neural network to employ bidirectional LSTM with attention layer and mixed it with KNN's intuition to achieve better results.</p><p>• The branches of the network learn sentence embedding for each of the student answer and reference answer. After merging, a fully connected layer measured the similarity between the two answers to score the answer as correct or incorrect.</p><p>• In the initial models we used Manhattan distance, cosine similarity as the similarity metric.</p><p>Data split : 80% train, 10% validation, 10% test data ; Loss: Binary Cross Entropy; Optimizer: Adam Epochs: 50; Attention Layer: Softmax</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Weight = idf * (w_pos -w_neg); W_pos = Correct answers with given word/Total number of correct answers W_neg = Wrong answers with given word/Total number of wrong answers</figDesc><table>1. Jonas Muller and Aditya Thygarajan, "Siamese 
+Recurrent Architecture for learning sentence 
+similarity", AAAI-16 
+
+2. Ziming Chi and Bingyan Zhang, "A sentence similarity 
+estimation method based on improved Siamese 
+Network", JILSA-2018 
+
+3. Tianqi Wang et.al, "Identifying Current Issues in Short 
+Answer Grading", ANLP-2018 
+
+Models and Results 
+
+• Trying out different attention layer to smooth 
+out key word issue 
+• We would like to improve this model and run 
+it on a larger unseen and out of domain 
+dataset to gauge its robustness. 
+• Try adding better reference answers or better 
+similarity detection mechanisms. 
+
+Auto-grading 
+Task 
+
+Seen 
+Questions 
+K Nearest Neighbours 
+
+Unseen 
+Questions 
+
+Hybrid Siamese Neural 
+Network 
+
+Word 
+Embedding 
+
+Weighted 
+Sentence 
+Embedding 
+
+Cosine 
+Similarity 
+
+K-nearest 
+neighbours 
+
+Accuracy = 79% 
+
+Model 
+Accuracy 
+(%) 
+
+MSE 
+
+LSTM + Manhattan 
+Distance [1] 
+
+62% 
+0.25 
+
+LSTM + Attention + FNN 
+[2] 
+
+73% 
+0.18 
+
+CNN + Bi -LSTM + 
+Manhattan 
+
+69% 
+0.20 
+
+Our Model 
+76% 
+0.16 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

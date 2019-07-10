@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Introduction Class Statistics Deep Queue-Learning: A Quest to Optimize Office Hours</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Avoy</forename><surname>Datta</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dian</forename><forename type="middle">Ang</forename><surname>Yap</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zheng</forename><surname>Yan</surname></persName>
+						</author>
+						<title level="a" type="main">Introduction Class Statistics Deep Queue-Learning: A Quest to Optimize Office Hours</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Table 1: Statistics for sample of classes (4/8 shown) . Scheduler Results Class Quarter &amp; Year #OH-Active TAs Total # Students Total OH Hours Total Served Total Load Influx</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Summary</head><p>• OHs often suffer from overcrowding and long wait times, stressing both students and instructors.</p><p>• If we could accurately predict the expected workload at a given OH, TAs can be better allocated.</p><p>• QueueStatus, Carta, and course syllabi provide a wealth of information that can be used.</p><p>• We trained a neural network model that predicts student load influx (expected serve time * # sign-ups) at OH on an hourly basis, for any course.</p><p>• With these predictions, we now optimize TA scheduling given realistic constraints.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Class Statistics</head><p>Avoy Datta, Dian Ang Yap, Zheng Yan CS 229 | Autumn 2018 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Scheduler</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deep Queue-Learning: A Quest to Optimize Office Hours</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology Features and Preliminary Statistics</head><p>• Load influx is significantly and positively correlated with: Week number (r = 0.07) and Number of servers (r = 0.32) • Significantly and negatively correlated with:</p><p>Days left until assignment due (r= -0.08), Hour of day (r = -0.10), Weekday (r=-0.09), Days until next exam (r = -0.06) CS 221</p><p>• We defined a new loss (Shrug loss) and used smoothing on labelled data to reduce penalty on outliers.</p><p>• To reduce contributions by outliers, we smooth out the data through convolution with a Hann window:</p><p>• Using data scraped off of Stanford course resources, a fully connected NN, and Gibbs sampling, we have come up with a system that schedules TA hours (within realistic constraints) that appears to correlate well with student demand.</p><p>• Major challenges for inference: figuring out a model that balanced bias with variance and coming up with a loss that didn't penalize outliers excessively.</p><p>• This model can serve as a recommender system for office hours for newly introduced courses. We tested it on one quarter of a course not used in the train set and found correlation between assigned hours and predicted influx were similar to actual load influx and server correlation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CS 229</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experiments</head><p>• Both classification (SVMs, Random Forest) and regression (fully connected nets, LSTMs) were experimented for predictions.</p></div>
+			</abstract>
+		</profileDesc>
+		<revisionDesc>
+				<date type="submission" when="-1" />
+		</revisionDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Summary</head><p>• OHs often suffer from overcrowding and long wait times, stressing both students and instructors.</p><p>• If we could accurately predict the expected workload at a given OH, TAs can be better allocated.</p><p>• QueueStatus, Carta, and course syllabi provide a wealth of information that can be used.</p><p>• We trained a neural network model that predicts student load influx (expected serve time * # sign-ups) at OH on an hourly basis, for any course.</p><p>• With these predictions, we now optimize TA scheduling given realistic constraints.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Class Statistics</head><p>Avoy Datta, Dian Ang Yap, Zheng Yan CS 229 | Autumn 2018 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Scheduler</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deep Queue-Learning: A Quest to Optimize Office Hours</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features and Preliminary Statistics</head><p>• Load influx is significantly and positively correlated with: Week number (r = 0.07) and Number of servers (r = 0.32) • Significantly and negatively correlated with:</p><p>Days left until assignment due (r= -0.08), Hour of day (r = -0.10), Weekday (r=-0.09), Days until next exam (r = -0.06) CS 221</p><p>• We defined a new loss (Shrug loss) and used smoothing on labelled data to reduce penalty on outliers.</p><p>• To reduce contributions by outliers, we smooth out the data through convolution with a Hann window:</p><p>• Using data scraped off of Stanford course resources, a fully connected NN, and Gibbs sampling, we have come up with a system that schedules TA hours (within realistic constraints) that appears to correlate well with student demand.</p><p>• Major challenges for inference: figuring out a model that balanced bias with variance and coming up with a loss that didn't penalize outliers excessively.</p><p>• This model can serve as a recommender system for office hours for newly introduced courses. We tested it on one quarter of a course not used in the train set and found correlation between assigned hours and predicted influx were similar to actual load influx and server correlation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CS 229</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experiments</head><p>• Both classification (SVMs, Random Forest) and regression (fully connected nets, LSTMs) were experimented for predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MSE, with smoothing</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Shrug, with smoothing</head><p>Visualization of smoothed y-labels</p><p>• Smoothing reduces spikes in erratic data.</p><p>• Less effective in predicting actual magnitude.</p><p>• Shrug yields significantly lower RMSE on test set, but poorer convergence during training.</p><p>• We use Gibbs Sampling to assign TAs to each individual time slot.</p><p>• The Gibbs sampler optimizes:</p><formula xml:id="formula_0">= = ⋅ | = ⋅</formula><p>measures the cosine similarity between the number of Tas assigned each office hour and the predicted loads</p><p>• Weight of sampling is proportional to increase in cosine similarity of the full assignment for each value assigned. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>Statistics for sample of classes (4/8 shown) 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Training with Huber lossTraining with Shrug loss Shrug loss reduces offset of predictions</figDesc><table>Loss Functions w/ 
+FCN 
+
+RMSE (Load 
+Influx) 
+
+MSE 
+69.89 
+
+MAE 
+62.65 
+
+Huber ( = 1) 
+62.61 
+
+Shrug ( = 18) 
+48.0 
+
+Cosine similarity, 
+actual schedule 
+
+Cosine similarity, 
+optimized 
+schedule 
+
+0.794 
+0.789 </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

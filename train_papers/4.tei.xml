@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">High Accuracy Flight State Identification of a Self-Sensing Wing via Machine Learning Approaches</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhe</forename><surname>Huang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>tedhuang@stanford.edu</roleName><forename type="first">Hongyi</forename><surname>Zhao</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>hyz08@stanford.edu</roleName><forename type="first">Cheng</forename><surname>Liu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">High Accuracy Flight State Identification of a Self-Sensing Wing via Machine Learning Approaches</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.3390/s18051379</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion and Future Work Features References</head><p>Autonomous fly-by-feel vehicles Motivated by the supreme flight skills of birds, a new concept called "fly-by-feel" (FBF) has been proposed to develop the next generation of intelligent aircrafts. To achieve this goal, Stanford Structures and Composites Lab (SACL) has developed a smart wing which embeds a multifunctional sensor network on the surface layup of the wing <ref type="bibr">[1]</ref>. By leveraging the structural vibration signals recorded from Piezoelectric Sensors in the sensor network under a series of wind tunnel tests with different flight states (i.e., different angles of attack and different airflow velocities), we have developed a data-driven approach for identifying the flight state of this smart wing. We applied supervised learning models to establish the mapping from the feature space to the practical state space. Compared with previous study [2], we have successfully improved the identification accuracy with a airflow velocity resolution from originally 3 m/s to 0.5 m/s under the same angle of attack (AoA).</p><p>Collected from a series of wind tunnel tests with different flight states, the dataset explored in this study includes conditions of Angle of Attack from 0 to 15 degrees (incremental step of 5 degrees) and conditions of airflow velocity from 0 to 25 m/s (minimum incremental step of 0.5 m/s). 60,000 data points are collected from every piezoelectric sensor for each flight state. We perform data augmentation in the time domain, by splitting 60,000 data points into numerous segments as samples: 80% samples are used as training data, 10% are used as validation data and the 10% else are used as testing data with uniform distribution among each flight state.</p><p>Goal: minimize misclassification rate σ =1 σ ∈ 1( ≠ ො )</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Decision Tree</head><p>The Gini index:</p><formula xml:id="formula_0">= 1 = 1 Ƹ (1 − Ƹ ) Random Forest SVM Objective function: min 0 , , 1 2 2 + σ =1 subject to ( 0 + • ) ≥ 1 − for all = 1, … , , ≥ 0 for = 1, … , . Neural network Softmax: σ = σ =1</formula><p>Categorical cross-entropy:</p><formula xml:id="formula_1">= − 1 [ ln + ( 1 − ) ln(1 − )]</formula><p>Convolutional Neural Network Architecture:</p><p>1. Results of the decision tree algorithm indicate that mean and standard deviation of signal magnitudes and power spectrum are key features. When velocity interval becomes smaller, features from different sensors are required to guarantee higher classification performance. 2. Linear models work well with manually designed features. Feature selection improves linear separability of the data. 3. The Convolutional Neural Network shows comparable performance by feeding in only standardized signal segments. It is demonstrated that the Convolutional Neural Network can be trained to capture important features from the original signal directly.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>We are going to develop a regression model in the following 6 months. Discretized flight state has constrained application if the resolution is not sufficient, and high resolution requirement with limited data also poses difficulties for classification. We hope to train a regression model to provide an accurate estimate of the flight state, for example "AoA: 9.8°, airflow velocity: 24.3 m/s", which would be more of practical use than specifying an approximate range of AoA and velocity.</p><p>[1] F.P. Kopsaftopoulos, R. Nardari, Y.-H. Li, P. Wang, B. Ye, F.-K. Chang, "Experimental identification of structural dynamics and aeroelastic properties of a self-sensing smart composite wing," in Proceedings of the 10th International Workshop on Structural Health Monitoring, Stanford, CA, USA, 1-3 September 2015.</p><p>[2] X. Chen, F.P. Kopsaftopoulos, Q. Wu, H. Ren, F. In this problem, a large feature pool from both the time and frequency domains is created to obtain enough useful information from the raw signal data. We split total data into 80%, 10%, and 10% for training, validation, and test dataset respectively. There are 4,743 training samples, 522 validation samples and 522 test samples.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>-K. Chang, "Flight State Identification and Prediction of a Self-Sensing Wing via an Improved Feature Selection Method and Machine Learning Approaches," Sensors 2018, 18, 1379; doi:10.3390/s18051379</figDesc><table>Time Domain 
+Frequency Domain 
+
+In the time domain, 25 statistical features are 
+calculated including 12 commonly used features 
+and 13 un-dimensional features: t 1 -t 12 can reflect 
+the vibration amplitude and energy while t 13 -t 25 
+can represent the series distribution of the signal 
+in the time domain. 
+
+In the frequency domain (after Fast Fourier 
+Transform on the original time domain data), 13 
+statistical features are selected: f 1 can indicate 
+the vibration energy in the frequency domain. f 2-4 , 
+f 6 , f 10-13 can describe the convergence of the 
+spectrum power. f 5 , f 7-9 can show the position 
+change of the main frequency. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Smart Wing Sensing Flight State Identification DiagnosticsOne typical raw data from the piezoelectric sensor under the flight state (Angle of Attack: 5 degrees and Airflow Velocity: 25 m/s):</figDesc><table>…… 
+
+Sample 1 Sample 2 Sample 3 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

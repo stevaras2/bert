@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting electronic properties of materials Ilan Rosen (irosen) and Jason Qu (jayqu), with Jacob Marks (from CS229a)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Predicting electronic properties of materials Ilan Rosen (irosen) and Jason Qu (jayqu), with Jacob Marks (from CS229a)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note type="submission">(Dated: December 13, 2018)</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We investigate the power of a variety of learning algorithms and physically motivated feature encodings to predict bandgaps on the JARVIS-DFT 3d dataset using only unit cell composition and relative atomic positions. We find that, defying intuition, a one-hot vector encoding of elemental composition outperforms Coulomb matrix-based encodings for metal-nonmetal classification and nonmetal bandgap size regression. Our final pipeline consisted of a random forest classifier, which obtained an F1-score of 0.767, and a neural network regressor, which achieved a root mean squared error of 0.924 eV.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>The application of machine learning (ML) techniques for understanding materials is a burgeoning field of research that has already seen success in academic and commercial settings. For example, ML methods have been used to improve estimates of electron wavefunctions, from which a material's optical and elastic properties can be computed. Such research, called high-throughput computational materials design, aims to identify materials likely to exhibit properties of interest (e.g., metallic materials with exceptional tensile strength or superconducting ceramics). 1 Once the enormous space of possible materials is restricted to a few such candidates, each candidate is synthesized and tested in a laboratory.</p><p>A major challenge in applying ML to materials research is the vast space of possible materials. Further, materials with similar compositions may exhibit wildly different observable characteristics. Training data exists for only some of these materials. In addition, it is unclear a priori which features are important to predict observable properties. Thus, feature engineering will be crucial for the success of our project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 1. Energy landscape of silicon-the bandgap is shaded. 2</head><p>We will use ML to predict the electronic bandgap of inorganic solids. Roughly, the bandgap, shown in <ref type="figure">Fig. 1</ref>, is an electronic property of a material describing the energy required to add an electron to the material. Materials with no gap are conductors, whereas materials with large gaps are insulators. Materials with small gaps are called semiconductors and can be made to either insulate or conduct electricity by small changes to their chemistry or electrical environment.</p><p>Bandgaps are difficult to predict based on material compositions. For example, VO x can be either conducting or insulating depending on the value of x and the temperature. Yet obtaining accurate predictions of gaps is crucial to the development of improved electronic materials. Currently, the best technique to predict bandgaps is density functional theory (DFT). DFT, developed in 1964 by Hohenberg, Kohn, and Sham, makes ab initio (from first principles) calculations of material properties, meaning it uses no phenomenological parameters. <ref type="bibr">3,</ref><ref type="bibr">4</ref> It is of the best computational tools for the prediction of material properties, but is extremely computational expensive. <ref type="bibr">5</ref> Here, we employ ML to overcome the computational limitations of DFT. Our objective is to develop a learning algorithm to provide fast and accurate predictions of electronic bandgaps, bypassing the need for expensive or inaccurate DFT computations. Our model will make predictions based on the elemental compositions and crystal structures of materials.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORKS</head><p>Multiple efforts have been made to predict electronic properties with ML. These works motivated our use of the Coulomb Matrix as a feature encoding, 6,7 and our choice of root mean squared error (RMSE) as the error metric against which to optimize hyper-parameters on our validation set. <ref type="bibr" target="#b3">8</ref> While previous works have predicted bandgaps using ML, these studies either considered a particular type of material (such as organic compounds or particular crystalline structures) or used various additional electronic properties as input features, reducing their real-world utility. <ref type="bibr" target="#b4">[9]</ref><ref type="bibr" target="#b5">[10]</ref><ref type="bibr" target="#b6">[11]</ref> Our project approaches the broader task of predicting gap size across material classes, and without additional electronic property data. As such, we anticipate higher error rates than in other works, but a more powerful and broadly applicable model overall.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET</head><p>Our model is developed using JARVIS (Joint Automated Repository for Various Integrated Systems), a database of materials properties that are computationally generated using DFT. <ref type="bibr" target="#b7">12</ref> Of the 25,923 three-dimensional inorganic solids in the database, 23,455 list the calculated bandgap. While metals truly have zero (or negligible) gap, every material in the JARVIS dataset was labeled with a finite, albeit often quite small, gap-an error associated with DFT calculations. In literature, the smallest known semiconductor bandgap is 0.015 eV, so we set our cutoff at 0.01 eV. Using this cutoff, the 3d dataset contained 14752 nonmetals and 8703 metals. In the dataset, certain elements occur more frequently than others, and different compounds contained different numbers of atoms per unit cell. During our experiments, we examined the effect of limiting our dataset to compounds with elements that occurred in at least m training examples, as well as limiting to compounds with N or fewer sites per unit cell.</p><p>The full dataset was randomly partitioned into 60% and 20% training and development splits, for developing the models, and a 20% testing split, that is withheld and used to benchmark the algorithm's performance. The large sizes of the development and test splits are necessary to adequately sample across the huge variety of material types.</p><p>It is crucial to develop a representation of the crystal structure information that simultaneously preserves the vital physics of the problem and serves as an efficient set of features for the machine learning algorithm. We considered a number of feature representations:</p><p>One-hot vector: The simplest encoding we propose is a one-hot vector representing a material's elemental composition. The dataset cumulatively uses 94 elements, so, in this representation, the n th element of a length-94 vector contains the fraction of the unit cell atoms comprised of element number n. For instance, the (fictional) compound H 1 Al 2 is represented as the vector (1/3, 0, 2/3, 0, 0, ...) since H and Al are the element numbers one and three, respectively. This representation of features has the advantage that a neural network can learn about the properties of each element independently.</p><p>However, the one-hot representation has numerous disadvantages. It lacks any structural data about the crystal, which is physically vital-e.g., diamond is an insulator while graphite is a conductor, although both are crystals of pure carbon. Furthermore, the one-hot vector is a 94 dimensional vector; such a large feature vector can result in a high-variance model. Finally, heavy elements, such as Eu, are rare and only appear a few times in the training set. Therefore, the model will be under-trained with respect to a large proportion of the features, resulting in a high-variance model.</p><p>Group one-hot vector: Rather than introducing a new feature for each of the 94 elements, we propose a group onehot encoding, which uses an 18 dimensional one-hot vector having one component for each group in the periodic table. Much of the relevant physics to material properties is contained in the number of valence electrons of elements, a common quantity among elements of like group. At the potential expense of increased bias, this representation should reduce the model's variance relative to the one-hot encoding, as it associates rare elements with common elements of the same group.</p><p>Coulomb matrix: To create a more complex feature set, we would like to add structural information about the crystals. The real-space coordinates of the atomic positions, however, are degenerate in choice of coordinate and therefore are themselves a poor set of features. The Coulomb matrix is a coordinate invariant representation of this information. The Coulomb matrix expresses the potential energy between pairs of atoms in the crystal, which depends on their pairwise distance and atomic numbers. The Coulomb matrix C is a symmetric matrix defined element-wise as</p><formula xml:id="formula_0">C ii = 1 2 Z 2.4 i , C ij = Z i Z j |r i − r j | for i = j,</formula><p>where Z i is the nuclear charge on the ith lattice site and r i is its position 6 . The Coulomb matrix, however, lacks a specific information of the crystal's constituent elements and only describes the atomic charges. Therefore, the neural net cannot learn properties associated with individual elements (for instance, Ar and K have very different electronic properties, despite their charges Z differing only by 1). A second drawback of the Coulomb matrix is that its size is the number of lattice sites in the compound, which varies between compounds. We assuage the latter issue by choosing all Coulomb matrices to be the a certain size N ; smaller Coulomb matrices are padded with zeros and crystals with too many atomic sites are disregarded.</p><p>As the Coulomb matrix is symmetric, we include only its upper triangular entries as features, reducing the number of features from N to (N + 1)/2. The upper triangular components are reshaped into a vector-valued feature.</p><p>Coulomb matrix Extensions: While the Coulomb matrix is invariant in the choice of real-space coordinates, it is not invariant under permutations of its rows and columns, although such permutations do not alter the material represented by the matrix. We employed two methods to alleviate Finally, to present our models with the maximum amount of information, we used an encoding including both the Coulomb matrix and the one-hot representations atom's groups, as well as an encoding including both the singular values of the Coulomb matrix and the one-hot representation of each element.</p><p>To visualize the dataset, we performed principle component analysis (PCA) on the dataset under the element onehot feature encoding <ref type="figure" target="#fig_1">(Fig. 3)</ref>. This analysis reveals an underlying structure to the dataset; this structure, however, is uncorrelated with the metallicity of the examples. We also visualized the group one-hot encoding using t-distributed stochastic neighbor embedding (tSNE). The resulting plots partially differentiated materials with gaps less than versus greater than 0.1 eV, but did not distinguish materials when the cutoff was set to 0.01 eV-the threshold we selected for metal/nonmetal classification, based on literature. These observations affirm our expectation of the difficulty of classifying metallicity. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head><p>We developed a pipeline to transform the inputs to our model, the crystal structures of materials, into useful predictions. The crystal structures are first encoded into appropriate feature representations. Next, a classification stage uses these features to predict which materials are metals and which are nonmetals. The predicted nonmetals are then sent to a regression stage, which predicts their bandgap.</p><p>The classification and regression learning models were trained on the training set and optimized using the development set. Optimization included testing different learning algorithms on each feature encoding, and then tuning hyperparameters on the best-performing encoding-algorithm combinations. To prohibit the regression stage from being biased on the performance of the classification stage, the regression stage was trained and developed on the set of true nonmetals, not the set of predicted nonmetals (the latter inevitably includes misclassified metals and omits misclassified nonmetals). The performance of the full pipeline was characterized using the withheld testing set.</p><p>We developed code to parse and encode the dataset in Python. We used a combination of self-develop machine learning algorithm implementations, written in Python, and methods from Python's scikit-learn package. We classified materials as metals or nonmetals classification using logistic regression, neural networks (NNs), and random forest (RF) classifiers. We predicted the size of the gap using linear regression, NNs, and RF regressors. We describe these models, taking m as the number of training examples, n as the number of input features, X ∈ R m×n+1 as a matrix of input features, and y ∈ R m as the output vector of bandgap sizes. θ denotes parameters that the model learns, and takes different sizes in the different algorithms. J represents the cost function, and λ is a regularization parameter that prevents the models from over-fitting the training set by enforcing that the magnitudes of the learned parameters remain small.</p><p>Linear Regression: The hypothesis is linear in the input features: h θ (X) = Xθ. The cost function is J(θ) = 1 2m (Xθ− y) T (Xθ−y)+ λ 2m θ 2 1 , where θ ∈ R n+1 is a vector of parameters that the model learns, with the first component being a bias term, and θ 1 denoting a vector of all the components of θ excluding the bias term.</p><p>Logistic Regression: The hypothesis is now given by a sigmoid, which introduces nonlinearity: h θ (X) = y) log(1 − h θ (X)) + λ 2m θ 2 1 . NN: Neural Networks are nonlinear models that can approximate high variance data. They can be used for either classification or regression, depending on the loss function. The number of hidden layers, number of neurons per layer, and the activation function are all model choices. For binary classification, the cost is given by</p><formula xml:id="formula_1">J(θ) = m i=1 − 1 m y (i) logŷ (i) +(1−y (i) ) log (1 −ŷ (i) ))+ λ 2m θ 2 1</formula><p>, wherê y = a 2 is the output of the NN. For real-valued regression, the cost function is given by J(θ) = 1 2m ŷ (i) − y (i) ) 2 + λ 2m θ 2 1 . We used neurons with rectified linear unit (ReLU) activation a = g(z) = max(0, z). The output neuron of the NN classifier is a sigmoid, and that of the NN regressor is a = g(z) = z.</p><p>Random forests: RFs are averages across independently grown trees and are less prone to over-fitting than individual trees. Decision trees are classifiers that repeatedly partition the data into branches chosen to minimize the Gini impurity I P = 1 − c=0,1 p 2 c where p c is the probability that an example in the branch is of class c. RF classifiers take the mode over many individual trees. Regression trees choose branches to minimize the total variance within branches I V = 1 2|S| i,j∈S (x i − x j ) 2 . RF regressors take the mean over many individual trees. The parameter "max features" determines the number of random features considered when determining each split.</p><p>Metrics: Along with the misclassification error, we quantified the performance of the classifier by the area under the receiver operator characteristic (ROC). The ROC displays true positive rate versus the false positive rate as the classification threshold is varied. We also considered the F1-score F 1 = 2T P 2T P +F P +T N where T(F)P(N) represents the number of true (false) positives (negatives). We quantified the performance of the regressor using the median normalized error and the RMSE </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS</head><p>All learning models for the classification and regression problems were tested on all feature encodings <ref type="figure">(Fig. 5)</ref>. The element one-hot encoding consistently outperformed all other encodings. A RF classifier was chosen for the first stage, and a NN regressor, for the second. Optimal hyperparameters were chosen for both <ref type="figure">(Fig. 6)</ref>. The RF classifer overfit the training set as the number of trees increased, though its validation accuracy did not decrease. We ultimately chose a RF classifier with 200 trees and 8 maximum features per split, and a single layer NN regressor with width 10, ReLU activation, learning rate 1e − 3, and regularization parameter λ = 0.01. The element one-hot encoding was used as the feature vector for both stages.</p><p>Having finalized the full prediction pipeline, we characterized its performance on the test set <ref type="figure" target="#fig_5">(Fig. 7)</ref>. The RF classifier achieved a misclassification accuracy of 23.2% and an F1 score of 0.767. The regression stage (tested on the set of true AND predicted nonmetals) achieved an RMSE of 0.924 eV, a median error of 0.364, and an R 2 score of 0.774; its performance is visualized in <ref type="figure" target="#fig_5">Fig. 7(c)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. DISCUSSION</head><p>The learning curve in <ref type="figure">Fig. 6(b)</ref> illustrates that the classifier performs substantially better on the training set than the validation set, indicating high classification variance. This suggests that the model could be improved by reducing the number of input features, or by increasing the number of training examples. The group one-hot encoding proved to not be an effective reduction of the feature set. A feature set generated by applying a dimensionality reduction algorithm such as PCA to the element one-hot vector may perform better. <ref type="figure">Fig. 6(d)</ref> suggests that the error in the regression stage is dominated by bias. Further effort towards feature engineering will mitigate this issue.</p><p>Both the classifier and the regressor would benefit from a larger training set. The augmented Coulomb matrix encoding increased the number of training examples by a factor of 10, but resulted in no performance benefit at a high computational expense. Incorporating additional DFT databases into the training dataset may improve our predictions.</p><p>In literature, 0.01 eV is generally used as the cutoff between metals and nonmetals. However, nearly half of the nonmetals in the dataset had gaps between 0.01 eV and 0.1 eV <ref type="figure">(Fig. 1)</ref>. Many of these materials are actually metals that DFT has inaccurately characterized. Changing the cutoff to 0.1 eV increases the classification accuracy of our model to 89.4%. In addition, the regressor achieves a substantially smaller median normalized error of 0.235 (the RMSE is essentially unaffected).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONCLUSION</head><p>Our model's accuracy is sufficient to provide useful predictions for high-throughput materials screening. The leading performance of the element one-hot encoding is surprising as it includes no information about materials' crystal structures. The group one-hot encoding performed well at classification but poorly at regression. We explain this discrepancy by noting that the valence of an atom (which is given by it's group) is important for predicting metallicity, but that the value of the bandgap depends on electronic potentials, information that the group one-hot encoding lacks. Adding the singular values of the Coulomb matrix as features supplies this information, and correspondingly increases the regressor's accuracy. Much of our model's error came from errors in the training dataset for incorrectly labeled examples with gaps between 0.01 eV and 0.1 eV. To correct for this issue, we propose to augment the DFT-generated dataset with experimentally obtained values for small bandgap semiconductors; these examples would be heavily weighted in the training algorithm.</p><p>We propose future work to add features representing element's electronic attributes, such as the orbital character of their valence electrons, to increase the complexity of the features. Further, to better represent structural information, we propose to use a unsupervised learning (such as the mixture of Gaussians model) to transform the atomic positions into categories of crystal structures based on their symmetries. Including these features will allow a neural network to discriminate between categories of materials.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. CONTRIBUTIONS</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>FIG. 2 .</head><label>2</label><figDesc>Characteristics of our full DFT generated dataset. (a) Histogram of bandgap sizes (eV) for nonmetals. (b) Cumulative distribution function of compounds vs. maximum number of atoms per unit cell. (c) Histogram of element occurrences in all compounds.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>FIG. 3 .</head><label>3</label><figDesc>Visualizations of training data (a) First two principle components of element one-hot encoding. (b) tSNE of group one-hot encoding with gap size cutoff 0.01 eV. (c) tSNE of group one-hot encoding with gap size cutoff 0.1 eV.this issue. First, we used the singular values of the Coulomb matrix as features, listed in order of decreasing value. The singular values are invariant to permutations of row-column pairs. While they do not contain all of the information from the Coulomb matrix, we expect training on the singular val- ues to give more consistent results. Second, used Coulomb matrices as features directly, but augmented the training set with the Coulomb matrices of training examples under ran- dom permutations of row-column pairs. This method pre- serves all the information contained in the original Coulomb matrix, at the expense of a dramatically increased memory and computation power requirement.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>FIG. 4 .</head><label>4</label><figDesc>Pipeline for model predictions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>FIG. 5 .FIG. 6 .</head><label>56</label><figDesc>applied element-wise. h θ ∈ [0, 1], with examples classified as positive (ŷ = 1) if h θ ≥ 0.5 and negative (ŷ = 0) other- wise. The cost function is J(θ) = − 1 m y log(h θ (X)) + (1 − 4 (a) (b) FIG. 5. Validation performances of the different learning algorithms using different input feature encodings. (a) Metal/nonmetal classification. The error metrics are misclassification error and the error under the receiver operating curve. (b) Regression to predict the bandgap value. The error metrics are RMSE and median normalized error. NNs one layer of width 10; RFs have 200 trees. The best performing models, which are later more carefully tuned, are highlighted. (a) (b) (c) (d) FIG. 6. (a) Hyperparameter tuning for the RF classifier. The misclassification error is shown versus the number of trees. (b) Learning curve of the RF classifier. The F1 score is shown versus the number of training examples. (c) Hyperparameter tuning for the NN regressor. The RMSE is shown versus the layer width. (d) Learning curves of the NN regressor. The R 2 score is shown the number of training examples, respectively. (b) and (d) The training scores (red) and cross validation (CV) scores (green) curves are shown. The 5-fold CV score is the mean of 100 splitting iterations. Shading indicates one standard deviation of the score mean.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>y i −ŷ i ), whereŷ is the pre- dicted value of the bandgap. We also considered the R 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>FIG. 7 .</head><label>7</label><figDesc>(a) Truth table of the RF classifier's predictions on the test set. (b) The receiver operating characteristic of the RF classifier. (c) True vs. predicted gap size from the NN regressor for 100 randomly selected examples from the training and test sets.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">S. Curtarolo, G. L. W. Hart, M. B. Nardelli, N. Mingo, S. Sanvito, and O. Levy, Nature Materials 12, 191 EP (2013). 2 I. Delhi, "Fundamental concepts of semiconductors," (2013). 3 P. Hohenberg and W. Kohn, Phys. Rev. 136, B864 (1964).4 W. Kohn and L. J. Sham, Phys. Rev. 140, A1133 (1965). 5 A. Parrill and K. Lipkowitz, Reviews in Computational Chemistry, Vol. 31 (Wiley, 2018).</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>All authors contributed equally to all components of this work.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">T</forename><surname>Schütt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Glawe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Brockherde</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Sanna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">R</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">K U</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Gross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. B</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page">205118</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Rupp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tkatchenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-R</forename><surname>Müller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><forename type="middle">A</forename><surname>Von Lilienfeld</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. Lett</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page">58301</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">C</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Satsangi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vaish</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Mizuseki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-R</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+		<idno type="doi">10.1021/acs.chemmater.8b00686</idno>
+		<ptr target="https://doi.org/10.1021/acs.chemmater.8b00686" />
+	</analytic>
+	<monogr>
+		<title level="j">Chemistry of Materials</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Pilania</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mannodi-Kanakkithodi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">P</forename><surname>Uberuaga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Ramprasad</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Gubernatis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Lookman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+	<note>EP</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhuo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mansouri Tehrani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Brgoch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry Letters</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">1668</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">C</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Satsangi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vaish</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Mizuseki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-R</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">K</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chemistry of Materials, Chemistry of Materials</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page">4031</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Choudhary</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Kalish</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Beams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Tavazza</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">5179</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Gene Function Using SVMs and Bayesian Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laura</forename><surname>Miron</surname></persName>
+							<email>lmiron@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benoit</forename><surname>Pit--Claudel</surname></persName>
+						</author>
+						<title level="a" type="main">Predicting Gene Function Using SVMs and Bayesian Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>• Before running the SVM on all go nodes, we perform a parameter search on the most represented GO node (GO:0045944, positive regulation of transcription by RNA polymerase II) • Below, graphs comparing kernels (linear and rbf with different γ values) and penalty parameters C of the error term. • Very good accuracy to be expected since the proportion of positive examples for each classifier is very low • Most important metric should be recall: a false positive should be compensated by the Bayesian network, whereas the false negative could have more impact • Average accuracy for all nodes over 97.7%</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction / Related Work Bayesian Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features Conclusions</head><p>• Determining the function of genes experimentally is often costly in time and money.</p><p>• Machine learning has been used to predict gene function, using features such as sequence, pairwise interaction, histone markers, and more.</p><p>• Most previous work handles protein functions independently, ignoring the structure between functions.</p><p>• Our work trains svm classifiers on individual GO nodes, then feeds the output into a Bayesian network representing the relationship between nodes.</p><p>• Our work aims at reproducing and improving on a method developed by Barutcuoglu &amp; al <ref type="bibr" target="#b0">[1]</ref>. → Focus on Saccharomyces cerevisiae</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Labels</head><p>• Boolean membership in each of 95 selected Gene Ontology (GO) classes <ref type="bibr" target="#b1">[3]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pairwise Interactions</head><p>• BioGRID protein interaction data for 5395 proteins <ref type="bibr" target="#b2">[4]</ref>, • 5394 Boolean features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Microarray Expression Levels</head><p>• Microarray gene expression levels for same proteins obtained through <ref type="bibr" target="#b3">[5]</ref>, • Microarray data has one or more missing columns for each example, which we complete using KNN, • 161 float features --&gt; 5555 features total, mix of floats and Booleans.</p><p>• Due to bugs in the library pgmpy, we are currently unable to make inferences on the full net of 95 nodes • We predict on the nodes shown in <ref type="figure">fig.3</ref>, and, as shown in <ref type="figure">fig. 4</ref>, obtain higher accuracy than the svm alone in all cases</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVM Results</head><p>• Improved accuracy on invidual svm classifiers compared to Barutcuoglu &amp; al <ref type="bibr" target="#b0">[1]</ref> • Where Barutcuoglu &amp; al had better results with C-&gt;+∞ and using an rbf kernel, we obtained better results with a linear kernel. • In our final classifier, we train one 10-Ensemble SVM per gene ontology node, using a linear kernel and C = 1.0 • One challenge in gene prediction is the small number of examples overall, and in particular the small number of positive examples for each GO node; we therefore use bootstrapped samples with replacement to train the classifiers</p><p>•We create a Bayes net where ŷi represents the svm prediction for label i, and y i represented the true value for membership in i •P(ŷi | y i ) is calculated during svm training using maximum likelihood estimation •P(y i O| ch(y i ) ) is inferred by counting from the training labels •Finally, for a given training example/ assignment to all ŷi , we use Bayesian exact inference to find the most likely assignment to all y i </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•Figure 1 .</head><label>1</label><figDesc>Refinements in GO classification between 2006 and today might explain better results.• Their bootstrapping procedure is effective for dealing with very few positive examples and possibly uncertain examples • Useful for newly discovered species where little data is availableFigure 1. Saccharoyces cerevisiae (yeast) [2]</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 . 0045944 Figure 3 .</head><label>200459443</label><figDesc>Results of parameter search on linear kernel and GO:0045944 Figure 3. Hierarchical relationship between GO nodes, Barutcuoglu, et al.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Hierarchical multi-label prediction of gene function</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Zafer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="830" to="836" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Gene ontology: tool for the unification of biology. The Gene Ontology Consortium</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Ashburner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Genet</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="25" to="34" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">BioGRID: a general repository for interaction datasets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Stark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="535" to="544" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Ncbi geo: archive for functional genomics data sets-update</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Nbci Gene Expression</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tanya</forename><surname>Omnibus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Barrett</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="991" to="995" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>Figure 4. Individual svm accuracy vs. Bayes net accuracy for selected GO nodes Figure 5. Bayes net structure [Barutcuoglu</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

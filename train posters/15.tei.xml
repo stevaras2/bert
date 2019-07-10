@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">End-to-end Text to Speech Synthesis Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiao</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">[</forename></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Yuxuan</roleName><forename type="first">]</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">J</forename><surname>Skerry-Ryan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daisy</forename><surname>Stanton</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yonghui</forename><surname>Wu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><forename type="middle">J</forename><surname>Weiss</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Navdeep</forename><surname>Jaitly</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zongheng</forename><surname>Yang</surname></persName>
+						</author>
+						<title level="a" type="main">End-to-end Text to Speech Synthesis Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>(xiao1105), Yahan Yang(yangy96), Ye Li(liye5)</p><p>• Motivation: One of the most challenging problem in audio/music processing is text-to-speech synthesis. With rapid development of deep learning, researchers invent many end-to-end algorithms for real life problems, which leads more innovative methods in solving speech synthesis problem.</p><p>• Problem definition: Generate audio file from text input.</p><p>• Approach: Combine seq2seq model with attention mechanism. Also try simple models as baseline.</p><p>• Challenge: This problem require complicated and welldesigned model to generate audio reasonable files.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>• LJ Speech Dataset. This is a public domain speech dataset consisting of 13,100 short audio clips of a single speaker reading passages from 7 non-fiction books.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Text:</head><p>• CMU Dictionary. Every word has a potential of being transformed into phonemes. Build a symbols dictionary with phonemes and alphabet. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance &amp; Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocess of dataset</head><p>Reference SVR model The program generates a SVR for each timestep, so the total number of SVR in our model equals to the number of time step after we preprocess data. We tried a linear kernel and a polynomial kernel for our SVM models. In each time step, we have a support vector multi-regressor for training each input text matrix and an array of spectrum output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Network model</head><p>To linearize the output, the 2D array was reshaped to a 1D array first, and treat the long 1D array as the output predictions for this model. The input layer is simply the entire vector of sequences, and the hidden layer has the same number of neurons as input length, which is fully connected to the inputs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simple Neural Network</head><p>The wave file generated from this simple neural network does not sounds like consistent speech. It was just a random combination of phonemes and words. Although through the training process, the loss function can be minimized down to relatively low magnitude, when comes to the dev/test data, the result sounds not quite reasonable.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Seq-2-seq model with attention</head><p>The wave file generated from this model sounds like human speech. Even though after training, the loss function can be minimized down to the magnitude of 10e-3, when comes to the dev/test data, the result sounds not quite reasonable.</p><p>• After the system generates output spectrum matrix from prediction, we utilize inverse FIR filter to transfer spectrum to audio signal and save the wave into byte with the method provided in spicy library.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Audio</head><p>• FIR filter. A finite impulse response (FIR) filter is a filter structure that can be used to implement almost any sort of frequency response digitally. It can smooth noise.</p><p>• Short-time Fourier transform. STFT, is a Fourierrelated transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time Seq-2-seq model with attention Input data was first put into embedding layer to align the dimension with output wave matrix. And then output of embedding layer was feed into bidirectional LSTM encoder model. The hidden state and cell state of attention bidirectional LSTM model were shared with decoder model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Word Embedding Model</head><p>words or phrases from the vocabulary are mapped to vectors of real numbers. We prepend this embedding layer to each of our models.</p><p>SVR NN Seq-2-seq MOS 1 1.7 2.5</p><p>• We put our sample wav files in the web (https://www.xiaowang.me/cs229).</p><p>• Evaluation of our machine learning algorithm is depending on the naturalness, which is given by a group of native speakers at Stanford University and calculate the mean opinion score(MOS) as a standard.</p><p>• After asking 10 Stanford students, we obtained the mean score of (1.0, 1.7, 2.5) for these three models, respectively.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Motivation: One of the most challenging problem in audio/music processing is text-to-speech synthesis. With rapid development of deep learning, researchers invent many end-to-end algorithms for real life problems, which leads more innovative methods in solving speech synthesis problem.</p><p>• Problem definition: Generate audio file from text input.</p><p>• Approach: Combine seq2seq model with attention mechanism. Also try simple models as baseline.</p><p>• Challenge: This problem require complicated and welldesigned model to generate audio reasonable files.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>• LJ Speech Dataset. This is a public domain speech dataset consisting of 13,100 short audio clips of a single speaker reading passages from 7 non-fiction books.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Text:</head><p>• CMU Dictionary. Every word has a potential of being transformed into phonemes. Build a symbols dictionary with phonemes and alphabet. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance &amp; Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocess of dataset</head><p>Reference SVR model The program generates a SVR for each timestep, so the total number of SVR in our model equals to the number of time step after we preprocess data. We tried a linear kernel and a polynomial kernel for our SVM models. In each time step, we have a support vector multi-regressor for training each input text matrix and an array of spectrum output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Network model</head><p>To linearize the output, the 2D array was reshaped to a 1D array first, and treat the long 1D array as the output predictions for this model. The input layer is simply the entire vector of sequences, and the hidden layer has the same number of neurons as input length, which is fully connected to the inputs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simple Neural Network</head><p>The wave file generated from this simple neural network does not sounds like consistent speech. It was just a random combination of phonemes and words. Although through the training process, the loss function can be minimized down to relatively low magnitude, when comes to the dev/test data, the result sounds not quite reasonable.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Seq-2-seq model with attention</head><p>The wave file generated from this model sounds like human speech. Even though after training, the loss function can be minimized down to the magnitude of 10e-3, when comes to the dev/test data, the result sounds not quite reasonable.</p><p>• After the system generates output spectrum matrix from prediction, we utilize inverse FIR filter to transfer spectrum to audio signal and save the wave into byte with the method provided in spicy library.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Audio</head><p>• FIR filter. A finite impulse response (FIR) filter is a filter structure that can be used to implement almost any sort of frequency response digitally. It can smooth noise.</p><p>• Short-time Fourier transform. STFT, is a Fourierrelated transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time Seq-2-seq model with attention Input data was first put into embedding layer to align the dimension with output wave matrix. And then output of embedding layer was feed into bidirectional LSTM encoder model. The hidden state and cell state of attention bidirectional LSTM model were shared with decoder model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Word Embedding Model</head><p>words or phrases from the vocabulary are mapped to vectors of real numbers. We prepend this embedding layer to each of our models.</p><p>SVR NN Seq-2-seq MOS 1 1.7 2.5</p><p>• We put our sample wav files in the web (https://www.xiaowang.me/cs229).</p><p>• Evaluation of our machine learning algorithm is depending on the naturalness, which is given by a group of native speakers at Stanford University and calculate the mean opinion score(MOS) as a standard.</p><p>• After asking 10 Stanford students, we obtained the mean score of (1.0, 1.7, 2.5) for these three models, respectively. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Postprocess of dataset</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVR model</head><p>The wave file generated from our SVR model mainly consisted of disjoint words, so that it does not sound like consistent human speech. One problem of SVR model is that the training time is too long, since the model works with many separate models and a number of multiregressors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

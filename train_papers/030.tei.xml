@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Dynamic Throttle Estimation by Machine Learning from Professionals</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nathan</forename><surname>Spielberg</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Alsterda</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Dynamic Throttle Estimation by Machine Learning from Professionals</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>To increase the capabilities of an automated Audi TTS, we applied learning algorithms to experimental data from both autonomously and professionally driven test runs to determine transient engine behavior. Data was collected at Thunderhill Raceway by sampling the vehicle's dynamic states over the course of testing. Sparse PCA was then performed to prune the feature set and remove redundant data. Learning transient behavior may increase the control system's performance in tracking a desired velocity profile, compared to the current engine mapping derived under steady state assumptions. To learn this transient behavior, Nonlinear Autoregressive Neural Networks, Multi-layer Perceptron Networks, and Random Forests are used, contrasted, and validated. Due to the highly nonlinear nature of Neural Networks, small perturbations in input states result in physically impossible and undesired predictions; thus, Random Forests prove to be a more robust predictor. Similar unpredictable performance was shown when implementing the multilayer perceptron regressor, which is not included for lack of space. Ultimately, the Random Forest method is chosen to learn the model by estimating the throttle commands required for a given response. The random forest model is verified by predicting race driver data given the current and past vehicle states during testing. Predictions were made with a MSE of 1.8% 2 and within a 90% confidence bound of ± 2.1%. Additional validation through model inversion provided little insight into performance of the forest, because of correlation with measured velocity and acceleration states. Immediate next steps consist of optimizing the performance of the forest for real time online predictions, and implementation on the vehicle for experimental validation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The Dynamic Design Lab at Stanford University performs vehicle automation research on an Audi TTS: "Shelley." Shelley work focuses on following optimal paths and speed profiles at the limits of friction to achieve lap times competitive with professional racecar drivers. To minimize lap times, the vehicle's controllers must follow speed profiles, as shown in <ref type="figure">Fig. 1</ref>. This requires the controllers' physical models of vehicle dynamics to closely match reality.</p><p>Shelley's longitudinal controller operates in a feedback-feedforward framework to follow desired speed. Part of the controller receives a desired longitudinal acceleration and predicts the throttle needed to achieve it. Its current form is a rudimentary lookup table augmented by the engine's gear and RPM state, shown in <ref type="figure">Fig. 2</ref>. This work aims to replace the table with a machine-learned function incorporating many more vehicle and engine states, with delay when appropriate <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The Dynamic Design Lab at Stanford University performs vehicle automation research on an Audi TTS: "Shelley." Shelley work focuses on following optimal paths and speed profiles at the limits of friction to achieve lap times competitive with professional racecar drivers. To minimize lap times, the vehicle's controllers must follow speed profiles, as shown in <ref type="figure">Fig. 1</ref>. This requires the controllers' physical models of vehicle dynamics to closely match reality.</p><p>Shelley's longitudinal controller operates in a feedback-feedforward framework to follow desired speed. Part of the controller receives a desired longitudinal acceleration and predicts the throttle needed to achieve it. Its current form is a rudimentary lookup table augmented by the engine's gear and RPM state, shown in <ref type="figure">Fig. 2</ref>. This work aims to replace the table with a machine-learned function incorporating many more vehicle and engine states, with delay when appropriate <ref type="bibr" target="#b0">[1]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem Representation</head><p>The Dynamic Design Lab has recorded several years of Shelley's data sets, consisting of both human and autonomously driven experiments. We selected a small subset of these data: two autonomous and one professionally driven sets to train our models, and one professionally driven set for validation. In total, the sets include 58,278 chronological feature-target pairs, of which 28% form the validation set.</p><p>These data consist of vehicle and engine states captured from Shelley's onboard sensors at a rate of 200Hz. The throttle, or pedal percentage actuated at each time step formed our target set, Y. Twelve variables that might intuitively relate to throttle compose our feature set, X. Then, to capture the time dependent dynamics of the system, the feature set was transformed to incorporate delay; each example's feature set was augmented with the features of the five preceding examples to form Φ(X). Finally, an estimation function was learned to predict the throttle paired to each time step's features, shown in <ref type="figure" target="#fig_1">Fig. 3</ref>.</p><p>Additionally, we performed Sparse Principal Component Analysis (SPCA) on our datasets to investigate to the independence and potential pruning of features. Unnecessary features may slow model computation, wasting precious µseconds in the real time environment we hope to embed our model. SPCA is similar to traditional PCA, but modified to limit the number of features incorporated into each PC:</p><formula xml:id="formula_0">X = UΣV T X = Feature Set Matrix U = Non-Unitary Basis Σ = Singular Values V = Loading Matrix</formula><p>Traditional PCA is not as helpful to identify feature correlation, because each PC will be typically built from components of every feature. After modification however, SPCA concisely builds each PC from only those features most correlated to one another <ref type="bibr" target="#b7">[7]</ref>. We chose the optimal number of features by experimentally increasing the SPCA feature limit. Three was deemed optimal for our data because additional components contributed less than 10% to the loading vectors of ranking PCs. Lateral Acceleration, Yaw Rate, and Steering Angle were found to comprise the highest scoring PC with similar weights; thus these features were suspected to be redundant. A segment of their time series is shown in <ref type="figure">Fig. 4</ref> which illustrates similarity in signal content. Removing Yaw Rate and Steering Angle from our feature set resulted in a negligible change in performance, and were not included in the methods and results which follow. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods / Results</head><p>We first attempted to train a neural network to predict throttle percentage. MATLAB's recurrent Nonlinear Autoregressive Neural Network with Exogenous Input (NARX) was chosen due to its design for time-series data. The network is autoregressive because past target values Y are fed into the model as features in parallel to exogenous inputs X. During training, the algorithm is run in open loop, meaning the observed target values are used as past throttle states, shown in <ref type="figure" target="#fig_2">Fig. 5a</ref>. In validation however, the observed throttle is withheld, and past throttle predictions are input to the model in a closed loop fashion, shown in <ref type="figure">Fig. 5b</ref>. Parameters were updated through Bayesian Regularization Backpropagation (BR), which minimizes a combination of squared errors and weights to produce a network that generalizes well <ref type="bibr" target="#b5">[6]</ref>. MATLAB recommended BR over Levenberg-Marquardt and Scaled Conjugate Gradient methods for our noisy data, and experimental validation of performance confirmed this choice <ref type="bibr" target="#b3">[4]</ref>.</p><p>NARX network design parameters include the number of hidden neurons and number of delay states. In <ref type="figure">Fig. 6</ref>, a learning surface demonstrates that increasing either parameter increased network performance. Conceptually, more neurons may increase the network's complexity, while additional delay states may allow the network to appreciate more time dependent dynamics. Beyond the measurements shown, computation became prohibitively time consuming. 12 hidden neurons and 5 delays states, which minimize the MSE in <ref type="figure">Fig. 6</ref>, were used to build the network responsible for the following results.</p><p>The NARX network's training and test performance is illustrated in <ref type="figure">Fig. 7</ref>. In training, the network achieved a MSE of 1.5% 2 . Validation testing was performed using the additional professional driver set. On this new data, results were not consistent, sometimes yielding  physically impossible throttle predictions as shown in <ref type="figure">Fig. 7b</ref>. In the high-liability field of human transportation, the unstable characteristics shown discredit the NARX network; beyond this point our focus narrowed to the Random Forest algorithm. Using Scikit-Learn, we were also able to apply a Random Forest algorithm to estimate the throttle percentage of the vehicle over the course of our time-series testing data <ref type="bibr" target="#b4">[5]</ref>. A random forest is an ensemble method that uses decision trees for regression problems. The randomness of the forest is exhibited by random features that are selected for nodes in decision making (attribute bagging) and that random subsets of the data are used in training each tree (bagging) <ref type="bibr" target="#b1">[2]</ref>.</p><p>The forest is constructed using the same training data as the NARX network, consisting of both autonomous and professionally driven tests. To let the forest predict any output value in the training set, we did not limit the number of terminal leaves that each tree could have. In future optimization for computational speed, this feature of the model may be necessary. The feature set comprising the data consists of the vehicle inputs plus the time delayed feature transformation of these inputs as shown in <ref type="figure" target="#fig_1">Fig. 3</ref>. If the feature set is not time delayed, the MSE of the model reaches over 31% 2 , as shown in <ref type="figure">Fig. 8</ref>, which was unacceptable. In training the forest, actual past throttle states are used from training data, whereas in testing past throttle values are delayed states of the previous predictions, in a similar closed loop fashion to the NARX network.</p><p>Model validation was performed using a separately recorded data set of a professional driver as shown in <ref type="figure" target="#fig_4">Fig. 9a</ref>. The current and time delayed vehicle states are then used in the closed loop forest model to estimate the driver's throttle percentage over the course of the testing data. Additional validation was attempted using model inversion, by predicting the acceleration during the driver's test using previously predicted throttle percentages. This validation proved unsuccessful, as the error was less than the original forward model. We hypothesize acceleration was predicted primarily from velocity and not previously predicted throttle percentages.</p><p>In tuning the forest for best testing performance and lowest generalization error, number of trees were experimentally varied. As shown in <ref type="figure">Fig. 10</ref>, MSE decreased with added trees in the forest, and returns diminished to less than 1% after 80 trees. With increasing number of random trees in the forest, the model can represent more of the bagged testing data as well as attribute bagged parameters, leading to a model with  lower generalization error. Even though MSE decreased with increasing number of trees, increasing number of trees can lead to overfitting in data noise as shown in <ref type="figure" target="#fig_4">Fig. 9a</ref> and increased computation time in both testing and training <ref type="bibr" target="#b2">[3]</ref>.</p><p>In validating our predictions against professional driver data, using a forest of 80 trees, we estimated the actual throttle percentage with a MSE of 1.8% 2 with a 90% confidence interval of ±2.1%. Confidence intervals were calculated by considering the upper and lower 5% of predictions made by individual trees in the forest for each given prediction as shown in <ref type="figure" target="#fig_5">Fig. 9b</ref>. An observed 84% of our testing data fell within our 90% interval indicating that our model has some generalization error from testing to training predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>This work shows strong potential to provide a throttle function which may outperform Shelley's current empirical map. The Random Forest algorithm, supplied with vehicle and engine states which are available in real time, demonstrates capability to accurately predict the throttle necessary to achieve desired accelerations within a MSE of 1.8% 2 and within a 90% confidence bound of ± 2.1%. Even though NARX networks were able to attain a MSE of 1.5% 2 , the computational time required for training and predictions provided limitations on utility. Furthermore, the NARX network showed limited utility because of its propensity to generate undesirable and physically unattainable throttle values. Similar performance was shown when implementing the multilayer perceptron regressor, which is not included for lack of space.</p><p>In the near future, we will integrate a pruned random forest model onto Shelley for experimental validation. To do so, the model must be optimized for real time performance and the existing control architecture. Future work in limiting the number of leaves, pruning features, and optimizing for number of trees in the forest will allow us to limit computation time, and thus create a model that we are able to experimentally validate on the car. Further work in investigating the impact of delay states will also allow us to consider adding future states to the feature set. Future desired acceleration states are available in more advanced control frameworks, such as Model Predictive Control (MPC). This may allow our model to learn the causality of future accelerations. Expanding this work in other domains of Shelley's controller such as steering and brake systems may also be able to improve system performance. We have shown the ability to accurately learn and predict the throttle profile for a given test from a professional, with the goal increasing the speed tracking capabilities of the vehicle and minimizing lap times.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Works Cited</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig</head><label></label><figDesc>Fig. 2 Fig. 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3</head><label>3</label><figDesc>Fig. 3</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 5a</head><label>5a</label><figDesc>Fig. 5a Fig.5b</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Fig. 5a Fig.5b</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 9a</head><label>9a</label><figDesc>Fig. 9a</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 9b</head><label>9b</label><figDesc>Fig. 9b</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Krisada</forename><surname>Kritayakirana</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">Christian</forename><surname>Gerdes</surname></persName>
+		</author>
+		<title level="m">Controlling an Autonomous Racing Vehicle. ASME Dynamic Systems and Control Conference</title>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Random forests</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<date type="published" when="2001" />
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Machine Learning Benchmarks and Random Forest Regression</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Segal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Center for Bioinformatics &amp; Molecular Biostatistics</title>
+		<imprint>
+			<date type="published" when="2003-04-14" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Network Toolbox™ Reference. Vers. R2016a</title>
+		<imprint>
+			<publisher>The MathWorks, Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">JMLR</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Xinxing Pan</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A comparison of neural network backpropagation algorithms for electricity load forecasting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Chunrong Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE International Workshop on</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="14" to="14" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>Intelligent Energy Systems</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Sparse Principal Component Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hui</forename><surname>Zou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">10</biblScope>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

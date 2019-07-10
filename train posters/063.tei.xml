@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Survival Rate of Acute Myeloid Leukemia (AML) Based on Cancer Cell Gene Expression Problem Data Reducing Dimensions Predicting Survival on New Dataset</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Max</forename><surname>Drach</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">of Center for Cancer Systems Biology for data and support</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Gentles</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">of Center for Cancer Systems Biology for data and support</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Survival Rate of Acute Myeloid Leukemia (AML) Based on Cancer Cell Gene Expression Problem Data Reducing Dimensions Predicting Survival on New Dataset</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Genetic data from cancer cells predicts life expectancy.</p><p>Gene expression frequency determined from cancer cell molecular profile.</p><p>Genes vary greatly, from transmembrane proteins to gene-regulation segments Cancer patient survival status also tracked.</p><p>Using pre-determined dimension-reducing parameters</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Gentles of Center for Cancer Systems Biology for data and support Cancer treatment is risky. Bone marrow transplants have a 30% death rate.Doctors must determine whether treatment truly increases chance of survival.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

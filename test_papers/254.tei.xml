@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Adversarial Models of Reality (AMoRe) CS 229: Progress Report in Theory &amp; Reinforcement Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Zelikman</surname></persName>
+							<email>ezelikman@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">ezelikma Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nathan</forename><surname>Schager</surname></persName>
+							<email>nschager@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">ezelikma Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Adversarial Models of Reality (AMoRe) CS 229: Progress Report in Theory &amp; Reinforcement Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>The World Models paper <ref type="bibr" target="#b0">[1]</ref> proposed a novel technique to train a game-playing agent by building a compressed representation of the world, learning how that representation evolves with a long short-term memory (LSTM) network, and then using the representation and the LSTMs memory as input to the agent's policy. We extended the algorithm in several ways to improve performance on more complex games, by updating the representation of the world with new trials, applying the existing model to anticipate future events in real-time, encourage exploration, and (for CS236) adversarially improving the quality of generated future frames. Our starting model, as evaluated on Sonic, using the code for Retro World Models <ref type="bibr" target="#b1">[2]</ref> in Pytorch [3], performed poorly, earning scores around 1,000 on most levels (with 3,000 considered complete) since we avoided using human examples. Our improved model performed better but not incredibly well, coming to an average performance of 3,600 across a number of levels.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>What is the nature of excellence? Is it the envisioning of a task in one's mind over and over again, or perhaps is it incremental improvement over repeated practice? Think of how an athlete trains daily while also envisioning her future success. In this paper, we propose our adversarial learning framework AMoRe to help ascertain whether these ideas can be applied to a reinforcement learning framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>The World Models paper <ref type="bibr" target="#b0">[1]</ref> was groundbreaking in its approach but has much room for improvement. For one, randomly trying many rollouts with a policy to generate dreams requires a lot of play-time in order to be generated accurately and will overfit to tested policies. For another, predicting the future single frames at a time has been shown to lead to compounding errors, as shown in the Deep multi-scale video prediction beyond mean square error paper <ref type="bibr" target="#b3">[4]</ref>. Qualitatively, this sequential-adverserial tradeoff is part of the difference between something like Google's DeepDream <ref type="bibr" target="#b4">[5]</ref> and something like Nvidia's progressively-grown Celebra images <ref type="bibr" target="#b5">[6]</ref>. We used OpenAI's Gym <ref type="bibr" target="#b6">[7]</ref> setup to test our model in game environments, evaluating our model's performance based on both the ultimate performance and the rate at which it reaches this performance. <ref type="bibr" target="#b7">[8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>We initially conducted tests using OpenAI's racecar setup, because it has a simple world with a clear distinction between reward and penalty areas. Afterwards, we tested our algorithm in Sonic the Hedgehog levels using OpenAI's Retro Contest dataset. Because the levels in Sonic are long and complex, our method of informing the VAE and LSTM using previous policies helped it pick out salient features over a constantly changing game environment. Sonic levels are also be a good test for the GAN dreams given that its worldspace is much more complicated than the racecar setting, and is thus also more likely to benefit from prior experience. Because different Sonic levels can be used for the training and test sets, this dataset is also be useful to see whether or not our algorithm lends itself well to our method of iterative training across experiments. <ref type="figure">Figure 1</ref>: AMoRe Architecture for single frame Using a generative adversarial network (GAN) consisting of two MLD-LSTMs, a variation of an RNN that generates distributions, we seek to train a discriminator to discern between actual observations and dreams, in order for the generator to generate dreams that are closer to reality and thus allow for more generalizable game-play. The structure of this model is as follows:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>1. Perform initial rollout using the JERK algorithm (Just Enough Retained Knowledge) <ref type="bibr" target="#b7">[8]</ref> 2. Use β variational auto-encoder (β-VAE) to compress the world representation 3. Train a GAN (consisting of two LSTMs) to generate a plausible future world given a policy, to be compared to the actual effects of the policy 4. Enact the policy with a controller, with a module we call the anticipator intercepting and changing actions that have a poor expected outcome 5. Before a given rollout, use the generator to model some large number of possible policies, and sample one based on performance (e.g. corresponding to Zipf's law on their ranks).</p><p>6. Repeat the process, using the generated policy to inform rollouts of the next iteration.</p><p>Using a GAN to generate and discriminate dream states helps prevent compounding errors in the image generation, as shown in <ref type="bibr" target="#b3">[4]</ref>. Practically, repeated probabilistic predictions of the future lend themselves to predicting an unrealistically "average" outcome. This should allow the algorithm to make better predictions by having hallucinations that better reflect the world. Although this part is primarily for CS236, in order to implement this effectively the code was based on the code for the Deep Generative Models paper. Making these two approaches compatible required the observations from the rollouts to be saved as their encoded forms combined with their actions, basically treating them as a highly compressed video frame. We tested to see whether accounting for actions of the model in the future actually helps. In our implementation, we train the discriminator and the generator and then combine the overall loss.</p><p>We made the entire process iterative across experiments, sampling using policies from past iterations to perform rollouts for the current iteration. This allowed the VAE to optimize its encoder and decoder to better recognize features that are more useful to scoring well. The tricky part is ensuring that the iterations do not create a policy that is stuck in a local minima, and this will largely depend on how policies are sampled during the rollout phase. Because the CMA-ES generates samples from a Gaussian distribution, one can vary the sigma value to get a larger variety of outcomes depending on your performance needs. The VAE is used to encode and decode frames. That is, it takes a frame as input and maps it to a distribution in a lower-dimensional space, in our case using a 4-layer convolutional neural network and a 200 dimensional encoding space. Encodings from the frames went to the LSTM, while the decoder was used primarily to train the encoder (and for visualization purposes). It used 5 deconvolutionary layers, as in the original code.</p><p>A VAE is normally trained to jointly minimize two things: one, the KL-divergence between the encoded real data and a prior distribution 1 ; two, a reconstruction loss corresponding to negative log likelihood of the decoder producing the data given the prior distribution. The β-VAE is a special variant of the VAE that has a parameter β, weighting the KL divergence term to tune a balance between "latent channel capacity and independence constraints with reconstruction accuracy" <ref type="bibr" target="#b8">[9]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Adversarial Future Generation (Focus of CS236)</head><p>For our adversarial predictor, we used two longshort term memory (LSTM) networks which output a mixture of Gaussian distributions. LSTMs maintain a gated memory representation across different items in a sequence, with its updated memory accessible to the next state. In addition, MDN-RNNs are a type of LSTM, which output a distribution as a mixture of Gaussians rather than a single prediction, with a weight, mean, and variance for each Gaussian. While the choice to treat the discriminator as generating a probability density may seem strange, this was the first approach to convergence that yielded a model which didn't experience exploding or vanishing gradients in the generator. The loss used for the generator was partially inspired by the loss used in a VAE, accounting for both the likelihood of the predicted next frame 2 and an adversarial loss, corresponding to how effectively it tricked the discriminator.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Controller</head><p>The controller is a simple single-layer neural network with a sigmoid activation: it takes in 3 the encoding of the current frame, as well as the hidden state and previous output of the LSTM (which took in the previous action and frame-encoding) and outputs an action with the same dimension as the action space. The action is a t = W c [z t h t ] + b c for controller c at timestamp t. We experimented with varying the complexity of this policy, but found that it made it more difficult to update from new levels. It is likely that a joint training model, that is, one which trains on all the levels at the same time, would be more compatible with this approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">CMA-ES</head><p>CMA-ES, for covariance matrix adaptation evolution strategy, <ref type="bibr" target="#b9">[10]</ref> is an evolutionary strategy for optimizing matrices with a few thousand parameters. In our formulation, this algorithm is responsible for optimizing the weights for the controller model. It adjusts a multivariate Gaussian distribution (with covariance between parameters) as a function of performance, making regions of the parameter space with higher performance more likely.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.1">Exploration Reward</head><p>To encourage CMA-ES to choose explorative policies, while not included in the final reward, we added an exploration reward for CMA-ES: since variational autoencoders put similar frames closer together, we simply kept the most recent several seconds of frame encodings, adding a small reward corresponding to the minimum Euclidean distance of the encoding of the current frame from the existing frames. One interesting side-effect of this was the tendency for Sonic to take the long route around levels, exploring dead ends and sometimes finding very non-obvious rewards due to it (like hidden ledges that required jumping while going down a waterfall in LabyrinthZone.Act3 of the first sonic). It was also, amusingly, a fan of spectacle, choosing to watch an explosion instead of proceeding. This is reminiscent of <ref type="bibr" target="#b10">[11]</ref>, where a purely curiosity-driven AI ended up getting addicted to screens displaying novel content. The anticipator uses a parameter we call alertness to determine whether or not it will intercept an action from the controller. With a low (Roughly 1/5 probability in every frame), it cyclically generates actions from the controller in response to LSTM-generated future frames to predict the reward of its intended action. If this turns out to be negative, the anticipator puts itself into alert mode, argmaxing its future reward (assuming the controller takes over) over its available moves. The motivation for this sparse application of the anticipator is twofold: first, argmaxing future rewards over actions is greedy and likely to lead to local minima; second, it's fairly computationally expensive and slows the runs if enough parallel games do it at the same time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Anticipator</head><p>Initially, an interesting issue came up: we were at the time letting the anticipator choose moves every time it ran, since it went through all of the possible actions, but often, not moving had the same reward as the controller making its move, since the controller would eventually accomplish whatever the best action accomplished. The consequence was that the anticipator often did nothing when it didn't think it could contribute. We solved this first by discounting future rewards with an impatience term (an exponential drop-off in the value of future rewards). One accidental effect was that the anticipator accidentally created short-sighted loops if in alert mode, like repeatedly hitting a 10-point bumper. We updated alertness to only activate if the controller performed badly. For our initial experimental round, we use the JERK method to perform rollouts. The iterative architecture then uses policies generated from the previous experimental round as rollouts for the next experimental round, which should improve the training of both the VAE and the GAN as they will be training on frames that score higher (balanced with some exploration).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments/Results/Discussion</head><p>We started with the code provided by OpenAI for their World Models experiment but have since modified it to implement our own algorithm. We rewrote the procedure to be iterative and to reuse previous policies during rollouts, as well as adding GAN capacity and some features to action selection in the code. We carried out our experiments in OpenAI-Gym, experimenting on levels sampled from Sonic The Hedgehog 1-3. Our results were successful in that our model outperformed the original paper and OpenAI baseline scores. For this particular challenge, your agent must achieve a score of 3000 to consider the level "solved", and our agent received an average score of 3600 across many levels. Upon inspection, the agent adapted novel behaviors, such as one instance where the agent jumped on a button over and over as the optimal action. Using the GAN model certainly improves the agent's ability to generate estimated future world states, while the iterative model provided superior rollouts for each experiment while also allowing the entire algorithm's architecture to be more in line with how we think science and cognition function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion/Future Work</head><p>Our goal for this paper was to improve upon the original World Models architecture, and in that sense we think we succeeded. We learned that our algorithm could solve the Sonic levels, which opens up some avenues of additional research questions. For one, there are certainly more cognitive principles that could further inspire our algorithm's architecture. Additionally, varying GAN architectures and models could probably enhance the performance further, as could using metalearning to tune parameters and hyperparameters before the actual training begins. Perhaps the most compelling future improvement is a stochastic update to the the LSTM and VAE with every new experiment, alongside the per-epoch training we introduced. <ref type="bibr" target="#b2">3</ref> As a single concatenated input vector</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :Figure 3 :</head><label>23</label><figDesc>Frames generated by the VAE on bottom corresponding to input frames shown on the top.4.1 β-VAEFigure 3: Estimated frames over time from generator. Notice how it can account for the passage of both time and space.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 4 :</head><label>4</label><figDesc>AMoRe Architecture across experiments</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5 :</head><label>5</label><figDesc>Non-adversarial and adversarial rewards in a sample epoch 4.6 Iterative architecture</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Often a mean-0, variance-1 normal distribution<ref type="bibr" target="#b1">2</ref> The loss used in<ref type="bibr" target="#b0">[1]</ref> </note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">World models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Ha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+		<ptr target="https://worldmodels.github.io" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Retro contest sonic</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Dijan</surname></persName>
+		</author>
+		<ptr target="https://github.com/dylandjian/retro-contest-sonic" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Desmaison</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Antiga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lerer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Deep multi-scale video prediction beyond mean square error</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mathieu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Couprie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015-11" />
+		</imprint>
+	</monogr>
+	<note>ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Inceptionism: Going deeper into neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mordvintsev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Olah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tyka</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Google Research Blog</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page">5</biblScope>
+			<date type="published" when="2015-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Progressive Growing of GANs for Improved Quality, Stability, and Variation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Laine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017-10" />
+		</imprint>
+	</monogr>
+	<note>ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Openai gym</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Brockman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Pettersson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schneider</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Zaremba</surname></persName>
+		</author>
+		<idno>abs/1606.01540</idno>
+		<ptr target="http://arxiv.org/abs/1606.01540" />
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Gotta Learn Fast: A New Benchmark for Generalization in RL</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Nichol</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Pfau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hesse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Klimov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schulman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-04" />
+		</imprint>
+	</monogr>
+	<note>ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Matthey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Pal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Burgess</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Glorot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Botvinick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Mohamed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lerchner</surname></persName>
+		</author>
+		<title level="m">Learning basic visual concepts with a constrained variational framework</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">The CMA Evolution Strategy: A Tutorial</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Hansen</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1604.00772</idno>
+		<imprint>
+			<date type="published" when="2016-04" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Large-scale study of curiosity-driven learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Burda</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Pathak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Storkey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1808.04355</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Latent Feature Extraction for Musical Genres from Raw Audio</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Woody</forename><surname>Wang</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arjun</forename><surname>Sawhney</surname></persName>
+							<email>sawhneya@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Latent Feature Extraction for Musical Genres from Raw Audio</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>While style is not well-defined for music, the genre of a piece of music is highly related to its acoustic properties. Current attempts at musical style encoding boast extensive feature engineering and static definitions of components of style. Learning encodings directly from raw audio instead has significant applications in musical style transfer and audio processing. Task Definition: We seek to transform raw audio samples to genre encodings without explicit feature engineering. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Qualitative Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Error Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>• Replace the autoencoder with a β-TCVAE to learn disentangled representations via a mutual information gap (MIG) metric • Increase number of classes in dataset to test generalizability of model • Experiment with using learned latent representations as style encodings for music style transfer • Interpolate components in the latent space to measure interpretability of latent representations</p><p>• We see a noticeable overlap between the pop class and the remaining three classes ○ When listening to random samples, we see that pop songs can easily be mistaken for the other three genres • The pop genre encodings have the largest variance ○ This is corroborated by the variance of the pop songs in the raw data PCA ○ When listening to exclusively pop samples, there seems to be less of a distinct style within the genre • Classical and jazz music have similar instrumentation, which might explain the proximity of their genre encodings • Model has the most difficulty discerning between metal and pop • Classical music exhibits the highest precision, recall, and F1 score, likely due to its distinct style</p><p>• The vanilla autoencoder results are as expected, since it is unsupervised and has no incentive to learn a distinguishable representation of genre • When supervised with a genre classifier, the Deep Softmax Autoencoder's encodings display promising separation and smoothness in the latent space</p><p>• Motivated by neural style transfer on images, we experiment with visualizing the classifiers' logits as a form of genre encoding • As expected, due to optimization objective, we see a clearer distinction between each class in the visualization of the classifiers' logits when accuracy is high Summary:</p><p>• Compared to the 4-dim encodings, the 64-dim encodings have the potential to capture more variance within each genre • The 4-dim encodings and 64-dim encodings serve different purposes: particular tasks may require the expressivity of the 64-dim or the conciseness of the 4-dim</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset Information and Feature Engineering</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]</head><label>1</label><figDesc>G. Tzanetakis et al. Musical Genre Classification of Audio Signals in IEEE, 2002. [2] S. Dai et al. Music Style Transfer: A Position Paper in arXiv, 2018. [3] H. Bahuleyan. Music Genre Classification using Machine Learning Techniques in arXiv, 2018. [4] I. Simon et al. Learning a Latent Space of Multitrack Measures in arXiv, 2018.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Work Quantitative Results (Final Architecture) Vanilla Autoencoder Encoder: 3 hidden layers, learn , where x is downsampled input Decoder: 3 hidden layers, learn , where x is encoder output , where x is downsampled input Two Layer Neural Network Hidden layer: 128-dim, tanh activation Deep Softmax Autoencoder (Final Architecture) Simultaneously train a deep autoencoder and multi-class classifier using the 64-dim encoding as input to the classifier Model Infrastructures Motivation Vrinda Vasavada vrindav@stanford.edu GTZAN Dataset [1] • 400 songs (30 seconds each) labeled as classical, jazz, metal, and pop Inputs and Feature Engineering • No explicit feature engineering, per task description • Sampled one second clips at 22.05 kHz • Downsampled to 500-dim inputs using average pooling</figDesc><table>Vanilla Autoencoder 
+Encoder: 3 hidden layers, learn 
+, where x is downsampled input 
+Decoder: 3 hidden layers, learn 
+, where x is encoder output 
+, where x is downsampled input 
+Two Layer Neural Network 
+Hidden layer: 128-dim, tanh activation 
+
+Deep Softmax Autoencoder (Final Architecture) 
+Simultaneously train a deep autoencoder and multi-class classifier using the 
+64-dim encoding as input to the classifier 
+
+Model Infrastructures 
+
+Motivation 
+
+Vrinda Vasavada 
+vrindav@stanford.edu 
+
+GTZAN Dataset [1] 
+• 400 songs (30 seconds each) labeled as 
+classical, jazz, metal, and pop 
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

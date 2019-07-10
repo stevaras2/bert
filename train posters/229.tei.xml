@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Pulses Characterization from Raw Data for CDMS</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francesco</forename><surname>Insulla</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Physics Department</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chris</forename><surname>Stanford</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Physics Department</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Pulses Characterization from Raw Data for CDMS</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The input features were traces with two channels: ! (#) ∈ ℝ )*+,×) . For the linear regression and FCNN we flattened the trace to a 4096 dimensional vector. For the CNN we kept the shape of the trace. For PCA + FCNN model we flattened the traces and used PCA to find the first 1024 principle of the components (PCs) using 20% of the training set -which explain 89.83% of the variance. We decided to try PCA because we plotted the correlation matrix of the traces an noticed all the points of the trace are positively correlated. For the Kernel PCA, we used a radial basis kernel, and 1024 PCs. We tried this too because we thought the relationship between the projected features could be non-linear.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>We would like to thank: To Chin Yu • For suggesting this project and providing key insights about Machine Learning. The Northwestern SuperCDMS team • For providing the MC simulation and the sample noise traces from which we generated our dataset. The CS299 TAs and Professors • For giving us the opportunity to do this project and teaching us all the material. We then estimate the variance using by bootstrapping: training 10 times on a random sample of the training set 90% of the size, and predicting on the test set. We got an estimated variance of 32.14.</p><formula xml:id="formula_0">Normalized Energies, 0 ≤ &amp; (#) ≤ 1</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Normalized Start</head><p>Times, 0 ≤ % (#) ≤ 1</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>We represent and</head><p>.</p><p>In all the models we minimize the mean squared error (MSE):</p><p>however we are interested in reporting the mean absolute error (MAE):</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN:</head><p>Linear PCA FCNN: We perform PCA by finding the eigen-basis of the correlation matrix C, where is the k-th principle component:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Kernel PCA FCNN:</head><p>We apply the kernel trick on the projections as follows and feed the result into the same FCNN.</p><p>We then feed the projections, , into the FCNN displayed below. From this project were able to develop a methodology to construct an effective tool that we might use as part of physics experiment to determine the start-time of pulses measured by our detector. After constructing our dataset from our Monte Carlo simulations, we trained liner regression, FCNN, CNN, a standard PCA fed into FCNN, and KPCA with a radial basis kernel fed into a FCNN to predict % (#) and had the best Test set MAE with the standard PCA + FCNN method. Our goal was to get to a MAE around 1 or 2, however the lowest we ever got on training was 4. This is likely due to the fact that the pulses are so noisy -which is why we chose this challenging problem in the first place. An important insight from this project was that more complex models don't always produce better results, as can be seen comparing the CNN and KPCA+FCNN with the PCA+FCNN. Another lesson we learned was that producing the dataset and preparing it for training can be the most time intensive step. Finally, while we didn't accomplish exactly what we set out to do we are content with out results and will continue improving on them.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>don't have enough real 5 data to train on, we have do have a Monte Carlo simulation of our experiment. Combining the results from simulating with real noise, we created our dataset as represented by the following diagram.(Train, Dev, Test): (85, 10, 5)%, 39,458 total</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table of Scaled MAE</head><label>of</label><figDesc></figDesc><table>Linear 
+Regression 
+
+Shallow 
+FCCN 7 
+
+CNN 
+Linear 
+PCA + 
+FCNN 
+
+Radial Basis 
+PCA + 
+FCNN 
+
+Training 
+321.40 
+145.84 
+58.93 
+15.24 
+27.59 
+
+Validation 364.03 
+160.12 
+123.74 17.91 
+73.12 
+
+Test 
+368.80 
+210.56 
+180.02 21.73 
+104.67 
+
+Input Layer 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Dissertations &amp; Theses Global. (1906685475). Retrieved from https://search.proquest.com/docview/1906685475?accountid=14026</note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

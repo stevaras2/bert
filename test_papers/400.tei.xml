@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Understanding Transcriptional Regulatory Logic Using Convolutional and Generative Deep Learning Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nic</forename><surname>Fishman</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>California</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georgi</forename><forename type="middle">K</forename><surname>Marinov</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Genetics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>California</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anshul</forename><surname>Kundaje</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Genetics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>California</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>California</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Understanding Transcriptional Regulatory Logic Using Convolutional and Generative Deep Learning Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note># To whom correspondence should be addressed: njwfish@stanford.edu 1 Code base for this project: https://github.com/njwfish/mpra yeast</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>The concerted action of sequence-specific transcription factors onto cis-regulatory elements in DNA is the core mechanism through which gene regulation is accomplished in most eukaryotes. Mechanistic dissection of the logic of these interactions is therefore of critical importance for understanding cellular responses to external and internal stimuli in a wide variety of contexts, such as organismal development and disease. However, despite many decades of intensive studies the goal of mapping out this cis-regulatory logic is still far from achieved. Massively Parallel Reporter Assays (MPRA) are a potentially extremely powerful tool that can be applied for this purpose, but extracting cis-regulatory interactions from their output is not trivial for the human eye. Here we apply deep learning approaches to MPRA datasets to understand the individual contribution to gene expression activity of transcription factor (TF) motifs and the relationships between them, and show that convolutional neural networks (CNNs) are capable of learning both aspects of cisregulatory logic. We then build on our CNN models and develop generative adversarial networks (GANs) that can produce novel regulatory sequences with particular gene expression activities.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Gene regulation in most eukaryotes is driven by the action of sequence-specific transcription factors, which recognize specific DNA sequence motifs/binding sites (TFBSs) within larger cis-regulatory elements (cREs), and act in concert to affect the expression of their cognate genes. These cREs typically contain multiple binding sites for several different transcription factors; it is the integration of the activity of all these factors within an individual cRE that determines its activity, and the integration of the activity of all cREs that together act on a gene that drives changes in its expression. The complexity of cis-regulatory logic is considerable -each human gene is associated with on average about a dozen putative cREs <ref type="bibr" target="#b0">1</ref> , each of them several hundred bases in length and potentially containing dozens of TFBSs -thus it is not surprising that despite decades of research in the field, understanding that logic in detail has remained an elusive target.</p><p>Two technological and analytical developments hold great promise for resolving that challenge.</p><p>The first one is the development of MPRAs, which allow the regulatory activity of many thousands of both endogenous as well as synthetic DNA sequences to be assayed simultaneously on a large scale <ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref> . In a typical MPRA design, each tested sequence is either associated with a barcode placed within a reporter gene 2,3,5 , or is directly located in the reporter itself <ref type="bibr" target="#b3">4</ref> . High-throughput DNA sequencing is used to determine the relative abundance of barcodes or input sequences in both the populations of expressed RNA and input DNA molecules, thus providing information on the relative activity of each construct.</p><p>The second advance involves the application of deep learning techniques to discerning gene regulatory logic, with the hope that machine learning will prove to be more effective where humans have not succeeded so far. Deep learning approaches have already demonstrated remarkable performance on a wide variety of problems in genomics 6 , such as predicting transcription factor binding, accessible chromatin regions, nucleosome positioning, RNA splicing outcomes, and many others, and they have more recently also seen initial applications to MPRAs involving endogenous 7 and random sequences <ref type="bibr" target="#b7">8</ref> . Once successfully predictive deep learning models are built, methods of deep learning model interpretation can then be used to extract regulatory relationships encoded in the DNA sequence <ref type="bibr" target="#b8">9</ref> .</p><p>Beyond the simple development of predictive models, another highly promising deep learning-based approach in this area is the generation of novel DNA sequences (following the "What I cannot create, I do not understand" principle), the activity of which can subsequently be tested in an MPRA. Initial work in this area has shown the ability of generative deep learning methods to generate DNA sequence de novo <ref type="bibr" target="#b9">10</ref> , but the success of such approaches in specific biological contexts has not yet been demonstrated. In this work we first apply deep learning approaches <ref type="figure" target="#fig_0">(Figure 1)</ref> to an yeast MPRA dataset that includes DNA sequences containing predefined regulatory grammars <ref type="bibr" target="#b10">11</ref> and their activities at various amino acid concentrations ("[AA]"). We find that CNN-based approaches can successfully capture these lexical grammars, identify relevant motifs, and predict regulatory activities in the context of this MPRA dataset. We build on our CNN models to develop a GAN-based algorithm for generating novel DNA sequences with desired regulatory activities. We then apply these approaches in the context of a much larger MPRA dataset in human cells, and plan on experimentally testing the activity of newly designed regulatory sequences in an MPRA.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>Initial applications to MPRAs involving endogenous 7 and random sequences 8 have shown that deep learning frameworks are capable of capturing the underlying regulatory grammars encoded in DNA sequences. More broadly, approaches applying deep learning to DNA sequence are at this point well developed in the literature. <ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b12">13</ref> The problem of de novo sequence generation has been less extensively explored. Killoran et al. <ref type="bibr" target="#b9">10</ref> applied GANs to generating generic DNA sequences using the Wasserstein GAN, which optimizes the earth mover distance between the generated and real samples <ref type="bibr" target="#b13">14</ref> . In this approach, the generator was first pre-trained to produce DNA sequences, and then the discriminator was replaced with a differentiable analyzer, oriented towards classifying if a given sequence had a specified property. Along a similar vein, Gupta and Zou 15 develop a GAN approach based on a feedback loop, generating DNA sequence in a generator-discriminator framework, but adding the selection of some "top" sequences (evaluated according to a given criterion) to the "real" distribution each iteration. In this way they expand the "real" distribution and force the generator to construct sequences in line with the analyzer's selection criteria. More recently Brookes et. al. propose a framework for design by adaptive sampling <ref type="bibr" target="#b15">16</ref> , but this approach, while powerful, is extremely limited by computational complexity; the authors were only able to generate sequence ≤13 bp in length.</p><p>Here we present a novel framework for end-to-end generation of sequences to minimize any developer-defined loss function on a set of DNA sequences with associated scores for some property(s) of interest.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methods</head><p>The backbone of this project is an end-to-end sequence generation pipeline that takes a set of sequences, and some corresponding property(s) to learn, then trains a GAN that can generate sequence designed to exhibit the given property(s). Throughout this paper we examine this pipeline in the con- <ref type="table">Table 1</ref>: Architectural search of deep learning CNN models for predicting regulatory activity from sequence. Each architectural property and the corresponding distribution it was drawn from in the random search are shown. Note that for properties relevant to multiple layers, such as units per dense layer, n independent samples were drawn from the distribution corresponding to the relevant number of layers. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">MPRA Datasets and data preprocessing</head><p>We used two MPRA datasets in this study. The first one 11 was carried out in the budding yeast Saccharomyces cerevisiae and includes testing the activity of ∼5,000 synthetic sequences containing defined numbers of TFBSs for factors known to be important in regulating gene expression upon changes in nutrient availability. Regulatory activity was measured under a range of six different increasing amino acid concentrations. The Sharpr-MPRA dataset 17 is significantly larger, containing ∼500,000 endogenous 145 bp-long human sequences that tile ∼15,000 putative regulatory regions at 5-bp intervals. These sequences were assayed in two different human cell lines (the erythroid K562 and the hepatic HepG2) with two different promoters.</p><p>DNA sequences were one-hot encoded following established practices. We also log+-transformed the regression targets so we could use the ReLU non-linearity as the output of our regression networks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Predicting Gene Expression</head><p>The first part of the pipeline involves building a neural net that learns to predict the effects on gene expression of a given set of regulatory sequences. We largely follow CNN-based approaches previously developed to tackle such tasks <ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b11">12</ref> . After one-hot encoding, the input sequences are split into training and test sets. Convolutional layers learn to capture transcription factor binding motifs, followed by a series of fully connected layers to predict output expression under a set of different conditions; in this case the regressor predicts a vector where each element corresponds to one of the conditions.</p><p>Because it is not a priori clear exactly which architecture is best suited for a given prediction task, we implement a random search, training 100 models with random numbers of convolutional and dense layers, randomly sized kernels and random numbers of hidden units <ref type="table">(Table 1)</ref>. We train these models for 1,000 epochs using the Adam optimizer, keeping only the lowest validation loss across the training history. Models are then evaluated on the test set, and a linear combination of the test error and the overfitting ratio (defined as M SEtrain M SEtest ) is used to rank the regression models. Later in the process it becomes important that the regressor is actually learning to assign importance to TFBSs, and that overfitting is minimized as much as possible.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Feature Importance Scoring</head><p>The DeepLIFT framework 9 was used to assign feature importance scores of MPRA prediction models to each nucleotide in input sequences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Generating Regulatory Sequence</head><p>To de novo generate regulatory sequences, we start with the improved Wasserstein GAN 14,18 , the core architecture of which we modify for our purposes in two ways. First, in addition to the random seed z, we also input a continuous vector t, with the same shape as the output from the regressor trained in the previous phase. The vector t is drawn from a normal distribution fit to the distribution of expressions in the MPRA dataset being trained on. The generator outputs a one-hot encoded sequence vector, making use of the gumbel-softmax activation function to remain differentiable. The discriminator is trained in classic WGAN-GP fashion, feeding examples from both real sequences from the MPRA dataset and generated ones from the generator. Formally this loss is calculated as:</p><formula xml:id="formula_0">L D = Ẽ x∼P g [D(x)] − E x∼P r [D(x)] + λ Ê x∼Px [(||∇xD(x)|| 2 − 1) 2 ]</formula><p>(1) Where we update the discriminator by maximizing with respect to L D . For the generator, we feed the generated sequence into both the discriminator and the regressor (from the previous phase), and the generator is updated by minimizing with respect to a weighted average of the two losses. These losses are weighed with a tunable γ term as follows:</p><formula xml:id="formula_1">L G = γL D + (1 − γ)L R (2)</formula><p>3.5. Evaluating Generated Sequences</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.1.">Motif Counts</head><p>The simplest way to evaluate generated sequences is to check whether they contain TFBSs known to be relevant for gene regulation under the conditions tested in the training set. To do this we can simply count frequency of each motif or motif combination in generated sequences, and compare it to either the real data or randomly generated sequence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.2.">1-Nearest Neighbor</head><p>The best method for evaluating the quality of a generated distribution given an actual distribution is to do calculate the LOO (Leave-One-Out)accuracy of a 1-NN algorithm in a learned feature space. <ref type="bibr" target="#b18">19</ref> We create a general framework for generating a learned feature space to compare regulatory sequences of a given length k &lt;= 2000 by starting with a CNN model, <ref type="bibr" target="#b12">13</ref> altering the length of the input space, and then truncating the model after the last convolutional layer that produces a non-negative output size. To compute the LOO accuracy, we label real sequences 1 and generated sequences −1, calculate the distances between all sequence pairs, and take the label of the second smallest distance sequence as the predicted label for all sequences. If the generated and real distributions were the same, i.e. if the generated sequences are high quality, the 1-NN will achieve 50% accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.3.">Predicting Expression</head><p>To ensure that the generated sequences are not simply overfitting the regressor network used to train the generator, we use an ensemble of several of the next-best regressors produced by the random architecture search to predict the expression of the generated sequences, and compare it to the initial target expression t.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Hyperparameters</head><p>Throughout training we used the default hyperparameters for the Adam optimizer, the default hyperparameters for the WGAN-GP algorithm, <ref type="bibr" target="#b17">18</ref> and a standard batch size of 64, because these parameters are relatively well supported in the literature and returned reasonably good results in preliminary tests.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Regression</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1.">Yeast MPRA</head><p>After random architecture search on the yeast MPRA dataset, we arrived at an optimal model with a test MSE of 0.0266 ( <ref type="table" target="#tab_0">Table 2</ref>). The performance of this model can be compared to the baseline established in the yeast MPRA study itself by physical thermodynamic models for predicting expression, the top test performance of which is R 2 = 0.8 across all sequences. The corresponding test R 2 for the top deep learning method is R 2 = 0.91 <ref type="figure" target="#fig_1">(Figure 2a)</ref>. Also, a key result of the original study is that combining large numbers of TFBSs in the same construct does not necessarily lead to higher regulatory activity, and can even decrease it, due to competition for binding between nearby sites. Deep learning models are well capable of capturing that behavior ( <ref type="figure" target="#fig_1">Figure  2b</ref>).  <ref type="table">Table 3</ref>: Evaluation of sequences produced from 5000 epochs of training for various γ on the Yeast MPRA dataset.</p><p>To confirm that the neural net's models are not just learning to predict expression, but are also identifying the key regulatory sequences driving, we applied DeepLIFT featue importance scoring 9 on the input sequences. The relevant motif indeed tend to be the most highly scoring sequences, with two examples shown in <ref type="figure" target="#fig_1">Figure 2c</ref>-d. To more generally quantify motif importance, we also calculate a motif importance score, calculated as the sum of the importance ascribed to basepairs within motif divided by the total importance for a given sequence. This score is summed over all sequences in both the training and test datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2.">Sharpr-MPRA</head><p>The Sharpr-MPRA dataset is significantly more difficult to predict than the Yeast MPRAs as it exhibits poor reproducibility between the experimental replicates 7 , and the between-replicate correlation sets an upper limit on the achievable model performance. We are still in the process of identifying the optimal performing models for this dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Sequence Generation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.1.">Yeast MPRA</head><p>We were able to successfully train several GANs using the Yeast MPRA regressor, but are still working evaluating and understanding the resulting sequences. Current summary results are shown in <ref type="table">Table 3</ref>, where several interesting observations are evident. First, using just the WGAN architecture (γ = 1), the distribution of generated sequences is very similar to the real one, and the per-sequence motif occurrence is close to that in the real data; however, the MSE is large. In contrast, using just the regressor (γ = 1) results in sequence with poor motif occurrence characteristics. It is only for the combination loss (γ = 0.5) that we see generated sequences that are approaching the desired properties. This supports the usefulness of the architecture we propose in <ref type="figure" target="#fig_0">Fig 1.</ref> An issue we have encountered in this context is that extremely extended training periods (10,000-20,000 epochs) begin to seriously degrade performance on all metrics. We are still investigating its sources and possible solutions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Sharpr-MPRA</head><p>We only have very preliminary sequence generation results on the Sharpr-MPRA dataset <ref type="table">(Table 4)</ref>, as we have not yet arrived at an optimal prediction model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusions</head><p>Here we show, using the Yeast MPRA dataset, that first, our CNN regression architecture is capable of learning regulatory activity from MPRA datasets, and even surpasses the baseline established by van Dijk using physical models, and second, that our proposed modified WGAN deep learning architecture is capable of de novo generating DNA sequence using the measured regulatory activities of known sequences as input. As the Sharpr-MPRA dataset is much larger and more difficult to predict, we are still in the process of finding the optimal approach for predicting and generating sequences on it, and this is where the next steps for this project are primarily oriented towards. Training WGAN with various γ values, and annealing the γ parameter over time are among the strategies we are focusing on next.</p><p>Additionally, the suite of evaluation tools we have built can be applied to any generated DNA sequences, and comparing against existing sequence generation approaches <ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16</ref> is also something we plan to do in the immediate future. We are also interested in establish a more straightforward, non-GAN baseline by setting up an MLE method for sequence gener-</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Metric</head><p>Optimal/Real Value Generated 1-NN LOO 0.5 0.89 Predicted Expression MSE 0.0 64324.5176 <ref type="table">Table 4</ref>: Evaluation of sequences produced from 5000 epochs of training for γ = 0.5 on the SHRAPR MPRA dataset.</p><p>ation based on the promise such approaches have shown in the language generation literature. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Outline of deep learning strategies for predicting activity and de novo generating functionally active DNA sequences. (a) The regression training phase of the sequence generation pipeline takes a set of sequences and trains a number of models to predict expression driven by these sequences (b) Structure of the GAN component of the sequence generation pipeline, which creates de novo predicted-to-be functionally active sequences.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>ArchitectureFigure 2 :</head><label>2</label><figDesc>Property Distribution Drawn From Number Convolutional Layers ∼ U ni(2, 4) Filters per Convolutional Layer ∼ U ni(5, 50) Filter Size ∼ U ni(4, 15) Number Dense Layers ∼ U ni(1, 5) Units per Dense Layer ∼ U ni(5, 100) Regularize all Layers ∼ Bern(p = 0.5) 2 Figure 2: Performance of predictive models on yeast MPRA dataset. (a) True (x-axis) and predicted (y-axis) expression levels for constructs with different numbers of GNC4 motifs. (b) Deep learning models reproduce experimentally the observed behaviors of constructs with different numbers of GNC4 motifs in response to increasing [AA]. (c-d) DeepLIFT importance score for a construct containing three weak GCN4 TFBSs (c) and another one containing three strong GCN4 TFBSs correctly identify motifs driving regulatory activity text of predicting the regulatory effects of DNA sequences on gene expression, guided by existing MPRA datasets.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>., A.K., and G.K.M. conceived the project. N.F. carried out deep learning model generation and data analysis with input from G.K.M. and A.K. N.F. prepared the manuscript with input and oversight from G.K.M. and A.K.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 2 :</head><label>2</label><figDesc>Top models from random architecture search for the Yeast MPRA and Sharpr-MPRA datasets. For feature importance scoring, we sum the DeepLIFT importance scores ascribed to TFBSs, and divide by the total importance of the input sequence. We sum this score over all sequences in both the training and test datasets.</figDesc><table>Yeast MPRA 
+Sharpr-MPRA 
+Model 
+Rank 
+
+Training 
+MSE 
+Test MSE 
+Motif Importance 
+Model 
+Rank 
+
+Training 
+MSE 
+Test MSE 
+
+1 
+0.014043 
+0.026653 
+1087.418475 
+1 
+8674.099 
+34120.833 
+2 
+0.002005 
+0.028467 
+1084.981529 
+2 
+7581.866 
+34191.550 
+3 
+0.008275 
+0.030267 
+11z77.912115 
+3 
+12927.603 
+34713.798 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An integrated encyclopedia of DNA elements in the human genome</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Encode Project Consortium</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">489</biblScope>
+			<biblScope unit="issue">7414</biblScope>
+			<biblScope unit="page" from="57" to="74" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Massively parallel functional dissection of mammalian enhancers in vivo</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">P</forename><surname>Patwardhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">B</forename><surname>Hiatt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Witten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">P</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>May</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">M</forename><surname>Andrie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">I</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">M</forename><surname>Cooper</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Ahituv</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">A</forename><surname>Pennacchio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shendure</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="265" to="270" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Systematic dissection and optimization of inducible enhancers in human cells using a massively parallel reporter assay</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Melnikov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Murugan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Tesileanu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Rogov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Feizi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gnirke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">G</forename><surname>Callan</surname><genName>Jr</genName></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">B</forename><surname>Kinney</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kellis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">S</forename><surname>Lander</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">S</forename><surname>Mikkelsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="271" to="277" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Genome-wide quantitative enhancer activity maps identified by STARR-seq</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Arnold</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Gerlach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Stelzer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">M</forename><surname>Boryń</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Rath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Stark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">339</biblScope>
+			<biblScope unit="issue">6123</biblScope>
+			<biblScope unit="page" from="1074" to="1077" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Inferring gene regulatory logic from highthroughput measurements of thousands of systematically designed promoters</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Sharon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Kalma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Sharp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Raveh-Sadka</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Levo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Zeevi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Keren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Yakhini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Weinberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Segal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="521" to="530" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Opportunities and obstacles for deep learning in biology and medicine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Ching</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">S</forename><surname>Himmelstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">K</forename><surname>Beaulieu-Jones</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Kalinin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">T</forename><surname>Do</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">P</forename><surname>Way</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Ferrero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">M</forename><surname>Agapow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zietz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">M</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">L</forename><surname>Rosen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Lengerich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Israeli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lanchantin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Woloszynek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">E</forename><surname>Carpenter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Shrikumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">M</forename><surname>Cofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">A</forename><surname>Lavender</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">C</forename><surname>Turaga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Alexandari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">J</forename><surname>Harris</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Decaprio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kundaje</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">K</forename><surname>Wiley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mhs</forename><surname>Segler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Boca</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">J</forename><surname>Swamidass</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gitter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">S</forename><surname>Greene</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J R Soc Interface</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">141</biblScope>
+			<biblScope unit="page">20170387</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Deciphering regulatory DNA sequences and noncoding genetic variants using neural network models of massively parallel reporter assays</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Movva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Greenside</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Shrikumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kundaje</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="page">393926</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Deep learning of the regulatory grammar of yeast 5 untranslated regions from 500,000 random sequences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">T</forename><surname>Cuperus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Groves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kuchina</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">B</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jojic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Fields</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Seelig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Res</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="2015" to="2024" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Shrikumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Greenside</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kundaje</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.02685</idno>
+		<title level="m">Learning Important Features Through Propagating Activation Differences</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Generating and designing DNA with deep generative models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Killoran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Delong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Duvenaud</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Frey</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1712.06148</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+	<note>cs.LG</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Large-scale mapping of gene regulatory logic reveals context-dependent repression by transcriptional activators</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Van Dijk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sharon</forename><forename type="middle">E</forename><surname>Lotan-Pompan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Weinberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Segal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Carey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">B</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Res</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="87" to="94" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Convolutional neural network architectures for predicting DNA-protein binding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">D</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">K</forename><surname>Gifford</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="121" to="127" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Predicting effects of noncoding variants with deep learningbased sequence model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><forename type="middle">G</forename><surname>Troyanskaya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Methods</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">931</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Arjovsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Bottou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1701.07875</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Wasserstein GAN</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Zou</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1804.01694</idno>
+		<title level="m">Feedback GAN (FBGAN) for DNA: a Novel Feedback-Loop Architecture for Optimizing Protein Functions</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">H</forename><surname>Brookes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Listgarten</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.03714</idno>
+		<title level="m">Design by adaptive sampling</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Genome-scale high-resolution mapping of activating and repressive nucleotides in regulatory regions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ernst</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Melnikov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Rogov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">S</forename><surname>Mikkelsen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kellis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1180" to="1190" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Improved training of Wasserstein GANs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Gulrajani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Arjovsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dumoulin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">C</forename><surname>Courville</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="5767" to="5777" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">An empirical study on evaluation metrics of generative adversarial networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Weinberger</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.07755</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

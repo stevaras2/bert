@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Multinomial logistic Regression: Pump it or Leave it? A Water Resources Evaluation in Sub-Saharan Africa</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jacqueline</forename><forename type="middle">M</forename><surname>Fortin Flefil</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marios</forename><forename type="middle">A</forename><surname>Galanis</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vladimir</forename><forename type="middle">B W</forename><surname>Kozlow</surname></persName>
+							<email>vkozlow@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Multinomial logistic Regression: Pump it or Leave it? A Water Resources Evaluation in Sub-Saharan Africa</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Neural Network: The Sigmoid function was used as the activation function. Different architectures were tested and optimized for each prediction.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Multinomial logistic regression was performed and optimized with L2 regularization and coordinate gradient descent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random Forest:</head><p>Hyperparameters that were optimized are: number of trees, max depth, max number of features per split, minimum number of samples by leaf, minimum number of sample by split.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Network:</head><p>The Sigmoid function was used as the activation function. Different architectures were tested and optimized for each prediction. In Sub-Saharan Africa, failure rates of handpumps, the main source of water for millions of people, is almost 15% just one year after installation [1]  . The goal of this study is to develop an algorithm that can predict the functionality of a handpump as well as the quantity and the quality of water it outputs based on a minimum of data collected on the field. Predicting those characteristic of a handpump at a given point in time can help shorten the time required for managing agencies to provide support and plan targeted maintenance operations of handpumps in remote areas.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Pump it or Leave it? A Water Resources Evaluation in Sub-Saharan Africa</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In Sub-Saharan Africa, failure rates of handpumps, the main source of water for millions of people, is almost 15% just one year after installation <ref type="bibr">[1]</ref> . The goal of this study is to develop an algorithm that can predict the functionality of a handpump as well as the quantity and the quality of water it outputs based on a minimum of data collected on the field. Predicting those characteristic of a handpump at a given point in time can help shorten the time required for managing agencies to provide support and plan targeted maintenance operations of handpumps in remote areas.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>This study is based on the Taarifa dataset which contains information about 59,400 handpumps located in rural Tanzania. Each handpump has 40 features attached to it, most of which are categorical features, the rest being numerical. Three categorical features of the dataset were identified as possible indicators of the sustainability of a handpump: functionality of the handpump, quantity of water delivered, and quality of water delivered. Those three features were predicted separately in the study.  Models were optimized using a grid search with CV to fine tune hyperparameters. Final results were obtained using 5-fold CV with a 75%-25% train-test split. The voting ensemble method was used to optimize our final results. Algorithms were evaluated and optimized based on the F1 score.</p><p>Future work could include looking at different models such as Convolutional Neural Networks or Support Vector Machine. Looking at differences in predictions between countries or regions would help us see how robust the algorithm is and how dependent on local conditions the sustainability of handpumps is. Finally, adapting the model to predict when a pump would fail would make it more applicable on the field.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Functionality Quantity Quality</head><p>The micro-average F1 score provided a good evaluation of the tested algorithms overall in terms of number of good predictions. However, it did not provide information on the distribution of our good predictions over the different classes. The class imbalance -still present in our test setmade it hard to get high overall F1 scores, so we relied visually on confusion matrices. We were able to achieve high accuracy at predicting the most represented categories, but usually still did not have great accuracy for the less common categories, despite the SMOTE process. The Random Forest algorithm achieved the best F1 scores overall, but was outperformed by the voting ensemble in terms of accuracy distribution.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>F1-Score (Micro)MethodFunctionality Quantity Quality LR 65.2% 64.3% 68.6% 57.0% 77.0% 59.8% RF 86.2% 76.8% 91.9% 78.9% 97.9% 87.4% NN 74.0% 70.4% 79.6% 66.4% 91.0% 73.3% Voting 79.5% 73.5% 93.7% 77.0% 93.3% 78.3%Preprocessing Future WorkOnly 24 of the 40 original features were used. The categorical features were transformed into binary feature using One Hot Encoding (OHE). Missing or incoherent feature values were replaced by the mean (numerical) or mode (categorical/binary) of this feature over the dataset.To deal with class imbalance, the Synthetic Minority Over Sampling Technique (SMOTE) was applied as described in[2].</figDesc><table>Method Functionality 
+Quantity 
+Quality 
+
+LR 
+65.2% 64.3% 68.6% 57.0% 77.0% 59.8% 
+
+RF 
+86.2% 76.8% 91.9% 78.9% 97.9% 87.4% 
+
+NN 
+74.0% 70.4% 79.6% 66.4% 91.0% 73.3% 
+
+Voting 79.5% 73.5% 93.7% 77.0% 93.3% 78.3% 
+
+Preprocessing 
+
+Future Work 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A spacecraft (SC) capable to autonomously plan its motion while accounting for conflicting mission objectives in a Pareto optimal way would permit to accomplish complex mission tasks around highly uncharacterized celestial bodies such as near-Earth asteroids (NEAs). The two most common conflicting objectives of a space exploration mission are the maximization of the scientific output and the minimization of the control effort, i.e. the propellant required on board. If the targeted celestial body is sufficiently known and has a predictable orbital environment, both numerical and analytical tools can be leveraged on-ground to design spacecraft motion plans that account for the trade-off. On the contrary, if the celestial body and its orbit environment are largely uncertain, all plans elaborated on-ground may fail dramatically when implemented in space. A clear example are missions around NEAs having relevant dynamics parameters (i.e. mass, shape, rotation axis orientation and gravity coefficients) largely uncertain. In these missions, a spacecraft should be capable of autonomously plan its motion when an updated knowledge of the NEA environment is provided by the sensors and the navigation filter. In addition, the generated motion plan should account for the trade-off science-output vs. control-effort in an optimal sense.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem Statement</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments Solution Approach</head><p>The multi-objective optimizer has been run = 96 times (~48 hours), therefore capturing 96 possible NEA dynamics parameters configurations. Taken uniformly through the whole spectrum of NEA , 6 sample configurations have been extracted as the development set and 5 as the test set. This results in approximately 3400 state-policies pairs for the training set, 200 for the development set and 200 for the test set. The neural network (NN) weights have been trained on the training set using a mean square error (MSE) loss function. The NN hyperparameters have been tuned and optimized according to the performances provided on the development set. Input and output of the NN have been normalized between 0 and 1. An initial randomized search has made the NN model to converge to a configuration of 4 hidden layers, with tanh activation function for the first 3 layers and sigmoid activation function for the last layer. In this study, the focus is on predicting a subset of the optimal spacecraft orbit elements (optimal policy). In particular, * = [ , , ] is considered, where is the orbit semi-major axis, is the orbit eccentricity and is the orbit inclination. Better results are obtained by training separately three NN each one optimized to predict one specific orbit element. Results of the hyperparameters optimization procedure for the three NN are reported in the following Figures. Finally, results of prediction accuracy on the test set in terms of root mean square error (RMSE) are reported in the following Tables.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multi-objective Motion Planning Dataset</head><p>Multi-objective Autonomous Spacecraft Motion Planning around Near-Earth Asteroids using Machine Learning </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Autonomous motion planning unit</head><p>This project explores the use of neural networks (NN) to provide a spacecraft with autonomous multi-objective motion planning capabilities around a near-Earth asteroid (NEA). The trained NN has been shown to provide interesting but still moderate accuracy results. To improve the performances, the first way to follow is to enlarge the dataset, which up to now is limited to only 96 possible NEA dynamics parameters configurations. In addition, future work will explore ways to leverage information about the covariance of the estimated state, that the navigation filter outputs. In this sense, a possible way to go is to reformulate the problem as a stochastic Markov Decision Process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>I have developed this project advised by Prof. Simone D'Amico. The topic of this study has been motivated by the on-going research project: "Autonomous Nanosatellite Swarming using Radio Frequency and Optical Navigation", developed at Stanford's Space Rendezvous Laboratory in collaboration with NASA Ames Research Center and sponsored by NASA SSTP (Small Spacecraft Technology Program).</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

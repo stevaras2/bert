@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of News Dataset</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olga</forename><surname>Fuks</surname></persName>
+							<email>ofuks@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Classification of News Dataset</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction and motivation</head><p>Nowadays on the Internet there are a lot of sources that generate immense amounts of daily news. In addition, the demand for information by users has been growing continuously, so it is crucial that the news is classified to allow users to access the information of interest quickly and effectively. This way, the machine learning model for automated news classification could be used to identify topics of untracked news and/or make individual suggestions based on the user's prior interests. Thus, our aim is to build models that take as input news headline and short description and output news category.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Data and features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Dataset</head><p>Our data source is a Kaggle dataset <ref type="bibr" target="#b0">[1]</ref> that contains almost 125,000 news from the past 5 years obtained from HuffPost <ref type="bibr" target="#b1">[2]</ref>. News in these dataset belong to 31 different topics (labels). Each news record consists of several attributes from which we are using only 'Category', 'Headline' and 'Short description' in our analysis. In addition, we combine data attributes 'Headline' and 'Short description' into the single attribute 'Text' as the input data for classification.</p><p>The data preprocessing consisted in combining some raw data categories that are very close (for example, "Arts" and "Arts and Culture", "Education" and "College" etc). The <ref type="figure" target="#fig_0">Fig. 1</ref> show an analysis of the data statistics -number of samples per category and average number of words per combined news description. From the <ref type="figure" target="#fig_0">Fig. 1a</ref> it is obvious that we are dealing with imbalanced categories -first three most well represented categories, "Politics", "Entertainment" and "World News", if combined, make up around 44% of all data samples. However, from <ref type="figure" target="#fig_0">Fig. 1b</ref> we see that in terms of number of words per news description categories are much more homogeneous. Overall average is 25.6 ± 14.4 words. A sample description from "Entertainment" category is shown below:</p><p>Hugh Grant Marries For The First Time At Age 57. The actor and his longtime girlfriend Anna Eberstein tied the knot in a civil ceremony</p><p>In the following work we decided to only consider samples with description's size greater than 7 words. Moreover, categories "Comedy" and "Weird news" were removed from the consideration. All this preprocessing left us with total number of samples 113,342 and 25 news labels. Last step of preprocessing included removal of stop words as well as punctuation and finally, stemming of each word.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Features</head><p>First, using the preprocessed news descriptions we created the dictionary of words. The total number of unique words is around 40,000. Then, we extracted the following word features for classification task:</p><p>• Word binary and word count features: For binary and count features we used first 5,000 most common words to define the dictionary and then, encoded the news descriptions as vectorseither as vectors of 0 and 1 for binary features or of word counts in the description. • Word level TF-IDF scores: For TF-IDF method we decided to extend the dictionary to the first 10,250 most frequent words. Moreover, we combined the text from all the news belonging to that category and treated it as the one document. Thus, our corpus of documents consisted of 25 documents (one for each news category) from which we learn TF-IDF representation and then, we apply it both to train and dev set samples.</p><p>• Word embeddings: Word embeddings are a family of NLP techniques aiming at mapping the semantic meaning into a geometric space <ref type="bibr" target="#b2">[3]</ref>. To learn the word embeddings from the data we applied an Embedding layer of Keras <ref type="bibr" target="#b3">[4]</ref>. Also, we considered only 30,000 most common words in the dataset and we truncated each example to a maximum length of 50 words.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Supervised Learning</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Algorithms</head><p>In the first part of our work we experimented with traditional machine learning techniques: Naive Bayes, multinomial logistic regression, kernel SVM and Random Forest.</p><p>Naive Bayes With binary features we applied multivariate Bernoulli model and with count features -multinomial event model. For each example, we classify asŷ = arg max y P (y) n i=1 P (x i |y), where we use MAP estimation for P (y) and P (x i |y) while also applying Laplace smoothing <ref type="bibr">[5]</ref>.</p><p>Multinomial Logistic Regression We use the cross-entropy loss with L2 regularization <ref type="bibr" target="#b4">[6]</ref>. The regularized cost function is</p><formula xml:id="formula_0">J(θ) = − m i=1 K k=1 y (i) k logŷ (i) k + λ n l=1 ||θ l || 2 2</formula><p>Kernel SVM We use a multi-class SVM <ref type="bibr" target="#b5">[7]</ref> with a "one-vs-rest" approach and an RBF kernel K(x, z) = exp −γ||x − z|| 2 . Optimal parameter C and kernel parameter γ were optimized by 3-fold cross-validated grid-search over a parameter grid.</p><p>Random Forest We used the Gini measure G(X m ) = k p mk (1 − p mk ), where p mk is the proportion of class k samples in node m [8]. We regularized each tree in terms of maximum depth.</p><p>In the second part of our work, we focused on building the neural network models: with word embedding features provided by the Embedding layer of Keras we trained several neural network models with one or two convolutional layers (CNN) and/or recurrent (LSTM) layer (RNN <ref type="bibr">[9]</ref>).</p><p>CNN This a class of deep, feed-forward artificial neural networks that excel at learning the spatial structure in the input data by learning the set of filters applied to the data.</p><p>RNN This is a class of artificial neural network where connections between nodes form a directed graph along a sequence. This allows it to exhibit temporal dynamic behavior for a time sequence.  <ref type="table">Table 1</ref>: Model performance measured by classification accuracy For our implementation, we experimented with several architectures (number of convolutional layers, number of filters in each layer, number of units in recurrent layer, dropout rate) as well as with different parameters such as an embedding dimension, maximum sequence length and maximum number of words (for words tokenization). <ref type="figure" target="#fig_1">Fig. 2</ref> shows the typical model architecture. In addition, we tried applying pretrained GloVe embeddings <ref type="bibr" target="#b6">[10]</ref> (with frozen Embedding layer) but the accuracy in this case was lower then when learning embeddings from the data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Results and Discussion</head><p>We divided the data into train/dev/test split according to 80/10/10. <ref type="table">Table 1</ref> shows the obtained classification accuracy across various models and features for traditional machine learning methods. For all set of features the highest accuracy is achieved by the logistic regression. Confusion matrix for logistic regression with TF-IDF features in <ref type="figure">Fig. 3a</ref> illustrates also our motivation for considering weighted logistic regression. It is obvious, that without weighting the model is biased towards predicting the more common classes, i.e. Politics, Entertainment and Healthy Living. By weighting each example by the inverse frequency of its class, we get a generally darker diagonal in confusion matrix <ref type="figure">(Fig. 3b)</ref>. However, in this case the overall accuracy on dev set decreases from 0.671 to 0.622.  Next, we computed TF-IDF scores to select representative words for each category (these were the words with maximum TF-IDF score greater than a certain threshold). After manual inspection of the obtained words we found that they all corresponded semantically quite well to the news label.</p><p>Lastly, we trained several neural network models. For all models we observed that they quickly start to overfit the data - <ref type="figure">Fig. 4</ref> shows the typical model accuracy and loss as functions of number of epochs. Obtained classification accuracy across various models is shown in <ref type="table">Table 2</ref>. The architecture with additional RNN layer slightly outperforms the one with just convolutional layers. Also, the accuracy of the ensemble of four models is higher than accuracy of any individual model. However, surprisingly the accuracy on the dev dataset achieved by these models was about the same as that of the logistic regression classifier (see <ref type="table">Tables 1 and 2</ref>). We examined the errors made by several top performing models and found that the model often confuses the true label with the label of one of the most frequent classes such as "Politics", "Entertainment", "Healthy living" and "World news" (these four categories make up 53% of the entire data set). Moreover, we realized that besides class imbalance there are at least two more factors that prevent our models from achieving higher accuracy:</p><p>• Often there is some combination of categories present in one news, though it has just one "true" label in the dataset. Example 1: "Australian Senator Becomes First To Breastfeed On Parliament Floor "We need more women and parents in Parliament," said Larissa Waters." -here the true category "Parents" was confused by the models with "World news", probably as it mentions Australia and senator but the news is also about parenthood. Example 2: "Most U.S. Troops Kicked Out For Misconduct Had Mental Illness. The new report will likely add to scrutiny over whether the military is doing enough to care for troops with mental health issues" -this news belongs to the "Healthy Living" category whereas the models identify it as "Politics" likely because the news mention US troops and military, however it is mainly about health issues.</p><p>• Overlap of different categories -we believe this may be due to the subjective assignment of the category upon news publication. Example: "How Do Scientists Study Dreams? Dreams are a compelling area of research for scientists, in part because there's still so much to learn about how, and why, we dream. " -this news belongs for some reason to "Healthy Living" category, though it mentions a lot about scientific research, so there is no surprise that all models identify it as category "Science".</p><p>Thus, often the model is able to understand some topic of the news but not may be the main onesometimes the true topic is more subtle or even implicit, but there are some words in the news that are characteristic of other categories and as a result the model classifies it incorrectly. These observations motivated us to compare top three labels predicted by each model to the true label of the example (these results also shown in <ref type="table">Table 2</ref>). In this case the maximum accuracy was 88.72% on the dev set and it is achieved by the ensemble of four NN models.  <ref type="table">Table 2</ref>: Model performance of different neural networks measured by classification accuracy (number after "CNN" in the model's name denotes the number of convolutional layers in the model, the number following "RNN" denotes the number of units in LSTM layer of the network). "Top1" column denotes the results if considering the top one label predicted by the models, "top3" -if considering top three labels. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Visualization of Word Embeddings</head><p>Application of TF-IDF method allowed us to select for each news category the words that are characteristic of this category. Then, we extracted pre-trained GloVe embeddings <ref type="bibr" target="#b6">[10]</ref> of the selected words (we used vectors of dimension 100) and applied a dimension reduction mehtod (t-SNE <ref type="bibr" target="#b7">[11]</ref>) to visualize the word vectors in 2-D space. <ref type="figure" target="#fig_4">Fig. 5</ref> shows the result of this procedure. Some clusters do emerge -for example, for category "Taste" (orange cluster on the right), "Sports" (light orange in the bottom), "World News" (big dark red on the left), "Religion" (small yellow at the top). In the future, this may also be employed for classification (for example, applying kNN method).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>We have built a number of models to predict the category of news from its headline and short description -using methods both from traditional ML and deep learning. Our best model (ensemble of four NN models) achieves on the dev set 68.85% accuracy, if considering top 1 label, and 88.72%, if considering top 3 labels predicted by the model. It is interesting how this news dataset is extremely hard to classify for even the most complex models. We attribute this to the subjectivity in category assignment in the data. However, in the future work we may also try to apply character-level language models based on multi-layer LSTM or learn embeddings for the whole news descriptions (as in doc2vec).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Statistical analysis of dataset: (a) Number of samples per category (b) Average number of words in the combined news description</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Typical</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>(a) Without example weighting (b) With example weighting</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :Figure 4 :</head><label>34</label><figDesc>Confusion matrix for logistic regression with TF-IDF features 3 (a) Model accuracy (b) Model lossFigure 4: Typical model accuracy and loss curves (train and dev) for neural network models</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Visualization of word embeddings for different news categories</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Kaggle News Category Dataset</title>
+		<ptr target="https://www.kaggle.com/rmisra/news-category-dataset.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2028" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>The Huffington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Post</surname></persName>
+		</author>
+		<ptr target="https://www.huffingtonpost.com/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1301.3781</idno>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Keras: The Python Deep Learning library</title>
+		<ptr target="https://keras.io/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">1.1.11 Logistic Regression</title>
+		<idno>Scikit-learn 0.20.0</idno>
+		<ptr target="https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression" />
+		<imprint/>
+	</monogr>
+	<note>documentation</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">1.4 Support Vector Machines</title>
+		<idno>Scikit-learn 0.20.0</idno>
+		<ptr target="https://scikit-learn.org/stable/modules/svm.html" />
+		<imprint/>
+	</monogr>
+	<note>documentation</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Glove: Global Vectors for Word Representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EMNLP</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="1532" to="1543" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">documentation, t-distributed Stochastic Neighbor Embedding</title>
+		<idno>Scikit-learn 0.20.1</idno>
+		<ptr target="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

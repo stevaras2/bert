@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Epsilon: General ML, NLP</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yonatan</forename><surname>Feleke</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Ashok Poothiyot &amp;lt;apoothiy@stanford.edu&amp;gt;</roleName><forename type="first">&amp;lt;yfeleke@stanford</forename><surname>Edu&amp;gt;</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gurkanwal</forename><surname>Brar</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">&amp;lt;gbrar@vmware</forename><surname>Com&amp;gt;</surname></persName>
+						</author>
+						<title level="a" type="main">Epsilon: General ML, NLP</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>The corporate world deals with task management in a variety of ways with each having some form of triaging process to correctly assign tickets to developers. Automation of this task has proven elusive with less than 60% accuracy of latest ML solutions. Project Epsilon explores this area by deploying a deep neural network to predict assignees.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Introduction</head><p>Web and SaaS companies handle high volumes of tickets in the form of exceptions, support requests, user-reported bugs, and crash reports. Mostly with dedicated teams that work on aggregating, triaging and assigning these tickets to the right individual or team. However, effective automation is essential to improve productivity and obviate the tedious work of manually triaging tickets.</p><p>Project Epsilon aims to eliminate this overhead by experimenting with supervised-learning classifiers to intelligently and automatically assign tickets to a developer. With high failure rates in state of the art solutions, we aim to deliver higher accuracy for predicting assignee for a new ticket based on past tickets using deep learning models.</p><p>The input to our algorithm is a collection of historic JIRA tickets in JSON format. These tickets are preprocessed and featurized and following which we predict the assignee for new or unassigned tickets using 3 different methods: SVM, Naive Bayesian and Deep Neural Network Classifiers. We then compare the performance for these 3 methods as pertaining to 2 primary input datasets: a public Expium generated dataset as well as a dataset with real Jira tickets from Linkedin.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Related Work</head><p>Classification on open bug reports with supervised learning strategies has been done in the past. Popular strategies are Naive Bayes and SVM classification on a multinomial event model input featurized as a bag of words. The primary research revolves around interpreting text to predict assignee based on observed history. Deep neural network implementation to ticket categorization seems to be uncommon and implementing dropout and skip layers is an interesting area of research to improve our implementation.</p><p>Of the ones detailed in section 10, [2] makes stronger assumptions using implied behavioral patterns and developer dependencies to improve performance. [3], on similar lines, extracts and utilizes intention from the ticket text fields while [4] uses hierarchical attention based contextualization for more robust classification.</p><p>[1] is most relevant research close to our deep neural network experiments and promises even larger datasets and varied projects.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Introduction</head><p>Web and SaaS companies handle high volumes of tickets in the form of exceptions, support requests, user-reported bugs, and crash reports. Mostly with dedicated teams that work on aggregating, triaging and assigning these tickets to the right individual or team. However, effective automation is essential to improve productivity and obviate the tedious work of manually triaging tickets.</p><p>Project Epsilon aims to eliminate this overhead by experimenting with supervised-learning classifiers to intelligently and automatically assign tickets to a developer. With high failure rates in state of the art solutions, we aim to deliver higher accuracy for predicting assignee for a new ticket based on past tickets using deep learning models.</p><p>The input to our algorithm is a collection of historic JIRA tickets in JSON format. These tickets are preprocessed and featurized and following which we predict the assignee for new or unassigned tickets using 3 different methods: SVM, Naive Bayesian and Deep Neural Network Classifiers. We then compare the performance for these 3 methods as pertaining to 2 primary input datasets: a public Expium generated dataset as well as a dataset with real Jira tickets from Linkedin.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Related Work</head><p>Classification on open bug reports with supervised learning strategies has been done in the past. Popular strategies are Naive Bayes and SVM classification on a multinomial event model input featurized as a bag of words. The primary research revolves around interpreting text to predict assignee based on observed history. Deep neural network implementation to ticket categorization seems to be uncommon and implementing dropout and skip layers is an interesting area of research to improve our implementation.</p><p>Of the ones detailed in section 10, <ref type="bibr" target="#b1">[2]</ref> makes stronger assumptions using implied behavioral patterns and developer dependencies to improve performance. <ref type="bibr" target="#b2">[3]</ref>, on similar lines, extracts and utilizes intention from the ticket text fields while <ref type="bibr" target="#b3">[4]</ref> uses hierarchical attention based contextualization for more robust classification. <ref type="bibr" target="#b0">[1]</ref> is most relevant research close to our deep neural network experiments and promises even larger datasets and varied projects.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Datasets and Features</head><p>The Linkedin dataset's security requirements of keeping data on LinkedIn assets and preventing the external distribution of JIRA tickets has unfortunately split our development and implementation environments. As such, the development of our models, metrics, and experiments was completed on the generated www.jumble.expium.com dataset for developing the algorithm and then applied the architecture to train and test on the private LinkedIn Foundation team support dataset.</p><p>A JIRA ticket from our datasets has the following JSON structure:</p><p>For a deeper dive into the featurization process, the input JSON data is parsed into a bag of words and a multinomial event model is used to vectorize the JIRA ticket. Words in the description, body and comment sections are concatenated and converted to a feature vector via a dictionary mapping of words to indices. We count words that occur more than five times. In our preprocessing step, we remove words that occur in our list of stopwords and remove duplicate JIRA ticket entries (3, 666 or 8.43%), all of which is implemented using a modification of our homework code with a future plan to use word2vec.</p><p>The words are assumed to be independent and are expected to have been chosen with separate distributions at create time. We've analyzed and explored cross-entropy error across different parameters of a neural network and compared runs with a support vector machine classifier and a naive Bayes classifier. While developing our solution we make the following assumptions:</p><p>The labels are developers we have seen before represented as integers, which came to a total of 1403 unique developers. We then create a matrix of a multinomial input vector and an integer class label representing the assignee and go ahead with training and testing. The shape of the Expium datasets after vectorizing was: m x n = &lt;5435, 1970&gt;. The LinkedIn dataset, however, repeatedly demonstrated a wide feature vector ( m &gt; n) throughout different slices of the data: m x n:-&lt;559, 2936&gt;, &lt;28200, 46595&gt;, &lt;43483, 65350&gt; demonstrating that even after we remove stopwords there are a lot of unique words per ticket.</p><p>Instead of breaking up our dataset to explicit train, cross-validation and test sets, we opted for k-fold cross-validation <ref type="bibr" target="#b9">[10]</ref> which creates 80% train and 20% validation groups in k different ways and averages results to report test and train accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Methods</head><p>The project aims to evaluate the applicability of deep neural networks to classify ticket assignment or classification using all previously assigned developers as the labels (classes for classification) and previously assigned tickets as training data. The problem is treated as a text classification problem with a novel experiment in using a deep neural network grid search to find optimal architecture and activation functions. The wide format of the feature vectors proves to be a challenge with the highly non-linear nature of deep neural networks which resulted in overfitting on the data. We suspect that much larger datasets will be required to overcome the sheer variance of available words to create tickets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Naive Bayes and SVM Classifiers</head><p>To give an idea of the performance of the deep neural network, we implemented these traditional methods and report accuracy values when using the currently assigned developer as a label and body of text as the feature vector to evaluate cross-entropy loss on the data set. The implementations still use the same feature vectors.</p><p>The Naive Bayes classifier works by calculating the probability of a particular word mapping to a developer and those parameters are used during predict time to select the most probable developer. We use a Support Vector Machine with a linear classifier and the algorithm works by forming an optimal separation between the data points close to the boundary. Using a kernel, the algorithm is able to form highly non-linear classification by operating at higher dimensions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Deep Neural Network Classifier</head><p>Our Neural network classifier operates by constantly updating weights by back-propagating after observing a cross entropy loss. During each backpropagation round the various layers update their weights to be able to fit the problem better. The activation functions are useful by making the neural network non-linear, i.e by preventing the entire architecture from simplifying to a linear regression with a combination of the weights. The components are the learning rate, hidden layers, height, activator function, loss function, and the final output layer.</p><p>We chose a deep neural network because of its capability to fit highly non-linear data sets and our use case benefits heavily from this property due to its freeform nature. We chose a softmax output step and cross entropy loss for our architecture and for the rest we completed a parameter search using the Expium data set focusing on testing 3, 5 and 8 layers, 8,16 and 32 neurons, and relu and tanh activator functions. A 5-fold experiment is used to determine performance and find the optimal architecture with 2000 backpropagation iterations. The architecture is then compared to the other solutions to explore performance in accurately predicting assignee.</p><p>A future extension of our research might leverage NLP methods to form better matching among tickets for classification. Especially to reduce the number of features evaluated, if we're able to map similar meaning words into a single feature we expect to reduce our overfitting and also make the features more linearly independent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Experiments</head><p>We ran the following experiments based on the http://jumble.expium.com/ generated datasets. A typical JIRA ticket has text body values in summary, description, comments and body sections. The featurization step concatenates all text elements and (unless otherwise specified as in 6.1) builds a multinomial event model with counts tracked for words that appear more than 5 times in a bag of words model assuming words are independently selected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">DNNs Architecture selection</head><p>Selecting the correct DNN marks the first stage of the experiments with the goal of improving predictions. Selecting Neural network parameters is a challenging task so we tried out combinations to achieve better accuracy measures for our test sets. We explored cross-entropy training error across different parameters of the neural network. The following test parameters were experimented with and analyzed. The focus on this execution is to observe the best minimization strategies during training that would have given lowest final logistic cross-entropy loss. The experiment was run with 2,000 iterations with 5-fold cross validation. The results were a fairly surprising mix of high train and test tradeoffs and some of the algorithms suffered from local optima traps. The experiment accuracy values are listed below as are some of the graphs related to the cross-entropy loss per iteration. Looking at the results, the choice for an architecture was not obvious because the small data set was usually over fit when we get high train accuracy. The more interesting observations were on the output of graphs compiled with varying the different parameters and looking at the train loss per-iteration. Depending on the parameters, we see wildly varying patterns that need to be tuned for better accuracy and efficient computation. It was surprising to see that taller and wider nets did not necessarily yield lower training loss. The full list of graphs or the previous data can be found here. In the end, we selected the simplest high train accuracy neural network structure with the hopes that the larger dataset will fix the over fitting issue and also by picking the simplest architecture with the smoothest descent we are also attempting to reduce the even more non-linear capabilities of bigger networks. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Classification Accuracy</head><p>In this section we will compare executions of the above chosen neural network as it compares to Naive Bayes and an SVM classifier with a linear kernel. The different tables represent accuracy comparison on different subsets of the data. Unfortunately, we had computational hurdles when trying to run the SVM classifier on larger values.    The highly non-linear nature of DNN has allowed almost perfect 5-fold mean accuracy but that same benefit has heavily overfit the data as observed by the low test prediction. The Naive Bayes model doesn't continue to improve that much with more data but we see that our neural network improves, this is due to the higher non-linear fitting capabilities of a deep neural network compared to Naive Bayes probability selection methods. For smaller sample sizes the traditional approaches completely outperform because the deep neural network overfits data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusions</head><p>The low accuracy rates in predicting a developer make the currently tested experiments not viable for the primary triaging solution.The results of our experiments resulted in poor accuracy on the test set because the DNN overfit the small dataset. However, the current solution still has a lot of opportunities for improvement. In particular, dropout implementation <ref type="bibr" target="#b7">[8]</ref> and even more samples could get the solution to keep improving. As is with the current ~40,000 tickets worth of data, we can not reliably predict the developer but can provide value by predicting top-k developers or whole teams instead of individuals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Future work</head><p>The most important work is to implement dropout <ref type="bibr" target="#b7">[8]</ref> to reduce our overfit challenges and also take advantage of NLP concepts to improve test accuracy. Primarily if we can reduce the number of features (words &gt; 5 frequency) by merging words that mean the same thing (word embeddings), we may drastically reduce our overfitting issue. Implementing stemming and lemmatization may also help merge features and allow the neural network to have a more linearly independent feature vector.</p><p>Additional features from the JIRA ticket fields also provide opportunities for improvement: watchers, labels, reporter, hashed exceptions and so on may provide additional information for classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Contributions</head><p>The contributions section is not included in the 5 page limit. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Training cross entropy loss by iteration for different NN architectures</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Final chosen architecture cross entropy loss by iteration The architecture: • Width: 3 wide • Height: 16 high • Activator:ReLu • Learning: 0.005 • Iterations: 1,000</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>DNN 5  fold cross validation mean train and test accuracy by number of samples</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 2 :</head><label>2</label><figDesc>5-Fold mean accuracy values for Expium dataset (5500 tickets) on NN architectures.</figDesc><table>Activator 
+Height Depth 
+Alpha 
+Train Accuracy 
+Test Accuracy 
+
+tanh 
+8 
+3 
+0.5 
+0.3177196530281229 
+0.3177196530281229 
+
+tanh 
+8 
+3 
+0.05 
+0.3215842095242583 
+0.30263503198323694 
+
+tanh 
+8 
+3 
+0.005 
+0.7701970776212672 
+0.08775843265212382 
+
+tanh 
+8 
+5 
+0.5 
+0.3177196530281229 
+0.3177196530281229 
+
+tanh 
+8 
+5 
+0.05 
+0.3177196530281229 
+0.3177196530281229 
+
+tanh 
+8 
+5 
+0.005 
+0.6857608717141656 
+0.05722404894590326 
+
+tanh 
+16 
+3 
+0.5 
+0.2954524465503901 
+0.06201693043798307 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 3 :</head><label>3</label><figDesc>Expium Generated Dataset of 5500 tickets</figDesc><table>Model 
+Train Accuracy 
+Test Accuracy 
+
+SVM 
+1.0 w/ 70% train* 
+0.223 30% test 
+
+Naive Bayes 
+5-Fold: 0.770 
+5-Fold: 0.208 
+
+DNN 
+5-Fold : 1.0 
+5-Fold: 0.0719 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="true"><head>Table 4 :</head><label>4</label><figDesc></figDesc><table>LinkedIn Dataset: 559 tickets out of total 43483 cp, arospm 
+
+Model 
+Train Accuracy 
+Test Accuracy 
+
+SVM 
+1.0 w/ 70% train* 0.291 w/o 30% test 
+
+Naive Bayes 
+5-Fold 0.65251 
+5-Fold 0.11613 
+
+DNN 
+5Fodl: .996 
+5Fold: 0.0589 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="true"><head>Table 6 :</head><label>6</label><figDesc>LinkedIn Dataset: 39817 tickets</figDesc><table>Model 
+Train Accuracy 
+Test Accuracy 
+
+Naive Bayes 
+0.3968 
+0.2255 
+
+DNN 
+0.9997 
+0.2020 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="false"><head></head><label></label><figDesc>This section should describe what each team member worked on and contributed to the project 1. Yonatan Feleke: Featurization, experiments, algorithm development, writeup and poster. 2. Gurkanwal Brar: Algorithm development and accuracy calculation 3. Ashok Poothiyot: Investigated datasets, Initial data preparation, setup scripts, writeup Project Code: https://github.com/yfeleke/epsilon</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">DeepTriage: Exploring the Effectiveness of Deep Learning for Bug Triaging</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Senthil</forename><surname>Mani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anush</forename><surname>Sankaran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rahul</forename><surname>Aralikatte</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1801.01275</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">An Effective Approach for Routing the Bug Reports to the Right Fixers</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Xi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Shengqu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Tenth Asia-Pacific Symposium on Internetware</title>
+		<meeting>the Tenth Asia-Pacific Symposium on Internetware</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Mining Intentions to Improve Bug Report Summarization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Huai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Beibei</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Automated labeling of bugs and tickets using attention-based mechanisms in recurrent neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Volodymyr</forename><surname>Lyubinets</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Taras</forename><surname>Boiko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Deon</forename><surname>Nicholas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Second International Conference on Data Stream Mining &amp; Processing (DSMP)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Distributed Representations of Mongolian Words and Its Efficient Estimation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wuyuntana</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">DEStech Transactions on Computer Science and Engineering</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>iceit</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Duplicate Bug Reports Considered Harmful</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>-Bettenburg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Premraj</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Zimmermann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Really? In: ICSM</title>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Beyond Independence: Conditions for the Optimality of the Simple Bayesian Classifier</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>-Domingos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Pazzani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<publisher>Morgan Kaufmann</publisher>
+			<date type="published" when="1996" />
+			<biblScope unit="page" from="105" to="112" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Dropout: a simple way to prevent neural networks from overfitting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nitish</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="1929" to="1958" />
+			<date type="published" when="2014" />
+			<publisher>APA</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Automatic bug triage using text categorization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cubranic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Sixteenth International Conference on Software Engineering &amp; Knowledge Engineering</title>
+		<meeting>the Sixteenth International Conference on Software Engineering &amp; Knowledge Engineering</meeting>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">A study of cross-validation and bootstrap for accuracy estimation and model selection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><surname>Kohavi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ijcai</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

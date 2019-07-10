@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Generative Neural Network Based Image Compression</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Meltem Tolunay</surname></persName>
+							<email>meltem.tolunay@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Electrical Engineering</orgName>
+								<orgName type="department" key="dep2">Department of Electrical Engineering</orgName>
+								<orgName type="institution" key="instit1">Stanford University Stanford</orgName>
+								<orgName type="institution" key="instit2">Stanford University Stanford</orgName>
+								<address>
+									<postCode>94305, 94305</postCode>
+									<region>CA, CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ahmad</forename><surname>Ghalayini</surname></persName>
+							<email>ahmad2@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Electrical Engineering</orgName>
+								<orgName type="department" key="dep2">Department of Electrical Engineering</orgName>
+								<orgName type="institution" key="instit1">Stanford University Stanford</orgName>
+								<orgName type="institution" key="instit2">Stanford University Stanford</orgName>
+								<address>
+									<postCode>94305, 94305</postCode>
+									<region>CA, CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Generative Neural Network Based Image Compression</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Traditional off-the-shelf lossy image compression techniques such as JPEG and WebP are not designed specifically for the data being compressed, and therefore do not achieve the best possible compression rates for images. In this paper, we construct a deep neural network based compression architecture using a generative model pretrained with the CelebA faces dataset, which consists of semantically related images. Our architecture compresses related images by reversing the generator of a GAN, and omits the encoder altogether. We report orders-of-magnitude improvements in the compression rate, compared to standard methods such as the high-quality JPEG, and are able to achieve comparable compression magnitudes to the 1%-quality JPEG, while maintaining a much higher fidelity to the original image and being able to create much more perceptual reconstructions. Finally, we evaluate our reconstructions with MSE, PSNR, and SSIM measures, compare them with JPEG of different qualities and K-means compression, and report compression magnitudes in bits per pixel (BBP) and the compression ratio (CR).</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction and related work</head><p>Standard lossy image compression techniques such as JPEG and WebP are not data-specific, i.e. they are not designed specifically to handle individual datasets, in which the images are semantically related to each other. Hence these techniques do not make use of the semantic relations among the images in a specific dataset, and do not achieve the best possible compression rates. This has led to a growth in the research towards deep neural network based compression architectures. These models tend to achieve orders-of-magnitude better compression rates while still maintaining higher accuracy and fidelity in their reconstructions. <ref type="bibr" target="#b6">Santurkar et al. [2017]</ref> combine Generative Adversarial Networks (GANs) with Variational Autoencoders (VAEs) in their compression scheme, where the decoder of the compressor is the generator part of the trained GAN, which is later combined with the encoder of the VAE. By constructing the compressor with an encoder obtained from a VAE and a decoder from a GAN, authors aim to make use of the strengths of both models. Specifically, GANs are known to produce high quality, perceptual outputs that are different from the training data, whereas VAEs output images that have high fidelity to their originals, though their reconstructions are not necessarily as visually appealing to humans due to the pixel-wise loss they use for training. In a compression scheme, we need our reconstructions to be both high-quality perceptual images and to be true to their originals. This is why the literature tries to combine these two models. Another end-to-end Convolutional Neural Network for image compression is proposed by <ref type="bibr" target="#b1">Jiang et al. [2017]</ref>. Additionally, <ref type="bibr" target="#b7">Theis et al. [2017]</ref> introduce Compressive Autoencoders, where they deal with the problem of the non-differentiable nature of the quantization component of compression. A quite recent paper by <ref type="bibr" target="#b0">Agustsson et al. [2018]</ref> shows the power of incorporating GANs into these compression schemes.</p><p>Another challenge in constructing a generative deep neural compressor rises from the fact that GANs lack the encoder function. The generator network of a GAN can map from the smaller dimensional latent space to the larger dimensional image space, but not the other way around. In compression language this means that a GAN can give us a decoder but not an encoder. Addressing this issue is the work of <ref type="bibr" target="#b3">Lipton and Tripathi [2017]</ref>, where the authors train a randomly initialized vector to recover the latent space representation of an image. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Our contributions</head><p>Our main contribution in this paper is the introduction of this novel method of latent space vector recovery into the compression literature. Accordingly, we construct a compressor using solely a pretrained GAN generator, omitting the encoder altogether. We refer to this method as "GAN Reversal" throughout the paper. Compression is done via training a vector in the latent space, which is further compressed with bzip2, a standard lossless compression scheme. Decompression of images is simply done with a forward propagation of the latent vector through the GAN generator. To the best of our knowledge, we are not familiar with any other literature that uses this GAN Reversal scheme for image compression.</p><p>Furthermore, the mentioned paper of <ref type="bibr" target="#b3">Lipton and Tripathi [2017]</ref> experiments with the standard 2 -loss function for latent vector recovery. Our experiments indicate some limitations with this loss function. Thus, our other contribution in this paper is to combine this GAN Reversal method with another more perceptual loss function based on Structural Similarity Index (SSIM), which significantly improves some of our results that we discuss further in the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Models and methods</head><p>A GAN consists of two networks called the generator and the discriminator. During training, the network tries to minimize an adversarial loss function. To achieve this the generator tries to create images that cannot be differentiated from true images while the discriminator tries to correctly classify images as real or generated. The discriminator is constructed just for the training purposes and is discarded after training. As stated in the introduction, the remaining generator network maps from a low dimensional latent space to a higher dimensional image space. For the formulas below, we will refer to the latent space as the z-space, and refer to the image space as the X-space. It is not an inherent feature of a GAN network to perform a mapping from X → z. However, this mapping is exactly the necessary encoding step of compression. In this compression architecture, we encode images to the latent space based on the work of <ref type="bibr" target="#b3">Lipton and Tripathi [2017]</ref>. Accordingly, a randomly initialized vector from the z-space is trained with stochastic gradient descent, whose reconstruction is aimed to be as close to the original image as possible with respect to an appropriate loss function. The mentioned paper uses a pixel-wise 2 -loss function as a similarity measure of the reconstruction to the original image. Additionaly, we experiment with two other loss functions, the pixel-wise 1 -loss and the SSIM metric.</p><p>The specific model construction is as follows: First, we either train a GAN or acquire the pretrained generator of a GAN, that is capable of generating images of a specific domain, such as human faces. The weights of this generator network, which exactly corresponds to the decoder of our compressor, are kept frozen. The GANs that we use for image generation are from a specific category called DCGANs introduced by <ref type="bibr" target="#b5">Radford et al. [2015]</ref>, where the sampling in the latent space is performed over a uniform distribution from the interval <ref type="bibr">[-1, 1]</ref>. With this prior information, we first randomly generate a vector z in the latent space, where the elements of the vector are sampled at random from a uniform distribution over the mentioned interval. Now let the mapping of the latent vector be f (z ) in the X-space, and define the unknown latent vector as z. With this terminology, our original image to be compressed is simply f (z). The goal of the compression is to find the vector z such that f (z ) is as close as possible to f (z). This closeness measure can be defined using the following loss functions, that can further be combined with each other using empirical weighted sums as well. The pixel-wise losses that we use are the 2 (Mean Squared Error -MSE) and 1 loss functions. Hence, the possible pixel-wise loss function to be minimized are:</p><formula xml:id="formula_0">2 (z ) = f (z) − f (z ) 2 2 1 (z ) = f (z) − f (z ) 1</formula><p>Because these mentioned loss functions are pixel-wise distance metrics, they have limitations in terms of outputting perceptual images and recovering the edges in the original images. This motivates us to use perceptual similarity metrics for our training. One of such metrics is the well-known Structural Similarity Index (SSIM). For two aligned windows x and y from different images, this metric is defined as <ref type="bibr" target="#b9">(Wang et al. [2004]</ref>):</p><formula xml:id="formula_1">SSIM (x, y) = (2µ x µ y + C 1 )(2σ xy + C 2 ) (µ 2 x + µ 2 y + C 1 )(σ 2 x + σ 2 y + C 2 )</formula><p>Note that this function takes the neighboring pixels into account ), and it is a more perceptual metric than pixel-wise metrics. Another remark is that SSIM value increases up to 1 as the images become more and more similar, so the corresponding loss function to be minimized is:</p><formula xml:id="formula_2">1 N (x,y) 1 − SSIM (x, y)</formula><p>We minimize these loss functions with respect to the latent vector z via stochastic gradient descent. Note that we actually know that the unknown latent vector was sampled from U[-1, 1]. Thus after each iteration, we can clip the vector to stay in this range. Another important remark is that this GAN reversal training is non-convex, and we cannot guarantee to recover the same latent vector after each training. Multiple latent vectors can indeed map to the same image, but for our compression purposes it does not matter which latent vector we recover, as long as its corresponding image is close to the original. <ref type="figure" target="#fig_0">Figure 1</ref> shows a simplified graphical explanation of GAN Reversal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments and evaluation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Experiments and dataset</head><p>In our initial experiments, we use a GAN architecture implemented according to the work of <ref type="bibr" target="#b2">Karras et al. [2017]</ref>, pretrained on CelebA faces dataset <ref type="bibr" target="#b4">(Liu et al. [2015]</ref>).</p><p>For the test set, and for an unbiased evaluation of the models and baselines used, we used a test set of 10 images from the CelebA dataset, face-centered and resized to be of size 128 × 128 pixels. The images in the test set are not outputs of the GAN generator (unlike in <ref type="figure" target="#fig_1">Figure 2</ref>, where the image was actually an output of the GAN generator for some latent vector). Accordingly, we run our initial experiments with "seen" images that have been created by the GAN itself in the first place. This is a natural starting point considering that we know that the GAN is capable of outputting these images. Later we move on to "unseen" images that are taken from the CelebA test set as we mentioned earlier. All experiments are run with TensorFlow, using stochastic gradient descent with an empirical learning rate between 1 and 10. The particular GAN model we use has a latent space dimension of 512 and outputs images of size 128 × 128 × 3. All elements of the latent vectors are float32 numbers. After training and recovering the latent vector corresponding to the original image, we perform additional quantization. Our experiments show that the latent vectors can be rounded up to 1 significant figure after the decimal point without any significant perceptual quality in the decompressed image for both seen and unseen images. For seen images, a vocabulary size of 21 is in practice sufficient to store the image in the latent space, where z i ∈ {−1.0, −0.9, −0.8, ..., 0.0, ..., 0.9, 1.0}. This is because for seen images the training will almost always succesfully recover the latent vector within an interval of <ref type="bibr">[-1,1]</ref>. Furthermore, if we round the latent vectors just to the set of {−1, 0, 1}, we still construct images that have very high perceptual qualities. However, high fidelity is not always guaranteed for this extreme case of quantization. This small vocabulary size in the latent space also allows us to perform efficient lossless compression on top of quantization. For this, we use an off-the-shelf bzip2 algorithm. For unseen images, we found that the training outputs latent vectors whose elements are from a larger interval (approximately <ref type="bibr">[-15,15]</ref>). Clipping during training made the fidelity of reconstructions worse, so we performed quantization in this larger interval for unseen images, and then ran the lossless bzip2 compression. <ref type="figure" target="#fig_1">Figure 2</ref> illustrates results from our method for seen images. For such cases where we know the image is an output of the GAN generator, finding a latent vector that outputs that image through GAN Reversal is almost perfect, as can be seen in <ref type="figure" target="#fig_1">Figure 2</ref>, even using just MSE loss. However, the challenge lies in the images that are not exact outputs of the GAN generator, where the MSE loss is no longer sufficient, and we use the SSIM loss for the unseen images. We added a weighted sum of one of the pixel-wise losses during training, but found empirically that the SSIM loss alone works best among all for our purposes. Results for unseen images are depicted in <ref type="figure" target="#fig_2">Figure 3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Metrics used and baseline models</head><p>In this paper, we are aiming to design a better extreme compression scheme with two main objectives: the scheme must achieve higher compression rates than other standard lossy image compression techniques, and the reconstructed images must still be of high perceptual quality and true to their originals. To assess how well our scheme is doing based on these objectives, we have to use suitable metrics.</p><p>For image quality, the metrics that are relevant to our work and that are most used in the literature include the mean squared error (MSE), peak signal-to-noise ratio (PSNR), and structural similarity index (SSIM). While MSE seems like the easiest metric to use, it is actually not as indicative of perceptual or textural quality as the other metrics <ref type="bibr" target="#b8">(Wang and Bovik [2009]</ref>). On the other hand, SSIM, proposed in <ref type="bibr" target="#b9">Wang et al. [2004]</ref>, has been shown to be more indicative of perceptual quality and thus have gained traction as the metric to use in applications where texture and perception are important.</p><p>To measure how much compression our scheme is achieving, we use the bits per pixel (BPP) metric, which conveys the magnitude of the compression scheme by indicating the (average) number of bits needed to represent one pixel. To put the numbers in context, a non-compressed image that represents each color channel of the pixel using one byte, has a BPP of 24. However, for fairness, before reporting the BPP, we losslessly compress the images from any scheme similar to what we do with the latent vectors in our GAN Reversal approach. Therefore, the BPP of the uncompressed PNG  <ref type="table">Table 1</ref>: Summary of the metrics obtained from the baselines and our approach "GAN Reversal" on our test set images will be less than 24 in our reported results on the test set. In other words, BP P = S compressed 128×128 , where S compressed is the size of compressed file, itself losslessly compressed. Moreover, we report the compression ratio (CR), which is defined as CR = BP P uncompressed BP P compressed . One of the baselines that we investigated first was compression using K-means clustering. The BPP of the K-means algorithm is: BP P kmeans ≈ log 2 (K). However, since we are also losslessly compressing the images from K-means, BP P kmeans &lt; log 2 (K). For this paper, we only try K = 2 because our aim is extreme compression.</p><p>The other baseline we investigated was JPEG (optimized), which is a popular lossy image compression scheme. We used two values for the quality parameter of the JPEG schem: 10% and 1%. Note that for the purposes of this paper where we are aiming for extreme compression, our main objective is beating the JPEG 1% baseline in the SSIM metric which corresponds to better perceptual quality, while still having a comparable compression ratio (CR). <ref type="table">Table 1</ref> summarizes the performance of the baselines as well as our approach "GAN Reversal" on the proposed metrics. <ref type="figure" target="#fig_2">Figure 3</ref> compares the outputs of the different compression schemes on a sample image from our test set. The results show that our approach has a compression ratio (CR) comparable to that of the extreme JPEG (1%) scheme (and even delivers a smaller size in most cases), while clearly outperforming it in the SSIM metric. For seen images, we can achieve sizes approximately as small as 250 bytes. This number is slightly bigger for unseen images, with an approximate size of 450 bytes after extreme quantization. Note that it's harder to achieve higher fidelity in the reconstructions for unseen images, compared to seen ones, where the simple MSE loss almost always guarantees perfect recovery of the latent vector. We had to use a more sophisticated SSIM loss for the unseen images, which correlates much better with human perception. We believe that this new compression scheme is very promising for the future, since it utilizes the semantic relations of a group of images using a pretrained GAN, thus eliminating the redundant side information that can be stored elsewhere to allow for extreme compression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Results and discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Future work</head><p>The main future goal should be to improve the loss function used for latent vector training even further. This will enable us to build compressors that achieve more perceptual reconstructions with higher fidelity. The additional challenge will be to build an automated process for the compressor. Since the compression procedure utilizes a gradient descent based training scheme, there are significant parts of compression that rely on human observation; such as the hyperparameter tuning, running other training sessions with differently initialized random vectors for improvement, and picking the best perceptual output among all reconstructions. For a practical compressor, all these processes must be automated.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>A simplified graphical explanation of the GAN Reversal process</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>a. The original uncompressed image (26.966 bytes) which is a GAN generator output. b. JPEG compression (left: reduced to 10% quality: 1671 bytes, right: reduced to 1% quality: 661 bytes). c. Our method (standard quantization: 478 bytes, extreme quantization: 240 bytes)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>a. An uncompressed unseen image from our test set (29.171 bytes). b. K-means (K = 4) compressed image c. JPEG compression (left: reduced to 10% quality, 1.030 bytes; right: reduced to 1% quality, 457 bytes). c. Our GAN Reversal scheme (extreme quantization: 450 bytes)</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Preprint. Work in progress.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>We would like to thank Kedar Tatwawadi and Shubham Chandak for their very helpful discussions and comments.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Generative adversarial networks for extreme learned image compression</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eirikur</forename><surname>Agustsson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Tschannen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Mentzer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Radu</forename><surname>Timofte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+		<idno>abs/1804.02958</idno>
+		<ptr target="http://arxiv.org/abs/1804.02958" />
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">An end-to-end compression framework based on convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Feng</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wen</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaohui</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jie</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xun</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Debin</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno>abs/1708.00838</idno>
+		<ptr target="http://arxiv.org/abs/1708.00838" />
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Progressive growing of gans for improved quality, stability, and variation. CoRR, abs/1710.10196</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tero</forename><surname>Karras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timo</forename><surname>Aila</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samuli</forename><surname>Laine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaakko</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1710.10196" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Precise recovery of latent vectors from generative adversarial networks. CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><forename type="middle">C</forename><surname>Lipton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Subarna</forename><surname>Tripathi</surname></persName>
+		</author>
+		<idno>abs/1702.04782</idno>
+		<ptr target="http://arxiv.org/abs/1702.04782" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Deep learning face attributes in the wild</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ziwei</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ping</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaogang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoou</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Computer Vision (ICCV)</title>
+		<meeting>International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2015-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Unsupervised representation learning with deep convolutional generative adversarial networks. CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luke</forename><surname>Metz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soumith</forename><surname>Chintala</surname></persName>
+		</author>
+		<idno>abs/1511.06434</idno>
+		<ptr target="http://arxiv.org/abs/1511.06434" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Generative compression. CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shibani</forename><surname>Santurkar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">M</forename><surname>Budden</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nir</forename><surname>Shavit</surname></persName>
+		</author>
+		<idno>abs/1703.01467</idno>
+		<ptr target="http://arxiv.org/abs/1703.01467" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Lossy image compression with compressive autoencoders. CoRR, abs/1703.00395</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lucas</forename><surname>Theis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wenzhe</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Cunningham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ferenc</forename><surname>Huszár</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1708.00838" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Mean squared error: Love it or leave it? a new look at signal fidelity measures. IEEE signal processing magazine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhou</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alan</forename><forename type="middle">C</forename><surname>Bovik</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="98" to="117" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Image quality assessment: from error visibility to structural similarity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">C</forename><surname>Zhou Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">R</forename><surname>Bovik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">P</forename><surname>Sheikh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Simoncelli</surname></persName>
+		</author>
+		<idno type="doi">10.1109/TIP.2003.819861</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Image Processing</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="600" to="612" />
+			<date type="published" when="2004-04" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Loss functions for image restoration with neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Gallo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Frosio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kautz</surname></persName>
+		</author>
+		<idno type="doi">10.1109/TCI.2016.2644865</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Computational Imaging</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="47" to="57" />
+			<date type="published" when="2017-03" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

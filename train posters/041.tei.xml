@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Result &amp; Conclusion</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jing</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Deparment of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiajun</forename><surname>Sun</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Deparment of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhendong</forename><surname>Lin</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Deparment of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Result &amp; Conclusion</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hotel Recommendation Based on Hybrid Model</head><p>Hybrid model results in prediction with 53.6% accuracy on testing data -4% improvement on content-base model. This result is consistent with our hypothesis: both user preference and hotel popularity are vital in recommendation system. Currently, the leading team on Kaggle hotel recommendation competition achieved 51.7% accuracy. The benchmark content-based model has 49.8% accuracy. Therefore, this Hybrid Model is very likely to get the first place in this competition.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVD(UV-decomposition ):</head><p>SVD seeks a low-rank matrix = to reduce the dimension and fill the some unrated items.</p><p>Mobile Users -NO obvious preference City -LITTLE effects on users preference. Country and region -CORRELATE with users preference.</p><p>Package Users -OBVIOUS preference</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Clustering</head><p>Begin with every points in its own cluster. Larger clusters will be constructed by combining two smaller clusters Decision Tree Classifier:. We applied the method of decision tree to classify new users into our user clusters according to their user profiles.</p><p>We compared the outcomes of predicted top 5 hotels clusters that a coming user might book between single content-based model and hybrid model. Combined with utility matrix in collaborative filtering, the hybrid model reached more accuracy not matter in training or testing to predict the booking outcomes of users.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>GUI Design</head><p>A Hybrid Model is developed for hotel recommendation. The benchmark approach in the industry relies on solely hotel popularity. This method does not provide personalized hotel recommendation. The Hybrid Model combines user preferences and hotel location specific popularity. Recommendation on returning user considers their historical booking history. While for new user, a decision tree is applied to classify them into our existing user clusters. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reference</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset Head</head><p>Keyword: Collaborative filtering , Contentbased, SVD, Hierarchical clustering, Decision Tree</p><formula xml:id="formula_0">U i ≔ U i + α M ij − V j T U i V j − λU i V j ≔ V j + α M ij − U i T V j U i − λV j e similarity = σ i=1 n A i B i σ i=1 n A i 2 σ i=1 n B i 2</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVD</head><p>Hybrid Model :</p><p>The Hybrid Model includes information on both user preference and hotel location specific popularity. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]</head><label>1</label><figDesc>Ba Q, Li X, Bai Z. Clustering collaborative filtering recommendation system based on svd algorithm[C]//Software Engineering and Service Science (ICSESS), 2013 4th IEEE International Conference on. IEEE, 2013: 963-967. [2] Huming G, Weili L. A hotel recommendation system based on collaborative filtering and rankboost algorithm[C]//2010 second international conference on multimedia and information technology. IEEE, 2010: 317-320. [3] Meng C, Cheng Y, Jiechao C, et al. A Method to Solve Cold-Start Problem in Recommendation System based on Social Network Sub- community and Ontology Decision Model[C]//3rd International Conference on Multimedia Technology (ICMT-13). Atlantis Press, 2013. [4] Salakhutdinov R, Mnih A, Hinton G. Restricted Boltzmann machines for collaborative filtering[C]//Proceedings of the 24th international conference on Machine learning. ACM, 2007: 791-798.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>IntroductionAccording to ontology model, user profile data can be used to detect the preference of users. Based on current data form we have, we draw several figures to show what factors in users profile affect the preference.</figDesc><table>Accuracy 
+Hybrid Model 
+Content-based 
+
+Train 
+61.29% 
+51.03% 
+
+Test 
+53.62% 
+51.74% 
+
+Accuracy Comparison 
+
+Utility Matrix: 
+Giving for each user-item pair, a 
+value that represents what is 
+known about the degree of 
+preference of that user for that 
+item. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>M: utility matrix D: hotel ranking matrix for different destinations m ik : rating utility matrix d jk : rating in hotel ranking matrix in destination j</figDesc><table>i: user_id 
+j: destination_id 
+k: hotel cluster_id 
+
+( ) 
+
+= [ 1 , 2 , … 
+, … m in ] 
+
+( ) 
+
+= [ 1 , 2 , … 
+, … d jn ] 
+
+= ( ) ( ) 
+
+Utility Matrix 
+SVD-Utility Matrix 
+
+Cosine Thresholds 
+SVD Converge 
+
+Hotel Cluster Popularity </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

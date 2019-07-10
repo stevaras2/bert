@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Real-time Detailed Video Analysis of Fruit Flies</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><surname>Herbst</surname></persName>
+							<email>sherbst@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Real-time Detailed Video Analysis of Fruit Flies</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Improve segmentation when the two flies are in contact.</p><p>• Add annotation of female wings (which don't move much) and abdomen (which does)</p><p>• Detect male and female wing grooming.</p><p>• Investigate the application of unsupervised learning methods (e.g., TSNE [3]) to features produced by the video analysis.</p><p>• Achieved real time operation (84 FPS processing throughput vs. 30 FPS source video rate)</p><p>• Contour classification (FlyNotFly and MF vs. FM) worked well; this was expected because the fly sizes are fairly well-defined.</p><p>• Orientation classification using PCA applied to HOG features worked surprisingly welleven using just two components resulted in qualitatively good performance. (I had first tried using keypoint descriptor matching, with less success) • The wing angle regression worked well because I used image processing techniques (blur, threshold, erode) to reduce feature variance caused everything except wing motion itself. has 0/180˚ambiguity</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>However, standard tools for this video analysis (e.g.,[1]) are often too slow to run in real-time, which is problematic for long-running or closed- loop experiments.• Goal of the this project: given a video recording of flies, annotate each with its sex, position, orientation, and wing angle in real time.</figDesc><table>Fly/NotFly 
+MF vs. FM 
+Orientation Wing Angle 
+
+Train Error 
+Test Error 
+Ntrain Ntest 
+
+Fly/NotFly 
+0.0% 
+0.0% 
+759 
+253 
+
+MF vs. FM 
+0.2% 
+0.7% 
+423 
+141 
+
+Male 
+Orientation 
+0.0% 
+0.0% 
+358 
+120 
+
+Female 
+Orientation 
+0.8% 
+0.0% 
+259 
+87 
+
+Wing Angle 
+σ=2.06˚σ=2.92˚354 
+118 
+
+Orientation Classifier: PCA applied to HOG features 
+
+• Type: classifier 
+• Input: one contour from the raw video after 
+thresholding 
+• Output: whether the contour represents zero, one, or 
+two flies 
+• Feature(s): the area of the contour 
+• Model: decision tree with Gini impurity criterion 
+• Results: 
+• 0% test error 
+• 2.2 ms runtime to extract and classify all contours 
+
+contour area 
+
+Feature(s) 
+
+• Type: classifier 
+• Input: the contours of two flies 
+• Output: whether the contours are ordered as male-female or female-male 
+• Data augmented by reversing the ordering of examples 
+• Feature(s): areas and aspect ratios of both contours 
+• Model: 
+• feature standardization, followed by 
+• logistic regression 
+• Results: 
+• 0.7% test error 
+• (1.4% without aspect ratio features) 
+• 0.7 ms runtime 
+
+• Contour #1 
+• Area 
+• Aspect Ratio 
+• Contour #2 
+• Area 
+• Aspect Ratio 
+
+Feature(s) 
+
+compute 
+contour area 
+use decision tree 
+
+Standardize 
+Features 
+
+Logistic 
+Regression 
+
+• Type: classifier 
+• Input: the contour of a male or female fly 
+• Output: the 0-360˚ orientation of the fly 
+• Data augmented by rotating examples 180• 
+Feature(s): 
+• Histogram of oriented gradients (HOG) descriptor 
+• Model (trained separately for male and female examples): 
+• PCA with 15 components, then 
+• Logistic regression 
+• Results: 
+• 0% test error 
+• 1.9 ms runtime for both flies 
+
+Orient 
+vertically 
+using image 
+moments 
+
+or 
+
+up/down ambiguity must be 
+resolved by the classifier 
+
+https://bit.ly/2EecQq1 
+
+https://bit.ly/2EecQq1 
+
+Crop and resample 
+to 64x128 image, 
+then compute 
+HOG descriptor 
+
+HOG features 
+3780x1 
+
+Wing Angle Regression: PCA applied to HOG features 
+
+PCA 
+15 components 
+
+Logistic 
+Regression 
+
+HOG features 
+
+Repeat 
+process for the 
+other fly 
+
+PCA 
+40 components 
+
+Linear 
+Regression 
+
+HOG features 
+
+Repeat 
+process for the 
+left wing 
+
+Crop to right 
+half of image 
+
+3.9 ms to read each 
+frame (1530x1530) 
+
+Decision tree 
+0% test error 
+2.2 ms runtime 
+
+Logistic regression 
+0.7% test error 
+0.7 ms runtime 
+
+HOG+PCA+LogReg 
+0% test error 
+1.9 ms runtime 
+
+HOG+PCA+LinReg 
+σ=2.92˚test error 
+3.3 ms runtime 
+
+Crop and resample 
+to 80x96 image, 
+then compute 
+HOG descriptor 
+
+References 
+
+HOG features 
+3564x1 
+
+• Type: regression 
+• Input: contour of a male fly 
+• Output: the 0-90˚ angles of the left and right wings 
+• Feature(s): 
+• Histogram of oriented gradients (HOG) descriptor 
+• Model: 
+• PCA with 40 components, then 
+• Linear regression 
+• Results: 
+• σ=2.92˚ test error 
+• 3.3 ms runtime 
+
+• Fruit fly behavior (e.g. for neuroscience experiments) is often measured 
+out by analyzing video recordings. 
+• • Starting point: a 15 min high-resolution 30 FPS grayscale video of the 
+courtship interaction between a male and a female fruit fly. (From Dr. 
+Ryan York of Prof. Tom Clandinin's neurobiology lab.) 
+• I hand-annotated 326 frames of this video using LabelMe [2] to indicate 
+the positions of heads, abdomens, and a point within the fly body. For 
+male flies, I also annotated wing angles via 3 additional points. 
+
+[1] Eyrun Eyjolfsdottir, Steve Branson, Xavier P. Burgos-Artizzu, Eric D. Hoopfer, Jonathan Schor, David J. Anderson, and Pietro Perona. Detecting 
+social actions of fruit flies. In Computer Vision -ECCV 2014, pages 772-787. Springer International Publishing, 2014. [2] 
+http://labelme2.csail.mit.edu/Release3.0/index.php, [3] van der Maaten, L.J.P.; Hinton, G.E. (Nov 2008). "Visualizing Data Using t-SNE". Journal of 
+Machine Learning Research. 9: 2579-2605. [4] https://en.wikipedia.org/wiki/Decision_tree_learning, [5] https://bit.ly/2Lb5XqU, [6] 
+http://cs229.stanford.edu/notes/cs229-notes1.pdf, [7] http://cs229.stanford.edu/notes/cs229-notes10.pdf, [8] https://en.wikipedia.org/wiki/Image_moment 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>use a basis consisting of the eigenvectors corresponding to the largest eigenvalues of</figDesc><table>Gini impurity [4] 
+Feature standardization [5] 
+
+Logistic regression [6] 
+
+with 
+
+set 
+
+Angle from image 
+moments [8] 
+
+Linear regression [6] 
+
+choose 
+
+with 
+
+PCA [7] 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Social Network Circle Discovery Using Latent Dirichlet Allocation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Frank</forename><surname>Fan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaimie</forename><surname>Xie</surname></persName>
+							<email>jaimiex@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Kim</surname></persName>
+							<email>mdkim@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Social Network Circle Discovery Using Latent Dirichlet Allocation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Online Social Networks, such as Face-</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>As of August 2015, Facebook, an immensely popular online social networking service, had over 1.59 billion monthly active users. The site allows users to create a user profile and add other users as "friends." Users can then categorize their friends into lists, such as "Close Friends," or "People From Work." However, with the average Facebook user having about 338 friends, manually picking out these friend circles becomes a laborious process. The purpose of our experiment is to explore algorithms that can automatically detect these circles, so that users can more easily personalize to whom they share their information. For example, a user would most likely not want to share the same information with acquaintances than with family members. In order to detect these circles, we will consider three sources of information: the user's profile features, the user's friends' features, and the network structure. In general, we want the friends in each circle to share certain common features (such as same school, same work, etc.), and also have many common friends within the circle. (Connectivity within a circle can also provide information on which groups are more casual and which are more tight knit.)</p><p>Finally, we should also consider the possibility of friends belonging in multiple circles. For example, someone who went to the user's university could also be a coworker. Therefore, our problem at hand is not a traditional clustering problem, where each example falls in one cluster. We will address the multi-cluster problem by using an algorithm that determines a multinomial distribution of the circles for each of the users' friends. We will explain this algorithm in more detail in the latter sections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Background</head><p>This section gives background information on the methods that have been explored to solve the task of Social Circle Discovery. We will then discuss Latent Dirichlet Allocation, which is a method from Natural Language Processing that we will apply to our task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Related Work</head><p>McAuley and <ref type="bibr">Leskovec (2012)</ref> developed a novel method that builds a probabilistic model of an ego graph based on connectivity between nodes, and the circles that exist among the nodes. The circles are treated as a latent variable in the optimization of the likelihood of the graph. <ref type="bibr" target="#b7">Petkos et al. (2015)</ref> used Latent Dirichlet Allocation in social circle discovery, but only used individual user-features and id's of neighbors in model training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Latent Dirichlet Allocation (LDA)</head><p>For social circle discovery, we turn to Latent Dirichlet Allocation (LDA), originally devised by <ref type="bibr" target="#b2">Blei et al. (2003)</ref> for topic modeling in Natural Language Processing. This involves treating users in a network as "documents," and user features as "words." The primary hope is to produce a mixture model of social circles for each user, based on their features: birthday, workplace, etc. Not only is this an intuitive extension of the field of linguistic topic-modeling, LDA proves to be a more timeefficient algorithm than traditional methods, while achieving comparable results <ref type="bibr" target="#b7">(Petkos et al. 2015)</ref>.</p><p>LDA is a generative algorithm that views documents as mixtures of topics, with each topic being a multinomial distribution of words. LDA models the production of each document in a corpus in the following fashion:</p><p>1. Produce an N ∼ Poisson(η), the length of the document.</p><p>2. Produce a θ ∼ Dirichlet(α). θ represents the distribution of topics within a document.</p><p>3. For each word w i in the document,</p><formula xml:id="formula_0">(a) produce a topic z i ∼ Multinomial(θ). (b) produce word w i ∼ Multinomial(z n , β)</formula><p>From this model, we can formulate the probability of a document, w:</p><formula xml:id="formula_1">p(w|α, β) = Γ i α i i Γ(α i ) × k i=1 θ i α i −1   N n=1 k i=1 V j=1 (θ i β ij ) w j n   dθ</formula><p>Since this formulation produces a loglikelihood maximization problem that is intractable, <ref type="bibr" target="#b2">Blei et al. (2003)</ref> propose an EM procedure for learning the model parameters.</p><p>Furthermore, in line with work done by Hoffman et al. <ref type="formula">(2010)</ref> and <ref type="bibr" target="#b8">Rahurek and Sojka (2010)</ref>, we utilize an online-learning variant of LDA for this project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Experiment</head><p>In the previous section we discussed the LDA method, which we will now apply to the problem of social circle discovery. This involves modeling the user's friends as "documents," features as "words," and social circles as "topics" in the documents. The features we used not only included individual friends' features (birthday, workplace, etc.), but also the id's of each user's friends to capture some sense of the connectivity of the graph. We also added features which each friend shares with the user/ego node. Concretely, for each friend "document," we have the feature labels for each exhibited feature on his/her profile, the feature labels for each feature he/she shares with the user-node, and the user IDs of all the friends that he/she is connected to by an edge.</p><p>To evaluate the performance of our LDA algorithm, we also ran two variants of K-means clustering, using just the feature vectors of the friends' profiles. However, since in many cases, the feature dimensions exceeded the number of friends, we compressed the feature vectors using tSVD (See Section: 3.2). To summarize, we ran the following algorithms:</p><p>• LDA using the network structure, user's profile, and friends' profiles. We set the number of circles, k = the number of ground-truth circles. We will refer to this algorithm as "LDA"</p><p>• LDA as above, except we set k using the AIC C selection algorithm described in section 3.1. This will be "LDA+C"</p><p>• K-means clustering using only the compressed feature vectors of the user's friends. We set k = the number of ground-truth circles. We will refer to this algorithm as "KMEANS"</p><p>• K-means as above, except we set k using the AIC C selection algorithm described below. This will be "KMEANS+C"</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Parameter Tuning</head><p>With the LDA algorithm, it is vital to pick the number of topics, which we will denote by K, to model. We accomplish this with a stepwise procedure through a grid search of varying values of K, to choose the model that minimizes the AICc <ref type="bibr" target="#b7">(Petkos et al. 2015)</ref>:</p><formula xml:id="formula_2">AIC c = −2LL + 2p + 2p(p + 1) N − p − 1</formula><p>Where LL is the log-likelihood of the model with respect to the dataset, N is the total number of words across all documents (total number of features summed across all users) and p = K(M − 1) + D(K − 1) is the effective number of parameters, with K being the number of topics (circles), M the number of distinct words (features) and D the number of documents (users).</p><p>To obtain the log-likelihood of a model, we utilized the perplexity measure produced by the online-LDA and used the following formula relating perplexity and log-likelihood <ref type="bibr" target="#b2">(Blei et al. 2003)</ref>:</p><formula xml:id="formula_3">P erplexity(C) = exp( −LL(C) N )</formula><p>with C representing all the documents in a corpus (i.e., all users in a network). The traditional AIC criterion helps to choose the model with the greatest likelihood, while penalizing models with large numbers of parameters (which mitigates over-fitting). The AIC c criterion, however, also corrects for finite sample sizes that are small with respect to the dimension of the parameter space <ref type="bibr" target="#b1">(Hurvich and Tsai 1989)</ref>. We see, also, that as the number of words N in the corpus increases without bound, the third term of the AIC c drops out and we are left with the formula for AIC.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Baseline Comparison</head><p>To set a baseline comparison, we decided to use K-Means clustering, which is capable of assigning each user to only one circle, so is expected to be less robust than our LDA algorithm. To pre-process the data before K-Means clustering, we used the truncated SVD method <ref type="bibr" target="#b0">(Berry et al. 1995)</ref>. Whereas most implementations of the tSVD require one to specify the number of eigenvalues to keep, We use our own tSVD implementation, adapted with a rule proposed by <ref type="bibr" target="#b5">Leskovec et al. 2014</ref>, which allows us to avoid humaninspection of the SVD eigenvalues (for a drop-off), and to avoid hard-coding the number of eigenvalues to keep:</p><p>• With our data matrix, with rows representing users and columns representing the feature values for each user, we formed the SVD (U ΣV * )</p><p>• By a rule of thumb <ref type="bibr" target="#b5">(Leskovec et al. 2014)</ref>, we truncated the maximum number of eigenvalues such that: the sum of squared remaining eigenvalues is at least .9 of the sum of squared original eigenvalues. This allows us to capture a good amount of the variation in the data, while reducing uninformative dimensions.</p><p>• Let's say we truncated the SVD to the m largest eigenvalues. Our tSVD is then denoted by: U m Σ m V * m . To form the dimensionreduced dataset, we simply take U m Σ m .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Data</head><p>The data that we will use for training/testing is provided by the Stanford Network Analysis Project, and all of our data comes from Facebook. The data is divided into ego networks, which consists of the ego node, all of the nodes it is connected to (called alters), and all of the edges there may be among these nodes. Within each ego network, we have the following: <ref type="figure">Figure 3</ref>: The average BER Scores across the four algorithms that were tested. BER scores are obtained by subtracting the average BER error from 1, so a higher score means better performance.</p><p>• Circles: these are the circles that the user manually chose, the ground-truth circle. The circles are not necessarily disjoint, so one user can be in multiple circles. We will compare our results with these sets of users.</p><p>• Edges: this contains every edge in the ego network, other than the implicit edges that connect each alter to the ego node. An edge, (n 1 , n 2 ) signifies that alters n 1 and n 2 are "friends" on Facebook.</p><p>• Features: for each alter, we are given a binary array, where a 1 in index i signifies that feature i is satisfied (and 0 otherwise). The features are constructed in a tree-structure, where example features include:</p><p>-education:university:Stanford -education:university:Harvard -education:year:2018, etc.</p><p>• Feature names: this contains the names of the features that correspond with the feature arrays. In general, we will just use the numerical labeling of the features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Results/Analysis</head><p>After running the LDA Algorithm, we get the multinomial distributions of the circles for each of the friends in the ego-network. At this point, we can choose a cut-off probability to choose which circles each user actually should be assigned to. For example, if a user is assigned a probability &lt; .05 of being in circle A, then this user is likely not actually in circle A. In choosing this cut-off probability, we have to consider how many circles we are actually predicting. Let N be the number of circles we predicted, then we will place user u in circle C if P r(u ∈ C) &gt; 1/N In our K-Means Algorithm, each user was automatically labeled into one circle.</p><p>Once we have established these circles, we want to be able to directly compare the automatically produced circles with the Ground-truth circles, which are the circles that the ego-user manually chose. To do this, we must determine an optimal mapping from our circles to the circles which the ego-user hand-picked. First, we need to determine some error/cost function which we would like to minimize. For the purpose of our experiment, we used the Balanced Error Rate (BER), as did <ref type="bibr" target="#b7">Petkos et al (2015)</ref>. If we let C = {C 1 , C 2 , ..., C K } be the set of automatically produced circles, and C = {C 1 ,C 2 , ...,C K } be the set of ground-truth circles. Then, we can define the BER as:</p><formula xml:id="formula_4">BER(C i ,C i ) = 1 2 |C i \C i | |C i | + |C i c \C c i | |C i c |</formula><p>The BER cost function equally weights the fraction false-positives and false-negatives. If we compute the BER for every pair (C i ,C j ), we can construct the cost matrix where the ij − th entry is BER(C i ,C j ). (Note that since the number of circles which we predicted does not always match the number of truth-circles, our cost matrix is not always a square-matrix. The number of matchings that we will get in this case will be min(|C|, |C|)) We want to find a circle matching f : C →C, which gives us the least total error. If we were to try every possible f and then compute the cost, this would take O(n!). However, with the KuhnMunkres algorithm, we can solve the assignment problem in O(n 3 ) time.</p><p>For our final BER score, we take the average of the BER rates from each circle assignment, then subtract that from one:</p><formula xml:id="formula_5">BER f = 1 |f | C∈dom(f ) (1 − BER(C, f (C)))</formula><p>For each algorithm we average the BER f values from each of the 10 ego-networks. We get the following results: KMEANS reports a BER score of .652, KMEANS+C obtains a score of .701, LDA a score of .622, and LDA+C a score of .657. For both our K-means and LDA algorithms, we achieved better results when we predict the number of circles using AIC C , rather than just setting k = the number of ground-truth circles. This is because in the latter case, we are overfitting the data -in one of the networks (for LDA), using our predicted number of circles (k = 5 rather than k = 46) improved the BER score from .632 to .851. Many of the ground truth circles only contained 1-2 people, and by abstracting away these circles, we actually got better results.</p><p>Another surprising result was that the K-Means algorithms, which used only the feature vectors of the user's friends, but did not consider the network structure or user's own profile features, did better than the LDA algorithms, which considered all three components. However, our implementation of the LDA algorithm places larger weight on the network structure because most of the user's friends have many more connections within the ego-network than 1s in their feature vectors. Since we are treating each connection as a word in the documents (the user's friends), the documents will largely be composed of network structure. This implies that profile features (even using the compressed vectors) may tell us more about circle formations. <ref type="figure">Figure 4</ref>: LDA performs better for most trials when we predict the number of circles using AICC selection, rather than using the number of ground-truth circles.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Graphical interpretation of an ego network. The large, red node signifies the ego node. The alters are colored according to the ground-truth circles they were placed in.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>The number of circles predicted may not always correlate with the ground-truth number of circles.</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Future Work</head><p>We hope to explore other combinations of features to include in our LDA model, such as interaction terms and indicators of edge strength. We also hope to devise ways to factor networkconnectivity into our model-building without having it overwhelm the other features present. Another area of work would be to explore parameter tuning with BIC and AIC and compare results with AIC c selection to verify our theoretical decision to use AIC c .</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Using linear algebra for intelligent information retrieval SIAM review</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">W</forename><surname>Berry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">T</forename><surname>Dumais</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">W</forename><surname>Brien</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1995" />
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="573" to="595" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Regression and time series model selection in small samples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hurvich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Tsai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page">297307</biblScope>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Latent Dirichlet Allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Online Learning for Latent Dirichlet Allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><forename type="middle">D</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francis</forename><surname>Bach</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="volume">23</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Learning to discover social circles in ego networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julian</forename><surname>Mcauley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc.c of NIPS</title>
+		<meeting>.c of NIPS</meeting>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Mining of Massive Datasets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Rajaraman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Ullman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>Cambridge University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Scikit-learn: Machine Learning in Python JMLR 12</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pedregosa</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="page" from="2825" to="2830" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Social Circle Discovery in Ego-Networks by Mining the Latent Structure of User Connections and Profile Attributes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georgios</forename><surname>Petkos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Symeon</forename><surname>Papadopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yiannis</forename><surname>Kompatsiaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Software Framework for Topic Modelling with Large Corpora</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Radim</forename><surname>Rahurek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Petr</forename><surname>Sojka</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+			<publisher>ELRA</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

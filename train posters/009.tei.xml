@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Direct energy estimation for waveforms produced by the EXO-200 detector Pulse shape templates</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2011">2011</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Jewell</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Abstract Department of Physics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Rider</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Abstract Department of Physics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Direct energy estimation for waveforms produced by the EXO-200 detector Pulse shape templates</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">Journal of Machine Learning Research</title>
+						<imprint>
+							<biblScope unit="volume">12</biblScope>
+							<biblScope unit="page" from="2825" to="2830"/>
+							<date type="published" when="2011">2011</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>Template amplitude space</p><p>We report on a new analysis technique for estimating the amount of charge associated with waveforms produced by a simulation of the EXO-200 detector. We use a set of filters to compress the number of parameters associated with each waveform from 2048 to 10. The filter templates are generated from clustering raw waveforms. A boosted regression tree is then used to estiamte the mapping from this reduced parameter space to the energy associated with each waveform.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The EXO-200 detector</head><p>The EXO-200 detector is a time projection chamber (TPC) searching for neutrinoless double beta decay [1]. If neutrinoless double beta decay is observed it would indicate that the neutrino is its own anitparticle [2]. This would be clear evidence of letpon number violation, the Majorana nature of the nuetrino, and would indicate the neutrino mass. Pulse shape templates</p><p>The first step in our analysis is to determine a set of pulses that are representitive of as many pulses produced by EXO-200 as possible. To do so, we employ k-means clustering on the raw waveforms in the training set. The two most significant templates are displayed below. To process the data we used 10 such templates.</p><p>Outlook: comprison to conventional analysis.</p><p>This algorithm for estimating the amount of energy associated with each waveform outperfoms the traditional analysis for the very simple simulated data set used here. Future work will see if this can be extended to more complicated events with noise and multiple charge depositions.</p><p>Acknowledgments: The work was supported by the NSF and DOE</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The EXO-200 detector</p><p>The EXO-200 detector is a time projection chamber (TPC) searching for neutrinoless double beta decay <ref type="bibr">[1]</ref>. If neutrinoless double beta decay is observed it would indicate that the neutrino is its own anitparticle <ref type="bibr">[2]</ref>. This would be clear evidence of letpon number violation, the Majorana nature of the nuetrino, and would indicate the neutrino mass.</p><p>[1] J B. Albert et al. <ref type="bibr">Phys. Rev. C, 89, 015502 (2014)</ref>  Pulse shape templates</p><p>The first step in our analysis is to determine a set of pulses that are representitive of as many pulses produced by EXO-200 as possible. To do so, we employ k-means clustering on the raw waveforms in the training set. The two most significant templates are displayed below. To process the data we used 10 such templates.</p><p>Outlook: comprison to conventional analysis.</p><p>This algorithm for estimating the amount of energy associated with each waveform outperfoms the traditional analysis for the very simple simulated data set used here. Future work will see if this can be extended to more complicated events with noise and multiple charge depositions.</p><p>Acknowledgments: The work was supported by the NSF and DOE Events deposit energy in the liquid xenon through both scintillation light and free ionization charge. Scintillation is detected on either side by APDs( avalanche photodiodes).</p><p>Charge deposited in the detector is drifted to either end where it is collected by the Uwires. Drifted charge produces signal on electrical channels by inducing current while drifting and collecting onto channels. The shape of the signals from collected charge is different from the shape of siganls due to induced current. The goal of this analysis is to develop a technique for determing the amount of charge collected on a channel that is robust against contamination from induced signals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Optimal filters</head><p>The cluster centers from k-means clustering were used as templates for optimal filters. The cluster centers were othonormalized using the Gram-Schmidt process. Optimal filtering is equavalent to LMS fitting to the templates in the frequency domain. For each template, s, and each waveform, we minimize</p><p>The figure below shows the training data projected into the space of the first two filter amplitudes. We train a boosted decision tree in the full 10 dimensional space of all of the filter amplitudes for each waveform to predict the amount of collected charge associated with each waveform.</p><p>A boosted regression tree (BRT) is used to estimate the mapping from the 10 dimensional space of filter amplitudes to the energy associated with each waveform. A boosted regression tre estimates a function by boosting together threshold functions. The plot on the left shows the result of training the BRT with just the first two filter amplitudes. With just the first two filter amplitudes, 7 induction wavefroms were erronously given energies and the average error in energy estimation of collection waveforms was 10.2%. Once we trained in the full 10 dimensional space, no induction waveforms were given energies and the average error was reduced to 0.1%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Energy prediction</head><p>Boosted regression tree A regression tree fits a function to a series of threshold functions. We use regression trees with 20 threshold functions. We then use AdaBoost to boost together 300 regression trees. The figure below shows the improvement gained by boosting 300 regression trees together to estimate a function over using a single regression tree. The figure below is from <ref type="bibr">[4]</ref> </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>[2] M Auger et al. JINST 7 P05010 (2012) [3] J.B. Albert et al. arXiv:1402.6956(2014) [4] F. Pedregosa, et al. Scikit-learn: Machine learning in Python.</figDesc><table>Journal of Machine Learning Research, 12:2825-2830, 2011 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

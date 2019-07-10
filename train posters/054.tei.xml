@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classifying Presidential Candidates&apos; Speech Patterns</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brendan</forename><surname>Corcoran</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyana</forename><surname>Van Houten</surname></persName>
+						</author>
+						<title level="a" type="main">Classifying Presidential Candidates&apos; Speech Patterns</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Selection</head><p>We characterized the speech patterns of leading candidates for United States President to determine which features are most effective at differentiating the candidates. We compiled full-text transcripts of stump speeches, debates, and interviews from the current election cycle. Then, we determined appropriate indicators from the raw text. Our algorithm constructs a model or "fingerprint" for each candidate's speech style which we use to predict the speaker of a new text excerpt.</p><p>It is time to reclaim the Constitution.</p><p>They're bringing drugs. They're bringing crime. They're rapists. I'm a progressive, but I'm a progressive who gets things done.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm</head><p>We collected campaign speeches and interviews of the last five candidates running in the 2016 Presidential Election. From these text excerpts, we measured features of two categories:</p><p>We want to teach the algorithm to discern the speaker from these features. We decided to use Gaussian discriminant analysis (GDA), a generative learning algorithm that builds a model of what each candidate sounds like. This takes the form of a multivariate Gaussian where each feature is a dimension. When a new speech is received, the algorithm compares it to each of the candidates' models (Gaussians) and determines which model it is most similar to. We selected this method due to the observed normal distributions of several features and the limited number of training examples available. I seem to be the only adult on the stage.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Bernie Sanders spoke the most about the economy. Ted Cruz spoke the most about religion, the Constitution, and foreign threats. Donald Trump spoke the most about immigration and had the shortest mean sentence length. Trump tends to use first person singular tense significantly more than Cruz. The two Democrat candidates tend to speak more about manufacturing than the Republican candidates.</figDesc><table>How a candidate speaks: 
+-Mean word length 
+-Mean sentence length 
+-Mean number of 
+conjunctions per 
+sentence 
+-Number of unique words 
+per total words 
+-Relative usage of female 
+and male pronouns 
+
+What a candidate speaks 
+about: 
+-Economy 
+-Health Care 
+-Foreign Threats 
+-Trade 
+-Manufacturing 
+-Women's Health 
+-Immigration 
+-Religion 
+
+Results 
+
+We achieved a training error of 29% and a test error of 31% 
+both of which are well below random guessing (80%). We 
+also measured several interesting results about each 
+candidate's speech patterns. For example, </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

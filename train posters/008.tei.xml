@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Humanities Research Recommendations via Collaborative Topic Modeling Overview of Recommendation Algorithms Recommendation Algorithms: Research Recommendations: • Datasets: CS/STEM research publications • Content-Focused: keywords imply readership • Filtering: extensive user feedback required • Hybrid: imbalanced + large datasets needed Content-Based</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nitya</forename><surname>Mani</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andy</forename><surname>Chen</surname></persName>
+						</author>
+						<title level="a" type="main">Humanities Research Recommendations via Collaborative Topic Modeling Overview of Recommendation Algorithms Recommendation Algorithms: Research Recommendations: • Datasets: CS/STEM research publications • Content-Focused: keywords imply readership • Filtering: extensive user feedback required • Hybrid: imbalanced + large datasets needed Content-Based</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Peer-mediated inference making intervention for students with autism spectrum disorders Accuracy on training and testing data with varied numbers of topics K</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Play or Playing to Teach: An examination of play targets and generalization in two interventions for children with</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>97% accuracy in recommending the hidden original article with &gt;0.9 conLidence and within top 10 recommendations • 99.9% recall in rating provided recommendations within top 20 and conLidence &gt;90% • 95% precision in relevance of random sample of recommendations CiteULike Humanities Researchers • Hyperparameter search: K = 40, λ u = 0.01 , λ v = 100, c ij = 1, 0.01 • Evaluate accuracy on users with &gt;20 recommendations • 92% accuracy for training user-article recommendations • Predicted 64% of entire user recommendations (half hidden) - extremely unlikely by chance ~ Bin(20, 1/715) • Precision based on random sample: 89% (for both prediction bars) Applications + Current Work • Application of LDA + CF can improve content-based recommendations for platforms without access to user feedback • Hybrid models can effectively recommend on small datasets • Articles with large proportion of out-of-vocab, non-English words</figDesc><table>• Item Keywords 
+• Probabilistic 
+Topic Modeling 
+• Cluster Analysis 
+• ScientiOic Articles 
+• Music + Movies 
+
+Filtering: 
+
+• User Ratings 
+• Nearest neighbor 
+• Implicit + Explicit 
+• Current News 
+• Shopping + Social 
+Networks 
+
+Hybrid: 
+
+• Collaborative 
+• Knowledge-Based 
+• Content-Based 
+• Weighted 
+• Mixed 
+• NetOlix 
+
+Dataset 
+
+Humanities research publications 
+• Topic modeling less effective 
+• International Journal of Comparative Psychology 
+
+Small amounts of user feedback 
+• Author-driven interest 
+• CiteULike user libraries 
+
+Goal 
+• Adapt hybrid modeling algorithm 
+• Effective for little + no user feedback 
+
+Collaborative Filtering: Matrix Factorization 
+
+Setup 
+• I users U = {u 1, ...., u I } and J items V = {v 1, ...., v J } 
+• User i recommends item j: r ij = 1 (else 0) 
+• Fix hyperparameters: λ u , λ v 
+
+Collaborative Topic Regression 
+
+Model Overview: 
+
+1. Users have interests 
+(implicit article recs) 
+2. Documents have topics 
+(LDA) some of which 
+explain readership 
+
+Initialize: 
+
+1. For each user i = 1,..., I 
+u i ~ N(0, 1/ λu I K ) 
+2. For each item j = 1 ..., J 
+v j ~ N(θ j , 1/ λv I K ) 
+3. Assume r ij ~ N(u i T v j, c ij -1 ) 
+
+Learning: 
+
+1. Model latent document 
+vector with content 
+2. Find MAP estimate of U, 
+V, R (coordinate ascent) 
+3. Minimize regularized LS 
+
+Coordinate Ascent: 
+
+Empirical Study: Simulating User Feedback 
+
+• Often no access to user feedback 
+• Simulate user-item interactions to improve recs 
+• Users: lists of original recommendations 
+• Updated using CTR and cross-validation 
+• International Journal of Comparative Psychology 
+• 4827 articles, 580 "users", 20 recs/user 
+
+Empirical Study: Humanities Research 
+
+• Sparser datasets (fewer users, recommendations) 
+• Topic models less accurate/relevant 
+• Non-content-focused abstracts 
+• CiteULike: Users studying Eastern and European 
+languages, History, Linguistics, Classics, Politics 
+• 1269 articles, 220 users, 715 user-item interactions 
+
+Making and Validating Recommendations 
+
+• Article Recommendation 
+• Recommendation rating is expected value of u i T v j 
+• Provide at least 10 recommendations if user has provided at 
+least 20 recommended articles 
+• Ranking Articles 
+• Rank articles by the predicted recommendation u i T v j 
+• Chose prediction bar 0.75/0.9 (conOidence to recommend) 
+• Recommendation Validation 
+• Precision 
+• Predicts the hidden original article (simulating user feedback) 
+• Predicts relevant witheld recommendations 
+• Recall 
+• Recalls the original provided user-item interactions with high 
+conOidence (rating over 0.9) 
+
+Data Overview + Analysis 
+
+Simulating Implicit User Feedback 
+• Hyperparameter search: optimal precision + recall at K = 100, λ u = 
+0.01 , λ v = 0.1, c ij = 1, 0.001 
+• • Current project work: 
+• Diversifying topics in article dataset 
+• Running LDA on introduction rather than abstract 
+• Applying HMM with LDA rather than using bag-of-words 
+• Updating parameters based on article citations and authors 
+
+Sample Data 
+
+(CiteULike) 
+
+Eastern 
+Languages Users: 
+
+Probabilistic Topic Modeling: Latent Dirichlet Allocation 
+
+Setup 
+• M documents W 1, ...., W M in corpus 
+• K topics β 1, β 2, ..., β K ; distribution over vocabulary V 
+• Fix hyperparameters α, β, ξ 
+
+Initialize for each W i : 
+
+1. Word length: 
+N i ~ Poisson(ξ) 
+2. Topic distribution: 
+θ j ~ Dirichlet(α) 
+over K topics 
+
+For each word w i ∈W i : 
+
+1. Choose a topic: 
+z ij ~ Multinomial(θ i ) 
+2. Choose the word: 
+
+w ij ~ p(w ij | β zij ) 
+
+condition on topic 
+
+Maximize likelihood: 
+
+1. Given value of 
+
+parameter α 
+
+2. EM algorithm to 
+
+learn β 1, ..., β K and 
+
+topics θ 1 , ..., θ M 
+
+Initialize: 
+
+1. For each user i = 1,..., I 
+u i ~ N(0, 1/ λu I K ) 
+2. For each item j = 1 ..., J 
+v j ~ N(0, 1/ λv I K ) 
+
+For all user pairs (i, j) : 
+
+1. Assign a rating 
+r ij ~ N(u i T v j, 1/c ij ) 
+2. Fix precision 
+parameters c ij to 
+reLlect conLidence 
+
+Optimize U, V: 
+
+1. Minimize regularized 
+least squared error 
+over all user-article 
+pairs 
+2. Predict rating u i T v j 
+
+Sample Data 
+
+(User Simulation) 
+
+User 6wq9p6zn 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Gender-Typed Play Behavior in Early Childhood: Adopted Children with Lesbian, Gay, and Heterosexual Parents + 28/ NP Japan's Defense White Paper as a Tool for Promoting Defense Transparency - NP Normative model of peer review -Qualitative assessment - NP Titles of New Article Recommendations Class Rank The Development of Juvenile-Typical Patterns of Play Fighting in Juvenile Rats does not Depend on Peer-Peer Play Experience in the Peri-Weaning Period + 8 Sacred Playground: Adult Play and Transformation at Burning Man + 11 Altruism in Animal Play and Human Ritual + 12 How Studies of Wild and Captive Dolphins Contribute to our Understanding of Individual Differences and Personality + 13 The Behavioral Development of Two Beluga Calves During the First Year of Life + 18 LDA Topic Model LDA Topic Model Visualization for K = 25 (CiteULike Humanities Research) Sample Topics (IJCP) • 'health risk methods factors' • 'cultural american historical' • 'expression genetic function' • 'species patterns california populations habitat' • 'brain activity neural cell' • 'public policy economic state'</figDesc><table>-
+16 
+
+Towards Distributed Data Collection and Peer-to-Peer Data Sharing 
+-
+17 
+
+Titles of Witheld Article Recommendations 
+Class Rank 
+
+Pretend Play of Young Children in North Tehran: A Descriptive Cultural Study of 
+Children's Play and Maternal Values 
+
++ 
+2 
+
+More than a Child's Work: Framing Teacher Discourse about Play 
++ 
+4 
+
+Integrated Drama Groups: Promoting Symbolic Play, Empathy, and Social 
+Engagement With Peers in Children with Autism 
+
++ 
+5 
+
+Comparing Object Play in Captive and Wild Dolphins 
++ 
+19 
+
+Development of "Anchoring" in the Play Fighting of Rats: Evidence for an Adaptive 
+Age-Reversal in the Juvenile Phase 
+
++ 
+20 
+
+Normative model of peer review -Qualitative assessment 
+-
+NP 
+
+Strategic defense and the global public good 
+-
+NP 
+
++ 
+28/ 
+NP 
+
++ 
+8 
+
+LDA Topic 
+Model 
+
+LDA Topic Model 
+Visualization for K = 25 
+(CiteULike Humanities 
+Research) 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

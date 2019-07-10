@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Final Report: Learning Chemistry from Moment to Moment</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-11">December 11 th , 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Colin</forename><surname>Dickens</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Allegra</forename><surname>Latimer</surname></persName>
+						</author>
+						<title level="a" type="main">CS229 Final Report: Learning Chemistry from Moment to Moment</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-11">December 11 th , 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Density functional theory (DFT) is a quantum mechanical modelling method that facilitates the prediction of ground state energies of atomic systems, thereby yielding valuable insights into many important chemical and physical systems and processes.</p><p>DFT is particularly valuable in the field of heterogeneous catalysis, where we are often interested in the strength of chemical bonds between a catalyst surface, e.g. metallic platinum, and a molecular fragment, e.g. CH2. Once bound, we refer to this molecular fragment as an adsorbate.</p><p>The energy released by bringing these two species together to bond, termed the binding energy, is a function of the electronic structure of the surface and the molecular fragment. For transition metal surfaces, simple chemical bonding theory has been used to demonstrate the existence of a linear correlation between the first moment of the projected density of electronic states (PDOS) of the surface and the binding energy of a given adsorbate, <ref type="bibr" target="#b0">1</ref> and marginal improvements have been achieved by including the second moment. <ref type="bibr" target="#b1">2</ref> The moments are defined as: Additionally, recent work has demonstrated a similar linear correlation between the first moment of the PDOS of oxygen atoms adsorbed on various surfaces, spanning metals and metal oxides, and the binding energy of a hydrogen atom on this surfacebound oxygen. <ref type="bibr" target="#b2">3</ref> These two works can be summarized mathematically as demonstrating the existence of some functions f and g such that: is the PDOS of the transition metal surface, A is the identity of the molecular fragment to be bound, and is the binding energy of this molecular fragment to the transition metal surface. Similarly, is the PDOS of the adsorbed oxygen atom, and is the binding energy of a hydrogen atom to this oxygen. While f and g are quite specific in terms of their inputs, we hypothesize the existence of another, more general function h, which takes as arguments the PDOS of the atoms that will participate in bonding between the surface and molecular fragment, and returns the corresponding binding energy, summarized as follows:</p><formula xml:id="formula_0">2345 , 2345 F → ∆ 5?@</formula><p>This idea is summarized in <ref type="figure" target="#fig_2">Figure 1</ref>. Beyond being of fundamental interest, such a function would enable the prediction of the binding energies of m adsorbates at n sites at a given surface from a single surface DFT calculation, as opposed to the m×n such calculations that would be required in its absence. This work will investigate whether machine learning (ML) tools can be used to estimate h. In essence, we seek a model that can learn the principles of chemical bonding, such that given the electronic structure of two species in isolation, it can predict the energy released when they are brought together to bond. A model that can predict binding energies to within 0.2 eV of the value calculated by DFT will be considered a success, as the expected error of DFT calculations of binding energies on transition metal surfaces is known to be ~0.2 eV. <ref type="bibr" target="#b3">4</ref> II. DATA</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Data Generation</head><p>The initial phase of our project consisted of generating a database of periodic DFT calculations using the open source code, Quantum Espresso, <ref type="bibr" target="#b4">5</ref> and the RPBE exchange-correlation functional. <ref type="bibr" target="#b5">6</ref> This process consisted of bulk lattice parameter optimization of 39 different metals spanning body centered cubic (BCC), face centered cubic (FCC), and hexagonal close packed (HCP) crystal structures, followed by cleavage of various surface facets, and finally placement of NO, CO, CHx, NHx, and OHx adsorbates at all unique surface binding sites (where x can take on values of 0, 1, 2, or 3). The corresponding molecular fragments were also simulated in vacuum with a computational cell of sufficient size to prevent self-interaction through periodic images.</p><p>Surface simulations consisted of performing a local optimization of the system's energy with respect to the atomic positions subject to certain constraints, namely that the lower two of four atomic surface layers were fixed to simulate the bulk and the in-plane position of the adsorbates' binding atom was fixed. DFT provides the gradient of the energy with respect to these positions, i.e. the forces on each atom, by solving for the electron positions using an approximate version of the Schrodinger equation. Following this optimization, the PDOS, work function, and system energy were extracted. Next, the resultant data was cleaned by removing systems that behaved unexpectedly upon structural optimization. Specifically, we designed filters that look for cases of molecular fragment dissociation, changes in molecular fragment coordination number, and significant distortion of the surface. We deemed these to be invalid examples and removed them from our analysis.</p><p>After cleaning our DFT calculations, we constructed a database for machine learning. A database entry for our machine learning models consist of three valid DFT calculations: an isolated molecular fragment and surface, and the combined system. The keys of the database consist of the bulk structure, composition, surface facet, adsorption site, initial state, and final state. For example:</p><p>The first key represents the process of CH3 adsorbing at an empty site in an on-top geometry on the (111) surface facet of FCC gold. The relevant PDOS spectra in this case are for an Au surface atom and for the C atom in gas-phase CH3. The second key represents the process of H adsorbing on adsorbed CH2 sitting in a bridge site on the (0001) surface facet of HCP ruthenium. In this case, the relevant PDOS spectra are for the C atom in adsorbed CH2 and an H atom in vacuum. After data cleaning, we were left with a database of 2000 examples on which to train. The data generation process is summarized by the schematic in <ref type="figure" target="#fig_3">Figure 2</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Engineering</head><p>The raw inputs to our ML models, the PDOS of the surface and the molecular fragment, are continuous 1D scalar functions that can be discretized to arbitrary resolution. Based on the aforementioned success of correlating binding energies with first and second moments, we will start by using as feature vectors the first ten moments of the PDOS of both the surface and molecular fragment. Next, we train another set of models on the raw spectra with spacing 0.1 eV, such that the feature vector is a concatenation of the surface and molecular fragment PDOS. In the case of convolutional neural networks, we stack rather than concatenate, creating a two-dimensional array. In instances where the molecular fragment binds to more than one surface atom, the representative surface PDOS is taken to be the sum of the PDOS of every surface atom involved in the bond.</p><p>It is important to note that the PDOS is computed relative to the Fermi level of the calculation, which represents the energy that divides filled and unfilled electronic states at zero temperature. However, when considering chemical bonding between the surface and molecular fragment, it is also relevant to know where their electronic states lie on an absolute scale, e.g. relative to vacuum. The energy difference between the Fermi level and vacuum for the surface is defined as the work function (WF), and we will also refer to this quantity as the work function in the case of the molecular fragment, although this is an abuse of nomenclature. Both WFs are included in our feature vectors in addition to the information provided by the PDOS.</p><p>III. METHODOLOGY All models were trained † via Python packages Scikit-learn (linear regression, kernel ridge regression, and random forest), <ref type="bibr" target="#b6">7</ref> Catboost (gradient boosting), <ref type="bibr" target="#b7">8</ref> or PyTorch (convolutional neural network). <ref type="bibr" target="#b8">9</ref> In the following model definitions, X is the m×n design matrix having m examples and n features, y is the length m vector of feature labels, ℎ H is the hypothesis, or the function that predicts values of y given X, J is the loss function, and is the vector of model parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Linear Regression (LR)</head><p>Linear regression utilizes a linear model of the form</p><formula xml:id="formula_1">ℎ H ( ) = =</formula><p>We can exactly solve for the parameters which minimize the squared error via the normal equations:</p><formula xml:id="formula_2">= ( = ) ?+ =</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Kernel Ridge Regression (KRR)</head><p>Kernel ridge regression can be viewed as an extension of linear regression with the addition of mechanisms to reduce bias (kernel trick) and variance (regularization). The kernel trick requires reformulating the training process to be purely in terms of inner products of examples such that individual feature vectors need not be explicitly represented. This allows the replacement of inner products with kernel functions that correspond to inner products in an arbitrary high dimensional space, resulting in a nonlinear model when projected back onto the original feature space. Regularization is implemented to combat overfitting by adding the L2 norm of the parameter vector to the squared error lost function:</p><formula xml:id="formula_3">= NO = (-) − (-) P Q + T| |T Q V -W+</formula><p>Because KRR is a distance-based model, it was important to normalize the data before applying the model. We did so by subtracting by the mean and dividing by the standard deviation of each feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Random Forest (RF)</head><p>Decision tree models divide feature space into discrete regions, and for every example that falls within a given region, the same prediction is made. In the case of regression, the prediction is the average of all training labels in that region. The goal is to choose these regions such that the residual sum of squares is minimized:</p><formula xml:id="formula_4">N NO (-) − X Y Z P Q V -[Y Z \ ]W+</formula><p>Bagging algorithms, in which the predictions of many independently trained models are averaged, are often employed with decision trees to combat overfitting. The random forest algorithm further reduces variance by encouraging trees in the ensemble to be decorrelated by only allowing a subset of the original n features to be used in each tree.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Gradient Boosting (GB)</head><p>Boosting algorithms also fall under the category of ensemble learning algorithms, where the predictions of multiple models are summed to achieve the overall prediction:</p><formula xml:id="formula_5">&gt; ( ) = N ℎ -( ) &gt; -W+</formula><p>In the case of boosting, these models are trained in series, where specifically, each new model is trained on the residuals of the sum of the previous models:</p><formula xml:id="formula_6">ℎ &gt;_+ ( ) ≈ − &gt; ( )</formula><p>The boosting algorithm as written above minimizes the squared error of the total model. So-called gradient boosting abstracts away this choice of loss function and instead trains each successive model on "pseudo residuals" of the previous model, which are simply the gradient of the loss function with respect to the predictions of the previous model:</p><formula xml:id="formula_7">ℎ &gt;_+ ( ) ≈ − &gt; ( )</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Such that the model update becomes:</head><p>&gt;_+ ( ) = &gt; ( ) + ℎ &gt;_+ ( ) Note the gradient descent form of the expression and the presence of the learning rate, . While these expressions are general in terms of the algorithm used to train each model, decision tree ensembles are typically used, which introduce typical hyperparameters such as tree depth.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Convolutional Neural Network (CNN)</head><p>Convolutional neural networks are artificial neural networks that utilize one more convolutional layer. Convolutional layers differ from fully connected layers in that they perform convolutions of the input data with a relatively small kernel matrix rather than performing a matrix multiplication with a dense matrix whose dimensionality is similar to the input data. Because the elements of the kernel matrix or dense matrix are parameters to be tuned, the convolutional layer results in much fewer total parameters. However, use of a convolution operation requires the input data have some regular, grid-like structure, which makes it a useful tool for image analysis, or in our case, spectra analysis.</p><p>Our CNN was implemented using PyTorch <ref type="bibr" target="#b8">9</ref> with an architecture consisting of a series of convolutional layers with 8 filters of depth 8 (with the exception of the input layer, whose filters have depth 2). Each convolutional layer was followed by PReLU activation, and the result of the final convolutional layer was passed through a fully connected layer also with PReLU activation before making a scalar prediction at the output layer. The loss function (mean squared error) was minimized with the Adam optimizer. When training, ~150 epochs were sufficient to reach a minimum in the dev set error.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F. Error Metric</head><p>As is the convention in the field of heterogenous catalysis, we use mean absolute error (MAE) to quantify the performance of our models, defined as:</p><formula xml:id="formula_8">MAE = 1 NT (-) − X (-) T V -W+</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G. Train Test Splits</head><p>To prevent model overfitting, the labeled examples were split into train (70%), dev (15%), and test (15%) sets. Training data was used to determine optimal model parameters, and dev data was used to evaluate the model's ability to generalize to previously unseen data and to tune hyperparameters. Finally, the model was judged by its performance on the test set.</p><p>We suspect that some of the examples in our dataset are highly correlated (e.g. the same molecular fragment adsorbing on different sites at the same surface), and we anticipate that a typical use case would involve making predictions on data that is unlike the data used to train the model. In the domain of heterogeneous catalysis, we might broadly consider cases to be similar if they involve the same surface composition and/or the same reaction. For the purposes of this work, we group each example by its composition and reaction and then perform the train-dev-test splits such that the model will never be asked to make a prediction on an example whose reactants and surface composition it has already trained on. As a concrete example, if the model has trained on O binding at the ontop site of Au (111), it will not be allowed to test on O binding at any site on any surface of Au. K-fold crossvalidation, which was used for hyperparameter tuning, was also performed by making folds in this way. Alternative split schemes will be discussed later.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. RESULTS AND DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Using moments as features</head><p>In <ref type="figure" target="#fig_4">Figure 3</ref>, we analyze our data in the context of previously published results. <ref type="figure" target="#fig_4">Figure 3a</ref> demonstrates the correlation between binding energy of C* or O* and the 1 st moment of the binding surface atom's PDOS similar to previous results. <ref type="bibr" target="#b2">3</ref> As expected, the parameters of the linear fit are both adsorbate and site dependent. In <ref type="figure" target="#fig_4">Figure 3b</ref>, we show another previously observed correlation between the binding energy of H binding on surface-bound O and the 1 st moment of the O PDOS. While this is a more general correlation than that shown in <ref type="figure" target="#fig_4">Figure 3a</ref>, we note that it does not extend to the analogous case of H binding on surface-bound C <ref type="figure" target="#fig_4">(Figure 3c)</ref>. In our quest to identify a single model that maps PDOS to binding energy, we begin by extending the univariate linear models shown in <ref type="figure" target="#fig_4">Figure 3</ref> to a multivariate linear regression model that takes as inputs the first ten moments of the binding atom PDOS in both the surface and molecular fragment. As shown in the learning curve in <ref type="figure" target="#fig_5">Figure 4</ref>, linear regression does not appear to be flexible enough to describe the variation in the data, suffering from high bias and achieving a poor training MAE of 0.81 eV compared to our desired threshold of 0.2 eV. Additionally, its performance seems to have plateaued around 800 training examples, suggesting that additional training data will not improve the model. For this reason, we sought the greater representational power of nonlinear models and tested kernel ridge regression (KRR), random forest (RF), and gradient boosting (GB). Crossvalidation (3 folds) combined with a randomized grid search was used to tune hyperparameters for KRR and RF. For KRR, the optimal hyperparameters were found to be an RBF kernel with α=0.00089 and γ=0.45. For RF, the optimal hyperparameters were found to be maximum tree depth=18, maximum features allowed per split=11, minimum samples in each split=2, and number of trees=100. Training GB models was too expensive to implement cross-validation, so the dev set was used to determine when to stop training, and manually modifying hyperparameters such as learning rate, tree depth, and regularization parameter was found to have little if any benefit and so the defaults were used. The learning curves for these models are shown in <ref type="figure" target="#fig_5">Figure 4</ref>. Nonlinear models generally seem to outperform linear regression. However, both of the tree methods, GB and RF, are overfitting the data as demonstrated by the large difference between train and dev errors. We found that decreasing the tree depth mitigated the overfitting but came at the cost of increased dev set errors. Notably, the learning curves of both GB and RF do not yet seem to have plateaued, suggesting that gathering additional training data could improve the models. KRR, on the other hand, is not overfitting but seems to have already plateaued. Parity plots for the train and test datasets using the optimized models are shown in <ref type="figure" target="#fig_6">Figure 5</ref>. We find that the test MAEs are similar to the dev MAEs shown in the learning curve and that there do not appear to be any significant outliers. Finally, we can examine the feature importance of the treebased methods <ref type="figure" target="#fig_6">(Figure 5b</ref>). Both GB and RF attribute greater importance to the lower moments, but RF does not attribute as much importance to the surface PDOS as does GB. We also see that GB attributes greater significance to the WFs than RF. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Using the full PDOS spectra as features</head><p>While using feature vectors consisting of the first 10 moments of the PDOS and the WFs gives reasonable performance, we recognize that the spectra are not single distributions and are much more complex (e.g. <ref type="figure" target="#fig_2">Figure 1</ref>), suggesting that a simple moment analysis may not be sufficient to capture the richness of the spectra. Therefore, we decided to train several models, namely RF, GB and a convolutional neural network (CNN), on the raw spectra. Again, the hyperparameters for RF and GB were determined as described above. In building the CNN, we sought help from our lab mate, Brian Rohr. We found the model to strongly overfit when regularization techniques were not employed, and we found the "reparameterization trick" first proposed by Kingma and Welling to be an effective defense against overfitting. <ref type="bibr" target="#b9">10</ref> In this scheme, representations are drawn from a distribution at the output of the final convolutional layer before being passed to the fully connected layers for training examples, effectively adding random noise to the training procedure. By considering the dev set error and manually trying a few iterations on our architecture, we ultimately decided on 4 convolutional layers with 8 filters (of width 5) of depth 8 and a stride of 4 followed by fully connected layer with 30 nodes. Further architecture details can be found in Methods.</p><p>Shown in <ref type="figure" target="#fig_8">Figure 7</ref> are the learning curves for these models. We see that RF and GB perform similarly to before, albeit with lower train and dev MAEs. The CNN does not overfit and may also benefit from training on additional data. Interestingly, the train error becomes greater than the dev error after 600 training examples, which is a consequence of the fact that when training, the output of the convolutional layers, i.e. the representation, is drawn from a distribution before being passed to the fully connected layer. As before, the parity plots for the optimized models <ref type="figure" target="#fig_9">(Figure 8)</ref> show similar test MAEs to the dev MAEs from the learning curves. Notably, we are able to achieve a test MAE of 0.27 eV using GB, which is quite close to our target MAE of 0.2 eV, and acceptable for many screening applications. Finally, we can examine the feature importance for the treebased methods. In <ref type="figure" target="#fig_10">Figure 9</ref>, we show the feature importance for RF (black) along with the average feature values from the entire dataset. We find that the most important surface features are near the Fermi level and states far below the Fermi level have little importance, which is expected based on basic chemical bonding principles. Interestingly, surface electronic states far above the Fermi level have a significant importance relative to their infrequent occurrence. The importance of the molecular fragment features seems less organized and is reflective of the discrete nature of the electronic states of molecular fragments and the limited number of them in our dataset. V. CONCLUSIONS AND FUTURE WORK In this work, we have demonstrated some of the promise for data-driven models to make predictions about the strength of chemical bonds at surfaces when given electronic structural information about the system, namely the PDOS of the atoms involved in the bond. We found a GB model trained on the raw PDOS spectra and reactant work functions yielded optimal performance with a test MAE of 0.27 eV, which is a sufficient accuracy for many screening applications. This performance was achieved using a train-test split such that the model was not allowed to train on any examples that shared the same reaction and surface composition as any example in the test set, which is likely a a typical use case; however we note that model performance can be quite sensitive to the way in which the train-test split is performed as shown in <ref type="table">Table 1</ref>. Depending on the use case, some of these splits may be more relevant than others. <ref type="table">Table 1</ref>. Sensitivity of test MAEs on the type of train-test split. The "Reaction" and "Composition" entries correspond to splits where the model is tested on either reactions or surface compositions, respectively, that it has not seen during training. "Composition + Reaction" is the method used throughout the main text and is described there. "Random" is simply a random split without any constraints.</p><p>In the future, it would be of interest to investigate whether our model generalizes to more complicated materials such as alloys and metal-oxides. Furthermore, we would like to experiment with other featurization techniques for the molecular fragments, the PDOS of which tend to be sparse with very narrow peaks. A first approach may be to simply replace the PDOS representation with a categorical variable indicating the molecular fragment identity. We expect such a modification to greatly simplify model training. However, it also comes with an inherent loss in generalizability as it necessarily precludes the model's ability to make predictions of reactions that involve molecular fragments it has not seen before.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 1 .</head><label>1</label><figDesc>Schematic describing the conventional approach to binding energy calculations with DFT and the approach explored in the present work.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc>Schematic of the data generation process. † Code available at https://github.com/colinfd/ChemLearn</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 .</head><label>3</label><figDesc>Analysis of present calculations in context of previous work. (a) Correlation between binding energy of C* or O* and the 1 st moment of the binding surface atom's PDOS, (b) correlation between the binding energy of H binding on surface-bound O* and the 1 st moment of the O* PDOS, (c) no analogous correlation exists for H binding on surface-bound C*</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 .</head><label>4</label><figDesc>Learning curves for LR, RF, GB and KRR.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc>Parity plots for Linear Regression (blue), KRR (orange), GB (green) and RF (red).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 .</head><label>6</label><figDesc>Feature importance of tree-based methods.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 .</head><label>7</label><figDesc>Learning curves for RF, GB, and CNN.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 .</head><label>8</label><figDesc>Parity plots for RF (red), GB (green), and CNN (purple).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 9 .</head><label>9</label><figDesc>Feature importance for RF using the full PDOS spectra as features (black) and average feature values for the surface (blue) and molecular fragment (orange)</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>We are grateful to the instructors of CS229, Andrew Ng and Ron Dror, as well as all of the teaching assistants for their help and support. We also are grateful to our lab-mate, Brian Rohr, who designed and built the convolutional neural networks and provided valuable guidance and advice. Finally, we thank the Stanford Sherlock Computing Resources.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Electronic factors determining the reactivity of metal surfaces</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Hammer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">K</forename><surname>Nørskov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Surface Science</title>
+		<imprint>
+			<biblScope unit="volume">343</biblScope>
+			<biblScope unit="page" from="211" to="220" />
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Electronic Structure Effects in Transition Metal Surface Chemistry</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vojvodic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">K</forename><surname>Nørskov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Abild-Pedersen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Topics in Catalysis</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1-4</biblScope>
+			<biblScope unit="page" from="25" to="32" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">An electronic structure descriptor for oxygen reactivity at metal and metal-oxide surfaces</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">F</forename><surname>Dickens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Montoya</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Bajdich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kulkarni</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">K</forename><surname>Nørskov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Surface Science</title>
+		<imprint>
+			<biblScope unit="volume">681</biblScope>
+			<biblScope unit="page" from="122" to="129" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A benchmark database for adsorption bond energies to transition metal surfaces and comparison to selected DFT functionals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Wellendorff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">L</forename><surname>Silbaugh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Garcia-Pintos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">K</forename><surname>Nørskov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Bligaard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Studt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">T</forename><surname>Campbell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Surface Science</title>
+		<imprint>
+			<biblScope unit="volume">640</biblScope>
+			<biblScope unit="page" from="36" to="44" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Quantum ESPRESSO: A modular and open-source software project for quantum simulations of materials</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Giannozzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Physics: Condensed Matter</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="395502" to="395521" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Improved adsorption energetics within density-functional theory using revised Perdew-BurkeErnzerhof functionals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Hammer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">B</forename><surname>Hansen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">K</forename><surname>Nørskov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. B</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page">7413</biblScope>
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Scikit-learn</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning in Python Journal of Machine Learning Research</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Liudmila</forename><surname>Prokhorenkova</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1706.09516</idno>
+		<title level="m">unbiased boosting with categorical features</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in PyTorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Paszke</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Welling</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.6114</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">Auto-Encoding Variational Bayes.</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

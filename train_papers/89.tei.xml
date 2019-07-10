@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Foreign Exchange Arbitrage</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Huber</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amy</forename><surname>Wang</surname></persName>
+						</author>
+						<title level="a" type="main">Predicting Foreign Exchange Arbitrage</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Systematic violations of CIP are first documented by <ref type="bibr" target="#b1">Du et al. (2018)</ref>. This and other works, such as <ref type="bibr" target="#b5">Hébert and Wang (2018)</ref> and <ref type="bibr" target="#b0">Boyarchenko et al. (2018)</ref>, postulate that cross-currency bases are reflections of constraints faced by financial intermediaries. Yet there is no known effort on predicting the basis and thereby establishing quantitative links between bases and other observables. Machine learning ("ML") techniques are appropriate to fill this void. More generally, ML is starting to be used in finance research: <ref type="bibr" target="#b6">Kozak et al. (2019)</ref> marries the theory on stochastic discount factor ("SDF") with regularized regressions on stock returns to identify factors in the SDF; <ref type="bibr" target="#b4">Gu et al. (2018)</ref> compares the performance on stock return predictions from various ML methods, including generalized linear models, dimension reduction, boosted regression trees, random forests, and neural networks. Our work broadens the application of ML to finance, and provides empirical evidence that can illuminate theoretical constructs of asset price movements on the foreign exchange market.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Dataset and Features</head><p>We construct using Equation 1 the outcome variables: the AUD basis and the JPY basis. Interest rates are taken to be the fixed rate in Overnight Index Swaps against central bank policy rates. We further collect 32 data series for each of the three relevant currencies: AUD, JPY, and USD. Our data capture activities in the financial markets, conditions of the economy, the state of international trade, and the stance of economic policies (see <ref type="figure" target="#fig_0">Figure 2)</ref>. With the exception of the Economic Policy Uncertainty ("EPU") Index, which is compiled by three leading economists and available at www.policyuncertainty.com, all data are obtained from Bloomberg.</p><p>We first pre-process the data by computing and using, for most of the features, the percentage change between two observations. This is done to both normalize and extract more meaningful information. We next augment the data in two ways. First, while all Financial Markets data are reported daily, other data are available only monthly or quarterly; for low frequency series, we impute daily observations based on the last available entry. Second, we interact and pairwise interact all features; these additional features are used in the polynomial specification of regularized regressions. With the cleaned data set, we construct two distinct samples that emphasize different aspects of the data. The Complete sample retains the longest possible time horizon by including series that are available between 2004 and 2017. The Post-Crisis Finally, we split each of our two samples into Test vs. Training sets in two different ways. In both cases, we arrive at a test set of 400 observations, which is about a year and half in calendar days. The Contiguous split uses as Test set the last 200 observations and the middle 200 observations in the Post-Crisis period; this method emphasizes the time series nature of our outcome variable. The Random split uses as Test set 400 randomly chosen observations in the Post-Crisis period, which reflects more of a cross-sectional test of the basis predictions.</p><p>Ultimately, each of our ML models is applied to 8 distinct Sample-Split combination: for each of the AUD and JPY bases, we have either the Complete or the Post-Crisis sample, and within each sample, we split Train vs. Test using either a Contiguous or a Random approach. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Regularized Regression</head><p>Regularized linear regressions extend the ordinary least squares regression algorithm by allowing regularizations on the fitted model parameters. Regularization prevents the linear regression from overfitting, especially when a large set of features are present. Any regularized linear regression solves the following optimization program.</p><formula xml:id="formula_0">θ = arg min θ (y (i) − θ T x (i) ) 2 + λ(α||θ|| 2 2 + (1 − α)||θ|| 1 ),<label>(2)</label></formula><p>where λ is a hyperparameter that determines the "strength" of regularization, and α determines the specific regularization function employed.</p><p>Setting α = 0 corresponds to regularizating L 1 norm, which is also known as Lasso regression. This regularization will set less relevant θs to zero, thereby achieving model parsimony. An α = 1 corresponds to using L 2 -regularization, or Ridge regression. It shrinks the coefficients of variables that are highly correlated. Both of these algorithms also have a Bayesian interpretation, with lasso corresponding to a Laplace prior and Ridge to a normal prior over the regression coefficients θ. Finally, we also consider an elastic net algorithm with α = 1 2 . This trades off the two previous regularization methods.</p><p>In addition to linear features, we also consider a second-degree polynomial of the features in these regularized regressions in order to capture non-linearities. All features and the y are standardized when training the algorithm in order for the regularization to work as intended. We implement all algorithms in the statistical software R <ref type="bibr" target="#b7">(R Core Team, 2013)</ref>, and use glmnet package <ref type="bibr" target="#b3">(Friedman et al., 2010)</ref> to implement these regularized regressions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Regression Trees</head><p>An algorithm might need to capture higher dimensional feature interactions in order to predict well. A regression tree allows for considering such non-linear interactions among features. In each step, the tree splits the data in one node (the parent node) into two subsets (children nodes) based on the value of one feature. The splitting rule is chosen to minimize the purity of the children nodes. The algorithm stops once the purity of the children nodes does not improve over the purity of the parent node. The prediction in each node j that contains m j training examples is µ j :</p><formula xml:id="formula_1">µ j = 1 m j i∈j y (i) .<label>(3)</label></formula><p>And the purity of a node D j is calculated with the deviance measure:</p><formula xml:id="formula_2">D j = 1 m j i∈j (y (i) − µ j ) 2 .<label>(4)</label></formula><p>We implement the regression tree algorithm using the R-package tree <ref type="bibr" target="#b8">(Ripley, 2018)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Random Forest</head><p>Regression tree algorithms can exhibit high variance. This problem can be remedied using a random forest. The random forest uses bootstrap to grow multiple trees and returns the average prediction of those trees as its final prediction. It can be shown that the variance of a random forest containing N trees, each with variance σ 2 and correlation ρ is:</p><formula xml:id="formula_3">ρσ 2 + 1 − ρ N σ 2 .<label>(5)</label></formula><p>Hence, the overall variance can be decreased by choosing a high number of trees N (we choose to grow 2000), and decorrelating the trees to achieve a low ρ. The forest decorrelates its trees in two ways. First, each tree is grown out of a bootstrapped sample, which is different for each tree. Moreover, at each node, the algorithm only considers splitting on a random sub-sample of all available features. The size of this sub-sample is mtry, and is a hyperparameter that we will tune. Each tree in the forest grows until it reaches a minimum number of terminal nodes/leaves, and that is set to five in our case. These measures contribute to less correlated trees and a lower overall variance of the random forest. We implement the random forest algorithm using the R-package ranger <ref type="bibr" target="#b9">(Wright and Ziegler, 2017)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results and Discussions</head><p>Before presenting the ML results, we discuss the tuning of two key hyper-parameters: λ in regularized regressions, and mtry in random forest.</p><p>Across Lasso, Ridge, and Elastic Net, we tune λ, the strength of our regularization penalty via the one-standard-error approach. That is, the glmnet package supplies 100 λ's, we choose the optimal λ as the value that's one standard error away from the λ that minimizes the cross-validation error, so as to reflect estimation errors inherent in calculating MSEs <ref type="bibr" target="#b2">(Friedman et al. (2001)</ref>). We do ten-fold cross-validation, and use the same assignment ID across all regularized regressions.</p><p>Random Forest has many degrees of freedom. We focus on optimizing mtry, or the number of randomly chosen features a node could split on. Splitting only on a subset of features at each node reduces correlation among trees and drives down variance of the overall model. For each of the 8 random forests (one on each Sample-Split), we ran ranger with mtry = {5, 6, 7, ..., 15}. The heuristic is to set mtry equal to the square root of feature dimension, which would be 7 or 8 depending on the Sample-Split. We choose the optimal mtry to be the number that minimizes the out-of-bag MSE in the Training set. Our final mtry's include four 12's, four 14's, one 10, and one 15. We set the other parameters of the Forest to 2000 trees and minimum of 5 leaves per node.</p><p>The performance of all eight of our ML models on the four Contiguous splits are summarized in <ref type="figure" target="#fig_2">Figure 4</ref>. We measure accuracy of prediction by MSE on the Test set. For these Contiguous splits, we have two blocks of Test sets: one in the middle of the Post-Crisis period and one at the end. The MSE for a model on this split is taken to be the average MSE in both blocks.</p><p>The MSE on the Random splits are not shown due to space constraint. The performance on the Random splits are stunningly good: the Random Forests generate MSEs on the Test set of between 10 to 20, which is incredibly small compared to the 10 to 25 standard deviation of the outcome variables. However, we embrace this success with reservation as it is difficult to interpret randomly selected observations with imputed values.</p><p>Focusing our analysis on the performance on the Contiguous splits, we highlight three takeaways. First, random forests achieve strong prediction performance. Forests not only have the lowest MSE in Test sets in all but one sample, but do so with a substantial margin. Comparing to regularized regressions, forests allow non-linear effects, and compare to regression trees, forests lower variance by bagging and splitting on only a subset of features at each node. The superior performance of forests suggest that these are two important considerations.</p><p>We plot in <ref type="figure">Figure 5</ref> our preferred specification: the forest application to predicting the AUD basis in the Complete sample. We further explore the importance of each feature in this forest. Specifically, in each of the 2000 trees, we tally the first seven variables that the tree split on. The bar height in <ref type="figure">Figure 6</ref> corresponds to the number of times a feature was actually included in the "Top 7" shortlist. The horizontal line represent the number of times we would expect to see a feature appear if all of the features are equally important and the selection is a random draw from a multinomial distribution with p 1 = p 2 = ... = p n = 1 n . Under this heuristic, the features colored in blue are the more important ones. Interestingly, this set of features encompass all but one feature that the regression tree used for the same sample.</p><p>Second, regularized regressions are informative about bias vs. variance in the prediction. Looking at the MSEs in the Training vs. Test sets across the linear vs. polynomial specifications of regularized regressions, we note that the prediction error in the AUD basis is likely caused by a bias problem, as the MSE decreases with the inclusion of the higher-dimensional features in both the Training and the Test set. In contrast, the results in JPY basis indicates a variance problem, i.e. overfitting, as the polynomial improves the Training error but increases the Test error.</p><p>Finally, performance differ dramatically in the middle vs end Test blocks. In results not shown due to space constraint, we note that all models have respectable performance on the Test block taken from the middle of the Post-Crisis period. Yet most models struggle with predictions in the last 200 observations. One potential reason is that outcome variables in this period exhibit patterns that have hitherto not been observed (low variance, elevated level), and are thus difficult to predict via a supervised learning algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusions and Future Work</head><p>Violations of the Covered Interest-Rate Parity condition are important phenomena in the global foreign exchange market, and a better understanding of the cross-currency basis can have profound implications on the theory of asset pricing. In this project, we take a step toward this understanding by predicting bases using machine learning techniques. We find that random forests achieve fairly good predictions, as measured by MSE on Test sets that encompass two separate blocks of observations in the Post-Crisis period. This performance likely owes to random forest's ability to flexibly introduce non-linear feature effects and strike a balance between bias and variance minimization.</p><p>In the future, we would collect more economic features and use higher order polynomial features to improve the regularized linear regressions of AUD basis, given the observed bias issue with the AUD data. We will expand the set of algorithms employed to improve the performance on the JPY data, as most algorithms seem to suffer from a variance problem. Specifically, we will apply the boosting technique, and we will consider training a neural network.</p><p>Overall, we are encouraged to see that we found models that perform reasonably well. Importantly, the features selected as important by our various models are intuitive and sensible. We hope to more closely examine the contribution of these features in the future and extend this analysis to a larger set of currency bases. All tasks were performed by Amy and Stefan in equal parts.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>List of features in each of AUD, JPY, USD sample focuses on only the years of 2010 to 2017, which is the prediction period of interest. The shorter horizon of Post-Crisis allows us to retain all features. The resulting number of features and observations are summarized inFigure 3, along with the complete process of data construction.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Summary of MSEs from Models on Contiguous Split</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :Figure 6 :</head><label>56</label><figDesc>Outcome vs. Prediction in Training vs. Test Sets Figure 6: Variable Importance in Random Forests on AUD Complete Sample Contiguous Split 6 Contributions</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Boyarchenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M</forename><surname>Eisenbach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Shachar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Van Tassel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>intermediated arbitrage</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Deviations from Covered Interest Rate Parity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tepper</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Verdelhan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Finance</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The elements of statistical learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Springer series in statistics</title>
+		<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2001" />
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Regularization paths for generalized linear models via coordinate descent</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Empirical asset pricing via machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">T</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Xiu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Forward Arbitrage and Intermediary Asset Pricing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Hébert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Shrinking the cross section</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kozak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Nagel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Santosh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Financial Economics</title>
+		<imprint>
+			<date type="published" when="2019" />
+		</imprint>
+	</monogr>
+	<note>forthcoming</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>R Core Team</surname></persName>
+		</author>
+		<title level="m">R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing</title>
+		<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">tree: Classification and Regression Trees. R package version 1</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Ripley</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="page" from="0" to="39" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">ranger: A fast implementation of random forests for high dimensional data in C++ and R</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">N</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ziegler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

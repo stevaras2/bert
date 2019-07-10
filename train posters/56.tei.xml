@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Mask r-cnn</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016">2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>References • He</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaiming</surname></persName>
+						</author>
+						<title level="a" type="main">Mask r-cnn</title>
+					</analytic>
+					<monogr>
+						<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+						<meeting>the IEEE Conference on Computer Vision and Pattern Recognition						</meeting>
+						<imprint>
+							<date type="published" when="2016">2016</date>
+						</imprint>
+					</monogr>
+					<note>• Our weakly supervised consists of the following components (figure 2C): Discussion and Future Work Figure 1: lung segmented from original and lung location provided data Formula 1 : Class Activation Mapper • Zhou, Bolei, et al. &quot;Learning deep features for discriminative localization.&quot;</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation and Objective Results</head><p>• Globally, Pneumonia is responsible for over 15% of all deaths of children under the age of 5. Unfortunately, this is usually due to a lack of professionals who can expertly identify the presence of pneumonia in an X-ray image. Furthermore, by knowing the location and area of the infection, doctors can get a better idea of the cause and severity of Pneumonia. However, Chest X-Ray images generated from hospitals are usually only labeled with Pneumonia diagnosis, without specifying the location. The lack of fully labeled data commonly observed in a hospital setting motivated us to explore a weakly supervised training method to do automated diagnosis. Our approach is comparable to the performance of a supervised method as demonstrated in our paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Objectives:</head><p>• Create a weakly supervised model (CAM + CNN) , which extracts features learned from the classifier and does not require location training labels, to predict Pneumonia location with performance comparable to supervised models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>• We acquired our dataset from Kaggle's RSNA Pneumonia Detection Competition. The dataset consists of 17,489 x-ray images ( 8964 with pneumonia, 8525 no pneumonia). Each Pneumonia image is labeled with the X, Y, weight and height as the ground truth of their bounding boxes.</p><p>• The data is almost perfectly balanced 51.25 / 48.74) so we split our dataset to a 70:20:10 train, valid and test split without sampling.</p><p>Localization:</p><p>• The first part of our study is to build a CNN model that can accurately classify whether a given image is labeled as Pneumonia or not. The images that were predicted as Pneumonia positive are then fed into our localization model. • SVM, Random Forest and Logistic Regression were used as a baseline to evaluate our classification model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>• To expedite the training of our neural network models, we compressed the original 1024*1024 pixels to 128*128.</p><p>• All images were normalized by their mean and standard deviation.</p><p>• A U-Net neural network was used to predict the confidence of each pixel belonging to the lung. Then we segmented the lung by multiplying the original image matrix with the localization matrix.</p><p>• Both the original and the segmented images were fed into our model as inputs to provide our model with a hypothesis of lung location.</p><p>Feature Engineering:</p><p>• The second part of our project is to build a weakly supervised model that can predict Pneumonia location without training labels, on the positively predicted images from the classifier.</p><p>• To benchmark the performance our of localization model, we created a supervised RCNN model that was trained with ground truth location labels ( <ref type="figure">figure 2B</ref>).</p><p>• Our weakly supervised consists of the following components ( <ref type="figure">figure 2C</ref>):</p><p>Discussion and Future Work • Based on our result, we have shown that our weakly supervised method is able to localize Pneumonia just as well as a supervised method.</p><p>• We predict that our model can perform even better if we have the computing power to train our model on the full images, as a lot of information are lost during compression. We also expect improvements by including more training data or transferring learned models from similar works, such was ChestXNet. • If improved to human level performance, our weakly supervised model can not only automate pneumonia location annotation and classification tasks, but can also be used to automate other medical image datasets.</p><p>Motivation:</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Globally, Pneumonia is responsible for over 15% of all deaths of children under the age of 5. Unfortunately, this is usually due to a lack of professionals who can expertly identify the presence of pneumonia in an X-ray image. Furthermore, by knowing the location and area of the infection, doctors can get a better idea of the cause and severity of Pneumonia. However, Chest X-Ray images generated from hospitals are usually only labeled with Pneumonia diagnosis, without specifying the location. The lack of fully labeled data commonly observed in a hospital setting motivated us to explore a weakly supervised training method to do automated diagnosis. Our approach is comparable to the performance of a supervised method as demonstrated in our paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Objectives:</head><p>• Create a weakly supervised model (CAM + CNN) , which extracts features learned from the classifier and does not require location training labels, to predict Pneumonia location with performance comparable to supervised models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>• We acquired our dataset from Kaggle's RSNA Pneumonia Detection Competition. The dataset consists of 17,489 x-ray images ( 8964 with pneumonia, 8525 no pneumonia). Each Pneumonia image is labeled with the X, Y, weight and height as the ground truth of their bounding boxes.</p><p>• The data is almost perfectly balanced 51.25 / 48.74) so we split our dataset to a 70:20:10 train, valid and test split without sampling.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Localization:</head><p>• The first part of our study is to build a CNN model that can accurately classify whether a given image is labeled as Pneumonia or not. The images that were predicted as Pneumonia positive are then fed into our localization model. • SVM, Random Forest and Logistic Regression were used as a baseline to evaluate our classification model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>• To expedite the training of our neural network models, we compressed the original 1024*1024 pixels to 128*128.</p><p>• All images were normalized by their mean and standard deviation.</p><p>• A U-Net neural network was used to predict the confidence of each pixel belonging to the lung. Then we segmented the lung by multiplying the original image matrix with the localization matrix.</p><p>• Both the original and the segmented images were fed into our model as inputs to provide our model with a hypothesis of lung location.</p><p>Feature Engineering:</p><p>• The second part of our project is to build a weakly supervised model that can predict Pneumonia location without training labels, on the positively predicted images from the classifier.</p><p>• To benchmark the performance our of localization model, we created a supervised RCNN model that was trained with ground truth location labels ( <ref type="figure">figure 2B</ref>).</p><p>• Our weakly supervised consists of the following components ( <ref type="figure">figure 2C</ref>):</p><p>Discussion and Future Work • Based on our result, we have shown that our weakly supervised method is able to localize Pneumonia just as well as a supervised method.</p><p>• We predict that our model can perform even better if we have the computing power to train our model on the full images, as a lot of information are lost during compression. We also expect improvements by including more training data or transferring learned models from similar works, such was ChestXNet. • If improved to human level performance, our weakly supervised model can not only automate pneumonia location annotation and classification tasks, but can also be used to automate other medical image datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation:</head><p>Data: Classification   • To evaluate the localization task, we used the IoU metric (Formula 2) by calculating the intersection over union of the prediction and ground truth bounding boxes.</p><p>• An example prediction heatmap and bounding boxes is shown in <ref type="figure">figure 4</ref>, where the blue boxes are the prediction drawn over the heatmap cluster, while the red boxes are the ground truth.</p><p>• Our mode is able to predict Pneumonia location even better than the supervised approach, with an increase of 0.0242 IoU increase <ref type="table">(Table 1B</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1.</head><p>A Class Activation Map (CAM) that takes in the output of the final convolutional neural network model and the fully connect layer weights for the Pneumonia class neuron and sum up the weighted outputs (Formula 1) . 2. The output from CAM were then scaled into a 3-channel RGB heatmap. 3.</p><p>To find individual clusters of predictions on the heatmap, we applied a Depth First Search on a random non-zero pixel on the heatmap, and repeat until all non-zero pixels are clustered. 4.</p><p>Lastly, we drew a bounding box around each clusters by finding the minimum and maximum X,Y coordinates of the clusters, and only kept boxes that are within 2 standard deviations of all predictions.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Our best model contains 10 convolutional layers, each with zero padding to keep the size of the original image and ReLU as the activation function. The Class Activation Mapper requires our model to only have one fully connected layer and a Global Average Max Pool layer before that. The model were need trained with an Adam optimizer with 0.0001 learning rate on 20 epochs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>lung segmented from original and lung location provided data Formula 1 : Class Activation Mapper References • He, Kaiming, et al. "Mask r-cnn." Computer Vision (ICCV), 2017 IEEE International Conference on. IEEE, 2017. • Zhou, Bolei, et al. "Learning deep features for discriminative localization." Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition. 2016. • Simonyan, Karen, and Andrew Zisserman. "Very deep convolutional networks for large-scale image recognition." arXiv preprint arXiv:1409.1556 (2014).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Bounding Box Prediction</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 1A ,</head><label>1A</label><figDesc></figDesc><table>Classification accuracies, 1B Localization IoU 
+
+Formula 2 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>)</figDesc><table>Localization 
+R-CNN 
+CNN 
++CAM 
+
+Train 
+0.1859 
+N/A 
+
+Test 
+0.1266 
+0.1508 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Project: Building on existing Bayesian learning for Safe High Speed Planning in Partially Observable Environments</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Toby</forename><forename type="middle">John</forename><surname>Buckley</surname></persName>
+						</author>
+						<title level="a" type="main">CS229 Project: Building on existing Bayesian learning for Safe High Speed Planning in Partially Observable Environments</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>With improvements in sensing technology and computational power, robots capable of moving through an environment in real-time are becoming more and more feasible. One such example is an autonomous four-wheeled vehicle which obeys differential constraints <ref type="figure" target="#fig_0">(Fig. 1)</ref>. The general methodology for a robot, given a movement task, is to sense its surroundings, compute a trajectory which will bring it closer to the goal location, and begin to move. While moving, the robot may re-sense the environment and update its algorithm to utilize this new information. An example of this is shown in <ref type="figure">fig. (</ref>2) where a car is traversing a maze-like environment. This is useful in multiple scenarios; if there are moving objects, uncertainties in the sensors, or an unknown map to traverse, the task would be near impossible to complete without feedback. Each of these cases are exacerbated by high-speeds and energetic dynamics, as the planner may not have time to react properly to dangerous behavior. As a result, safety constraints are maintained in calculations for the planner to ensure collisions do not occur.</p><p>A typical constraint is to simulate actions into the future, and confirm that at least one possible action does not result in collision. If no such actions exist, the current state is called an Inevitable Collision State (ICS) <ref type="bibr" target="#b0">[1]</ref>. Further constraints can be derived by considering the dynamics of objects in the environment, as well as forcing the horizon to be arbitrarily large <ref type="bibr" target="#b1">[2]</ref>.</p><p>In any case, in order to perform the simulation, assumptobyb@stanford.edu No slip is assumed, so differential constraints must be obeyed which limit the vehicle's movement abilities in the lateral direction.</p><formula xml:id="formula_0">(a) (b) (c) (d) (e) (f) Fig. 2:</formula><p>The path of a car as it moves through time in an unknown environment. It's knowledge of the environment improves as it progresses. Green is the executed path, magenta is the planned path given its current knowledge, pink is the boundary into the unknown, and blue are the inferred walls.</p><p>tions must be made about the unexplored state space. In the most conservative approach, the robot treats any part of the environment not already explored as an obstacle. This approach maintains zero percent probability of collision but has multiple drawbacks as well. For instance, a robot rounding a hallway corner will slow down so that it can sense the unexplored path as it's turning, resulting in more time taken. In the same scenario, a human knows from experience that it is very unlikely a hallway dead-ends and subsequently will turn the corner sharply. If a path contains many sharp turns the lost time can add up, resulting in much slower completion time.</p><p>There are multiple methods to speed up the robot; the first is to relax the safety constraints and approximate the probability of collision in some manner. This, combined with a penalty for collisions allows the robot to naturally gauge whether an action's risk vs reward is worthwhile. This method often requires hard-coded behavior which can be detrimental in scenarios differing from the algorithm's original intent.</p><p>Another method is to maintain safety constraints but encourage behavior that reduces the likelihood a robot finds itself in an unfavorable scenario. With the same example as previously, when taking a sharp corner at high speed a robot can swing out wide in order to increase its vision around the corner and give itself room to take evasive action if necessary. If the hallway is clear, it will continue its turn without having to accelerate back to full speed. This paper uses the latter method as a baseline planner, and compares it to the probability based planner which utilizes Bayesian inference.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. LITERATURE</head><p>There are many methods to tackling the problem of high speed planning in partially observable environments, each with their own strengths and weaknesses.</p><p>First off, it can be advantageous to recast this problem as a POMDP, as many people have, and use this framework to work in the belief space instead of the state space <ref type="bibr" target="#b2">[3]</ref>, <ref type="bibr" target="#b3">[4]</ref>, <ref type="bibr" target="#b4">[5]</ref>. With such a formulation, it's possible to manipulate the beliefs directly and take them into account when choosing a next action. A large branch of the POMDP formulation research is focused on relaxing the safety constraints outlined previously and using methods such as machine learning or <ref type="figure">Fig. 3</ref>: Computing ICS. The blue line depicts a candidate action, with green and red showing valid and invalid emergency stopping maneuvers respectively. Even though the grey un-seen space is obstacle free, the vehicle doesn't know that from its initial position. So to be conservative, it assumes such space is an obstacle. sampling of the belief space to estimate the probability of collision <ref type="bibr" target="#b5">[6]</ref>.</p><p>One such method was recently proposed by Charles Richter et. al. Their planning algorithm utilizes machine learning to estimate the probability of collision for a given state <ref type="bibr" target="#b6">[7]</ref>. The collision probability depends on calculating pre-defined features of an observation, such as minimum distance to nearest known obstacle or the final speed of an action, and comparing it against the machine-learned data. While such algorithms obtain impressive results, it ultimately only works in environments similar to those trained on. Furthermore, there is an argument to be made that environments are too high in dimensionality to be boiled down to a handful of features. While Richter's algorithm does reduce completion time, there are areas to improve on. First, Richter et. al. assume a data set can be built by training in any environment and that any differences in output are due to their features lacking the subtlety to capture the difference. This may lead to irrational behavior in the robot if two training environments happen to share features but differ greatly in collision probability. This method is also open to incorrectly identifying a novel environment as one that has been trained in. For example, results from Richter's simulation in a hallway-forest hybrid map using a prior and training data shows that even in environments not trained in (forest), there are peaks in the data-density, implying in those time steps the planner mistook the forest for a hallway environment. This problem may be reduced by introducing more features such as largest arc-length of an obstacle projected on the horizon, or longest straight-edge of an obstacle Second, Richter's algorithm does not take into account potential information gained from executing actions that brings the robot close to the edge of unexplored territory. In situations where data-density is low, it would be beneficial to return to areas of high data-density. If the planner was choosing between two similar actions, one of which continued in D.init(K) for k ← 1 to K do randomly sample feasible configuration, map, and action calculate stopping maneuvers if collision free then</p><formula xml:id="formula_1">y (i) ← 0 else y (i) ← 1 end φ ← calcF eatures(action) D(k) ← {y (i) , φ} end</formula><p>Algorithm 1: Probability Modeling low data-density region and the other with the potential to observe a region of high data-density, the latter action should be chosen.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. PROPOSED SOLUTION</head><p>Charles Richter uses four features to predict the probability of crashing. They are as follows: 1) minimum distance to the nearest obstacle along the path, 2) average distance to an obstacle or horizon in a 60 angle in front of the robot along the action, 3) average free straight path directly in front of the robot along the action, and 4) total speed at the end of the action.</p><p>In order to test additional features and see how the results change, I chose four additional features to test; 5) ratio of sensed new cells to total cells, 6) ratio of walls to free space, 7) total turn angle, 8) number of obstacle cluster (calculated using k-means clustering).</p><p>Training data, D, is generated by randomly sampling a feasible configuration and action within a training map. An observation is made from the configuration and the features are calculated with respect to the chosen action. Next, emergency braking maneuvers are executed from the end of the action for a variety of steering angles to see if the vehicle is in an inevitable collision state <ref type="figure">(Fig. 3)</ref>. If any maneuvers successfully bring the vehicle to a stop without collision, then y i is set to 0. Otherwise y i = 1. The features and ICS check results are placed in D and the process repeats. Algorithm 1 outlines this process.</p><p>In order to choose the next action, the cost of each feasible action is calculated (1) and the minimum is chosen. <ref type="figure" target="#fig_1">Fig. (4)</ref> shows an example of each action possible for a car (sans obstacles). J a (a t ) denotes the time to execute action a t , h(b t , a t ) denotes the heuristic cost to the goal for a t given the current belief b t , J c denotes the cost of collision, and f c denotes the posterior probability of collision.</p><formula xml:id="formula_2">a * t (b t ) = argmin at J a (a t ) + h(b t , a t ) + J c * f c (φ(b t , a t ))<label>(1)</label></formula><p>Posterior probability of collision is calculated according to a non-parametric Bayesian inference model <ref type="bibr" target="#b1">(2)</ref>. This model was developed by Vega-Brown et al <ref type="bibr" target="#b7">[8]</ref>.</p><formula xml:id="formula_3">y, φ T rain ← D while not at goal do Cost.init(actions) for a ∈ actions do φ ← calcF eatures(a) K ← calcKernel(φ, φ T rain ) α, β ← calcP suedoP riors(a) f c ← eq2 : f (y, α, β, K) Cost(a) ← eq1 : (a, f c ) end a * ← argmin(Cost) execute a * end</formula><p>Algorithm 2: Bayesian Learning</p><formula xml:id="formula_4">f c (φ) = P (y = "collision"|φ, D) = α(φ) + N i=1 k(φ, φ i )y i α(φ) + β(φ) + N i=1 k(φ, φ i ) (2) Where k(φ, φ i )</formula><p>is the radial basis function (Gaussian kernel). The prior pseudo-counts α and β act as a form a Laplace smoothing, where the counts are a function of the features present for the given action. If action a t results in an inevitable collision state when assuming that all unknown space is an obstacle, then α is set to a positive value. Otherwise it is zero. This ensures that when the vehicle enters  a region with little to no training data, the prior distribution dominates and a similar safety constraint compared to the baseline is used to guide the vehicle through the region. Algorithm 2 outlines this process.</p><p>The result of the action cost function is that when the algorithm is very confident a collision will not occur due to high training data-density and a small number of recorded collisions, then the robot will maintain high speed while steering towards unknown regions of the map. The planner assumes the space past the boundary will be open and that no collision will occur. Conversely, if the data shows that actions with similar features crashed a majority of the time, then the cost will drastically increase, making it unlikely the planner will choose such an action, and will choose a safer alternative.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. SIMULATION/EXPERIMENTS</head><p>In our simulation, the full dynamics of a car are used, complete with applied force at the front axle to act as the electric motor or braking system. The available controls are steering angle and applied force. The original planner was trained on a maze-like environment, while the extended planner was trained on all three types of maps <ref type="figure" target="#fig_2">(Fig. 5)</ref>. A total of 8000 training points were generated, and a value of J c = 0.8 was used for the cost of collision. If an action is an ICS according to a conservative map estimate, then α is set to 5, and 0 otherwise. And the same as Richter's paper, α + β is set to 5.</p><p>Now that the specifics of how the simulation was run are taken care of, we can examine the results. <ref type="figure" target="#fig_3">Fig. (6)</ref> shows an example of paths taken by the two algorithms for a mazelike map. Note that the baseline is unnecessarily curvy, this is from the cost function depending heavily on speed at the end of the action. As a result, when traversing an open hallway the planner goes close to the wall as this reduces distance to the goal. But once a corner is approached the baseline planner must swing overly wide in order to maintain high speed and meet the ICS constraint. <ref type="figure" target="#fig_4">Fig. 7</ref> shows how this behavior truly reduces total time. As seen, the difference in velocity between the ML planner and the baseline is almost always positive, and in upwards of 3 m/s in magnitude. By maintaining higher speed for longer, the time to the goal is significantly reduced.</p><p>In contrast, observe how the probabilistic planner cuts the majority of the corners very closely. This is because the machine learning data tells it that each corner has high likelihood of continuing past the unknown boundary, so it associates low risk with maintaining high speed while moving through the region. Presented in table I are the time taken to complete three different maps. Simulations were ran with randomized starting locations within a bounding start box. The original machine learning planner experiences speedups in maps where it has some familiarity (maze &amp; hybrid) and is slower in the unknown environment (forest). <ref type="table" target="#tab_0">Table II</ref> show the percent reduction of the ML planners compared to the baseline. The new machine learning planner is also faster in the maze, but far slower on the other two maps. Overall the original ML planner beats the new ML planner in each category. This is interesting since the new planner has been trained on the new environments whereas the original has not. I attribute the lack of speed-up due to the fact that the feature space has increased from four to eight, but the number of training points stayed the same.  This shows the limitations of selecting too many features without generating enough training data. It is also clear that machine learning is not right for all environment types; in some cases, the baseline planner is satisfactory.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CONCLUSIONS</head><p>I have shown two variations on a greedy path planning algorithm which reduce time to the goal by up to 19.2% compared to a baseline planner. This is because the baseline is very conservative, maintaing hard-coded safety constraints, and naive, it simply tries to maximize velocity throughout the course.</p><p>This speedup comes with considerable risk involved. Of the 50 trials ran with a collision cost of 0.8, only 21 completed. If collision cost was increased or more training data generated, the number of failed runs should decrease.</p><p>Finally, I have also shown that selecting too many features without properly generating enough training points can lead to worst behavior than a naive baseline.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>A car-like vehicle.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 4 :</head><label>4</label><figDesc>All possible quarter second actions for a car with a max speed of 32 m/s.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 5 :</head><label>5</label><figDesc>Maps used to train the machine learning planner.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 6 :</head><label>6</label><figDesc>Simulation results for the maze map from the two algorithms. Color denotes speed of the vehicle where dark blue is zero and red is high-speed.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7 :</head><label>7</label><figDesc>Difference in velocity between the ML planner and baseline.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Time for completion of multiple maps. All results in seconds.</figDesc><table>Maze 
+Forest Hybrid 
+
+Baseline 
+11.45 2.5 
+3.9 
+
+M.L. 
+9.25 
+2.9 
+3.4 
+
+M.L. new 9.65 
+3.15 
+4.25 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Percent Reduction compared to baseline Maze Forest Hybrid M.L. 19.21 -16.00 12.82 M.L. new 15.72 -26.00 -8.97</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Inevitable collision states. a step towards safer robots</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">A short paper about motion safety</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">High-speed autonomous navigation of unknown environments using learned probabilities of collision</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Intention-aware online pomdp planning for autonomous driving in a crowd</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Motion planning under uncertainty using iterative local optimization in belief space</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Motion planning under uncertainty for robotic tasks with long time horizons</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Bayesian learning for safe high-speed navigation in unknown environments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Richter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. ISRR</title>
+		<meeting>ISRR</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Nonparametric bayesian inference on multivariate exponential families</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Vega-Brown</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

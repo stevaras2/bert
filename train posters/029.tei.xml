@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Results Baseline Estimator: DAHC HRR-level: DAHC Hospital-level: Model Learning Curves (with k=3 fold cross validation): Visual Representations of Our Data: Predicting Medicare Costs Using Non-Traditional Metrics</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Louie</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Wells</surname></persName>
+						</author>
+						<title level="a" type="main">Results Baseline Estimator: DAHC HRR-level: DAHC Hospital-level: Model Learning Curves (with k=3 fold cross validation): Visual Representations of Our Data: Predicting Medicare Costs Using Non-Traditional Metrics</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction &amp; Motivation</head><p>Our aim was to build models to predict an individual's healthcare costs on the basis of nontraditional patient metrics by leveraging open source hospital data. In doing so, we hope to both improve the accuracy of patient cost predictions and gain insights into factors responsible for fluctuations in healthcare costs. Results from our Medicare.gov data set are omitted because the training set constructed failed to achieve reasonable learning, relative to the DAHC training set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Datasets</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DAHC Hospital Referral Region Data:</head><p>We first sought to predict the cost of an average hospital in a given Hospital Referral Region (HRR). We implemented a baseline estimator based on traditional metrics/features such as demographics and ethnicity. This estimator performed poorly and proved very ineffective at predicting Medicare costs when compared to the estimator based on non-traditional features. Some of the most important features for this estimator were number of ambulatory cases, readmission rate, physicians per 100,000 residents, and critical care physicians per 100,000 residents. This suggests that quality of initial care and a health care system's complexity may play a larger role in determining Medicare costs than individual demographics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DAHC Hospital Data:</head><p>We found that models trained on our data set consisting of non-traditional metrics at the hospital level predicted expected Medicare cost very well. On the individual hospital level, some of the most predictive features include: percent of deaths occurring in hospital, medical and surgical unit days per patient, medical specialist visits per patient, and number of beds. Learning Curves:</p><p>Our plotted learning curves for our three supervised models show that our gradient boosting and SVM models' generalization and performance can be further improved with more training examples. More training examples could potentially be retrieved and incorporated from previous years' data sets. Our linear model's performance is plateauing, indicating that we may need to incorporate greater complexity into our model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion &amp; Future Directions</head><p>Our results indicate that Medicare costs can be estimated with reasonable accuracy using non-traditional metrics associated with individual hospitals or hospital referral regions.</p><p>Looking forward, we hope to next construct a predictive model on the individual patient level. The ability to predict the expected cost of admission to a specific hospital based on an individual's symptoms could be extremely beneficial. In addition, we hope to improve our current learning models by utilizing methods like grid search to find the optimal parameters for our models (e.g. SVM) and we hope to find more data that we could potentially include in our training sets. </p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

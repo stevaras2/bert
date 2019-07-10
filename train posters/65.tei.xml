@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Amazon Inventory Reconciliation Using AI Motivation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pablo</forename><surname>Rodriguez Bertorello</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nutchapol</forename><surname>Dendumrongsup</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sravan</forename><surname>Sripada</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Amazon Inventory Reconciliation Using AI Motivation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset Algorithms</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Convolutional Neural Networks (CNN) Support Vector Machines</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results: CNN</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>• Remove the images from the training set where items are occluded • Train the model on different training/val/ sets to reduce data distribution differences • Evaluate ensemble methods to improve the accuracy • Use class weights to assign higher loss to classes with suboptimal performance • Use all 324K images for training instead of a sample of 150K images Amazon has made public the Bin Image Dataset. It contains images and metadata from bins of a pod in an operating Amazon Fulfillment Center. The bin images in this dataset are captured as robot units carry pods as part of normal operations. Bin Image dataset provides the metadata for each image from where number of items in bin can be derived.</p><p>•  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Results: SVM</p><p>• We were able to improve the model accuracy by 75% using CNN over SVM, for an overall 324% over random • Our best model is achieving over 97% accuracy on the images with no items and the accuracy goes down as the number of items in images go up Kernels</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Consists of 150,000 Images of different sizes • Restricted project to only images with fewer than 6 bin items • Histogram of distribution mass, for the number of object in a bin: • Some images are occluded • Even for a human, some images are difficult to classify Preprocessing • Resized all the images to 224 x 224 • Normalized images for zero mean, unit variance • Split into 70% training, 20% validation and 10% testing • Feature extraction: ○ Raw pixel: with and without extracted principal component analysis (PCA) ○ Histogram of gradients: with and without edge detection to remove the impact of the tape ○ Laplacian of gaussian ○ Horizontal flip Data Augmentation</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Convolutional Neural Networks for Visual Recognition&quot; • Patrick H Winston. MIT 6.034: &quot;Support Vector Machines&quot; Histogram of Gradients Sobel -X Gradient</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrej</forename><forename type="middle">Karpathy</forename><surname>• Justin Johnson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Stanford Cs231n</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

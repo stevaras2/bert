@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Music Genre Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Derek</forename><forename type="middle">A</forename><surname>Huang</surname></persName>
+							<email>huangda@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arianna</forename><forename type="middle">A</forename><surname>Serafini</surname></persName>
+							<email>aserafini@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eli</forename><forename type="middle">J</forename><surname>Pugh</surname></persName>
+							<email>epugh@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Music Genre Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>/derekahuang/Music-Classification</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Genre classification is an important task with many real world applications. As the quantity of music being released on a daily basis continues to sky-rocket, especially on internet platforms such as Soundcloud and Spotify -a 2016 number suggests that tens of thousands of songs were released every month on Spotify -the need for accurate meta-data required for database management and search/storage purposes climbs in proportion. Being able to instantly classify songs in any given playlist or library by genre is an important functionality for any music streaming/purchasing service, and the capacity for statistical analysis that correct and complete labeling of music and audio provides is essentially limitless.</p><p>We implemented a variety of classification algorithms admitting two different types of input. We experimented with a RBF kernel support vector machine, k-nearest neighbors, a basic feed-forward network, and finally an advanced convolutional neural network. For the input to our algorithms, we experimented with both raw amplitude data as well as transformed mel-spectrograms of that raw amplitude data. We then output a predicted genre out of 10 common music genres. We found that converting our raw audio into mel-spectrograms produced better results on all our models, with our convolutional neural network surpassing human accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Machine learning techniques have been used for music genre classification for decides now. In 2002, G. Tzanetakis and P. Cook <ref type="bibr" target="#b7">[8]</ref> used both the mixture of Gaussians model and k-nearest neighbors along with three sets of carefully hand-extracted features representing timbral texture, rhythmic content and pitch content. They achieved 61% accuracy. As a benchmark, human accuracy averages around 70% for this kind of genre classification work <ref type="bibr" target="#b3">[4]</ref>. Tzanetakis and Cook used MFCCs, a close cousin of mel-spectrograms, and essentially all work has followed in their footsteps in transforming their data in this manner. In the following years, methods such as support vector machines were also applied to this task, such as in 2003 when C. Xu et al. <ref type="bibr" target="#b8">[9]</ref> used multiple layers of SVMs to achieve over 90% accuracy on a dataset containing only four genres.</p><p>In the past 5-10 years, however, convolutional neural networks have shown to be incredibly accurate music genre classifiers <ref type="bibr" target="#b7">[8]</ref> [2] <ref type="bibr" target="#b5">[6]</ref>, with excellent results reflecting both the complexity provided by having multiple layers and the ability of convolutional layers to effectively identify patterns within images (which is essentially what mel-spectrograms and MFCCs are). These results have far exceeded human capacity for genre classification, with our research finding that current state-of-the-art models perform with an accuracy of around 91% <ref type="bibr" target="#b5">[6]</ref> when using the full 30s track length. Many of the papers which implemented CNNs compared their models to other ML techniques, including k-NN, mixture of Gaussians, and SVMs, and CNNs performed favorably in all cases. Therefore we decided to focus our efforts on implementing a high-accuracy CNN, with other models used as a baseline.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>We obtained all of our musical data from the public GTZAN dataset. This dataset provides us with 1000 30-second audio clips, all labeled as one out of 10 possible genres and presented as .au files. From each clip, we sampled a contiguous 2-second window at four random locations, thus augmenting our data to 8000 clips of two seconds each. Since this data was sampled at 22050HZ, this leaves us with 44100 features for the raw audio input. We restricted our windows to two seconds to limit the number of features. We found that 44100 features was the perfect balance between length of audio sample and dimension of feature space. Thus after pre-processing our input is of shape (8000, CS229 Final Report -Music Genre Classification 44100), where each feature denotes the amplitude at a certain timestep out of the 44100. We also used 100 samples of un-augmented data each of our cross validation and test sets.</p><p>We also experimented with pre-processing our data by converting the raw audio into mel-spectrograms. In doing this, we experienced significant performance increases across all models. Mel-spectograms are a commonly used method of featurizing audio because they closely represent how humans perceive audio (i.e. in log frequency). In order to convert raw audio to mel-spectogram, one must apply short-time Fourier transforms across sliding windows of audio, most commonly around 20ms wide. With signal x[n], window w[n], frequency axis ω, and shift m, this is computed as</p><formula xml:id="formula_0">STFT{x[n]}(m, ω) = n x[n]w[n − m]e −jωn .</formula><p>These are computed more quickly in practice using sliding DFT algorithms. These are then mapped to the mel scale by transforming the frequencies f by m = 2595 log 10 (1 + f 700 ). Then we take the discrete cosine transform of the result (common in signal processing) in order to get our final output mel-spectogram.</p><p>In our case, we used the Librosa library <ref type="bibr" target="#b4">[5]</ref> and chose to use 64 mel-bins and a window length of 512 samples with an overlap of 50% between windows. Based on previous academic success with such transformations, we then move to log-scaling using the formula log(X 2 ).</p><p>The resulting data can be visualized below:</p><p>Hip-Hop Metal Reggae <ref type="figure">Figure 1</ref>: Examples of log-scaled mel-spectrograms for three different genres.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Principal Component Analysis</head><p>In addition to pre-processing our data as described above, we also used Principal Component Analysis to reduce dimension for two of our models (k-NN and SVM). PCA is a form of factor analysis that tries to approximate the data by projecting it onto a subspace of lower dimension. In order to do this, we first transformed the mel-spectrograms by normalizing their mean and variance. In order to preserve as much variance as possible with m examples</p><formula xml:id="formula_1">x (i) , unit length u, PCA maximizes 1 m m i=1 (x (i) T u) 2 = 1 m m i=1 x (i) x (i) T .</formula><p>Since our data has mean 0, this is equivalent to taking the principal eigenvector of Σ, the covariance matrix of the data. Empirically, we had best results reducing to 15 dimensions, analogous to taking the top 15 eigenvectors of Σ and projecting our data onto the subspace spanned by them. We implemented this using scikit-learn <ref type="bibr" target="#b6">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>We decided to first implement two simpler models as baseline measures of performance, then progress to more complicated models in order to increase accuracy. We implemented variants of k-nearest neighbors, support vector machine, a fully connected neural network, and a convolutional neural network. In addition to mel-spectogram features, we used principal component analysis to reduce dimensionality for the input to k-NN and SVM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">K-Nearest Neighbors</head><p>After reducing the dimensionality to 15 features using PCA (see above), we applied the k-nearest neighbors algorithm. Predictions are made on a per-case basis by finding the closest training examples to our test or cross-validation example that we wish to classify and predicting the label that appeared with greatest frequency among their ground-truth labels. Through trial and error, we found that best accuracy resulted from setting k = 10 and weighting the label of each neighbor by distance.</p><p>Explicitly, denoting our data point as x, let x (1) , . . . , x (10) be the 10 closest neighbors to x, those which return the largest value on ||x − x (i) || 2 , where || · || 2 denotes the Euclidean distance between points. Then, we choose weights w i for each i such that</p><formula xml:id="formula_2">w i ∝ ||x − x (i) || 2 , 1 i=1 0w i = 1.</formula><p>Finally, we return arg max</p><formula xml:id="formula_3">y w i 1(y = y (i) ),</formula><p>the label which is most prevalent among x's 10 nearest neighbors when weighted by distance. This was implemented with scikit-learn <ref type="bibr" target="#b6">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Support Vector Machine</head><p>After reducing dimensionality using PCA, we trained an SVM classifier as well. SVMs are optimal margin classifiers that can use kernels to find more complex relations in the input data. Since our data is not linearly separable, this equates to finding</p><formula xml:id="formula_4">min γ,w,b 1 2 w 2 + C m i=1 ξ i s.t. y (i) ( j α j K(x (j) , x (i) ) + b) ≥ 1 − ξ i and ξ i ≥ 0</formula><p>where x (i) are examples, α j , b are weights and biases, C is a penalty parameter, and 1 − ξ i is the functional margin for example i. K : R n × R n → R is a kernel function. In a traditional SVM this function corresponds to inner product between two vectors x (j) , x (i) , but in our case we are using an RBF (radial basis function) kernel:</p><formula xml:id="formula_5">K(x (j) , x (i) ) = exp − ||x (j) − x (i) || 2 2 2σ 2 .</formula><p>This kernel, also sometimes called the Gaussian kernel, corresponds to an infinite dimensional feature space is related to Euclidean distance. This function as a whole is often minimized using sequential minimization optimization. This was implemented with scikit-learn <ref type="bibr" target="#b6">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Feed-Forward Neural Network</head><p>We used a fully connected neural network as well, with ReLU activation and 6 layers, with cross-entropy loss. As the input to our model was 1D, when using mel-spectrograms, we flattened the data. Our model is fully connected, which means each node is connected to every other node in the next layer. At each layer, we applied a ReLU activation function to the output of each node, following the formula:</p><formula xml:id="formula_6">ReLU(x) = x x ≥ 0 0 x &lt; 0.</formula><p>At the end, we construct a probability distribution of the 10 genres by running the outputs through a softmax function:</p><formula xml:id="formula_7">σ(z) j = e zj K k=1</formula><p>e z k To optimize our model, we minimized cross entropy loss:</p><formula xml:id="formula_8">CE(θ) = − x∈X y(x) logŷ(x)</formula><p>We experimented with various regularization techniques, such as dropout layers and L2 regularization. Dropout randomly selects features to drop based off a specified constant, and L2 regularzation adds a penalty term to the loss function in the form of λ i θ 2 i . This was implemented with TensorFlow <ref type="bibr" target="#b0">[1]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Convolutional Neural Network</head><p>This was our most advanced model, using 3 convolution layers, each with its own max pool and regularization, feeding into 3 fully connected layers with ReLU activation, softmax output, and cross entropy loss. Most of the equations can be found above, and our architecture is visually presented below: This approach involves convolution windows that scan over the input data and output the sum of the elements within the window. This then gets fed into a max pool layer that selects the maximum element from another window. Afterwards, the output is fed through a model described in section 4.1. This was implemented with TensorFlow and Keras <ref type="bibr" target="#b0">[1]</ref> [3].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results and Discussion</head><p>The main quantitative metric which we used to judge our models is accuracy (that is, percentage of predicted labels which matched their true labels), and our main way of visualizing the performance of our best model is through the confusion matrices as seen in <ref type="figure" target="#fig_1">Figure 3</ref>. Because the labeling was uniformly distributed on our data, cross-validation, and test sets, these confusion matrices offer not only a way to visualize our data, but more specific information than precision and recall values offer.</p><p>We selected our hyperparameters based of empirical results and industry standards. For instance, choosing 4 by 4 window for our first convolution window was a result of seeing a similar window size work in other academic results, and then fine tuning to meet our data-specific needs. We chose to use Adam optimization for a few reasons. Working with audio time-series data over 2 dimensions cause sparse gradient problems, similar to those often encountered in natural language or computer vision problems. We also felt our data was somewhat noisy and messy. Adam mitigates the sparse gradient problem by maintaining a per-parameter learning rate, and mitigates the noise problem by basing updates on a weighted average of recent updates (momentum). With Adam our models trained more quickly and didn't plateau as early.</p><p>Consult <ref type="table" target="#tab_0">Table 1</ref> for model accuracy both without data processing -i.e. with raw audio as input -and with data processing -i.e. using the scaled mel-spectrograms as input. The clearest trend identifiable here is the dramatic jump in performance after we moved from using raw audio to mel-spectrograms. We saw a substantial improvement in accuracy on all four of our models after converting our data to this form, which suggests that there is essentially no benefit to looking directly at raw amplitude data. While it is true that converting to mel-spectrograms takes a little bit of time, especially with our high number of training examples, this pre-processing step can be pre-computed and stored in a file format such as .npz for quick access across all models. Additionally, mel-spectrograms are essentially images, as in <ref type="figure">Figure 1</ref>, which provides an human-accessible way to visualize our data and to think about what our neural networks may be classifying on. In other words, there is essentially no downside to switching to mel-spectrograms.</p><p>We also see that all four of our models struggle with over-fitting. We spent the most time trying to mitigate this issue on the CNN. To do so, we introduced three methods. We played around with a combination of batch normalization, dropout layers, and L2 regularization. We found some difficulty in using this, as allowing the model to over-fit actually increased our accuracy. While we could bring the training accuracy and the test accuracy to within .05 of each other, this would result in poor model performance. Thus we accepted our over-fitting issue.</p><p>Looking more closely at our confusion matrix, we see that our CNN struggled most with the rock genre. It only managed to correctly classify 50% of rock audio as rock, labeling the others as mainly country or blues. Additionally, it incorrectly classified some country, as well as a small fraction of blues and reggae, as rock music. While it's not all that surprising that rock was a challenging genre -a qualitative inspection of rock mel-spectrograms implies that many rock music excerpts lack the easily visible beats that other genres such as hip-hop and disco possess, while our personal experience with rock music vis a vis the other genres tells us that rock is also missing distinctive traits such as high-register vocals (pop) or easily audible piano (classical or jazz). Additionally, rock is a genre that both encapsulates many different styles (light rock, hard rock, progressive rock, indie rock, new wave, etc.) and heavily influences many other derivative genres. However, we were surprised that rock and country were so easily confused, as opposed to rock and metal, which would seem to rely on more similar instrumentation and tempo.</p><p>Additionally, we note that correct classification of jazz was less accurate than most other categories. Our algorithm falsely classified some jazz music as classical, although never did the reverse of this. We hypothesize that the more piano-heavy jazz tracks may have been too close to classical music in terms of both tempo and instrumentation, and may have been missing the saxophone or trumpet sounds and timbres associated with many other samples of jazz audio.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion and Future Work</head><p>Across all models, using frequency based mel-spectrograms produced higher accuracy results. Whereas amplitude only provides information on intensity, or how "loud" a sound is, the frequency distribution over time provides information on the content of the sound. Additionally, mel-spectrograms are visual, and CNNs work better with pictures. The CNN performed the best, as we expected. It took the longest time to train as well, but the increase in accuracy justifies the extra computation cost. However, we were surprised to see the similarity in accuracy between the KNN, SVM, and feed-forward neural network.</p><p>In the future, we hope to experiment with other types of deep learning methods, given they performed the best. Given that this is time series data, some sort of RNN model may work well (GRU, LSTM, for example). We are also curious about generative aspects of this project, including some sort of genre conversion (in the same vein as generative adversarial networks which repaint photos in the style of Van Gogh, but for specifically for music). Additionally, we suspect that we may have opportunities for transfer learning, for example in classifying music by artist or by decade.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>Our group has collaborated closely on the majority of this project. We worked together to find a project idea, lay out the direction of the project, and determine matters of data processing as well as implementation details. The writing of the project proposal, milestone report, and this final report have all been a team effort -we found that we never felt the need to explicitly delegate tasks. For the poster Arianna drove most of the design process, but all three group members helped to provide the content.</p><p>However, when it came to coding, we realized that our team worked better when we could mostly code by ourselves. Derek was instrumental in setting up the environments and compute resources, and together with Eli took on most of the implementation of the neural networks. Arianna implemented the non-deep learning models, as well as spearheaded the data processing and feature selection aspects of our project.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>CNN architecture.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Confusion matrix for CNN predictions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>Accuracy of predictions by model used. 
+With data processing Without data processing 
+
+Train CV 
+Test 
+Train CV 
+Test 
+
+Support Vector Machine 
+.97 
+.60 
+.60 
+.75 
+.32 
+.28 
+K-Nearest Neighbors 1.00 .52 
+.54 
+1.00 .21 
+.21 
+Feed-forward Neural Network 
+.96 
+.55 
+.54 
+.64 
+.26 
+.25 
+Convolution Neural Network 
+.95 
+.84 
+.82 
+.85 
+.59 
+.53 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">TensorFlow: Large-scale machine learning on heterogeneous systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashish</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eugene</forename><surname>Brevdo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhifeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Craig</forename><surname>Citro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andy</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthieu</forename><surname>Devin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sanjay</forename><surname>Ghemawat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Harp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Irving</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Isard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yangqing</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rafal</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manjunath</forename><surname>Kudlur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Josh Levenberg, Dandelion Mané</title>
+		<editor>Ilya Sutskever, Kunal Talwar, Paul Tucker, Vincent Vanhoucke, Vijay Vasudevan, Fernanda Viégas</editor>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Oriol Vinyals. Software available from tensorflow.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Music genre classification using machine learning techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hareesh</forename><surname>Bahuleyan</surname></persName>
+		</author>
+		<idno>abs/1804.01149</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">François</forename><surname>Chollet</surname></persName>
+		</author>
+		<ptr target="https://keras.io" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Convolutional neural network achieves human-level accuracy in music genre classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mingwen</forename><surname>Dong</surname></persName>
+		</author>
+		<idno>abs/1802.09697</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Mcfee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matt</forename><surname>Mcvicar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Balke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carl</forename><surname>Thomé</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Lostanlen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Colin</forename><surname>Raffel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dana</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oriol</forename><surname>Nieto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Battenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dan</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryuichi</forename><surname>Yamamoto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josh</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rachel</forename><surname>Wzy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Keunwoo</forename><surname>Bittner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pius</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian-Robert</forename><surname>Friesch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matt</forename><surname>Stöter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siddhartha</forename><surname>Vollrath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simon</forename><surname>Nehz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>Waloschek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">J</forename><surname>Hawthorne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">João</forename><forename type="middle">Felipe</forename><surname>Carr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Santos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><surname>Jackiewu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrian</forename><surname>Holovaty</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-08" />
+			<pubPlace>Seth, Rimvydas Naktinis, Douglas Repetto, Curtis</pubPlace>
+		</imprint>
+	</monogr>
+	<note>librosa/librosa: 0.6.2</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Music genre classification via sparse representations of auditory temporal modulations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Panagakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Kotropoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">R</forename><surname>Arce</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">17th European Signal Processing Conference</title>
+		<imprint>
+			<date type="published" when="2009-08" />
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Musical genre classification of audio signals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Cook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Speech and Audio Processing</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="293" to="302" />
+			<date type="published" when="2002-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Musical genre classification using support vector machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Changsheng</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">C</forename><surname>Maddage</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xi</forename><surname>Shao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fang</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qi</forename><surname>Tian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2003 IEEE International Conference on Acoustics, Speech, and Signal Processing</title>
+		<imprint>
+			<date type="published" when="2003-04" />
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">429</biblScope>
+		</imprint>
+	</monogr>
+	<note>Proceedings. (ICASSP &apos;03</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

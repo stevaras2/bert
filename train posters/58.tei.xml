@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Airbus Ship Detection -Traditional v.s. Convolutional Neural Network Approach</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junwen</forename><surname>Zheng</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ying</forename><surname>Chen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhengqing</forename><surname>Zhou</surname></persName>
+						</author>
+						<title level="a" type="main">Airbus Ship Detection -Traditional v.s. Convolutional Neural Network Approach</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>CS 229-Machine Learning Project Professor Andrew Ng</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The fast growing Shipping traffic increases the chances of infractions at sea. Comprehensive maritime and monitoring services help to support the maritime and industry to increase knowledge, anticipate threats and improve efficiency at sea. This challenge origins partly from the Airbus Ship Detection Challenge on Kaggle. We developed classifiers to efficiently classify whether there is any ship from satellite images with machine learning and deep learning approaches. Various scenes including open water, wharf, buildings and clouds appear in the dataset. [2]Gogul09, Image Classification using Python and Machine Learning, GitHub repository, 2017.</p><p>[3]Gao Huang, Zhuang Liu, Laurens van der Maaten and Kilian Q. Weinberger, Densely Connected Convolutional Networks, CVPR, 2017. The algorithm finds a linear combination of features that characterizes and separates two classes, with estimation of the mean and variance for each class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>K-Nearest Neighbors (KNN):</head><p>The algorithm classifies an object by a majority vote of its neighbors, with the object being assigned to the class most common among its k nearest neighbors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Naive Bayes(NB):</head><p>The algorithm is a probabilistic model based on applying Bayes' theorem with strong (naïve) independence assumption between feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random Forest (RF):</head><p>The algorithm is an ensemble learning method by constructing a multitude of decision trees and outputting the class of the individual tree. We use 70 trees in the forest.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Support Vector Machine (SVM):</head><p>The algorithm finds the maximum margin between different classes by determining the weights and bias of the separating hyperplane, with RBF kernel. </p><formula xml:id="formula_0">Conv. &amp; Max (128x128x16) Conv. &amp; Max (64x64x32) Conv. &amp; Max (32x32x64) Conv. &amp; Max (16x16x128) FC (32768) FC (128) Sigmoid<label>(1)</label></formula><p>The CNN Approach can efficiently capture relevant features from different locations of an image. It take image as input, go through some hidden layers such as convolutional layers, pooling layers and fully connected layers, and output a prediction probability of the image containing ship. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset:</head><p>We use a public dataset provided on Kaggle Airbus Ship Detection Challenge website. We initially implemented the methods on a dataset with 10k training images and 5k test images. All the image has been resized in 256 x 256 x 3 using the cv2 package in python.  <ref type="figure" target="#fig_3">Figure 2</ref> for more details. We also designed a simple CNN model which consist of 4 convolutional layers and 4 maxpoling layers, see <ref type="figure" target="#fig_6">Figure 3</ref> for more details. Result Analysis: 1. Among the traditional methods, Random Forrest has the smallest variance and the highest mean of accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.</head><p>Simple CNN model outperforms all the traditional method as expected.</p><p>• We plan to extract global features along with local features such as SIFT, SURF or DENSE, which could be used along with Bag of Visual Words (BOVW) technique.</p><p>• For traditional methods we can apply data augmentation method.</p><p>• Implement different network (e.g., deeper network) to train the classifier.</p><p>• Come up with a smart input data sampling method that can balance images of different scenes/backgrounds.</p><p>• Apply segmentation technique to identify the locations of all ships in a image.  We used hand engineering features extraction methods [2] to obtain three different global features for traditional ML algorithms. The images were converted to grayscale for Hu and Ha, and to HSV color space for His before extraction, shown in <ref type="figure" target="#fig_2">Figure 4</ref>.</p><p>-Hu Moments (Hu) features were used to captured the general shape information.</p><p>-Color Histogram (His) features were applied to quantifies the color information.</p><p>-Haralick Textures (Ha) features were extracted to described the texture.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Image Augmentation for CNN:</head><p>To improve the robustness of our network, we augmented the training data by rotating, flipping, shifting and zooming training images </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Example Images from Dataset [1]Kevin Mader, Transfer Learning For Boat or No-Boat, Kaggle, 2018.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Discriminant Analysis (LDA):</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Feature</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :</head><label>2</label><figDesc>Transferred</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :Figure 5 :</head><label>65</label><figDesc>Cross Validation (k = 10) Accuracy of Traditional Methods Using All Extracted Features and Test Accuracy of CNN Models Figure 5: Training Loss and Accuracy of CNN Models for 30 Epochs Feature Engineering for Traditional ML Algorithms:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 3 :</head><label>3</label><figDesc>Simple CNN (SIM-CNN) Model Framework</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Traditional ML Approach Comparison (w/ Featuring Engineering)   </figDesc><table>Result Analysis: 
+
+1. Among all the ML Algorithms, Random Forest achieves the highest test accuracy. 
+2. In general, Feature Engineering improves the performance of traditional ML Algorithms. 
+3. "More is less": some algorithms give significantly better performance when working with 
+only certain combination of features. 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicted label Predicted label Predicted label Predicting Expedia Hotel Cluster Groupings with User Search Queries</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jarrod</forename><surname>Cingel</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Liezl</forename><surname>Puzon</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicted label Predicted label Predicted label Predicting Expedia Hotel Cluster Groupings with User Search Queries</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Project Objective Data</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Selection and Combination</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Selection and Combination</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MAP@5 Score</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MAP@5</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cross Validation on Local Training Set</head><p>|U| = number of user events P(k) = precision at cutoff k n = number of predicted hotel clusters.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>• Generalize SVM Prediction to compute an ordered list of 5 clusters • n(n-1)/2 one vs. one classifiers • Each classifier gets a "vote" • Sort the cluster numbers in decreasing order by number of votes, and choose 5 • Decision Tree: 5 with highest probability • Unique proportional ensembling of of both classifiers • Multipliers for each classifier normalized and made proportional to generalization error • Higher weight to the model with lowest generalization error • For each item in each of the 2 lists, calculate score by position • Use 5 highest-scoring items in sorted order Scoring • MAP@5 (Mean Average Precision @ 5) score to evaluate list of 5 predictions for hidden test data Predicted label Predicted label • Statistics • Training data • N = 3,000,693 • Test Data • N = 2,528,243 • 100 hotel clusters • No strong individual correlations between 19 features and hotel_cluster • Preprocessing • Normalization [0, 1] for each feature • Standardization (N~(0,1)) Predicting Expedia Hotel Cluster Groupings with User Search Queries Jarrod Cingel and Liezl Puzon Stanford University Project Objective Data Results • Provide smarter suggestions for Expedia users by predicting what group of hotels a user will book a hotel from based on certain search criteria • PCA • 5 PC's account for 99% of the variance • Wrapper method to select 5 features with forward search • Average k</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

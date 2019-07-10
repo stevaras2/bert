@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Media Bias in Online News CS 229: Machine Learning -Final Project</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016-06-06">June 6th, 2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Merriman Sholar</surname></persName>
+							<email>jmsholar@stanford.edu&amp;noaglasersunetid:noaglasr@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predicting Media Bias in Online News CS 229: Machine Learning -Final Project</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2016-06-06">June 6th, 2016</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>This paper explores applications of machine learning to analyzing media bias. We seek patterns in event coverage and headlines across different news sources. For headline wording, we first validate the existence of informative trends by examining the performance of multinomial Naive Bayes and SVM classification in mapping titles to news sources. We then perform keyword analysis to determine which words are most indicative of certain news sources.</p><p>In event coverage, we use unsupervised clustering techniques to profiles news sources by the events covered. We vary the scope of our analysis from global news to Israel and Palestine from 2014 to 2016 and Israel during the summer of 2014. We were able to observe meaningful trends in both headline key words and event coverage and are excited about this methodology as an objective lens to the analysis of media bias.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Problem and Background</head><p>In cognitive science, bias is defined as deviation from the norm, or true value <ref type="bibr" target="#b0">[1]</ref>. Media bias can refer to deviating coverage amounts across event types or skewed representation of the events. Because news sources have authority and influence over popular opinion, this bias incredibly important to monitor.</p><p>Previous work has examined geographical overreporting, variation in event coverage promptness, differences in writing-style readability, and variation in intensity of coverage. Other work examines biased adjectives and utilizes natural language processing to understand bias in writing style. Mladenic examines networks of cross referencing between news sources and news providers to understand which voices news sources are choosing to represent. We adopt a Naive Bayes model for keyword analysis -discerning the words most indicative of which source is reporting about a certain topic. For example, Leban used keyword analysis to study bias across a variety of subjects, including the conflict in Crimea.</p><p>Media bias affects all stages of news publishing. Because headlines most affect the general consumer, we focus on wording and event selection (cherry picking or selection bias).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Data</head><p>For the data for this project we use the eventregistry.org API <ref type="bibr" target="#b4">[5]</ref>.Event Registry [ER] collects news articles from RSS feeds of over 100,000 news sources around the world. ER also clusters groups of 'articles' into 'events' based on location and article content. These ER clusters will be referred to as 'event' in the rest of this paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Headlines</head><p>For an initial phase of the project, we used the Event Registry API to curate over 160,000 article headlines for articles published by the top twenty news websites (as ranked by Alexa web traffic metrics) between 2014 and 2016. The results of applying keyword analysis to this dataset were used as a baseline for our main goal of applying a similar analysis to media surrounding the Israel-Palestine conflict.</p><p>For the second phase of the project, we used the Event Registry API to curate over 1,500 articles, focused specifically on the Israel-Palestine conflict. For this dataset, 8 news sources were selected specifically for their collective propensity to provide a wide range of opinions on the conflict.</p><p>For both the baseline and primary datasets, Naive Bayes and SVM models were trained to predict the news organization that published an article, given the headline of the article. Article headlines were preprocessed using a combination of SciKit-Learn's Count Vectorizer and TF-IDF Transfomer tools.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Events</head><p>To study event selection bias, we gathered data for 600 events related to Israel between June 1st and September 30th, 2014. The data included 1,143 news sources; all news sources were used to normalize vector norms but only the top 100 (by total number of articles) were clustered.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Headlines</head><p>Multiclass Naive Bayes and SVM models were trained on the dataset described in section 2, attempting to predict the news organization that published a given article based on the headline of that article. Accuracy of these classifiers was used as an indicator of the feasibility of pursuing keyword analysis (under the hypothesis that the existence of observable trends in data would lend itself to worthwhile results under keyword analysis). Accuracy statistics can be found in section 4.1.</p><p>Having verified the existence of observable trends in data, we generate for each unique pairing of token and news organization a measure of "indicativeness", or how representative the given token is of article headlines produced by a given news organization. We note that the Naive Bayesian Model generates probabilities of the form P (token | news outlet).</p><p>Using these, we can calculate indicativeness for each pairing of token and news outlet: Indicativeness = log P (token | news outlet) P (token | NOT news outlet) A summary of the most indicative keywords for each news organization can also be found in section 4.1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Events</head><p>We tested the hypothesis that there exists systematic event selection bias which would allow us to create meaningful profiles of news sources.</p><p>We examined three models for news sources: coverage propensity -vector of number of articles covering each event, event cherry picking -vector of binaries indicating whether each event was covered, and normalized propensity vectors. A PCA plotting the 100 most common news sources under the three models is presented in <ref type="figure" target="#fig_0">Figure 1</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Headlines Keyword Analysis</head><p>Accuracy statistics achieved by the Multinomial Naive Bayes and SVM classifiers on the larger international news dataset (160,000 articles) are reported below. As was noted in section 2, results on the larger dataset were intended to act as a baseline for the accuracy of these same classifiers when applied to the smaller, more focused dataset of articles covering the Israel-Palestine conflict.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>The results of classification on this dataset are presented below. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusions</head><p>We believe that word counts and event coverage profiling can serve as a highly objective lens for the study of media bias. Common approaches in NLP, such as quantifying inflammatory adjectives or the readability of text undoubtedly introduce bias and are hard to generalize across new languages. This type of analysis could hold news sources more accountable than one fraught with subjective metrics.</p><p>The results of headline keyword analysis proved particularly interesting, and we observe that the keywords judged to be most indicative of various news outlets display significant correlation with the established political leanings of each outlet. Additionally, the results seen here prompt new and more exciting questions and applications surrounding this research. Several immediately apparent next steps include a rigorous evaluation of the idea of "indicativeness"</p><p>(and an analysis how best to compute this metric), an expansion and cleansing of the dataset (which was subject to the limitations of the EventRegistry API), and an exploration of practical applications of these trends.</p><p>Interesting trends emerged in events clustering, although the model is quite naive. For example, the clustering on page 3 groups newspapers stereotypically geared towards Israelies and Jewish Americans (cluster 1), Palestinian and Irish/British sources (cluster 4) and liberal German and American news sources (cluster 2). We believe that more meaningful clusters can be generated by adding features such as event categories/keywords.</p><p>Much of the inspiration for this research came as a result of the authors' own experiences with the so-called "echo-chamber effect", in which an individual consumes only media that validate his or her views. In attempting to classify news outlets based on their political leanings and biases, one potential application of this research would be to generate a set of news sources representing a comprehensive span of opinions on a given issue. Such an application would hopefully promote a greater awareness of the intricacies of important issues, and facililate a more objective, productive discussion surrounding them.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Visualization of the three news source models [Left: number articles/event, Center: Whether reported on event, Right: normalized number of articles/event]. PCA of 600 event dimensions to 2D. Plotted are 100 news sources with most articles about the Israel in the summer of 2014. (a) Propensity model represents lo- cal news as strong outliers. (b) Binary model has more spread, local news still separate (c) Normalized propensityGaussian Mixture Models and Hierarchical Clustering Models resulted in similar outlet profiles and so we pro- ceeded with KNN.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>For the baseline dataset, we present the most indicative tokens for each news organization. The existence of observable, sensible trends lends confidence to the corresponding predicative keywords for the Israel-Palestine dataset.</figDesc><table>Model 
+Precision Recall F 1 Score 
+
+Naive Bayes 
+.57 
+.53 
+.52 
+
+SVM 
+.47 
+.48 
+.48 
+
+News Organization 
+Most Indicative Tokens 
+
+CNN 
+cnn, com, cnnpolitics, isis, facts, 370, opinion, mh370, plague, cruz 
+
+Bloomberg 
+bloomberg, said, draghi, yuan, treasuries, estimates, pboc, bonds, ruble, traders 
+
+Huffington Post 
+huffington, jenner, here, post, yoga, kardashian, these, this, thing, adorable 
+
+BBC 
+bbc, news, edinburgh, glasgow, ni, utd, lorry, labour, wales, belfast 
+
+For the primary dataset we found the following most indicative keywords for each news outlet: (EcoDiario), The Sacramento Bee 
+
+4. www.presstv.ir, Irish Sun, International Business Times UK, www.aa.com.tr, www.albawaba.com, www.palestine-
+
+info.co.uk, Naharnet, News From Antiwar.com, english.wafa.ps 
+
+5. BBC News, NDTV, CBC News, The Globe and Mail, Telegraph.co.uk, Xinhuanet.com, Reuters, Mail Online, 
+
+Miami Herald, Fox News, news24, The Charlotte Observer, The Christian Science Monitor, VOA Voice of 
+
+America, NPR.org, euronews, Philly.com, Bloomberg Business, Boston Herald, Channel NewsAsia, The Hindu, 
+theStar.com, Daily News, Zee News, Manila Bulletin, National Post, timesofmalta.com 
+
+6. GULF NEWS, The Huffington Post, The Daily Star Lebanon, ABC News, CNN International, english.farsnews.com, 
+
+Republika Online, Star Tribune, ReliefWeb, Sky News, The Star Online, RT 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Most data analysis was conducted with the SciKit-Learn Python machine learning framework.<ref type="bibr" target="#b5">[6]</ref> </note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Learning How to Detect News Bias</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dunja</forename><surname>Mladenic</surname></persName>
+		</author>
+		<idno>n. pag. 2015. Web. 21</idno>
+		<imprint>
+			<date type="published" when="2016-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Pattern Analysis of News Media Content</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilias</forename><surname>Flaounas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Diss. U of Bristol</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+<note type="report_type">Print</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Research Methods In the Age of Digital Journalism</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilias</forename><surname>Flaounas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Omar</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ali</forename><surname>Thomas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Digital Journalism</title>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="102" to="116" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">News reporting bias detection prototype</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregor</forename><surname>Leban</surname></persName>
+		</author>
+		<ptr target="www.xlike.org" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Event Registry</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregor</forename><surname>Leban</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bla</forename><surname>Fortuna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marko</forename><surname>Grobelnik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bla</forename><surname>Novak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alja</forename><surname>Komerlj</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016-05" />
+		</imprint>
+	</monogr>
+	<note>Event Registry. N.p., n.d. Web. 23</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Scikit-Learn ;</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning in Python, Pedregosa</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Alexa Top News Sites</title>
+	</analytic>
+	<monogr>
+		<title level="j">Alexa.com. Amazon, n.d. Web</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<date type="published" when="2016-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Hotel Recommendation Based on Hybrid Model</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jing</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiajun</forename><surname>Sun</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhendong</forename><surname>Lin</surname></persName>
+						</author>
+						<title level="a" type="main">Hotel Recommendation Based on Hybrid Model</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Collaborative filtering</term>
+					<term>Content-based</term>
+					<term>SVD</term>
+					<term>Hierarchical clustering</term>
+					<term>Decision tree</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract: This project develops a hybrid model that combines content-based with collaborative filtering (CF) for hotel recommendation. This model considers both hotel popularity in input destination and users preference. It produces the prediction with 53.6% accuracy on test data-4% improvement on purely content-based model. Addtionally, three issues are well-resolved when implementing CF: sparsity in utility matrix, cold-start, and scalability.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Introduction</head><p>The goal of the project is to develop a hybrid model for better hotel recommendation. At this moment, the majority of the recommendation systems are content-based models, which only consider the searching paramaters input by customers but not the users preference. For instance, Expedia focuses on the searching criterion and recommends the top popular local hotels. Personalizing the user search by their preference is a burning need for better hotel recommendation. Collaborative filtering is considered as the starting point of this project. It has been widely used in recommendation systems but rarely in hotel recommendation.</p><p>Nevertheless, there are still related works. Ryosuke Saga. et al <ref type="bibr" target="#b0">[1]</ref> created a preference transition-based network system to recommend hotels. By tranversing user booking history, a transition network of user preference is constructed to do recommendation. But the network is too specific to accept new users and detect the further changes of old customers. Xiong Yu-ning.et al <ref type="bibr" target="#b1">[2]</ref> came up with a personalized intelligent hotel recommendation system for online reservation. This research firstly extracts Hotel Characteristic factors, attempts to analyze customers browsing and purchasing behaviors and secondly constructs a personalized online hotel marketing recommendation system polymerization model for Multi-level customers. They combined user-item sytem and achieved positive outcomes. But it does not expand for new users.</p><p>In this project, hybrid model is applied to combine user preference and item properties. Based on the final comparison of accuracy, the model achieves good results. More Details are as follows.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Methodology</head><p>In this part, three models will be introduced. Content-based model and collaborative filtering are traditional methods in recommendation system. Hybrid model compensates the shortcomings in two models by combining these two models successfully. At the same time, it introduces new methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Content-based Model</head><p>Content-based filtering is a common approach in recommendation system. The features of the items previously rated by users and the best-matching ones are recommended. In our case, the local popularity of the hotel clusters based on ratings by users is used to be the main feature in the contentbased model. More details will be explained later.</p><p>There are three main shortcomings of this approach <ref type="bibr" target="#b2">[3]</ref> :</p><p>(1). It is limited by the number and the types of features associated with the objects for recommendation.</p><p>(2). It may involve the issue of over-specialization as no inherent method is included for finding something unexpected.</p><p>(3). It may not predict precisely for new users. Usually, a content-based recommendation system need enough ratings to provide accurate recommendations.</p><p>In our project, we used content-based filtering as a reference for result comparison.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Collaborative Filtering</head><p>The philosophy of collaborative filtering is to identify similar users and give recommendation based on the preference of similar user. But collaborative Filtering have the following issues. First of all, user behavior are chaotic, such as the gray sheep problem. The gray sheep refers to the users whose preference do not consistently agree or disagree with any group and itself. In our dataset of the next experiment, we find some users choose different hotel cluster every time. This makes collaborative filtering extremely ineffective on those "gray sheep" users. Secondly, Collaborative filtering assumes that users make decisions purely due to their preference. However, we find their choices are highly correlated with hotel destination. A destination sometimes only have certain types of hotel; and a certain type of hotel is very famous or popular in that destination. Thus, the users' choices will be significantly limited by destination or influenced by destination. Besides the chaotic user behavior and hotel destination influence, collaborative filtering have utility matrix sparsity and data scalability issue that we will address them in detail in next Hybrid Model section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Hybrid Model</head><p>The goal of hybrid model is to resolve two big problems. First of all, we need to work out three big issues of CF mentioned in part B. On the other hand, we would like to combine users preference and popularity of hotels to recommend.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Utility Matrix</head><p>The utility matrix gives each user-item pair; a value represents the degree of preference of that user for that item. In the later experiments, we will use user ID representing user; and hotel cluster representing item. When a hotel cluster is viewed by a user, rating of 1 is given; when a hotel is booked, rating of 5 is given.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Clustering</head><p>In terms of scalability problem, hierarchical clustering is applied to cluster the large number of users into different clusters. Most of the users have little booking history (less than 5 booking history) in the data. This leads to a very sparse utility matrix. Also, the number of user in the data is massive, which makes it impossible to implement Matrix Factorization on the original utility matrix. Therefore, users are classified into user cluster and utility matrix is compressed based on that. The hierarchical clustering method builds a hierarchy of clusters, by moving up this hierarchy, similar pairs of clusters are merged as a cluster. To be more specific, cosine distance is applied to measure similarity between users. Normally, cosine distance requires data normalisation. The original rating is substracted by the average rating of that user cluster:</p><formula xml:id="formula_0">M i,k = M i,k − K k M i,k</formula><p>where, i represents user cluster, k represents hotel cluster and K is the total number of hotel cluster. M i,k means the rating of user cluster i on hotel cluster k and M i,k is the normalised rating (M represents it in the rest of paper). Cosine distance is written as follow:</p><formula xml:id="formula_1">cosine similarity = K k=1 A k B k K k=1 A 2 k n k=1 B 2 k</formula><p>where A k and B k is the ratings on hotel cluster k by user cluster A, B, respectively and K is the total number of hotel cluster.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVD (singular value decomposition) Method</head><p>After clustering the users based on their preference in utility matrix, the utility matrix might still be super sparse because it is also rare to a cluster of users to rate most of the hotel. We would like to find a method to fill the unrated entries in utility matrix by smallest error. Here SVD is applied to do that.</p><p>SVD seeks a low-rank matrix X = U V T , where U ∈ R N ×C and V ∈ R K×C (N is the total number of distinct customers, K is the number of distinct items and C is the dimension factor), that minimizes the sum-squared distance to the fully obseved target matrix M (here is clustered utility matrix) with the dimension R N ×K . Matrices U and V are initialized with small random values sampled from a zero-mean normal distribution with standard deviation 0.01. We minimized the following objective function <ref type="bibr" target="#b3">[4]</ref> ,</p><formula xml:id="formula_2">(i,k) (M ik − V T k U i ) 2 + λ(||V k || 2 + ||U i || 2 )</formula><p>where λ is the regularization parameter in order to avoid overfitting. To solve this objective, we can use stochastic gradient descent (SGD). After taking derivatives of the objective with respect to U and V , and the following is the update rules:</p><formula xml:id="formula_3">U i := U i + α((M ik − V T k U i )V k − λU i ) V k := V k + α((M ik − U T i V k )U i − λV k )</formula><p>where α is the learning rate parameter.</p><p>After estimating U and V by iterating over the known (i, k) pairs in the data, user i's recommendation for product k can be estimate by computing</p><formula xml:id="formula_4">U i V T k .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Decision Tree Classifier</head><p>In order to resolve the cold-start problem, ontology model is introduced. The ontology decision model <ref type="bibr" target="#b4">[5]</ref> is making up by user ontology characteristics and results of sub-comities, which are regarded as attributes and classes, respectively. The ontology theory demonstrates that users profile determines the users behavior, to some extent. Generally speaking, we explore the users profile data, such as age, gender, occupation, class, location and so forth, to predict the users behavior. That is to say, if the users have similar or same profile information, we think they have same or similar preference so that they might do the same behavior.</p><p>Decision tree is to predict the cluster label of a new user by inputting the user's profile data. Decision tree is a high-level overview of all the sample data, which not only can accurately identify all categories of the sample, but also can effectively identify the class of the new customer. In order to avoid overfitting, cross-validation method is adopted to obtain the best decision tree. A procedure to do that in hotel recommendation is in <ref type="figure" target="#fig_0">Fig. 1</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Combination</head><p>The second problem we would like to resolve is combining the user preference with the item properties. Take the hotel recommendation as an example. Set a evaluation metric. If the hotel was booked, it is rated as 5 points. If it is just clicked, it gets 1 point. Otherwise, it is unrated. Based on booking history we have, a ranking matrix in terms of hotel properties (i.e, destination) can be created by average all ratings based on counts of booking or clicking, shown as follows.</p><formula xml:id="formula_5">D =      d 11 d 12 · · · d 1K d 21 d 22 · · · d 2K . . . . . . . . . . . . d J1 d J2 · · · d JK      J×K</formula><p>where J is the total number of hotel destinations, K is the total number of hotel type or hotel cluster.</p><p>From the previous procedures, a clustered SVDutitlity matrix M is attained. We created a new matrix R with the dimension N × K by M and D.</p><p>That is,</p><formula xml:id="formula_6">R ik = M (i) k · D (j) k</formula><p>where i is customer ID, j is destination ID, k is hotel cluster ID, N is the total number of users that have booking histories.</p><p>M reflects the user preference, and D represents the popularity of hotel in local destination. Matrix R connects two attributes. The other benefit is for a single user's perspective. By clustering customers, booking histories from several users are combined together. But for a single user, he or she might not go to the hotel with the high rating of that cluster, which produces a great error if recommending the top hotel by purely clustered utitliy matrix. It is about 13% accuracy in the later experiment. Furthermore, the top cluster recommended by utility matrix might not in that destination input by the customer, which also leads to big bias. However, in the end, matrix R can get better tradeoff.</p><p>All the process is shown in the flow chart in <ref type="figure" target="#fig_1">Fig. 2</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Experimental Results</head><p>In order to test the validation of hybrid model, datasets from random 20000 customers on Expedia are accepted to do experiments. The dataset is shown in Tab.1. When applying hierarchical, in order to control whether two clusters should be merged or not, a distance threshold should be specified. Here we set the threshold based on <ref type="figure">Fig.3</ref>. It is found that after 0.75, the number of hotel cluster starts to converge. Therefore, we set threshold = 0.75 resulting 112 user cluster. After clustering utility matrix, SVD is applied on the clustered utility matrix. <ref type="figure">Fig.4</ref> shows how stochastic gradient descent converges. However, it is found that SVD does not converge on dimension. <ref type="figure">Fig.5</ref> shows the RMSE linearly decreases with a increase of dimension (number of eigenvalue).  <ref type="figure" target="#fig_3">6</ref> is the utility matrix after clustering users; while the right one is the SVD utility matrix. It can be found that, after applying SVD, utility matrix become less sparse. Based on data we have, user country, region, city, is-mobile and is-package (the users booked the hotel with a flight) are regarded as the features of user profiles in this case. But we would like to detect if all these attributes show obvious users preference.</p><p>From the <ref type="figure" target="#fig_4">Fig.7</ref>, it is easy to see that users in different cities are inclined to choose the range of small hotel cluster ID, which means it has obvious relation with users preference. It is same with the attribute that the user used mobiles to book or not because the figures show the same distribution. Nevertheless, country, region and package factors show the different density for users in different factor values. For example, package users prefer to choose hotel cluster ID 65, while not-package users would like to book ID 91 hotel cluster.</p><p>Hybrid model results in prediction with 53.6% accuracy on testing data-4% improvement on content-base model. This result is consistent with our hypothesis: both user preference and hotel popularity are vital in recommendation system. In Kaggle, the benchmark content-based model (Data Leak method) has 49.8% accuracy. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Future Work</head><p>Our hybrid model can be further improved in these two aspects:</p><p>1. Larger dataset will be applied in this model so density-based clutesring method should be used instead of hierarchical clustering.</p><p>2. More features such as hotel country and hotel market might be included to test their impacts in prediction. V. Reference</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Decision tree classifier</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Hybrid Model Flow Chart</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :Figure 5 :</head><label>35</label><figDesc>Cosine threshold Figure 4: SVD converge Figure 5: SVD rank and RMSE It is also found that utility matrix become signifi- cantly less sparse after applying SVD. The left fig- ure of Fig</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>Clustered utility matrix (left) and utility matrix after SVD</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7 :</head><label>7</label><figDesc>User Profile Detection (package user is the user booked the hotel with the flight)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Dataset Head</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc>Accuracy Comparison</figDesc><table>Accuracy Hybrid Model Content-based 
+Train 
+61.29% 
+61.29% 
+Test 
+53.62% 
+51.03% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Hotel recommender system based on user&apos;s preference transition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Saga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Hayashi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Tsuji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SMC 2008. IEEE International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="2437" to="2442" />
+		</imprint>
+	</monogr>
+	<note>Man and Cybernetics</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Personalized Intelligent Hotel Recommendation System for Online Reservation-A Perspective of Product and User Characteristics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Yuning</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Li Xiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Management and Service Science (MASS)</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+	<note>International Conference on. IEEE</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Content-based Recommender Systems: State of the Art and Trends</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Lops</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Gemmis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+			<publisher>Springer Science+Business Media</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Restricted Boltzmann machines for collaborative filtering[C]//Proceedings of the 24th international conference on Machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007" />
+			<publisher>ACM</publisher>
+			<biblScope unit="page" from="791" to="798" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A Method to Solve Cold-Start Problem in Recommendation System based on Social Network Sub-community and Ontology Decision Model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Jiechao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">/3rd International Conference on Multimedia Technology (ICMT-13)</title>
+		<imprint>
+			<publisher>Atlantis Press</publisher>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

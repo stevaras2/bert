@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Neural Network for Detecting Head Impacts from Kinematic Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Fanton</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicholas</forename><surname>Gaudio</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alissa</forename><surname>Ling</surname></persName>
+						</author>
+						<title level="a" type="main">Neural Network for Detecting Head Impacts from Kinematic Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Mild traumatic brain injury (mTBI), more commonly known as concussion, has become a serious health concern with recent increase in media coverage on the long term health issues of professional athletes and military personnel. Acute symptoms include dizziness, confusion, and personality changes which can remain for days or even years after injury <ref type="bibr" target="#b0">[1]</ref>. Further, recent studies have shown that repetitive mTBI can lead to long-term neurodegeneration and increase the risk of diseases such as Alzheimer's and Chronic Traumatic Encephalopathy <ref type="bibr" target="#b1">[2]</ref>. Although the mechanisms of this injury are not well understood, studies have shown that one of the biggest risk factors for mTBI is a history of prior mTBI <ref type="bibr" target="#b7">[8]</ref>. Further, concussion symptoms are more severe with a longer recovery time if an individual does not rest after injury <ref type="bibr" target="#b8">[9]</ref>. Therefore, it is imperative that individuals who have been suspected to have received a TBI be immediately removed from risky situations.</p><p>According to the CDC, contact sports such as football are one of the leading causes of mTBI. In these sports, mTBI is diagnosed by a sideline clinician through subjective evaluation of symptoms and neurological testing. Because of the large variance of symptoms within different individuals, and the pressure of athletes to return to play, mTBI can often be missed by these tests <ref type="bibr" target="#b10">[11]</ref>. In efforts towards developing an objective diagnostic tool for concussion prevention, the Camarillo Lab at Stanford University created an instrumented mouthguard that rigidly connects to the upper dentition to record the linear acceleration and angular velocity of head impacts in six degrees of freedom. Whenever the linear accelerometer measures a signal of over 10g of acceleration, the device will trigger and record 200 ms of impact data. However, one of the primary challenges of this device is that it is prone to false positives, with non-impact events such as chewing, spitting, or dropping the mouthguard often triggering the device. In order for this device have promise to be used as a diagnostic tool in the future, it must be able to accurately classify between real impacts and false positives. Currently, this is done after the game; a research assistant will tediously watch hours of video footage time synced with the mouthguard, and each impact is manually labeled as a real impact or false positive. However, a machine learning classifier should be able to automatically differentiate between real and false impacts to a high degree of accuracy, as the kinematic data between these two impact types typically look distinct, as shown in <ref type="figure">Figure 1</ref> in both the time and frequency domain.</p><p>In this project, our goal is to train a neural network, which will automatically extract relevant features, to classify between real impacts and false positives. The input to our algorithm is mouthguard time series data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Related Work</head><p>Currently, there are a number of sensor systems used for measuring head impact kinematics in contact sports. Many of these systems use a simple linear acceleration threshold for differentiating impacts and non-impacts; however, this leaves the device prone to a large number of false positives. Many companies and research groups are developing proprietary algorithms for detecting impacts, but little has been published validating their accuracy <ref type="bibr" target="#b3">[4]</ref>. The state-of-the-art for this problem is recent work from the Camarillo Lab, in which an impact classifier using a sequential feature selection was used to determine the most important classifier features (e.g. time domain features, power spectral density features, etc.), and these features were used to train a support vector machine <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref>. While the results of this work were promising, achieving 87.2% sensitivity and 93.2% precision on a collegiate dataset, recent advances and increased adoption of neural nets for detecting human activity have shown this could be a promising approach for this application. Further, as the Camarillo Lab begins to disseminate their device around the country to different colleges and high schools, it is expected that there will soon exist a significantly larger dataset of real and false positive impacts to work with, and a neural network should perform better than SVM in predicting a non-labeled impact or nonimpact on a large dataset.</p><p>To the best of our knowledge, only one study has attempted to use a neural network algorithm for detecting head impacts and non-impacts from kinematic sensor data; this study used a simple net with a single fully-connected layer, and only achieved 47% specificity and 88% sensitivity on their dataset of soccer athletes <ref type="bibr" target="#b4">[5]</ref>. Convolutional neural nets (CNN) have been used to great success for Human Activity Recognition from accelerometer and gyroscope time series data. Ronao et al. <ref type="bibr" target="#b5">[6]</ref> developed a deep CNN to detect human activity from smartphone sensor data, and was able to achieve a classification accuracy of 95.75% on differentiating between six different human activities. PerceptionNet <ref type="bibr" target="#b6">[7]</ref> improved upon this performance, achieving an accuracy of 97.25% on the same dataset. These results suggest that deeper CNN's could have merit for detecting head impacts, which could be considered a simpler, binary classification of human activity from kinematic data. CNN's have also been broadly useful for classification, localization, and recognition tasks, such as biomedical image segmentation, with a limited dataset <ref type="bibr" target="#b14">[15]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Dataset and Features</head><p>Our dataset is 527 examples of which half are labeled real (or true) impact and the other half are labeled as false impacts. The dataset was obtained by instrumenting Stanford football athletes over the Fall 2017 season with the Camarillo Lab instrumented mouthguard. To obtain the ground truth labels for the dataset, videos of each game and practice, time synced with the mouthguards, were analyzed according to the methodology outlined by Kuo et al <ref type="bibr" target="#b12">[13]</ref>. Through manual video analysis, the time of every helmet contact event was noted. These helmet contact events were then matched with the instrumented mouthguard sensor impacts. Mouthguard events with helmet contact clearly identifiable in video were labeled as real impacts. Mouthguard events in which there was clearly no helmet contact were labeled as false positives. Mouthguard events in which the view of the player in video footage was obscured or unidentifiable were discarded and not used in the dataset.</p><p>We split our dataset up into 70% for training, and 15% for both evaluation and testing for when leveraging K-fold cross validation and 70% for training and 30% for evaluation for when training our selected architecture. Each example has dimension 199x6 comprised of 6 time traces of length 199 (200 ms). The six time traces are the linear acceleration at the head center of gravity in the x, y, and z axes, and angular velocity of the head in the x, y, and z anatomical planes. The data was sampled with a time step of 1000 Hz, with 50 ms recorded pre-trigger and 150 ms post-trigger for 299 data points. <ref type="figure">Figure 1</ref> shows the time and frequency characteristics of one representative impact and non-impact. True impacts generally are comprised of lower frequency content, while false impacts have much higher frequency content, which is supported by <ref type="figure">Figure 1</ref>. Intuitively, this makes sense, as biting or dropping the mouthguard would likely result in a high frequency noisy signal, while football head impacts typically have frequency content in the 20-30 Hz range <ref type="bibr" target="#b9">[10]</ref>.</p><p>Data was pre-processed using standardization by subtracting out the mean of each sensor's values and dividing by the standard deviation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Methods</head><p>A convolutional neural network is a class of deep neural networks comprised of convolutional layers. In convolutional layers, each sensor measurement is convolved with a weighting function w. In the case of a 1D input to a 1D convolutional layer, the i th product element can be found as follows:</p><formula xml:id="formula_0">x c i = b + ∑ D d = 1 w d i+d−1</formula><p>Where b is the bias term, D is the filter width, and w d a re each of the filters. In the case where the input to the 1D convolution is a multi-channeled, such as our application where we are stacking six input signals, the output of the convolution each channel is added to give the following:</p><formula xml:id="formula_1">x c i = b + ∑ S s = 1 ∑ D d = 1 w d i+d−1</formula><p>Where s is the number of input channels (in our case, six). The output of a 1D convolutional layer is a single vector. In 2D convolutional layers, this process is repeated in two dimensions, providing a two dimensional output. Convolutional neural networks commonly have pooling operations, which combine outputs of neuron clusters at one layer into a single neuron in the next layer. Max-pooling layers use the maximum value from a specified cluster of neurons, while average pooling uses the average of a specified cluster. Further, dropout layers can be added to help prevent overfitting; a dropout layer will randomly ignore a certain percent of the layer interconnections during training.</p><p>We investigated multiple different convolutional neural network architectures using Keras and Tensorflow written in Python; specifically, we developed both sequential models and recursive network models. In investigating proper model architecture, we utilized the K-fold cross validation technique (k=10) as we knew that 527 examples is not a very large amount and gathering more data was not feasible within the scope of this project. In training all of our networks, the number of epochs was increased indefinitely, until five consecutive epochs did not result in an improved evaluation binary cross entropy loss. Following completion of training, the model at the end of the epoch with the lowest evaluation loss was saved and used for analysis.</p><p>We developed and compared two primary architectures. The "RecursiveNet" model has the most convolutional layers as seen in <ref type="figure">Figure 2a</ref>. In a recursive architecture, inputs to later hidden layers are concatenated with outputs of earlier hidden layers. The idea behind leveraging a recursive model was to further prevent overfitting of our small dataset in a very deep architecture. The dimensional representations of the input data were held constant across the hidden layers of the network (using padding). Our last model, "HIKNet" is a sequential convolutional neural network with architecture shown in <ref type="figure">Figure 2b</ref>. In this architecture, 1D convolutional layers feed into a late 2D convolution. This model is based off of PerceptionNet <ref type="bibr" target="#b6">[7]</ref>. The intuition behind this structure is that the 1D convolution acts to extract high-level features of the motion signal, feeding into a 2D convolution which fuses the sensor signals together. The late 2D convolution helps to prevent overfitting of the data. No layers in the HIKNet were padded as the network is not as deep and thus lower dimensional representations proved not only permissible but also beneficial for classification applications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Experiments/Results/Discussion</head><p>In all testing, the metric we optimized for was accuracy, but we also performed tests on precision, specificity, and sensitivity. The equations for the metrics are described below, where TP is "true positive," TN is "true negative," FP is "false positive", and FN is "false negative."</p><formula xml:id="formula_2">ccuracy a = T P + T N T P + T N + F P + F N precision = T P T P + F P specif icity = T N T N + F P ensitivity s = T P T P + F N</formula><p>Using our baseline hyperparameters in preliminary testing, we found that the HIKNet had comparable accuracy to RecursiveNet at a much lower computational cost. Thus, we focused our hyperparameter tuning on the HIKnet architecture.</p><p>We tuned the final HIKNet using a "greedy" optimization scheme for number of 1D conv layers, 2D conv layers, and type of final layer. Because our parameters were initialized to random values, and convergence is highly dependent on weight initialization <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b13">14]</ref>, each experiment we did was repeated 10 times and metrics were averaged over those trials. We tested 1, 2, 3, and 4 1D conv layers and found that difference in performance was minimal. The number of 2D convolutional layers also did not make a significant difference in the performance metrics. Thus we chose two 1D conv layers and one 2D conv layer because having less parameters increased the speed of the net. For our last hidden layer, we tested a Global Average Pool, Global Max Pool, and Dense layer with 250 nodes. As shown in <ref type="figure">Figure 3</ref>, Global Average Pooling resulted in the best accuracy because it emphasizes the connection between features maps and categories, and it has no parameter to optimize, thus prevents overfitting. The Dense layer has fully connected layers which can be prone to overfitting and thus not generalizable <ref type="bibr" target="#b11">[12]</ref>.</p><p>We also did a parameter sweep to find the optimal filter size, kernel width, and dropout threshold. The filter size was changed between the values of 15 and 200, the kernel width was between 0 and 50, and the dropout threshold was swept between 0 and 0.6. The optimal dropout threshold was found to be 0.4, kernel width was 15, and filter number was 150. We found that the optimal kernel width and dropout threshold for HIKNet was the same for the PerceptionNet <ref type="bibr" target="#b6">[7]</ref>. We believe we did not overfit our data because we utilized dropout layers and optimized for the epoch number with the lowest evaluation loss.</p><p>The final performance metrics are summarized in <ref type="table">Table 1</ref>. For our final version of HIKNet, we also computed the area under the receiver operator characteristic curve (AUC ROC ) and area under the precision-recall curve (AUC PR ). The ROC curve plots true positive rate against false positive rate at different thresholds; an ideal classifier would have an area under the curve of 1.0. The PR curve plots precision against recall (sensitivity) at various thresholds; likewise, a perfect classifier would have an area under the curve of 1.0. Compared to the SVM classifier <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref> trained on our dataset, HIKNet had higher performance metrics on the same time series data set. This is probably because the SVM needed manual feature extraction which inherently has error associated with it, whereas the neural net automatically detected the best features. However, there are still some advantages of using the SVM because there is physical intuition of what the features are in the SVM, whereas in the neural net, the features are a mix of unknown parameters and the algorithm is a black box.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7.</head><p>Conclusion/Future Work</p><p>In conclusion, a low parameter neural network performed very well and achieved better performance metrics than the existing SVM classifier trained on the same mouthguard time series data set. We created two deep convolutional neural networks, one that was recursive and one that was sequential, and although both performed similarly, we chose the HIKNet because it had fewer parameters and a higher confidence in its ability to generalize to other kinematic time series datasets than the RecursiveNet based on our literature search. We used a greedy optimization scheme to build the architecture of HIKNet, and did a parameter sweep to find the optimal filter size, kernel width, and dropout percent.</p><p>As an immediate next step, we can apply our neural networks to a larger mouthguard dataset as more data is collected in the Camarillo Lab to further tune parameters. In future work, we can use the same mouthguard and video impact footage to create a dataset with more specific labels, i.e. where the impact was located on the head, body impact, or no impact. Using this data, we could create a softmax classifier to predict whether an impact occurred and where it occurred on the head and body. Lastly, once more concussion data is obtained, we could create a neural network that could detect whether an impact occurred and predicts if the impact resulted in a concussion or not. This would require additional data beyond just the mouthguard data such as clinical diagnoses and medical records. The ultimate goal would be to have a device that could instantly tell if an impact resulted in concussion; although it may take years to obtain the dataset needed to train this classifier, the performance of our network architecture gives promise that this could be possible using a similar methodology as put forth in this work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>8.</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>Michael Fanton -Developed HIKNet neural network architecture in Keras, set up architecture optimization, helped with statistical analyses, provided background information Nicholas Gaudio -Lead the insight into Keras and the model architecture setup, created the RecursiveNet, setup auto epoch stopping and saved the best epoch model, conducted experiments to find the optimal filter width and filter number. Alissa Ling -Preprocessed data, wrote the K-fold function, optimized the dropout threshold, lead the final poster, wrote first draft of sections.</p><p>9.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The epidemiology and impact of traumatic brain injury: a brief overview</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean</forename><forename type="middle">A</forename><surname>Langlois</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wesley</forename><surname>Rutland-Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marlena</forename><forename type="middle">M</forename><surname>Wald</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of head trauma rehabilitation</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="375" to="378" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Traumatic Brain Injury and Alzheimer&apos;s Disease: The Cerebrovascular Link</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaime</forename><surname>Ramos-Cejudo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EBioMedicine</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A head impact detection system using SVM classification and proximity sensing in an instrumented mouthguard</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lyndia</forename><forename type="middle">C</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Biomedical Engineering</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="2659" to="2668" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Detection of American football head impacts using biomechanical features and support vector machine classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lyndia</forename><forename type="middle">C</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific reports</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">855</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Application of neural networks for filtering non-impact transients recorded from biomechanical sensors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shruti</forename><surname>Motiwale</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE-EMBS International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+	<note>Biomedical and Health Informatics (BHI)</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Human activity recognition with smartphone sensors using deep learning neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charissa</forename><surname>Ronao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sung-Bae</forename><surname>Ann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page" from="235" to="244" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">PerceptionNet: A Deep Convolutional Neural Network for Late Sensor Fusion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kasnesis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charalampos</forename><forename type="middle">Z</forename><surname>Panagiotis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Iakovos</forename><forename type="middle">S</forename><surname>Patrikakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Venieris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of SAI Intelligent Systems Conference</title>
+		<meeting>SAI Intelligent Systems Conference<address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Epidemiology of recurrent traumatic brain injury in the general population: A systematic review</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oliver</forename><surname>Lasry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurology</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="2198" to="2209" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Concussion recovery time among high school and collegiate athletes: a systematic review and meta-analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richelle</forename><forename type="middle">M</forename><surname>Williams</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sports medicine</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="893" to="903" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Mechanistic Insights into Human Brain Impact Dynamics through Modal Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaveh</forename><surname>Laksari</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical review letters</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page">138101</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A review of sideline assessment measures for identifying sports-related concussion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michelle</forename><surname>Albicini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Audrey</forename><surname>Mckinlay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of concussion</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">2059700218784826</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Min</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qiang</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shuicheng</forename><surname>Yan</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.4400</idno>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Comparison of video-based and sensor-based head impact exposure</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Calvin</forename><surname>Kuo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page">199238</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Understanding the difficulty of training deep feedforward neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xavier</forename><surname>Glorot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the thirteenth international conference on artificial intelligence and statistics</title>
+		<meeting>the thirteenth international conference on artificial intelligence and statistics</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">U-net: Convolutional networks for biomedical image segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olaf</forename><surname>Ronneberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philipp</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Brox</surname></persName>
+		</author>
+		<ptr target="https://drive.google.com/file/d/1rj8O4d13DrKCyMT8792yOdQQPY6ChnGn/view?usp=sharing" />
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Medical image computing and computer-assisted intervention</title>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

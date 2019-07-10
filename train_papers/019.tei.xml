@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Material decomposition using neural network for photon counting detector</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Picha</forename><surname>Shunhavanich</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Material decomposition using neural network for photon counting detector</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Most current CT systems use energy-integrating detectors (EIDs), which detect total energy over a period of time. So, the energy information of each photon is lost in this process. In contrast, photon counting detectors (PCDs) detect individual photons and discriminate them into multiple energy bins. From this energy information, PCDs gain an improvement in CT image quality, provide better tissue characterization, eliminate electronic noise, and improve the Detective Quantum Efficiency (DQE). A major problem with PCDs is the slow count rate, resulting in count rate loss (photons arriving too close in time are recorded as only one event) and pulse pileup (detected energy of that event is incorrectly higher or lower) <ref type="bibr" target="#b0">[1]</ref>. Other non-idealities of PCDs include charge sharing and k-escape <ref type="bibr" target="#b1">[2]</ref>. These effects cause spectral distortion, which impairs material decomposition accuracy and thus degrades reconstructed image quality. Several works have been proposed to compensate for the distortion including analytical model <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b2">3]</ref> and A-table methods <ref type="bibr" target="#b3">[4]</ref>. However, their performance is detector-specific and still could be improved. In this work, we propose to use neural network to help estimate basis material thickness from distorted spectra.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Spectrum</head><p>An X-ray beam has a range of energy. Spectrum is the number of x-ray photons as a function of energy. The example spectra are shown in <ref type="figure" target="#fig_1">Figure 1</ref>. In photon counting detector, the spectrum is divided into energy bins, and the number of photon counts in each energy bin is detected. In other words, if, for example, the energy bins are  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural network</head><p>The input data, , is defined as follows.</p><formula xml:id="formula_0">! = −log ( ! !,! )</formula><p>where ! is the number of detected counts in energy bin j, and !,! is the number of count detected in energy bin j for air scan.</p><p>Thus, the number of nodes in the input layer is 6, corresponding to one bias and the 5 element of . The output data is the thickness of two basis materials (water and calcium), corresponding to the two node of the output layer of the network. A neural network with either one or two hidden layers is chosen. For the two-hidden-layer network, if we let (!) be the activation in layer l,</p><formula xml:id="formula_1">(!) = 1 (!) = 1 (Θ ! ! ) (!) = 1 (Θ ! ! ) (!) = ℎ ! = Θ ! ! Figure 3. Schematic diagram of neural network</formula><p>where ( ) is a sigmoid function (applied element-wise in this case), Θ ! is a matrix of weight controlling function mapping from layer l to l+1.</p><p>The cost function employed is</p><formula xml:id="formula_2">= 1 2 (ℎ ! ! ! − ! (!) ) ! ! !!! ! !!! + 2 Θ !" ! ! !,!,!</formula><p>where ( ! , ! ) for i=1, 2,..,m are training examples.</p><p>The optimized Θ ! 's are acquired from minimizing the above cost function with trust-region algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>X-ray source Detector</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulations</head><p>Forward projections of two phantoms are acquired assuming fan-beam CT geometry over 180 views. Both phantoms are water with 8 inserts of calcium varying in density from 0 to 1.550 g/cm <ref type="bibr" target="#b1">2</ref> . The difference between the two phantom are in shape and size as shown in <ref type="figure" target="#fig_3">Figure 4</ref>. The cylindrical-shaped one is used for training, while the other is used for testing. The equivalent thickness of water and calcium along each projection is known.</p><p>The measured spectra are distorted using our implementation of an analytical model of pulse pileup effect <ref type="bibr" target="#b0">[1]</ref>. The maximum true count rate is assumed to be 2x10 6 counts/s/mm 2 . Poisson noise is additionally added. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Number of elements in hidden layer</head><p>Different number of elements (4 to 15) in hidden layer was tested for network with one hidden layer. A hold-out cross validation was performed using the 3060 examples randomly chosen from the projection measurements of the training phantom. The number of elements that results in the minimum empirical error on the hold-out cross validation set would be chosen.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Number of hidden layers</head><p>The network of one hidden layer with no regularization term in the cost function was compared with the network of two hidden layer with regularized cost function. For the two-hidden-layer network, the regularization parameter λ and the number of elements in hidden layer are arbitrarily chosen to generate initial results. The water-and calcium-equivalent-density images are reconstructed from the predicted thicknesses in each projection using filtered backprojection algorithm. The water and calcium densities bias are calculated from the following equation and are compared.</p><formula xml:id="formula_3">= ( !"#$%&amp;"' − !"#$ )/ !"#$</formula><p>where !"#$%&amp;"' is the average value in region of interest (ROI) in the reconstructed density images. The ROI for water density is placed at the center of the phantom, while the one for calcium inserts are placed at the corresponding inserts' location. Testing data Projection Phantom 13 elements in hidden layer result in the lowest error on the cross validation set and lowest average absolute calcium thickness error as displayed in <ref type="figure">Figure 5</ref>. Thus, this number of elements is chosen. <ref type="figure">Figure 5</ref>. Empirical error on the hold-out cross validation set (left) and average absolute thickness of calcium (middle) and water (right).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Number of elements in hidden layer</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Number of hidden layers</head><p>As shown in <ref type="figure">Figure 6</ref>, the percent thickness errors for both water and calcium are high at low true thicknesses for both networks. For equivalent density images, the two-hidden-layer network has observable error at the four corner of phantom in the calcium-equivalent density image. The water density bias is -0.0011 and -0.0015 for the one-and two-hidden layer network, respectively. The overall calcium density bias is higher (more negative) in the network with two hidden layer than the one with one hidden layer. <ref type="figure">Figure 6</ref>. The results of network with one hidden layer (number of elements of hidden layer = 13) (left) and with two hidden layers (number of elements in each hidden layer = 3, λ =0.01) (right)</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>[0-90 keV] and [90keV-140keV], the total number of photons having energy less than 90keV and the total number of photons having energy between 90 and 140keV are measured. In this work, we assume 5 energy bins with energy [0-66keV], [66-83keV], [83-97keV] , [97-112keV], and [112-200keV]. These energy thresholds are chosen such that the number of photons in each energy bin is relatively equal for the detected spectrum with 9 cm of water and 1 cm of calcium.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Example comparison of spectra incident on detector (blue) and spectra detected after pulse pileup effect (green). No object is placed in the x-ray beam path (left), and 9cm of water and 1 cm of calcium are placed (right).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc>Schematic diagram of the process for calculating the input of the neural network model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Training data (top row): 10cm cylindrical water phantom with of 2cm calcium inserts. Testing data: 7.1x7.1cm water phantom with 1.4x1.4cm calcium inserts.</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p>Simulations show that neural network is a good alternative to material decomposition for photon counting detector projection data with pulse pileup effect. The full capability of this approach can be further investigated with more parameter value fine-tuning and larger data set.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An analytical model of the effects of pulse pileup on the energy spectrum recorded by energy resolved photon counting x-ray detectors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katsuyuki</forename><surname>Taguchi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical physics</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="3957" to="3969" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Vision 20/20: Single photon counting x-ray detectors in medical imaging</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katsuyuki</forename><surname>Taguchi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jan</forename><forename type="middle">S</forename><surname>Iwanczyk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical physics</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page">100901</biblScope>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A cascaded model of spectral distortions due to spectral response effects and pulse pileup effects in a photon-counting x-ray detector for CT</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jochen</forename><surname>Cammin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical physics</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page">41905</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Estimator for photon counting energy selective x-ray imaging with multibin pulse height analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">E</forename><surname>Alvarez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical physics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="2324" to="2334" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Experimental comparison of empirical material decomposition methods for spectral CT</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><forename type="middle">C</forename><surname>Zimmerman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Taly Gilat</forename><surname>Schmidt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physics in medicine and biology</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page">3175</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Novel approaches to address spectral distortions in photon counting x-ray CT using artificial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Touch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SPIE Medical Imaging. International Society for Optics and Photonics</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

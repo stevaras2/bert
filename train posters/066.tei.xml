@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning Merging Driver Behavior</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Lin</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Derek</forename><surname>Phillips</surname></persName>
+						</author>
+						<title level="a" type="main">Learning Merging Driver Behavior</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We approached the problem from a few directions, using both standard linear regression and support vector regression (from the python scikit learn package): Data with mean centering || Data without mean centering Predicting horizontal position || Predicting vertical position</p><p>Vertical Position (lanes)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p>From these first few runs, we have found that the SVM performs best with default parameters (penalty weights, epsilon values), and compared to simple linear regression it has smoother, more human-like predictions, but linear regression does a better job of predicting abnormal behavior. We thought using mean-centered data may improve the SVM, but our results suggest little to no improvement. Our models are much better at predicting horizontal position (direction of travel) than vertical (lanes). This can be attributed to the fact that most cars on a highway go the same speed, but it is harder to predict how far over a car will merge. Additionally, multiple-lane merges are rare amongst the data, so potentially the larger data set will give better results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Next Steps</head><p>We currently have run on one 15 minute chunk of data, with about 130 merging cars as training examples. We will next want to run the models on all 45 minutes of data, for both highways, and compare performance on both. However, we want to only run with the best few models to streamline the process. Generally, we want to approach the problem from two other directions: changing the input features, and using other models. Some examples of other input features:</p><p>• Using the initial position or traffic as well as current • Use a history of traffic (e.g. previous 5 grids)</p><p>• Use more features like headway, vehicle size, etc. Some examples of other models:</p><p>• KernelRidge, Lasso, Random trees • Nearest-Neighbors with previous X grids • Using feature selection and cross validation We also will try some of our hand implemented algorithms, such as finding the K most similar traffic patterns, and predicting the average resulting trajectory of the associated merging vehicles Overview Understanding human driver behavior is a critical component in the development of autonomous vehicles. In the literature, laneshifting and regular highway driving has been well studied, but the analysis of merging behavior is sparse. We are developing a model for predicting merging behavior on highways given positional and trajectory information of the vehicles. We predict horizontal/vertical position of a merging vehicle given the current traffic and time elapsed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Processing</head><p>Our data is from the NGSIM database and includes positional data for vehicles over a stretch of highway 101 and I80. We transformed the data from the NGSIM database to include directional velocity, and ultimately arranged it in grid format to allow for a constant feature size to be input into our models. For each grid entry, we keep an average of the features of the vehicles in that grid area. The grid has low resolution to maintain a small feature set size, and we further cut down the feature set size by limiting the window of interest to a subset of the highway from when the merge begins to when it ends. For each frame the vehicle is in, the input is the current grid of traffic (with the merging vehicle removed) and the time elapsed since the vehicle first entered the area. The output will be either the X or the Y position of the merging vehicle. </p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>We approached the problem from a few directions, using both standard linear regression and support vector regression (from the python scikit learn package): Data with mean centering || Data without mean centering Predicting horizontal position || Predicting vertical position</p><formula xml:id="formula_0">Linear Regression SVM Regression Horizontal Position (direction of travel)</formula><p>Vertical Position (lanes)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p>From these first few runs, we have found that the SVM performs best with default parameters (penalty weights, epsilon values), and compared to simple linear regression it has smoother, more human-like predictions, but linear regression does a better job of predicting abnormal behavior. We thought using mean-centered data may improve the SVM, but our results suggest little to no improvement. Our models are much better at predicting horizontal position (direction of travel) than vertical (lanes). This can be attributed to the fact that most cars on a highway go the same speed, but it is harder to predict how far over a car will merge. Additionally, multiple-lane merges are rare amongst the data, so potentially the larger data set will give better results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Next Steps</head><p>We currently have run on one 15 minute chunk of data, with about 130 merging cars as training examples. We will next want to run the models on all 45 minutes of data, for both highways, and compare performance on both. However, we want to only run with the best few models to streamline the process. Generally, we want to approach the problem from two other directions: changing the input features, and using other models. Some examples of other input features:</p><p>• Using the initial position or traffic as well as current • Use a history of traffic (e.g. previous 5 grids)</p><p>• Use more features like headway, vehicle size, etc. Some examples of other models:</p><p>• KernelRidge, Lasso, Random trees • Nearest-Neighbors with previous X grids • Using feature selection and cross validation We also will try some of our hand implemented algorithms, such as finding the K most similar traffic patterns, and predicting the average resulting trajectory of the associated merging vehicles Overview Understanding human driver behavior is a critical component in the development of autonomous vehicles. In the literature, laneshifting and regular highway driving has been well studied, but the analysis of merging behavior is sparse. We are developing a model for predicting merging behavior on highways given positional and trajectory information of the vehicles. We predict horizontal/vertical position of a merging vehicle given the current traffic and time elapsed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Processing</head><p>Our data is from the NGSIM database and includes positional data for vehicles over a stretch of highway 101 and I80. We transformed the data from the NGSIM database to include directional velocity, and ultimately arranged it in grid format to allow for a constant feature size to be input into our models. For each grid entry, we keep an average of the features of the vehicles in that grid area. The grid has low resolution to maintain a small feature set size, and we further cut down the feature set size by limiting the window of interest to a subset of the highway from when the merge begins to when it ends. For each frame the vehicle is in, the input is the current grid of traffic (with the merging vehicle removed) and the time elapsed since the vehicle first entered the area. The output will be either the X or the Y position of the merging vehicle. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Vehicles, Vx, Ax…(other features)]</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

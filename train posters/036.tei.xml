@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="de">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">STRUCTURE PREDICTION OF OPTICAL FUNCTIONAL DEVICES WITH DEEP LEARNING</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai</forename><surname>Zhang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shiyu</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qing</forename><surname>Wang</surname></persName>
+						</author>
+						<title level="a" type="main">STRUCTURE PREDICTION OF OPTICAL FUNCTIONAL DEVICES WITH DEEP LEARNING</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>3 Training results and discussion 2 Neural networks</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="de">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training configurations and definitions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural networks configuration</head><p>• The magnitude and phase of the transmitted electrical field are used as the input to the neural networks, i.e.</p><p>• The magnitude and phase are normalized before feeding into the neural network     </p><formula xml:id="formula_0">y 2 { 1, +1} 20 … … … … x 2 r z (1) 2 H 1 z (2) 2 H 2 f 1 , W 1 , b 1 f 2 , W 2 , b 2 f o , W o , b</formula><formula xml:id="formula_1">W (l) 2 H l ⇥H l 1 b (l) 2 H l z (l) = f j ⇣ W l z (l 1) + b l ⌘ y = W o z (p) + b o J(W, b; x, y) = 1 m m X i=1 ky (i) ŷ (i) k 2 2</formula><p>Minimization procedure • Backward-propagation to find the derivatives of the cost function with respect to parameters between each layers • Stochastic gradient descent (SGD) to find the optimal solution • Constant learning rate = 0.001 4 Application <ref type="figure">Figure 7</ref> Comparison of 45 • deflected transmitted light electric field of the predicted Si structure and the ideal 100% efficiency electric field</p><formula xml:id="formula_2">W (l) , b (l) x 2 2⇥51=102 x 2 51 ✏ train/test = s P m i=1 kŷ (i) y (i) k 2 2 P m i=1 ky (i) k 2 2 y j = ( +1,ŷ j &gt; 0 1,ŷ j &lt; 0. ✏ prediction = 1 m m X i=1 P n j=1 {ŷ j 6 = y j } n</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Physical implication</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deviation efficiency</head><p>We achieved 43.4% efficiency as a 45 • beam deflector. The Si nanostructures were predicted by our deep learning algorithm using ideal 100% deflected electric fields as input in the test.</p><p>y 2 R n</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 1D</head><label>2</label><figDesc>Si structure aligned along x-direction at height z = 1000.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 Figure 6</head><label>36</label><figDesc>Output electrical field given light normal incident on Si structures shown in Figure 1. 0 100 200 300 400 30 40 50 60 70 80 Iterations Error (%) Training Testing 0 100 200 300 400 86 87 88 89 90 Iterations Error (%) Training TestingFigure 6Learning curve for far-field electric field training using two-layer neural networks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5</head><label>5</label><figDesc>Learning curve for near-field electric field training using two-layer neural networks.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 1</head><label>1</label><figDesc>Schematic of 1D Si structure with simulation procedure.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>1 Optical device and simulation Simulation setup: optical device and electrical fields Simulation software • Rigorous Coupled-Wave Analysis (RCWA). Optical device • Silicon (Si) nanostructures represented by a binary vector. Input signal • Normal incident light. Output signal • Electric field distributed in a 2D space.</figDesc><table>Data set for learning 
+• 200000 training samples, 50000 test samples. 
+• Si structure 
+• Output electrical field collected at near-field and far-field 
+locations with 
+
+CS 229 
+Machine Learning 
+Spring 2016 
+
+Figure 4 Neural networks with 2 hidden layers. 
+
+Neurons 
+Activation function 
+• Rectified Linear Unit (ReLU) 
+
+Fully connected neural networks 
+Parameters at layer l 
+• Neuron weights: 
+• Neuron bias: 
+Forward-feeding 
+
+• For all j, the activation function is ReLU in this project 
+Prediction 
+
+Training process 
+Cost function 
+• Mean Square Error (MSE) function 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

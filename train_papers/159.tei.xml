@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine Learning for Disease Progression</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yong</forename><surname>Deng</surname></persName>
+							<email>yongdeng@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuxin</forename><surname>Huang</surname></persName>
+							<email>xxhuang@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guanyang</forename><surname>Wang</surname></persName>
+							<email>guanyang@stanford.edu</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Materials Science &amp; Engineering</orgName>
+								<orgName type="department" key="dep2">Department of Applied Physics</orgName>
+								<orgName type="department" key="dep3">Department of Mathematics</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Introduction</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Machine Learning for Disease Progression</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Disease progression in individual patients is one of the fundamental questions in medical practice. Since many medical tests are either harmful or inconvenient to perform frequently, it would be beneficial to develop a disease progression prediction method based on machine learning approaches. In this project, we focus on the study of the progression of motor impairment in children with Cerebral Palsy. In particular, Gait Deviation Index (GDI) <ref type="bibr" target="#b4">[5]</ref> is collected over time for each patient and used to quantitatively characterize the development of gait impairments. Due to the sparsity and irregularity of the data in time, we would apply regression methods with rank-constraints relying on matrix completion to analyze the data set, as proposed in Ref. <ref type="bibr" target="#b2">[3]</ref>. Specifically, our main input data is a matrix Y , each row of which is GDI of a patient measured over time. It is of our interest to find a coefficient matrix W so that Y can be described by W B, where B is a matrix of time dependent basis. Details can be found in section 2, section 3 and Ref. <ref type="bibr" target="#b2">[3]</ref>. Our contributions in this project include:</p><p>• We have cleaned and preprocessed the 'Gillette Children's Specialty Healthcare dataset', which includes around 6000 observations of children visiting a gait clinic, and merged the dataset with the SEMLS dataset, which contains information of surgeries of each patient.</p><p>• We have implemented Soft-Longitudinal-Impute (SLI), Sparse-Longitudinal-Regression (SLR), functional principal components (fPCA) methods described by <ref type="bibr" target="#b2">[3]</ref> on the dataset, which explains around 30% of the variance.</p><p>• We have studied the effect of a surgery for each patient. It turns out that after taking the surgery information into account, the model could perform significantly better and explains around 40% of the variance, which performs better than the current state-of-the-art approaches.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Dataset and Features</head><p>The original data contains records of 12078 exams on 2904 patients, mostly between age 3-18. Each exam record consists basic information (e.g. walking speed, cadence, bmi, height, weight, maximum knee flexion, O2 expenditure, and Gait Deviation Index (GDI) <ref type="bibr" target="#b4">[5]</ref>) of a patient as well as about 300 clinical variables of a particular leg. In particular, GDI is a measurement of severity of pathology. It's a real number normally between 50 -110, where normally developed children have GDI around 100. Accurate estimation of post-treatment GDI can lead to better clinical decisions. In this report, it is of our main interest to predict the GDI trajectories of the patients.</p><p>For robustness of the result, the following pre-processing procedures were performed:</p><p>1. To avoid co-linearity between the two legs of patients, we consider only exams on left legs.</p><p>2. We consider only records with valid GDI, age between 3 and 20, BMI (body mass index) between 10 and 30 and throw away the outliers. 3. To have enough data points to fit the individual progression curve, we consider only subset of patients with 3 or more remaining records after previous steps.</p><p>The remaining data set contains 3106 exams on 777 patients. Some summaries of the data set are shown below. As can be seen in <ref type="figure" target="#fig_0">Figure 1</ref>, the measurements are collected sparsely and irregularly in time. 3 Models and Methods</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Problem Formulation and Related Work</head><p>The general question is stated as following. Let n be the number of patients. For each patient i ∈ {1, ....n}, we have n i observations {y i,1 , ..., y i,ni } at time-points {t i,1 , t i,2 , ..., t i,ni } where</p><formula xml:id="formula_0">0 &lt; t min ≤ t i,1 &lt; t i,2 &lt; ... &lt; t i,ni ≤ t max . Let b ≡ {b i : i ∈ {1, .</formula><p>.., K}} be a set of basis for L 2 ([t min , t max ]) truncated to the first K elements. We would like to estimate a set of coefficients w i ∈ R K so that y i,j can be approximated by w T i b(t i,j ). The state-of-art approaches to estimating w i include direct approaches with functional principal component analysis <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b6">7]</ref>, linear mixed-effect models <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b8">9]</ref> with low-rank approximations <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b7">8]</ref>.</p><p>Direct approach has two major drawbacks to modeling covariance. First, overfitting happens when the number of observations n i for individual i is smaller or equal to the size of the basis k. Second, similarities between curves are ignored while they could improve the fit potentially. Linear mixedeffect models can solve this problem conveniently by estimating the covariance structure and the individual fit simultaneously. However, they are not applicable unless the number of observations per subject is relatively large, for we attempt to estimate K coefficients for every subject. Given the small number of observations, we could still fit a linear mixed-effect model in a smaller space spanned by functions with largest contribution to the random effect. Based on this, low-rank approximations are widely applied. However, due to their reliance on the distribution assumptions, these models need to be carefully fine-tuned for specific situations.</p><p>To avoid the potential bias caused by the assumption of an underlying probabilistic distribution in mixed-effect models, Ref. <ref type="bibr" target="#b2">[3]</ref> approximates the optimization problem in the sparse matrix completion setting. Observed measurements are denoted asỹ i,j . The time grid is discretized to T time-points G = [τ 1 , ..., τ T ]. We assign y i,gi(j) =ỹ i,j for g i (j) = arg min 1≤k≤T |τ k − t i,j |. Then we can construct a N × T matrix Y of observed values for N patients. Notice that the matrix Y is a sparse matrix, as each patients only have a few measurements at different times. We considers all the unobserved entries in matrix Y as missing values, and our target is to impute all the unknown elements.</p><p>Denote the set of all observed elements by pairs of indices as Ω. Let P Ω (Y ) be the projection onto observed indices:</p><formula xml:id="formula_1">P Ω (Y ) = M , such that M i,j = Y i,j for (i, j) ∈ Ω and M i,j = 0 otherwise. P ⊥ Ω (Y )</formula><p>is defined as the projection on the complement of Ω:</p><formula xml:id="formula_2">P ⊥ Ω (Y ) = Y − P Ω (Y ).</formula><p>The basis now is a T × K matrix B = [τ 1 , ..., τ T ] T . The coefficients we would like to fit is denoted by a N × K matrix W . Therefore, the problem can be formulated as a matrix completion problem, heuristically speaking, the target is to find a matrix W , such that W B T ≈ Y on our observed indices Ω, and thus we could impute the missing values of Y by W B T . The details of the previous heuristics can be found in the next part of this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Models without adjusting for surgery</head><p>As our model can be described as:</p><formula xml:id="formula_3">Y ≈ W B T .<label>(1)</label></formula><p>The direct way of finding such a W is to solve the following optimization problem:</p><formula xml:id="formula_4">arg min W P Ω (Y − W B T ) 2 F<label>(2)</label></formula><p>where · F is the Frobenius norm, i.e. the square root of the sum of matrix elements. However, such approach consists two main drawbacks. First, if the number of basis functions K is larger than or equal to the number of observations n i , which is the number of observations of individual i, then the error could be reduced to 0, which causes overfitting. Second, this methods ignores the similarities between the curves of different individuals, which could potentially improve the model performance.</p><p>One of the standard ways to remedy these issues it to assume that individual trajectories can be represented in a low-dimensional space by constraining the rank of W . Thus our optimization problem is now: arg min</p><formula xml:id="formula_5">W P Ω (Y − W B T ) 2 F + λ W * ,<label>(3)</label></formula><p>where λ &gt; 0 is a parameter, · F is the Frobenius norm, and · * is the nuclear norm, i.e. the sum of singular values. Ref. <ref type="bibr" target="#b1">[2]</ref> shows that the optimization problem arg min</p><formula xml:id="formula_6">W 1 2 Y − W B T 2 F + λ W * has a unique solution S λ (Y B), where S λ (X) = U D λ V T and X = U DV T is the singular value decomposition (SVD) of X. D λ = diag((d 1 − λ) + , (d 2 − λ) + , ..., (d p − λ) + ), where (x) + = max(x, 0), is soft-thresholding of a diagonal matrix D = diag(d 1 , d 2 , ..., d p )</formula><p>. We refer to S λ (X) as the singular value thresholding (SVT) of X. Inspired by this, algorithm 1 in Ref. <ref type="bibr" target="#b2">[3]</ref> is proposed to solve the optimization problem Eq. 3 on a sparsely observed data set by iteratively imputing the missing elements in Y with SVT of P Ω (Y )B obtained in the previous step.</p><p>The optimization problem above can be easily extended to multiple variables varying or constant in time that work together to characterize the progression of one disease:</p><formula xml:id="formula_7">arg min W P Ω (X − W B T ) 2 F + λ W * .<label>(4)</label></formula><p>X i is some N × T matrices corresponding to the processes measured and X = (X 1 : X 2 : ... : X p ). B = I p ⊗ B is a pT × pK matrix with B stacked p times on the diagonal. W is a N × pK coefficient matrix that we want to fit. This optimization problem can also be solved with algorithm 1 in Ref. <ref type="bibr" target="#b2">[3]</ref>.</p><p>The above two optimization problems both aim to reduce the dimensionality of the sparse observations. In practice we would often want to predict the trajectory of one variable Y (GDI in our case) with the knowledge of other variables X related to the same disease. Then the problem can be formulated as a regression of Y on X: arg min</p><formula xml:id="formula_8">A P Ω (Y − XAB T ) 2 F + λ A * .<label>(5)</label></formula><p>Algorithm 3 in Ref. <ref type="bibr" target="#b2">[3]</ref> is proposed to solve this sparse-regression problem.</p><p>Finally, combining the technique of dimensionality reduction and sparse regression we can predict the trajectory of one variable, given some other covariates that are varying or constant in time. We first solve Eq.(2) using algorithm 1 in Ref. <ref type="bibr" target="#b2">[3]</ref> to reduce the dimension of covariates X. The resulting coefficient matrix is given by W . Then we decompose W as W = U SV T to retrieve the latent components U . Finally we regress Y on U solve the regression problem with algorithm 3 in Ref. <ref type="bibr" target="#b2">[3]</ref>:</p><formula xml:id="formula_9">arg min A P Ω (Y − U AB T ) 2 F . + λ A * .<label>(6)</label></formula><p>Some preliminary simulations and data studies are presented in Ref. <ref type="bibr" target="#b2">[3]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Models after adjusting for surgery</head><p>Intuitively, having a surgery would impact the progression of disease, thus it is reasonable to build up a model which take surgery into account. For each patient i, our new model can be formulated as</p><formula xml:id="formula_10">y i (t) = k j=1 w i,j b j (t) + µ · 1 i,S (t) + i ,<label>(7)</label></formula><p>where the indicator function 1 S (t) equals 1 if patient i has received a surgery before time t and 0 otherwise, µ can be interpreted as the average effect of a surgery among all patients, and i is a random effect which can be modeled as a normal distribution with mean 0 and variance σ 2 .</p><p>In our case, we could first regress Y on the dummy feature 1 S to get an estimation for the mean effect µ, after adjusting for the effect of surgery, we could get a new matrixỸ where each rows represents the 'adjusted GDI' for patient i. Then we could try to impute the missing values ofỸ based on all the methodologies described in part 3.2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Implementation</head><p>The code used can be found in https://drive.google.com/file/d/1gkyf1IAwJICRcVAkKsn_ FBI8qnfg1edO/view?usp=sharing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results and Discussion</head><p>We first apply SLI to the GDI data. As a comparison, fPCA is also used to train the same dataset and generate predictions. The baseline is just a naive prediction calculated by averaging all GDI data we have. To estimate the accuracy and robustness, we have performed the experiment 20 times, at each time the data is randomly split into a training set (containing 90% of the data) and a test set (containing the rest 10% of the data), all models are trained on the training set and evaluated on the test set. The averaged mean square error (MSE) and the standard deviation (sd) of the MSE on the test set are summarized in <ref type="table">Table.</ref> 1.</p><p>We can see that SLI is better than fPCA in this case and can explain 30% of variance from the baseline prediction, defined as the percentage of reduction of MSE from SLI with respect to MSE from baseline. To further improve the prediction we include the surgery information, which is expected to be highly correlated with GDI, into consideration. We then perform SLR, SLI and fPCA on the adjusted dataỸ , obtained as described in section 3.3, instead of Y and compare the results with the baseline, as shown in <ref type="table">Table. 2</ref> The inclusion of the surgery data significantly improves the performance of SLI, which can now explain 40% of variance from the baseline prediction. MSE from SLR is also smaller than MSE from SLI. This is not surprising since SLR makes use of more disease related information. However, both SLR and SLI could not outperform fPCA in this case. Plots of fitted GDI from SLI versus true GDI can be found in <ref type="figure" target="#fig_1">Fig. 2</ref>. It is convincing to conclude that, adjusting the effect of a surgery improves the performance of predictions significantly.</p><p>On the other hand, there is still a larger portion of variance remains unexplained, this may be due to the sparse and irregularity of the data, also it is important to note that in practice, it is often hard to predict the disease progression precisely based on the current features of an individual. But still, there is room for improvement, for example we could do variable selections to find the most relevant features or build more sophisticated models to capture the effect of a surgery, some of the directions of future works are discussed in Section 5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion and Future Work</head><p>The SLI results using the original data can explain 30% of the error of the baseline. After we include the effect of surgery, the predictions of both SLI and SLR are improved and can explain up to 40% of the error of the baseline. However even after we consider the effect of surgery, the performances of SLI and SLR are still not as good as fPCA.</p><p>We can perform feature selection to further improve our matrix-completion based methods. This can be done by forward selection or by using the top components from the dimension reduction of covariates as new features.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Data set summaries 0 200 400 600 5 10 15 20 age count 355 201 137 51 20 11 2 0 100 200 300 3 4 5 6 7 8 9 nVisits count q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q q 60 80 100 5 10 15 20 age GDI The three plots from left to right are: (a). histogram of age among all exams; (b). histogram of number of visits per patient; (c). Gait Deviation Index (GDI) from a subset of about 40 patients, individual patients are differing by color.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>ResultsFitted GDI vs true GDI from SLI on original data (left) and data with surgery information (right)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :Table 2 :</head><label>12</label><figDesc>SLI and fPCA applied to the original data. Method MSE sd SLI 81.54 10.12 fPCA 84.87 14.58 baseline 119.75 10.00Table 2: SLR, SLI and fPCA applied to the data with surgery information.</figDesc><table>Method MSE 
+sd 
+
+SLI 
+81.54 
+10.12 
+fPCA 
+84.87 
+14.58 
+baseline 119.75 10.00 
+
+Method MSE 
+sd 
+
+SLR 
+72.19 
+10.32 
+SLI 
+73.61 
+10.68 
+fPCA 
+70.28 
+10.27 
+baseline 119.75 10.00 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>This project is in corporation with postdoctoral researchers Dr. Łukasz Kidziński and Dr. Yumeng Zhang from the department of statistics in Stanford. The GDI dataset is provided by Dr. Łukasz Kidziński. The code we used is based on fcomplete (https://github.com/kidzik/fcomplete.git), a R package written by Dr. Kidziński. Dr. Zhang contributed helpful discussions and the code for data pre-processing.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Longitudinal principal components and non-linear regression models of early childhood growth</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">S</forename><surname>Berkey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annals of human biology</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="523" to="536" />
+			<date type="published" when="1983" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A singular value thresholding algorithm for matrix completion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian-Feng</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emmanuel</forename><forename type="middle">J</forename><surname>Candès</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zuowei</forename><surname>Shen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM Journal on Optimization</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">2010</biblScope>
+			<date type="published" when="1956" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Longitudinal data analysis using matrix completion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Łukasz</forename><surname>Kidziński</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1809.08771</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Statistics in function space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Dd Kosambi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DD Kosambi</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="115" to="123" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The gait deviation index: a new comprehensive index of gait pathology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Schwartz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rozumalski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Gait &amp; posture</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="351" to="357" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Linear mixed models for longitudinal data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geert</forename><surname>Verbeke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Linear mixed models in practice</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1997" />
+			<biblScope unit="page" from="63" to="153" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Karhunen-loeve expansion and factor analysis: theoretical remarks and application</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Satosi</forename><surname>Watanabe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Trans. on 4th Prague Conf. Information Theory, Statistic Decision Functions, and Random Processes Prague</title>
+		<imprint>
+			<date type="published" when="1965" />
+			<biblScope unit="page" from="635" to="660" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Dynamic prediction of disease progression for leukemia patients by functional principal component analysis of longitudinal expression levels of an oncogene</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fangrong</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiao</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuelin</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Applied Statistics</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1649" to="1670" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Models for longitudinal data: a generalized estimating equation approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Scott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kung-Yee</forename><surname>Zeger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul S</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Albert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="page" from="1049" to="1060" />
+			<date type="published" when="1988" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

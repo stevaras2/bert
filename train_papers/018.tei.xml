@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Non-stationary autoregressive filters for prediction of subsurface geological structure</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anshuman</forename><surname>Pradhan</surname></persName>
+							<email>pradhan1@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Energy Resources Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Non-stationary autoregressive filters for prediction of subsurface geological structure</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Accurate decision-making in the petroleum industry is highly contingent on building a reliable model of the subsurface geological structure. Building a model of the subsurface typically involves solving an inverse problem with acquired data for various model parameters of interest like P-wave velocity, rock porosity etc. However, issues of poor data quality necessitate regularizing the inverse problem, where prior geological information is incorporated. A big issue is that geology is typically highly heterogeneous (non-stationary) and conventional regularization operators fail to capture this non-stationarity. This project uses autoregressive filters that can learn on training images (TIs) of the geological structure, for use as regularization operators in inverse problems. A nonstationary approach is employed, in which multiple filters are trained for a single grid of the subsurface structure. After training, the filters are expected to provide a way of incorporating non-stationary prior information about geological structure into inverse problems.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head><p>Any inverse problem can be viewed as complementary to a learning problem. Here, the hypothesis (physical model) is assumed to be known and the goal is to predict the features (model parameters) from targets (acquired data). The commonly used fitting goals (optimized simultaneously) for model parameters are</p><formula xml:id="formula_0">≈ = − (1) ≈ =<label>(2)</label></formula><p>where, : Physical model, : Model parameters, d: Data, : Regularization operator, &amp; : Residuals. Equation (2) is the regularization goal, which is the topic of interest in this project. Machine learning techniques will be utilized to train regularization operator on prior geological information, which is expected to help guide the inversion towards the desired geological solution.</p><p>Prediction error filter (PEF) <ref type="bibr" target="#b0">(Claerbout, 1999</ref>) is a commonly employed regularization operator. PEFs can be trained using autoregression on a TI. For example, lets assume a geologist has some prior geological knowledge e.g., subsurface channel structures in a deltaic reservoir, shown as TIs in <ref type="figure" target="#fig_1">Figure 1</ref>. To train the PEF, regression equations are formed by autoregression on the TI and filter coefficients are optimized. However, PEF has been shown to fail in the presence of non-stationarity, e.g., the heterogeneous channels in <ref type="figure" target="#fig_1">Figure 1</ref>, in the training image <ref type="bibr" target="#b0">(Claerbout, 1999)</ref>.</p><p>To deal with this issue, this project implements a non-stationary approach to training the filters. Instead of using a single filter to learn on the entire grid of the TI, multiple filters are used over the grid. However, this approach comes with its own complicacies. For instance, in the extreme case of a separate filter for each grid-cell, the total number of filter coefficients to be optimized increases dramatically and the system of regression equations becomes under-determined <ref type="bibr" target="#b0">(Claerbout, 1999)</ref>. To summarize, the dilemma is that more filters are needed to capture geological nonstationarity but there are not enough equations. I started this project by asking the question "How can we make the system of equations overdetermined?" Hypothetically, one way out would be the case if instead of a single TI, we somehow had access to multiple TIs. Let us first assume we have access to multiple TIs. A mathematical formulation will now be presented to encapsulate these ideas. Let us assume we have n 1D training images (TIs), each consisting of 3 grid-cells. The k th TI is expressed as = { 1 , 2 , 3 }. We assume every grid-cell has a 3 × 1 filter (i.e. 2 coefficients) of its own. The filter coefficients for the 3 rd grid-cell can be expressed as 3 = {1, 13 , 23 }. These filter coefficients are determined by optimizing the following system of equations in a least-squares sense. </p><p>Similar fitting equations are formulated for the remaining cells. All the coefficients can then be determined by minimizing the residual vector of the whole system in a least-squares sense.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>A mathematical formulation was developed for the problem. What is needed now is a way to generate multiple TIs to serve as data. One method is to use geostatistical simulations <ref type="bibr" target="#b1">(Mariethoz et. al., 2014)</ref> to generate the TIs. Basically, these simulations sample from a probability distribution and give us many possible realizations of the geological structure. <ref type="figure" target="#fig_1">Figure 1</ref> shows, as grids of 150 × 200, two possible realizations of a region in deltaic reservoir. We generate 100 such TIs. Another scenario, that of a stone-wall, two realizations of which are shown in <ref type="figure" target="#fig_2">Figure 2</ref>, is also used to test the proposed methodology. Albeit not a geological scenario, the structure is highly nonstationary to be representative of geology. The next task is to determine the features we want to use in the regression equations. Since geology varies in a spatial context, 2D filters as shown in <ref type="figure" target="#fig_3">Figure 3</ref> are used. Thus, the features are neighboring data points in a 2D spatial sense. This is reasonable since the goal is to capture the patterns present in the TIs. The shape of the filters can also be modified suitably according to one's needs.   Realizat Realiza</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The filters will now be trained and tested for accuracy. In the initial analysis, we used 2 × 2 filters for every grid cell. Regression equations are subsequently formed for all grid-cells, as illustrated in Equation <ref type="formula" target="#formula_1">(3)</ref> for a single cell. The filter coefficients are now optimized in a least squares sense using a conjugate gradient scheme <ref type="bibr" target="#b0">(Claerbout, 1999)</ref>.</p><p>After training the filters, these filters are tested for their efficacy in prediction of non-stationary geology. It is important to note that, in an ideal case, these trained filters will be used in solving Equation <ref type="formula" target="#formula_0">(2)</ref> in conjunction with Equation (1). The same idea will be employed for testing purposes. We use equation <ref type="formula" target="#formula_0">(2)</ref> again but in a reverse sense, i.e., we now optimize using the trained filter (only Equation <ref type="formula" target="#formula_0">(2)</ref> will be solved here for simplicity). Since the output of PEF is white, Equation <ref type="formula" target="#formula_0">(2)</ref> is fitted to random numbers <ref type="bibr" target="#b0">(Claerbout, 1999)</ref>. The model parameters are now optimized in a least squares sense using conjugate gradient. <ref type="figure" target="#fig_4">Figure 4</ref> shows the result of such a procedure for the two scenarios.  <ref type="figure" target="#fig_4">Figure 4</ref> shows how the trained autoregressive filters did an excellent job at predicting the non-stationary geology. The highly heterogeneous structures in both the scenarios were simulated perfectly. The highlighted parts in <ref type="figure" target="#fig_4">Figure 4</ref> show patterns that were not present in either of the two input realizations shown but may have been present in other realizations. This underscores the fact these trained filters are successful in capturing the probabilistic prior information present in geostatistical simulations. Now, let us imagine employing these filters in an inverse problem. Since, both Equations 1 and 2 are optimized simultaneously, it is expected that Equation 2, which uses the filters trained on prior information, will guide Equation 1 towards the desired geological solution. Implemented correctly for the desired model parameters of interest like P-wave velocity, rock porosity etc., it is expected that this will increase confidence on the high-stakes decisions involving drilling of hydrocarbon wells.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fortes and Failings</head><p>However, one cause of concern in this preliminary approach is the danger of overfitting. Filters were trained for every grid-cell. But how justified is this approach? Do the statistics vary too rapidly to warrant the use of filters for every grid-cell? To reduce the number of filters that are used, we can make the filters constant in patches over the grid. This can minimize the risk of over-fitting. We first tried to make the filters constant along 1D patches <ref type="bibr" target="#b0">(Claerbout, 1999)</ref>. A 1D patch is shown in <ref type="figure" target="#fig_5">Figure 5</ref> (left). Similar patches were formed all over the grid and the filters (constant in patches now) were optimized. <ref type="figure" target="#fig_5">Figure 5</ref> (right) shows the simulation result using the trained filter. It is clear that the result has degraded in comparison to the original simulation. My best guess is that this is because of the incongruity in the shapes of the filter and patches. If we look at the geological patterns more closely, we see that the patterns are not smooth anymore but rather have become zagged. This seems like footprints of the patches that were employed. The statistics of the geology vary in a spatial sense rather than a 1D sense. Thus, I believe in order to recreate consistent results while minimizing the risk of overfitting, we need to employ 2D patches that can mimic the spatial variation of the statistics. This idea is heralded as the subsequent direction of work for this project. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Two possible realizations of a deltaic reservoir obtained using Direct Sampling. Highlighted portions show how the two realizations are different from each other.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Two possible realizations of a stone-wall obtained using Direct Sampling.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>A 3 × 3 filter for ℎ cell. Similar filters are used for remaining grid cells Realization 1 Realization 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Simulations of the two scenarios using the trained filters</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>(Left) A 1D patch is shown in orange. All the highlighted cells have a common filter. (Right) Simulation result after training filters constant in patches</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Geophysical image estimation by example: Environmental soundings image enhancement</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Claerbout</surname></persName>
+		</author>
+		<ptr target="http://sepwww.stanford.edu/sep/prof/" />
+		<imprint>
+			<date type="published" when="1999" />
+			<publisher>Stanford Exploration Project</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Multiple-point geostatistics: Stochastic modeling with training images</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Mariethoz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Caers</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>Wiley-Blackwell</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

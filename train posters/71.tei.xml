@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">An Early Warning System for Gentrification in California</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">An Early Warning System for Gentrification in California</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Goals</head><p>• Characterize CA's housing markets with public data • Accurately forecast gentrification in Tracts</p><p>• Understand the drivers of gentrification through feature selection and regularization</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>Data comes from American FactFinder (AFF), a public repository of local-, state-, and national-level Census data collated by the United States Census Bureau. It is at the Census Tract level.</p><p>Census Tracts are hyper-local geographic bounding boxes containing ~4,000 people. They are generally invariant in scope over time.</p><p>AFF releases inter-censal surveys with housing market data such as:</p><p>• </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features and Responses Discussion</head><p>• Ex-ante balanced-ness of the classes was surprising; suggests gentrification is spatial (some countervailing economic force is ensuring costs don't rise uniformly)</p><p>• Non-parametric estimators (Random Forest, XGBoost) outperformed logit; likely due to near-inability to overfit at no cost of bias </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models:</head><p>Results:</p><p>• Models trained on difference in feature values from 2010 to 2011, responses calculated from 2012 to 2016</p><p>• Hyperparameters for all models tuned by grid search (random forest: no. trees, split subset size; LASSO: regularization coefficient; XGBoost: learning rate, stump depth, and regularization coefficient)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Responses:</head><p>• Long-term △ in monthly housing costs • Long term △ in income distribution, measured by shift in Hellinger distance of income from start-year to end-year vs. a baseline (see <ref type="figure">Figure 1)</ref>. Defined over discrete distributions P(X), Q(X) as:     </p><formula xml:id="formula_0">∆</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Grid search shows large accuracy gains from regularizing (LASSO: ! = 0.005, XGB: &amp; = 25) • Signal was much stronger in cost than income distribution response; not surprising given they were almost uncorrelated (' = 0.06) • Feature importance ranking validated engineering of spatial features (see Figure 3) Future Work and References • Construct adjacency matrix weighted by e.g. inter-Tract centroid distance to encode "decaying" influence into engineered features • Simplify income distribution response by collapsing buckets to reduce noise, increase signal ________________________________________ Veronica Guerrieri, Daniel Hartley, and Erik Hurst. "Endogenous Gentrification and Housing Price Dynamics". In: NBER Working Paper Series (2010). Ken Steif. "Predicting gentrification using longitudinal census data". In: Urban Spatial (2016). Miriam Zuk. "Regional Early Warning System for Displacement". In: US Department of Housing and Urban Development (2015). Liana Fox. "The Supplemental Poverty Measure: 2017". In: United States Census Bureau: Economics and Statistics Administration (2018).Aakash Pattabi | Department of Economics | apattabi@stanford.edu</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :Figure 2 :</head><label>12</label><figDesc>Engineered features: • First order spatial lag in housing cost and income distribution shift • Local Moran's I-statistic of spatial clustering (see Figure 2) Figure 1: This simulated income distribution becomes more affluent (and less tri-modal) from Y1 to Y2. We argue this is indicative of gentrification Figure 2: California's Census Tracts were modeled as an unweighted, undirected graph to engineer features based on the features of adjacent TractsTobler's First Law of Geography: Everything is related to everything else, but nearer things moreso than further ones.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Spatial features and features correlated with (lack of) affluence are influential</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Renter-occupied vs. owner-occupied unit counts • Educational attainment of renters vs. owners • Race, ethnicity, age of Census Tract residents • Employment by industry and job tenure This project's data were assembled from tables S2502; S2503; B25085; and DP03 in AFF, comprising ~150 features.</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Response: ∆ in income distribution over time</figDesc><table>XGBoost 
+
+Ensemble of shallow trees where 
+subsequently grown predictors 
+depend on previous ones 
+
+Minimizes logistic loss @(A) (defined 
+left) where 5(7) is given by 
+proportion of trees voting positive in 
+a given iteration 
+
+Response: ∆ in monthly cost of housing over time 
+
+Model 
+n train = 7,262 
+n test = 397 
+
+Test 
+Accuracy 
+Precision 
+Recall 
+No Info 
+Rate 
+
+Random Forest 
+0.62 
+0.64 
+0.69 
+0.53 
+
+L1-Penalized Logit 
+0.58 
+0.59 
+0.70 
+0.53 
+
+XGBoost 
+0.64 
+0.65 
+0.69 
+0.53 
+
+Ensemble 
+0.63 
+0.63 
+0.71 
+0.53 
+
+Model 
+n train = 7,262 
+n test = 397 
+
+Test 
+Accuracy 
+Precision 
+Recall 
+No Info 
+Rate 
+
+Random Forest 
+0.58 
+0.58 
+0.85 
+0.59 
+
+L1-Penalized Logit 
+0.55 
+0.58 
+0.85 
+0.59 
+
+XGBoost 
+0.53 
+0.59 
+0.70 
+0.59 
+
+Ensemble 
+0.56 
+0.58 
+0.86 
+0.59 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 1 :</head><label>1</label><figDesc>XGBoost and the ensemble outperform other classifiers and improve meaningfully over simply predicting majority class in sample</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 2 :</head><label>2</label><figDesc>No classifier beats no info rate for income distribution response. High recall, low precision suggest "trigger-happy" positive labelling…</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

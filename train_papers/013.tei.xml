@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of Abdominal Tissues by k-Means Clustering for 3D Acoustic and Shear-Wave Modeling</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><forename type="middle">T</forename><surname>Looby</surname></persName>
+							<email>klooby@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Classification of Abdominal Tissues by k-Means Clustering for 3D Acoustic and Shear-Wave Modeling</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. ABSTRACT</head><p>Clutter is an effect that degrades the quality of medical ultrasound imaging. To better understand and subsequently reduce the effects of clutter, the underlying mechanisms must be studied. Clutter is thought to be highly reliant on the reverberations of acoustic signal due to microscopic subcutaneous tissues.</p><p>This paper presents a method for producing a fourtissue acoustic map to be used in three-dimensional nonlinear ultrasound simulations. A full volumetric map was successfully produced through the application of the k-means clustering algorithm to a fat-water separated MRI volume.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. MOTIVATION A. Clutter</head><p>In ultrasonic imaging, clutter, a phenomenon associated with poor-quality images, produces a temporallystable obstruction resulting in decreased image contrast and a reduced-ability to discern imaging targets. Clutter is frequently a factor when imaging overweight, obese, and difficult-to-image patients. The effect of clutter is attributed to the interactions of acoustic waves with the subcutaneous tissue layers. Particularly, acoustic reverberation, off-axis scattering, and phase aberrations from the subcutaneous layers are significant sources of clutter <ref type="bibr" target="#b0">[1]</ref>  <ref type="bibr" target="#b1">[2]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Tissue Classification for Modeling</head><p>The imaging difficulties presented by clutter are a major obstacle for clinical ultrasound imaging. As such, modeling the acoustic wave-tissue interactions that produce clutter is of importance to ultrasound researchers. While much previous work has been done in characterizing this phenomenon using twodimensional models, the problem must be examined on a three-dimensional scale in order to produce simulation results of significant value. Presently, the literature lacks three-dimensional models of these interactions.</p><p>This project, which forms a piece a of an ongoing project that I am conducting in Jeremy Dahl's ultrasound research lab, seeks to produce acoustic maps to be used in three-dimensional ultrasound simulations. An acoustic map, in the context of this project, is a mapping of tissue characteristics to spatial locations. These maps will be produced through the processing of 3D magnetic resonance imaging (MRI) scans.</p><p>At this time, the primary aim is to take a set of MRI slices and assign each image pixel a label corresponding to the tissue displayed in that pixel. The primary tissues of interest are skin, fat, muscle, and connective tissues. Any pixels corresponding to regions without signal are classified together as background pixels in a fifth cluster.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. MATERIALS</head><p>The MRI datasets used in this project were acquired at the Lucas Center at Stanford specifically for this project. In order to achieve high signal-to-noise ratio (SNR) at a very high resolution (100 micron isotropic), prohibitively long scan times are required. As such, a slab of pork belly is used as an ideal ex-vivo model. It is desired that the results achieved on this model be replicated when applied to a non-ideal in-vivo human scan, which will show a significant degradation in SNR.</p><p>A tailored MRI pulse was used to generate two datasets. One dataset contains the signals from protons within water-based tissues; the other contains signal from protons within fat-based tissue. Although out of the scope of this project, as brief explanation, this was achieved by making use of the chemical shift seen in the resonant frequencies of shielded protons. This allows for the signals from different chemical species (here, water and fat) to be distinguished based on the phase of the received signal.</p><p>For illustrative purposes, a two-dimensional slice of the dataset is provided in <ref type="figure" target="#fig_0">Fig. 1</ref> and <ref type="figure" target="#fig_1">Fig. 2</ref>. Before running the algorithm, some preprocessing was required. First, the datasets were separately normalized to have a minimum voxel intensity of zero and a maximum voxel intensity of one. The datasets were then registered to each other, as it is vital that the voxel correspondences between the two datasets be accurate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODOLOGY A. K-Means Algorithm</head><p>The k-means clustering algorithm is fairly straightforward. A set of centroids is initially chosen, either at  random or with some initial estimate of the likely final centroids. During each iteration, every point (in this application, pixel) is assigned the label corresponding to the centroid closest in Euclidean distance in the feature space (the feature space will be described in the next section). Once every point has been assigned a label, the locations of the centroids are updated to the means of the locations of all points that were assigned the corresponding label in the previous step. This process is repeated until a convergence criterion has been met.</p><p>Mathematically, this can be described (as presented in the course lecture notes) by the following: repeat steps 1 and 2 until convergence is achieved.</p><formula xml:id="formula_0">c (i) := arg min j x (i) − µ j 2 (1) µ j := m i=1 1 c (i) = j x (i) m i=1 1 c (i) = j (2)</formula><p>In these equations, c (i) denotes the label assigned to data point x (i) , µ j the location of centroid j, and 1{} is the indicator function yielding 1 when its argument is true. The algorithm is implemented using the builtin function provided with MATLAB for computational efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Space</head><p>In the k-means clustering method, the feature space can be thought of as a space with dimensions defined by the features chosen to describe the data to be categorized. The centroids take on values within this space, and distances within the space can be calculated between the values taken on by the centroids and the values held by the data.</p><p>A substantial piece of this project involves devising and properly weighting the features that are used to describe each pixel. The dataset can be considered as a three-dimensional matrix whose dimensions correspond to the three spatial dimensions x, y, and z. Each entry in the matrix is a scalar representing the pixel intensity at each spatial location. As such, the only information available is a pixel intensity and its location in Cartesian space.</p><p>The results that will be presented in the next section were achieved using a weighting of nine features. The features were chosen and weighted in order to best accommodate the clustering of the data into the five desired clusters. 1) Known Signal: As the data has already been grouped into fat signal and water signal, it is very desirable to make use of this information. The voxels corresponding to the water-based tissues (skin, muscle, and connective tissue) should be represented by high signal values in the water signal dataset, while the pixels corresponding to the fat signal should of course be represented by high signals in the fat signal dataset. Furthermore, the regions corresponding to a lack of signal should have very low pixel values in both datasets.</p><p>This information was included as three binary features. Representative slices of these features are provided in <ref type="figure" target="#fig_2">Fig. 3, 4</ref>, and 5. As the remainder of the difficulty rests in distinguishing the three water-based tissues, the following features will only be applied to the water signal volume. <ref type="figure">Fig. 3</ref>. Thresholding the normalized water signal dataset gives a binary mask corresponding to voxels to be associated with waterbased tissues.</p><p>2) Connected Regions: Intuitively, neighboring voxels of similar intensity are likely to belong to the same tissue class. This is a very natural assumption and can be implemented by using a region-labeling  algorithm. The algorithm implemented in this work used the MATLAB function bwlabel(). This function takes a binarized volume and outputs a label for each detected connected region.</p><p>It was found that in three-dimensional space, the connective tissue fibers link the larger tissue structures to each other, as anticipated by prior knowledge of this anatomy. As such, running the region-labeling algorithm in three dimensions did not provide useful results. However, by labeling regions in two-dimensional space, it is possible to separate the connective tissue regions from the larger skin and muscle masses. A representative slice of this feature is shown in <ref type="figure">Fig 6.   Fig. 6</ref>. Each connected region in the volume was assigned a unique integer label. The labels were then normalized to a maximum value of one.</p><p>The sizes of each of these connected regions can also be usefully incorporated into the feature space. As the connective tissue regions (the smallest connected regions) were found to be the most difficult to classify, the region-size feature was chosen to emphasize clustering these small regions together. This was achieved by summing the number of pixels in each region and then thresholding the labeled volume so that only the regions significantly smaller than the mean region size were kept <ref type="figure" target="#fig_4">(Fig. 7)</ref>. 3) Intensity: Voxel intensity naturally makes up one feature. Alone, this is in no way sufficient for characterization, as the different water-based tissue types produce similar signals (see <ref type="figure" target="#fig_0">Fig. 1</ref>). Towards the edges of tissue regions, the MRI signal decays, and as such there is a broad overlapping of intensities between the tissue types. These variations were accounted for by assigning the median voxel intensity over each connected region to every voxel within that region. <ref type="figure">Fig. 8</ref>. The median intensity value over each region in <ref type="figure">Fig. 6</ref> was assigned to every voxel within that region to promote uniform classification by region and voxel intensity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4) Spatial Distribution:</head><p>Again, referring to <ref type="figure" target="#fig_0">Fig 1,</ref> it can be seen that there is a significant macroscopic distribution of tissues in the y-direction (vertical). It is possible to take advantage of this distribution by using the y-position of each voxel as a feature.</p><p>Experimentation was done with using polynomial weightings of the voxel locations to try to enforce prior knowledge about the expected spatial distributions of the water-based tissues. However, a simple logarithm of the vertical position (with respect to the orientations of the slices as presented in the figures in this work) was found to effectively enforce the expected spatial distributions of tissues while preserving the ability to generalize to future datasets. 5) Image Gradients: Additionally, there are spatial variations in pixel intensity throughout each tissue. As a particular example, the connective tissues (thin tendrils as seen in <ref type="figure" target="#fig_0">Fig. 1</ref>) display a bright signal of a width on the order of 1-2 pixels. In an attempt to characterize such spatial variation, local gradients in the x-and y-directions are used as features. These gradients are calculated with a two-dimensional convolution of the image data with appropriate kernels, defined as: In equations 3 and 4, G x and G y are the local gradients in the x-and y-directions respectively, and * is the convolution operator.</p><formula xml:id="formula_1">G x = Im * −1 1 (3) G y = Im * −1 1<label>(4)</label></formula><p>6) Feature Space Weighting: The complete feature space can be represented as in Eqn. 5. S total is the complete signal mask, S water and S fat the water and fat signal masks, R label the connected region labels, and R size the sizes of the connected regions. I i denotes the intensity of the ith pixel, y i denotes the normalized and weighted y-position (vertical) of the ith pixel, and, as before, G x,i and G y,i are the local gradients calculated for each pixel.</p><formula xml:id="formula_2">x (i) =               S total S water S fat R label 10R size I i 2y i G x,i G y,i              <label>(5)</label></formula><p>Multiplicative weightings were added to the region size and y-location features in order to encourage the algorithm to emphasize these features over the rest, as these were found to produce better results when weighted.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS</head><p>Clustering was run on the water-only and fat-only volumes ( <ref type="figure" target="#fig_0">Fig. 1 and Fig. 2</ref>, respectively) using the features defined in the previous section. By running kmeans on this feature set, a complete acoustic map is obtained <ref type="figure" target="#fig_0">(Fig. 12)</ref>. For the sake of providing a visualization of the data, each of the images displayed throughout this work are of the same two-dimensional slice of the larger three-dimensional volume. The clustering was successfully applied to the entire volume.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. DISCUSSION AND CONCLUSIONS</head><p>Overall, excellent qualitative results were achieved. As is to be expected, some misclassifications must be accepted, as any MRI acquired at this resolution will have low SNR and contrast. The feature space was specifically defined with this in mind in order to produce benign misclassifications whenever possible.</p><p>In medical ultrasound, images are constructed based on acoustic reflections. Such reflections occur when a propagating acoustic wave encounters an acoustic impedance mismatch. Larger mismatches produce larger reflections. This aspect of ultrasound physics was used to guide the definition of "benign" and "malignant" misclassifications.</p><p>A benign misclassification was defined to be a classification of either skin or muscle voxels into the connective tissue class. As long as kept to small numbers, these misclassifications will have negligible effect on simulation results.</p><p>There are two types of misclassifications defined as malignant for this application. The first was defined to be any deep classification of a fat voxel as water-based tissue or water-based voxel as fat. Here, I use deep in the anatomical sense (that is, an example of this misclassification would be an erroneous voxel in the middle of a piece of muscle labeled as fat). This type of error was heavily influenced by the Rician noise inherent in MRI scan data and was nearly eliminated by the addition of the connected regions feature <ref type="figure">(Fig  6)</ref>.</p><p>The second malignant misclassification type is the classification of any tissue voxel as "background" or "empty space." Such erroneous voxels would produce extremely large imaging artifacts, the impedance mismatch between any tissue and empty space is large. The preliminary results presented in the Milestone suffered greatly from these misclassifications.</p><p>Much of the subsequent work involved incorporating features and preprocessing steps to eliminate these errors. The inclusion of a more sophisticated image registration transform to ensure alignment between the fat and water volumes along with inclusion of the connected region and binary signal features allowed for the almost complete removal of these misclassifications.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. FUTURE WORK</head><p>The results presented in <ref type="figure" target="#fig_0">Fig. 12</ref>, are more than satisfactory to serve as a dataset for preliminary ex vivo simulations. As mentioned, it is desired to translate this process to usage with in vivo scan data, which will suffer a further reduction in SNR and image contrast.</p><p>Investigations into the robustness of this algorithm to the presence of these less ideal conditions will need to be performed.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Selected slice from the water-only dataset. Gray levels closer to white indicate a stronger water signal at that pixel.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Selected slice from the fat-only dataset. Gray levels closer to white indicate a stronger fat signal at that pixel.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>Thresholding the normalized fat signal dataset gives a binary mask corresponding to voxels to be associated with fat-based tissues.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 .</head><label>5</label><figDesc>The water and fat features were combined to provide a binary mask to encourage the separation of tissue voxels from background noise.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7 .</head><label>7</label><figDesc>Thresholding out the largest of the regions leaves a fair estimate of voxel regions expected to relate to the connective tissues class.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 9 .</head><label>9</label><figDesc>Taking a weighted logarithm of the vertical voxel locations enforces the prior expectation regarding the spatial distribution of abdominal tissues.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 10 .</head><label>10</label><figDesc>The convolution described in Eqn. 3 produces a volume with local horizontal gradients represented by voxel intensity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 11 .</head><label>11</label><figDesc>The convolution described in Eqn. 4 produces a volume with local vertical gradients represented by voxel intensity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 12 .</head><label>12</label><figDesc>The k-means algorithm produces an integer-labeled map- ping of the dataset. A 2D slice of the labeled tissues with each tissue class represented by a different grayscale value is provided. In order of increasing "whiteness," the classes are background (black), fat, muscle, skin, and connective tissue (white).</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reverberation clutter from subcutaneous tissue layers: Simulation and in vivo demonstrations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">J</forename><surname>Dahl</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">M</forename><surname>Sheth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ultrasound Med Biol</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Sources of image degradation in fundamental and harmonic ultrasound imaging: A nonlinear fullwave simulation study</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">F</forename><surname>Pinton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">E</forename><surname>Trahey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">J</forename><surname>Dahl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans Ultrason Ferroelect Freq Contr</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="1272" to="1283" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

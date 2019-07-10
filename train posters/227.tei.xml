@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Appliance-level Residential Consumer Segmentation from Smart Meter Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lily</forename><surname>Buechler</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zonghe</forename><surname>Chua</surname></persName>
+							<email>chuazh@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Appliance-level Residential Consumer Segmentation from Smart Meter Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions and Future Work Methods Results</head><p>Background:</p><p>• Deployment of distributed energy resources (e.g. solar, electric vehicles) is driving greater uncertainty in power demand, requiring expansion of residential demand response programs (curtailment/shift in power consumption in response to prices or incentives)</p><p>Objective:</p><p>• Perform consumer segmentation for DR program targeting based on appliance-level power consumption • Segment consumers based on three characteristics:</p><formula xml:id="formula_0">ℎ ℎ = log ( ) ( ) + log ( ) ( )</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset:</head><p>• </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Availability:</head><p>Methods:</p><p>• </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Flexibility:</head><p>• Linear regression (LR) with recursive feature selection • KNN regression • Random forest (RF) with recursive feature selection </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>K-Means clustering -Euclidean distance measure • Hierarchical clustering -Ward's linkage with symmetrized KL divergence distance measure: Appliance # of homes Analysis Air conditioner 129 V Refrigerator 103 V Dishwasher 82 V, A Clothes washer 80 V, A Dryer 62 V, A Electric vehicle 29 V, A Water heater 19 V, A Clothes washer + dryer 13 V, A Pool pump 9 V Total home demand 132 V, F Results V = variability, A = availability, F = flexibility • Gaussian Mixture Model (GMM) • Latent Dirichlet Allocation (LDA) Evaluation metrics: • Increase in availability: • Completeness score:Variability:• K-Means clustering -assign load profiles to clusters • Entropy of load profile assignment distribution: = − σ log ( ) • Hierarchical clustering -segment homes by load profile distribution</figDesc></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions:</head><p>• Consumer segmentation can yield up to a x2 increase in load availability during specific hours • Appliance-level cluster assignments can differ significantly from aggregate load cluster assignments, requiring separate segmentation analysis • Linear regression with feature selection yields highest accuracy for predicting consumer responsiveness to price Future work:</p><p>• Incorporate additional factors (day of week, season) into availability analysis • Perform analysis on larger dataset</p><p>Completeness score: </p></div>			</div>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

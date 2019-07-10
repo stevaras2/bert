@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Re-Evolutionary Algorithms (Combining Policy Gradient Methods in Reinforcement Learning with Evolutionary Algorithms)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Devang</forename><surname>Agrawal</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Dept. ftlili</orgName>
+								<orgName type="institution">ICME Dept</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaushik</forename><surname>Ram</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Dept. ftlili</orgName>
+								<orgName type="institution">ICME Dept</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sadagopan</forename><surname>Meche</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Dept. ftlili</orgName>
+								<orgName type="institution">ICME Dept</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dept</forename></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Dept. ftlili</orgName>
+								<orgName type="institution">ICME Dept</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fatma</forename><surname>Tlili</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Dept. ftlili</orgName>
+								<orgName type="institution">ICME Dept</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Re-Evolutionary Algorithms (Combining Policy Gradient Methods in Reinforcement Learning with Evolutionary Algorithms)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We aim to develop a hybrid evolutionary reinforcement learning algorithm and apply it to a classic control problem to prove its superiority over the standalone algorithms. We implement a policy gradient algorithm (Advantage Actor Critic -A2C) and an evolutionary algorithm (ES) for the cartpole problem on OpenAI gym. Subsequently, we combine A2C with ES for the cartpole problem to show that it performs better than the standalone algorithms.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Reinforcement Learning is a form of policy search algorithms which given an environment aims to find the actions to be taken to maximize cumulative rewards. Deep Reinforcement Learning (DRL) algorithms use neural networks to solve control problems which have high-dimensional state and action spaces by learning to map the state-action space to their corresponding rewards. While these algorithms proved to be effective in applications such as robotics, control and in games such as Go, they are known to suffer from some difficulties such as high sensitivity to hyperparameter settings and limited feature space exploration. A class of search algorithms which addresses these problems of DRL is the Evolutionary Strategies (ES). These algorithms fall under blackbox optimization, which estimate the parameters of the policy neural network to optimize the cumulative rewards with no regards to the given environment. While ES algorithms are more stable than DRL and can explore the feature space better, they suffer from low exploitation of the environment feedback signals and tend to have poor performances in most applications due to their high sample complexity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Related Work</head><p>Some of the main challenges that deep reinforcement learning algorithms, including policy gradient algorithm tend to suffer from are temporal credit assignment with sparse rewards, lack of exploration, and extreme sensitivity to hyperparameters tuning. Evolutionary Strategies tend to overcome these challenges by probabilistically selecting promising candidate out of a population of candidates thus allowing more exploration. <ref type="bibr" target="#b2">(Khadka and Tumer, 2018)</ref> combines Evolutionary Strategies algorithm and a Deep RL agent by first training some RL actors and then periodically injecting gradient information into the EA population.</p><p>This paper <ref type="bibr" target="#b1">(Houthooft et al., 2018)</ref> introduces an evolved differentiable loss function where the loss is parametrized via temporal convolutions over the agent's experience which uses the previous knowledge and experience of the agent for future tasks. <ref type="bibr" target="#b4">(Pourchot and Sigaud, 2018)</ref> combines simple cross-entropy method (CEM) and TD3 (a deep reinforcement learning algorithm) by first initializing a population of actors and dividing it into two groups. The first group is directly evaluated while the second group follows the direction of the gradient given by the critic in TD3.</p><p>Similarly, in the work of <ref type="bibr" target="#b0">(Colas et al., 2018</ref>) a replay buffer is filled with exploratory trajectories and then DDPG is run on that data. While this approach doesn't use ES directly it is similar to ES in focusing on the diversity of the learned policies.</p><p>Finally <ref type="bibr" target="#b3">(Maheswaranathan et al., 2018)</ref>'s work uses the gradients from a gradient descent algorithm such as Q-learning to modify the covariance matrix of an ES algorithm to change the distribution from which the population of candidates is sampled.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Environment</head><p>A pole is attached to a cart which moves along a frictionless track. The system is controlled by moving the cart right or left. The pole starts upright and the goal is to prevent it from falling over. The objective of this task is to keep the cartpole upright continuously for 200 timesteps which corresponds to a reward of 200. <ref type="figure">(</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Advantage Actor Critic</head><p>We implement an Advantage Actor Critic (A2C) policy gradient algorithm for the cartpole problem. We get a probability distribution for the actions for each state and we choose actions sampled from that distribution. The advantage is calculated by finding the difference between an estimated average future reward and the average current value of the state. These advantages are used to scale our current predictions directly into our policy gradient.</p><p>Figure 2: actor-critic architecture <ref type="bibr" target="#b5">(Sutton and Barto, 1998)</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1">Policy Gradient</head><p>For the policy gradient, we output a policy to take an action given a specific set of states. This policy gradient algorithm will learn a set of weights for each action based on the observations within the environment. We minimize the negative of the logarithm of probabilities of each action weighted by the advantages. This process is done using TensorFlow and the loss is minimized using AdamOptimizer for backpropagation. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.2">Value Gradient</head><p>For the value gradient, we learn parameters that compute the advantage of taking a particular action given an observed state. We minimize the least squared error between future reward value estimations and current average reward value estimations, then update the weights for our value gradient neural network for calculating our current advantage estimations. New values are calculated by using a discounted Monte-Carlo simulation, which will place importance on short-term reward rather than long-term reward using a discount factor. Once we can compute an advantage, we can then feed this directly back into our policy gradient. For a single observation, we utilize a hidden layer with 10 neurons with the ReLU activation function, and then its output is subtracted from the DMC (Discounted Monte-Carlo) value of that state, and we obtain an output representing the advantage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Evolutionary Strategies</head><p>We spawn instances of the parameters which are jittered by random noise. One episode of cartpole is run with each parameter instantiation and the total reward at the end of the episode is calculated. This is computationally efficient because we can parallelize the code to run each episode with its parameter instantiation.</p><p>One way of creating an offspring of parameters is to weight the noises (of each parameter instanti- <ref type="figure">Figure 4</ref>: Value Gradient architecture using a single hidden layer ation) with a value proportional to the total reward obtained at the end of the episode with that parameter instantiation produced by the noise. We normalize the total rewards obtained for each parameter instantiation in our population. We linearly combine these noises (proportional to their total rewards), normalize this and we update the parameters accordingly.</p><p>Another way is to choose the parameters corresponding to the maximum reward obtained by that parameter instantiation at the end of that episode. In the first plot <ref type="figure">(Fig: 6</ref>) the candidate parameters of the population are weighted by their corresponding rewards. In the second plot <ref type="figure">(Fig: 7)</ref> only the candidate which corresponds to the maximum reward is chosen. The plots shows that taking the best candidate parameters is better than the weighted combination of the candidates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Vanilla E-A2C</head><p>We combine ES and A2C iteratively in a sequence. Each iteration of algorithm spawns parameters and makes an update by choosing the best candidate </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Preliminary Experiments</head><p>We use the weighted combination of parameters proportional to the rewards obtained on the episode for this combination. The performance evaluation parameter we use for the comparison of these algorithms is the number of episodes it takes to reach a reward of 200 (which implicitly means that the weights have undergone sufficient training to produce a satisfactory total reward). The number of instances of parameters we spawn (noises we generate) is set to 50, we used a noise standard deviation of 0.1 and a learning rate of 0.001 for the ES algorithm. We expect the ES algorithm to take the longest time to reach a reward of 200 and expectedly so it takes 1160 episodes to reach a reward of 200 averaged over 100 different training sequences. The A2C algorithm takes 266 episodes to reach a reward of 200 averaged over 100 different training sequences. Our vanilla evolutionary A2C algorithm takes 226 episodes to reach a reward of 200 averaged over 100 different training sequences, and we observe that it performs better than both the standalone algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Evolutionary A2C</head><p>In our final combination, ES spawns a population of parameters and A2C updates each member of the population by performing a series of gradient descent updates. Finally ES chooses the best parameter vector (based on the rewards obtained) in the population, and injects noise onto this parameter vector to generate the new population.</p><p>We inject noise in the parameters of the policy gradient function which contain the information of the action choices for all of the 200 states for a given episode. A2C trains for 5 episodes in each epoch we have plotted the rewards for. <ref type="figure">(Fig: 9)</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Mountain Car Environment</head><p>We extended our algorithm to the mountain car environment <ref type="figure">(Fig: 10)</ref> but our evolutionary A2C algorithm failed to learn meaningful value to the parameters since there is an exploration issue in the task. Policy gradient methods face an issue in this environment because the rewards are very sparse. So even if the car explores the correct side of the track, there is no gradient descent update made by A2C to the policy since this is an onpolicy algorithm and does not re-use the data to a later state when it actually reaps the reward for that exploratory action. Hence, for this problem off-policy algorithms like DQN are effective. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head><p>The training converges when the average reward reaches 200 consistently. A2C reaches this state at around 75 epochs <ref type="figure" target="#fig_5">(Fig: 11)</ref> but it has a lot of variation due to the stochasticity in the selection of actions. ES has a lot of variation at the beginning but stabilizes after 150 epochs <ref type="figure">(Fig: 12)</ref>. Vanilla E-A2C reaches this state after 125 epochs <ref type="figure" target="#fig_1">(Fig: 13)</ref>. The evolutionary A2C <ref type="figure">(Fig: 14)</ref> is clearly superior to the other three algorithms in the sense that it is the quickest to converge and the variations in the reward are minimal after reaching this state.</p><p>The code for each of these algorithms is attached herewith: https://drive.google.com/open?id=19OUh2 Rywr97RsLUmFC t LaBIRB − ytey5 </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusions and Future Work</head><p>We conclude that our combined evolutionary actor critic algorithm is most efficient at the cartpole task compared to the standalone algorithms we've chosen. We observe that ES instantiating a population of policy gradients is effective in that it explores better and uses the environment signals to arrive at the optimal solution quickly. We could explore combinations of Proximal Policy Optimization with a similar evolutionary strategy to solve tasks on MuJoCo.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Contributions</head><p>Literature study of previous work on combining policy gradient algorithms with ES -Fatma Implementing a standalone A2C -Kaushik Ram Implementing a standalone ES -Devang Vanilla combination of A2C and ES -Devang and Fatma Final combination of A2C and ES -Devang and Kaushik Ram Extending combined algorithm to the mountain car problem -Devang Writing the report -Kaushik Ram and Fatma</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Figure 1: Cartpole problem on OpenAI Gym</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Policy Gradient architecture which out- puts predictions of each action</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5 :</head><label>5</label><figDesc>Evolutionary Strategies</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :Figure 7 :Figure 8 :</head><label>678</label><figDesc>Weighted Combination of Candidates Figure 7: Maximum Candidate Parameters or the weighted combination of candidates. The weights updated by the ES is passed on to the pol- icy gradient function of the A2C algorithm which performs a gradient descent update. ES spawns a population of parameters from the gradient de- scent updated parameters from A2C and the se- quence continues. (Fig: 8) Figure 8: Vanilla E-A2C</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 9 : A2C Figure 10 :</head><label>9A2C10</label><figDesc>Evolutionary A2C Figure 10: Mountain Car Problem</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 11</head><label>11</label><figDesc>Figure 11: A2C</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Gep-pg: Decoupling exploration and exploitation in deep reinforcement learning algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cédric</forename><surname>Colas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olivier</forename><surname>Sigaud</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pierre-Yves</forename><surname>Oudeyer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1802.05054</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rein</forename><surname>Houthooft</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Phillip</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Isola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Bradly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Filip</forename><surname>Stadie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Wolski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pieter</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Abbeel</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1802.04821</idno>
+		<title level="m">Evolved policy gradients</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shauharda</forename><surname>Khadka</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kagan</forename><surname>Tumer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1805.07917</idno>
+		<title level="m">Evolutionary reinforcement learning</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Guided evolutionary strategies: escaping the curse of dimensionality in random search</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Niru</forename><surname>Maheswaranathan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luke</forename><surname>Metz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George</forename><surname>Tucker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jascha</forename><surname>Sohl-Dickstein</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.10230</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Cemrl: Combining evolutionary and gradient-based methods for policy search</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aloïs</forename><surname>Pourchot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olivier</forename><surname>Sigaud</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1810.01222</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Reinforcement learning: An introduction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><forename type="middle">S</forename><surname>Sutton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">G</forename><surname>Barto</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

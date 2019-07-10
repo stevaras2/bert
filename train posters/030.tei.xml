@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Dynamic Throttle Estimation by Machine Learning from Professionals</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nathan</forename><surname>Spielberg</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Alsterda</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Gerdes</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Dynamic Throttle Estimation by Machine Learning from Professionals</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Shelley, the Dynamic Design Lab's automated TTS racecar, uses an empirical map (below) to select throttle commands necessary to follow a desired speed profile (below right). We aim to improve this map in hopes to follow desired speed more closely and race faster laps! <ref type="bibr">[1]</ref> 12 variables measured at 200 Hz from several autonomous and professionally piloted test runs compose our feature set. Throttle commands form our targets. The feature set was also augmented with delay states from previous time steps, as illustrated above.  This work shows strong potential to provide a throttle function which may outperform the vehicle's current empirical map. The Random Forest algorithm, supplied with vehicle and engine states which are available in real time, demonstrates capability to accurately predict the throttle necessary to achieve desired accelerations within a MSE of 1.8% and within a 90% confidence bound of ± 2.1%.</p><p>In the near future, we will integrate this model onto Shelley for experimental validation. To do so, the model must be optimized for real time performance and the existing control architecture.</p><p>Thanks to: Prof. John Duchi, Prof. Chris Gerdes, the NSF, DDL, VW and ERL When delay states of past inputs are not included, the average MSE is 30% for a forest of ten trees. When delay states are included, the average MSE reduces to 2.5%, showing the system's high dependency on time series feature data.</p><p>Performance improved with additional trees in the forest, but increased less that 1% after 80 trees. Computational time also increased with number of trees in the forest. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Sparse Principal Component Analysis was then performed to identify features with redundant information, as shown on the left. Steering Angle and Yaw Rate were subsequently removed from our features with negligible effect on performance.[4]   </figDesc><table>SPCA: 
+X = UΣV T 
+
+X = Feature Set Matrix U = Non-Unitary Basis 
+Σ = Singular Values 
+V = Loading Matrix 
+
+[1] Kritayakirana, Krisada, and J. Christian Gerdes. Controlling an Autonomous 
+Racing Vehicle. ASME Dynamic Systems and Control Conference (2009) 
+[2] L. Breiman. Random forests. Machine Learning, 45(1):5-32, (2001) 
+[3] Neural Network Toolbox™ Reference. Vers. R2016a. Natick, MA: The 
+MathWorks, Inc. 
+[4] Zou, Hui, Trevor Hastie, and Robert Tibshirani. 
+Sparse Principal Component Analysis. Journal of 
+Computational and Graphical Statistics 15(2): 265-286, 
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Using the Random Forest algorithm, predicted throttle is shown (left) to follow actual throttle through a test trial with 1.8% mean squared error (MSE). A shorter segment is shown (right), illustrating that 84% of test throttle values fell within our model's gray confidence region. Our model was confident that 90% of test throttles would fall within ± 2.1% of predicted values.[2]   </figDesc><table>90% 
+Confidence 
+Interval </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

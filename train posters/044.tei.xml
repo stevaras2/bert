@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting an Aptamer&apos;s Target Binding Affinity</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Naber</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Electrical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting an Aptamer&apos;s Target Binding Affinity</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Support Vector Machine (SVM) Classifier</head><p>The dataset was divided into training (60%) and test (40%) subsets. The top 40% of aptamers were labeled as positive examples. Various string kernels were used including spectrum and several variations of mismatch kernels. The kspectrum kernel measures similarity based on the number of common k-subsequences. Mismatch kernels measure similarity based on spatial nucleotide sequence differences. The optimization was carried out using stochastic gradient descent. The logarithm of fluorescence was used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Gaussian Process Optimization (GP-UCB)</head><p>The dataset was treated as the entire domain. That is, following the updates made with a new noisy measurement, the aptamer in the dataset which maximized the upper confidence bound was chosen. The weighted mismatch kernel was used and the logarithm of fluorescence was used.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>Aptamers are short nucleotide sequences that can very specifically bind target molecules. In the process of finding an aptamer that binds a target tightly, several thousand other aptamers are generated and evaluated. This project had two goals aimed at using all of this extra information: 1. Develop a classifier that would predict whether or not a proposed aptamer would perform well. 2. Develop a model that can be used to propose new high-performing aptamers. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CS229 Spring 2016</head><p>The SVM classifier performs well with the mismatch kernels, which incorporate spatial information. This makes sense because the location of a nucleotide in the string determines secondary and tertiary folding; some locations will be more sensitive to swapped nucleotides than others. This suggests creating a kernel that weights each location within the string differently depending on sensitivity to mismatches. The GP optimization using UCB results show convergence to the mean function. Future work will combine this with Monte Carlo search methods to propose new high-performing aptamers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure Kernel</head><p>Training Accuracy </p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

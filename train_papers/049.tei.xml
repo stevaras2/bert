@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Stock Prices and Analyst Recommendations</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Saumitra</forename><surname>Thakur</surname></persName>
+							<email>sthakur2@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">SUID</orgName>
+								<orgName type="department" key="dep2">SUID</orgName>
+								<orgName type="institution" key="instit1">SUID</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+								<orgName type="institution" key="instit4">Stanford University</orgName>
+								<address>
+									<postCode>05921351, 06005208, 05795996</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Theo</forename><surname>Vadpey</surname></persName>
+							<email>tvadpey@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">SUID</orgName>
+								<orgName type="department" key="dep2">SUID</orgName>
+								<orgName type="institution" key="instit1">SUID</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+								<orgName type="institution" key="instit4">Stanford University</orgName>
+								<address>
+									<postCode>05921351, 06005208, 05795996</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sandeep</forename><surname>Ayyar</surname></persName>
+							<email>ayyars@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">SUID</orgName>
+								<orgName type="department" key="dep2">SUID</orgName>
+								<orgName type="institution" key="instit1">SUID</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+								<orgName type="institution" key="instit4">Stanford University</orgName>
+								<address>
+									<postCode>05921351, 06005208, 05795996</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Stock Prices and Analyst Recommendations</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Since the mid-2000s, virtually all financial trades are executed via computers. Much of that trading occurs algorithmically, with computers executing purchases and sales in response to a market made heavily of other algorithmic traders. <ref type="bibr" target="#b0">1</ref> About 66 percent of all equity transactions in the United States now are done via high-frequency (algorithmic) trading. <ref type="bibr" target="#b1">2</ref> As a consequence, market behavior has fundamentally changed. In several occurrences in the past decade, markets experienced "flash crashes" where one algorithm making a big sale triggered a waterfall of other algorithms to respond similarly and the market tumbled to a fraction of its value within seconds. <ref type="bibr" target="#b2">3</ref> The rise in computerized trading has been accompanied with increasing efforts to use machine learning to predict future market behavior. Previous research has focused on forecasting movements in price (either as a continuous price or in discrete intervals) or forecasting decisions to buy or sell. These studies have met with mixed results. For both practical and theoretical reasons, the price of traded equities remains difficult to predict, with the task described as "difficult if not impossible" by some. This is due both to the large number of possible features that could be used to train an algorithm as well as the lack of consensus on what, theoretically, ought to underpin the valuation of a security. <ref type="bibr" target="#b3">4</ref> Researchers have tried a range of techniques, including supervised learning techniques, artificial neural nets, backpropagation networks, hybrid Kohonen self organizing maps, and other methods. <ref type="bibr" target="#b4">5</ref> Several prior projects in this course have examined financial trading as well.</p><p>Although computerized trading has left its mark on equities markets, much of equity transaction today still occurs based on value judgments by humans. These judgments, in turn, often reflect the sentiment of professional equity analysts employed by financial institutions like Goldman Sachs. Indeed, many computer scientists have shifted their focus away from forecasting prices or other stock technical properties and instead focusing on forecasting perceptions. <ref type="bibr" target="#b5">6</ref> A large number of traders conduct market research through Bloomberg terminals. Bloomberg is the market leader in distributing financial data. 7 Bloomberg's market power is so substantial that the UK government had to postpone a major sovereign debt buyback when the Bloomberg network went offline briefly in 2015. <ref type="bibr" target="#b6">8</ref> For public equities, Bloomberg offers a consensus analyst recommendation from 1-5 (strong sell to strong buy) that reflect the aggregate opinion of equity analysts. Prior research on how these recommendations impact the market suggests that they may actually move markets in the opposite direction (fueled, perhaps, by a perception that others with the same information will move in the direction of the recommendation). Regardless of direction, researchers agree that such recommendations have a major impact on market perceptions and prices. <ref type="bibr">9</ref> We take a novel approach to applying supervised learning to financial modeling. In addition to forecasting the price of an equity in the future, which we treat as a regression problem, we also forecast Bloomberg consensus analyst recommendations, as a classification problem. (Analyst recommendation categories between 1-5). As discussed previously, these consensus numbers have tremendous power to shape market perceptions and are associated with detectable movements in the value of the stock. Prior studies have forecasted price, but little to nothing has been published on forecasting analyst recommendations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. DATASETS</head><p>We collected over 130 data sets spanning about 8 years (quarterly) for each company in the Standard and Poor 500 (S&amp;P 500) and the Russell 2000. The S&amp;P 500 consists of the 500 largest companies by market capitalization, while the Russell 2000 consists of 2000 small companies. We were curious how our methods would perform between the two datasets. However we ended up abandoning the Russell 2000 due to the large amount of missing data relative to the S&amp;P companies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. METHODS:</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Data Processing</head><p>The data took the form {X i , y i }, where X i is a matrix of features in R 32×133 for company i. The rows of X i represented time, the columns represented the features. The label for company i was given by y i in {1, 2, 3, 4, 5} 32 . Rows corresponded to time in {2006Q2, ..., 2015Q4}.</p><p>We thinned the original dataset, including only features and companies with an adequate number of observations. We prioritized keeping companies in the dataset over features. From an initial 133 features, and 505 companies, we narrowed the dataset to 499 companies and 100 predictors, which included balance sheet items, like cash stock and goodwill, income statement items like revenue, and several macroeconomic indicators, e.g., GDP growth, 10-year treasury rate.</p><p>We added percentage change over the previous period as a feature for each existing feature. We anticipated that in some cases the percentage change from the previous quarter would be more significant than the quanitity in a single quarter.</p><p>We made an important modeling decision to treat each feature as a random variable, and assumed that this was iid across companies. Using this assumption, we restructured the data such that instead of a sequence of matrices,</p><formula xml:id="formula_0">[X 1 , y 1 ], [X 2 , y 2 ], ..., [X 499 , y 499 ], we operated on a large matrix:      X 1 y 1 X 2 y 2 . . .</formula><p>. . .</p><formula xml:id="formula_1">X 499 y 499     </formula><p>In order to attempt to preserve the time information, before restructuring in this way we applied a simple autoregressive model to each data series (on each company) to find the number of significant lags. Knowing that linearly dependent features would be removed by our feature selection procedure later on, we chose the maximum number of lags that a feature demonstrated for any company, and included those lags as features.</p><p>Missing values were a significant problem in our dataset. We chose to approach the problem with 0-1 dummy variables. We replaced missing data with an arbitrary value, 0, and included a dummy feature where each element corresponding to a missing value took a value of 1, and was 0 otherwise. We found that this method conformed with our lack of an opinion with respect to missing values. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Model training and Evaluation</head><p>We randomly divided our data samples into training (80%) and test sets (20%). We trained several supervised learning models on the training data using 10 fold cross-validation to evaluate model performance. We also performed parameter tuning using 10 fold-CV to select the optimum performing metrics for each model algorithm. We then fit our model on the entire training set and predicted responses on the test set. We divide our learning tasks into two parts as seen in <ref type="figure" target="#fig_0">Fig 1:</ref> Classification for predicting the analysts stock ratings and Regression for predicting Stock prices. Accordingly, we use different metrics for evaluating the performance of our models. For the classification problem, we use metrics such as "Accuracy", "Specificity", "Sensitivity", "Positive Predictive Value (PPV)" and "Negative Predictive value (NPV)".</p><formula xml:id="formula_2">Accuracy = T P + T N T P + T N + F P + F N (1) Sensitivity = T P T P + F N<label>(2)</label></formula><p>Specif icity = T N F P + T N (3)</p><formula xml:id="formula_3">P P V = T P T P + F P (4) N P V = T N T N + F N<label>(5)</label></formula><p>where, T P = true positive rate, T N = true negative rate F P = false positive rate, F N = false negative rate For regression, we use root mean squared error (RMSE) to evaluate models</p><formula xml:id="formula_4">RM SE = 1 n × n i=1 × y i −ŷ i y i</formula><p>We briefly describe some of the methods used: 1) Support Vector Machines: We used support vector machines for classification and support vector regression, an extension of SVM, where the response is continuous instead of binary, for regression. SVM's are quite effective in highdimensional spaces and fairly versatile in terms of choosing different kernels e.g linear, polynomial, radial basis functions. We select the optimum models by tuning parameters such as cost, gamma and kernels.</p><p>For classification, since we have K &gt; 2 classes, we used the one versus all classification approach. Here we fit K SVMs, and each time we compare one of the K-classes to the remaining K − 1 classes. For example if β 0k , β 1k , ...., β pk are the parameters that result from fitting an SVM comparing the kth class (coded as +1)to the others (coded as −1). If x * is any test observation, then SVM assigns this observation to the class for which β 0k + β 1k x * 1 + β 2k x * 2 + .... + β pk x * p is the highest, as this corresponds to a higher likelihood that the test observation belongs to the kth class rather than any of the other classes. In case of support vector regression, the method seeks coefficients that minimize an epsilon loss function, where only residuals (y i -β 0 -β 1 x i1 -.. -β p x ip ) larger in absolute value than some positive constant contribute to the loss function.</p><p>2) K-nearest Neighbors: K-nearest neighbor is a nonparametric method where given a positive integer K and a test observation x 0 , KNN first identifies K points in the training data that are closest to x 0 , represented as N 0 . KNN then estimates the conditional probability of class j as the fraction of the number of points in N 0 whose response values equal j. Then KNN classifies the test observation x 0 to the class with the highest probability by applying Bayes rule. KNN is useful as the cost of the learning process is not large and no assumptions need to be made about the characteristics of the concepts. However, in our case KNN is computationally expensive since number of features is large. We used 10-fold CV to select number of neighbors. In KNN regression, instead of combining discrete predictions of K-neighbors, we combine continuous predictions. These predictions are combined by averaging.</p><p>3) Lasso, Ridge based methods: In Ridge method, a linear model is fit by penalizing the coefficients using L2 norm by virtue of a tuning parameter λ. As λ approaches a large value, the 2nd term in the Eqn 6 called the shrinkage penalty, grows and the coefficient estimates approach 0. This forces some of the coefficients towards zero. The ridge method will therefore include all the p predictors in the model which is a disadvantage if we have a large number of predictors. In Lasso method, the coefficients are penalized using L1 norm by λ (Eqn 7. As λ becomes large enough, some of the coefficients will actually shrink to zero. Hence, Lasso performs variable selection and the models are easier to interpret as it will give rise to a sparse model. We select the value of λ using 10 fold CV.</p><formula xml:id="formula_5">n i=1 (y i − β 0 − p j=1 β j x ij ) 2 + λ p j=1 β 2 j (6) n i=1 (y i − β 0 − p j=1 β j x ij ) 2 + λ p j=1 |β j |<label>(7)</label></formula><p>4) Tree-Methods: Tree-based methods involve separating the features into a number of regions. We then estimate the mean of training samples in the region for which a data point which we want to predict belongs to. Basic trees are simplistic and do not generalize very well. Hence we evaluate approaches such as boosting, bagging and random forests. Bagging takes a subset of samples of the training observations and fits several trees. The predicted values on are then averaged which helps to reduce the high variance in a basic tree. Random forests gives a slight improvement over bagging by decorrelating the trees by randomly sampling m predictors from the full set of p predictors as split candidates every time a split is considered. Boosting involves sequentially growing trees where each tree is grown by using information from previous trees. We optimize parameters of these tree based methods by estimating the out-of-bag error estimates. As we are dealing with K &gt; 2 classes (multinomial), we used grouped-lasso penalty on all K-coefficients of particular variables. This shrinks them to zero or non-zero together. <ref type="figure" target="#fig_1">Fig  2 shows</ref> the cross-validation curve along different values of λ. The λ which gives the minimum CV deviance is chosen and corresponding coefficients at that λ are selected by the model. The nature of the label we tried to predict was such that in most cases, the previous label (included as a feature) was the same as the current label. Consequently, for all classification results, we felt an appropriate naive benchmark would be the percent of labels perfectly predicted by the previous period's label. This was 82.4% in our dataset. As seen in <ref type="table" target="#tab_0">Table II</ref> and <ref type="figure">Fig 3,</ref> most of our results were close to this in terms of accuracy, outperforming the naive estimate slightly (by around 4%, with the exception of SVM). Overall, random forests was the best performing classifier. While most classifiers had high accuracy, specificity, PPV and NPV, they suffered from low sensitivity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Regression</head><p>For regression, we started out by evaluating ordinary least squares model for predicting stock prices which had a test RMSE of 41.1. To improve performance, we applied shrinkage   Overall, with respect to classification, most of our models mildly improved over the naive benchmark, achieving accuracy of around 86% compared with 82% (the naive benchmark). It would be interesting to see if the information captured by this improvement would be valuable for security selection. A simulation and related security selection procedure could give answers to this.</p><p>With respect to regression, we achieved great improvements over simple linear regression by applying different approaches. We managed to get RMSE from 41.1 to 27.0 in the best model (via boosting).</p><p>Some ways in which we might improve our error or extend analysis: -We might include polynomial terms, nonlinear transformations, or interaction terms in the models. -It might be more interesting to predict analyst labels further in the future because they are less related to the previous label.</p><p>-It might be interesting to model the analyst recommendations as Markov processes, and calculate metrics such as average holding time.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Overall Pipeline for Predicting Components of Portfo- lios</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>10-fold CV showing Multinomial Deviance of Lasso Fit</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Plots of (a) Ridge Coefficients as a function of λ (d) Lasso coefficients as function of λ Fig. 5: 10 fold CV showing Mean Squared Error of Lasso Fit V. DISCUSSION:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Parameter Tuning for Selected Models</figDesc><table>Classification Model 
+Tuning Parameters 
+Lasso, Ridge Based Methods 
+regularizing/penalizing term 
+Support Vector Machine 
+kernel function, cost, gamma 
+Decision Trees 
+number of trees 
+Random Forests 
+number of estimators, number of features 
+K-Nearest Neighbors 
+number of neighbors 
+
+IV. RESULTS: 
+A. Classification 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Fig. 3: Performance Comparison of Different Classifiers for Analyst Recommendations methods such as Lasso and Ridge regression. Fig 4 shows the result of coefficients being shrunk towards zero 4a in case of ridge regression and completely to zero 4b in case of lasso. Fig 5 shows the reduction in training mean squared error(MSE) as a function of log λ values in Lasso where MSE increases with increase in the penalty term a dictated by the regularization parameter λ.As we had a large number of predictors, Lasso works better than ridge regression as it performs feature selection and selects only non-zero coefficients in the model for training. Accordingly, as we see in table III, applying Lasso results in a test RMSE of 33.1 while ridge regression results in test RMSE of 38.1. Other methods such as SVM, and tree based methods perform slightly better than Lasso regression, with Boosting giving us the lowest test RMSE of 27.0. Overall, while we managed to significantly reduce the test error from simple linear regression, there is still room for improvement.</figDesc><table>Performance Comparison of Different Classifiers 
+for Analyst Recommendations (naive benchmark accuracy 
+82.4%) 
+
+Model 
+Accuracy Specificity Sensitivity 
+PPV 
+NPV 
+Lasso + Logistic Reg. 
+0.867 
+0.920 
+0.611 
+0.760 0.935 
+SVM 
+0.817 
+0.887 
+0.587 
+0.760 0.916 
+Random Forests 
+0.867 
+0.920 
+0.625 
+0.891 0.939 
+Decision Trees 
+0.864 
+0.920 
+0.617 
+0.621 0.929 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE III :</head><label>III</label><figDesc>Results for Regression: Stock Price Prediction</figDesc><table>Regression Model 
+Test Root Mean Squared Error 
+Linear Regression 
+41.1 
+Linear Regression with Ridge 
+38.1 
+Linear Regression with Lasso 
+33.1 
+Support Vector Regression 
+29.7 
+K-Nearest Neighbors (5) 
+39.3 
+Bagging 
+28.5 
+Random Forests 
+27.1 
+Boosting 
+27.0 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Rise of Computerized High Frequency Trading: Use and Controversy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Mcgowan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The. Duke L. &amp; Tech. Rev., i</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Fast traders face off with big investors over &apos;gaming</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><surname>Patterson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Wall Street Journal</title>
+		<imprint>
+			<date type="published" when="2010-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">The flash crash: The impact of high frequency trading on an electronic market</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Kirilenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">S</forename><surname>Kyle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Samadi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Tuzun</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Available at SSRN 1686004</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Predicting stock prices using a hybrid Kohonen self organizing map (SOM). In System Sciences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tony</forename><forename type="middle">;</forename><surname>Brabazon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">O</forename><surname>Afolabi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Olude</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">40th Annual Hawaii International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2000-09" />
+			<biblScope unit="page" from="48" to="48" />
+		</imprint>
+	</monogr>
+	<note>A Connectivist Approach to Index Modelling in Financial Markets</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Neural network applications in stock market predictions-a methodology analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">O</forename><surname>Afolabi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Olude</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">proceedings of the 9th International Conference on Information and Intelligent Systems</title>
+		<meeting>the 9th International Conference on Information and Intelligent Systems</meeting>
+		<imprint>
+			<date type="published" when="1998-09" />
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="255" to="263" />
+		</imprint>
+	</monogr>
+	<note>HICSS 2007. 40th Annual Hawaii International Conference on</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Collective intelligence: A new approach to stock price forecasting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">A</forename><surname>Kaplan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on</title>
+		<imprint>
+			<date type="published" when="2001" />
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="2893" to="2898" />
+		</imprint>
+	</monogr>
+	<note>Bloomberg increases market share lead over Thomson Reuters. The Baron</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Bloomberg Terminals Go Down Globally</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josie</forename><surname>Cox</surname></persName>
+		</author>
+		<ptr target="http://wealthmanagement.com/equities/do-analyst-investment-recommendations-really-drive-stock-performance" />
+	</analytic>
+	<monogr>
+		<title level="j">The Wall Street Journal</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<date type="published" when="2015-04-17" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

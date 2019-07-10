@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Human Activity Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aristos</forename><surname>Athens</surname></persName>
+							<email>aristos@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Navjot</forename><surname>Singh</surname></persName>
+							<email>navjot@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><surname>Blum</surname></persName>
+						</author>
+						<title level="a" type="main">Human Activity Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocessing:</head><p>Both logistic regression and SVM involved a preprocessing step of subtracting the mean and dividing by the standard deviation of the training set from each data point.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Logistic Regression</head><p>L2 regularization was employed along with Stochastic Average Gradient Descent [2] as a solver because of its scalability in speed for large datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Support Vector Machine</head><p>Radial Basis Function Kernel was used because of its ability to generate non-linear boundaries. The rbf kernel also performed better than the linear and polynomial kernels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Decision Trees Gini Loss:</head><p>where pmk is the proportion of examples in class k present in region Rm, and qm is the proportion of examples in Rm from tree T with |T| different Rm regions [3]</p><p>Boosting: AdaBoost--ensembles 500 weak decision trees. Random Forest: Ensembles 100 trees, where only the square root of the total number of features are considered at each split.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deep Learning</head><p>MultiLayer Perceptron: Neural network architecture consisting of two hidden layers of size (n, 512) and (512, 512), input layer with size (n, 1), output one-hot encoded to size (k, 1). We use ReLU activation and categorical cross entropy loss.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Executive Summary</head><p>Activity recognition is an important task in several healthcare and consumer product applications. With the recent proliferation of human sensory data, we wanted to see how well a machine learning model can classify human activities using heart rate data and IMU readings from a user's hand, chest, and ankle. Since hand IMU and heart rate data is more ubiquitous and accessible than chest and ankle data through the use of smart watches, we also decided to compare our logistic regression, SVM, decision tree, and neural net models between the full dataset and a limited dataset with only hand IMU and heart rate data. With data from the full dataset, all models were all able to perform with high accuracy on all recorded activities. Using the limited dataset, the models performed only slightly worse than the full dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>• PAMAP2 Dataset from the UCI machine learning repository [1].</p><p>• Data features include 9-axis IMU data streams for sensors on each of hand, chest, and ankle and subject heart rate. • 1.9 million data points of 52 features each, spread over nine subjects.</p><p>• 18 different activity IDs, including sitting, walking, running, folding laundry, and cycling. • For comparison, the "limited" dataset contains only hand IMU and heart rate data.</p><p>Results 5-fold cross-validation was conducted on different combinations of data features. The best performing features (full three-IMU + heart rate, and hand-IMU + heart rate) are shown below.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deep Learning</head><p>MultiLayer Perceptron: Neural network architecture consisting of two hidden layers of size (n, 512) and (512, 512), input layer with size (n, 1), output one-hot encoded to size (k, 1). We use ReLU activation and categorical cross entropy loss.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Executive Summary</head><p>Activity recognition is an important task in several healthcare and consumer product applications. With the recent proliferation of human sensory data, we wanted to see how well a machine learning model can classify human activities using heart rate data and IMU readings from a user's hand, chest, and ankle. Since hand IMU and heart rate data is more ubiquitous and accessible than chest and ankle data through the use of smart watches, we also decided to compare our logistic regression, SVM, decision tree, and neural net models between the full dataset and a limited dataset with only hand IMU and heart rate data. With data from the full dataset, all models were all able to perform with high accuracy on all recorded activities. Using the limited dataset, the models performed only slightly worse than the full dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>• PAMAP2 Dataset from the UCI machine learning repository <ref type="bibr" target="#b0">[1]</ref>.</p><p>• Data features include 9-axis IMU data streams for sensors on each of hand, chest, and ankle and subject heart rate. • 1.9 million data points of 52 features each, spread over nine subjects.</p><p>• 18 different activity IDs, including sitting, walking, running, folding laundry, and cycling. • For comparison, the "limited" dataset contains only hand IMU and heart rate data.</p><p>Results 5-fold cross-validation was conducted on different combinations of data features. The best performing features (full three-IMU + heart rate, and hand-IMU + heart rate) are shown below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Human Activity Classification</head><p>Aristos Athens, Navjot Singh, Zachary Blum aristos@stanford.edu, navjot@stanford.edu, zblum25@stanford.edu</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion &amp; Future Work</head><p>• The dataset provides input features that likely would not be present in real-world applications, like chest and ankle IMUs. We found we could get relatively good performance using just hand IMU and heart rate, the type of data one might get from a smart watch.</p><p>• Logistic regression unsurprisingly performed the worst as it is a linear classifier.</p><p>• As expected, ensembling (random forest and boosting) improved test accuracy over the original decision trees.</p><p>• The neural net consistently provided high accuracies at the cost of long train times and relatively slow classification. In the future we would try using RNNs to classify more complex tasks that depend on sequential lower level actions. • In the future we would like to test these models using real IMU's. In particular, we would want to see if a low-compute embedded device could perform classifications with NN's or SVM's in real time, in addition to computationally cheaper decision trees.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">PAMAP2 Physical Activity Monitoring Dataset</title>
+		<ptr target="http://archive.ics.uci.edu/ml/datasets/pamap2+physical+activity+monitoring" />
+		<imprint>
+			<date type="published" when="2012-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Minimizing Finite Sums with the Stochastic Average Gradient</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mark</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicolas</forename><forename type="middle">Le</forename><surname>Roux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francis</forename><surname>Bach</surname></persName>
+		</author>
+		<ptr target="https://web.stanford.edu/class/stats202/content/lec19.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Mathematical Programming B</title>
+		<imprint>
+			<biblScope unit="issue">7</biblScope>
+			<date type="published" when="2017" />
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+	<note>Lecture 19: Decision Trees</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

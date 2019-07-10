@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning hypernymy in distributed word vectors via a stacked LSTM network</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016-06-04">June 4, 2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Irving</forename><surname>Rodriguez</surname></persName>
+							<email>irodriguez@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Learning hypernymy in distributed word vectors via a stacked LSTM network</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2016-06-04">June 4, 2016</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We aim to learn hypernymy present in distributed word representations using a deep LSTM neural network. We hypothesize that the semantic information of hypernymy is distributed differently across the components of the hyponym and hypernym vectors for varying examples of hypernymy. We use an LSTM cell with a replacement gate to adjust the state of the network as different examples of hypernymy are presented. We find that a seven layer LSTM model with dropout achieves a test accuracy of 81.4% on the Linked Hypernyms Dataset, though further comparison with other models in the literature is necessary to verify the robustness of these results.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In the last several years, distributed word vectors have shown the ability to learn semantic and syntactic information without receiving explicit inputs outlining these properties. Particularly, both the word2vec <ref type="bibr" target="#b5">[6]</ref> and GloVe <ref type="bibr" target="#b12">[13]</ref> models have shown that distributed word vectors cluster together in space based on linguistic similarities and that these relationships can be quantitatively captured with simple vector algebra and analogy tasks.</p><p>How these properties manifest themselves within the word vectors, however, is not well understood. This is especially true of paradigmatic linguistic relationships like hypernymy and synonymy. There is significant linguistic benefit in understanding these complex properties -a robust hypernymy model would greatly facilitate automatic taxonomy construction, for example, and Wolter and Gylstad have noted that paradigmatic relationships tend to be similar across languages and could be used to improve machine translation models. <ref type="bibr" target="#b14">[15]</ref> Previous models have failed to capture the full linguistic complexity of hypernymy. These models often rely on supervised methods that are not linguistically consistent with the properties of hypernymy, namely asymmetry, transitivity, and hierarchy. As such, we attempt to remedy these shortcomings through a recurrent neural net that maps a hyponym vector to one of its hypernym vectors. Specifically, we set out to learn the mapping from a hyponym to a hypernym 1 vector based strictly on the components of the distributed vectors with a stacked LSTM network.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Methods</head><p>We set out to build a deep recurrent neural network to learn a function H(h wo that produces the hypernym vector given the input hyponym vector of word w o , h wo .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Stacked LSTM Model</head><p>A long short-term memory (LSTM) models seem well-suited for our task. We hypothesize that hypernymy (and other linguistic relationships which distributed vector models seem to automatically learn) are baked directly into the individual components of the vectors. The LSTM architecture contains a cell state C t at each given time step t. In our case, this represents our activation matrix which maps a hyponym vector to its hypernym vector. The hidden layer then consists of four calculations dubbed the forget, input, activation, and output gates. At each time step, we input the hyponym vector h to into the first cell,</p><formula xml:id="formula_0">i t = σ(W i h (t−1)e + W i h to + b i ) f t = σ(W f h (t−1)e + W f h to + b f ) o t = σ(W o h (t−1)e + W o h to + b o ) c t = tanh(W c h (t−1)e + W i h to + b c )</formula><p>where i, f , o, c denote the forget, input, and output, and activation gates with their respective bias terms, and h (t−1)e denotes the predicted hypernym in the previous time step.</p><p>In essence, each of these gates calculates which components of the vectors within the cell carry meaningful information and updates the cell state accordingly. The forget gate scales down the components of the input state C t−1 , the input gate scales the components of w t to be added to the cell state, the activation gate determines the new component values to be added to the cell state, and the output gate yields a vector to scale the predicted hypernym.</p><p>Our LSTM cell combines the input and forget gates into a replacement gate which only adds the output of the input gate to the cell state in components which were forgotten. We then update the cell state and calculate the predicted hypernym,</p><formula xml:id="formula_1">C t = f t × C t−1 + (1 − f t ) × c t (1) h te = o t × tanh(C t )<label>(2)</label></formula><p>where × denotes element-wise multiplication. We hypothesize that the input, forget, and output layers should be able to identify the components of the hyponym vectors which best predict hypernymy and update the weights accordingly. Since hypernymy is hierarchal and a single word can have hypernyms on varying levels of generality, these components could change from example to example but should be handled appropriately at each step t in the replacement gate.</p><p>We minimize the quadratic loss function over our training set using mini-</p><formula xml:id="formula_2">batch SGD J = 1 2 Σ m i=1 ||h ie − h we || 2 2<label>(3)</label></formula><p>and optimize in the number of layers in the model and the number of hyponymhypernym pairs processed at each iteration of mini-batch SGD.</p><p>In order to prevent overfitting and improve our model's robustness outside of the validation set, we introduce dropout in between the penultimate and final layers for our best-performing model.</p><p>We implement our stacked LSTM model using TensorFlow.</p><p>[1]</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Piecewise Projection Model</head><p>We compare our performance to the supervised model outlined by Fu et. al. <ref type="bibr" target="#b3">[4]</ref> To replicate results, we use K-Means clustering in order to cluster the vector difference h wo − h we into k clusters for each word pair (w o , w e ) in our dataset. For each cluster, we then learn a linear projection Ψ j (h wo ) that maps a hyponym to its hypernym and classify positive pairs when |Ψ j (h wo i ) − h we i | &lt; δ for some hypersphere radius δ in our difference vector space. We minimize the quadratic loss over the dataset to learn the projections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Distributed Word Vectors</head><p>We first train highly-dimensional word vectors using the publicly available word2vec module. <ref type="bibr" target="#b8">[9]</ref> Due to time constraints, we use a single optimized CBOW model to obtain our pre-trained vectors for use as inputs into our LSTM network. Our model uses Mikolov et. al's method for consolidating common phrases into a single token <ref type="bibr">[? ]</ref>. We thus learn an individual vector for these phrases (consisting of up to 3 words, like "new york times") and treat them as a single hyponym or hypernym.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">Data</head><p>The Linked Hypernyms Dataset (LHD) provided by Kliegr as part of the DBPedia project contains 3.7M hyponym-hypernym pairs. <ref type="bibr" target="#b9">[10]</ref> These pairs are generated by parsing the first sentences of Wikipedia articles for syntactic patterns (i.e, "X is a Y") for hypernyms matching the article title.</p><p>The LHD set contains tokens for phrases longer than 3 words (like "history of the united states") and also contains many words which are not in the vocabulary of our vector model. As such, we prune these pairs from the set. This leaves roughly 1.5 million hyponym-hypernym pairs. We then sample 20% of the remaining pairs to and evenly split them for use as our validation and test sets.</p><p>We also evaluate the performance of our model on the BLESS dataset used in previous hypernymy classifiers. <ref type="bibr" target="#b3">[4]</ref> [14] The dataset contains 2.7k example pairs parsed from the WackyPedia corpus using similar syntactic patterns. We attempt to perform the same 10-fold cross-validation in order to compare our accuracy with these classifiers.</p><p>The most common tokens for both datasets are shown in Appendix A. Both of these datasets are publicly available. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Word Vector Model</head><p>We trained a skip-gram model <ref type="bibr" target="#b4">[5]</ref>, choosing the set of vector dimensions, window size, and negative sampling size (denoted d, w, s n , respectively) based on the performance of the given model on the analogy task provided in the Google word2vec implementation <ref type="bibr" target="#b8">[9]</ref>. We use the July 2015 English Wikipedia dump as the training set for our word vectors.</p><p>The parameters which achieve the highest accuracy are d * = 300, c * = 9, s * n = 9. <ref type="figure" target="#fig_1">(Fig. 2)</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Piecewise-Projection Model</head><p>We trained our piecewise-projection model using our pre-trained word2vec vectors. We reserve 20% of the data for our validation and test sets and training on the remaining pairs. We choose the optimal k, δ based on the F1 score of each model with 10-fold cross-validation on the training set and find (k * BLESS = 30, δ * BLESS = 3.5) and (k * LHD = 15, δ * LHD = 4.0) <ref type="figure" target="#fig_2">(Fig. 3</ref>) We then use the optimal learned parameters to evaluate the model on the respective test set. We report an F1 score of 87.0% on the BLESS set and 61.3% on the LHD set. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Stacked LSTM Model</head><p>For the stacked LSTM model, we vary the number of layers from n l = 1 to 8. Additionally, we tune the number of examples fed into the mini-batch SGD at any iteration. Due to time constraints, we only add dropout to the two models with the highest validation accuracy. We then test these models on the BLESS set instead of tuning them once more on the validation set of BLESS.</p><p>For a given output vector, we count correct predictions as hypernym tokens that one of the three vectors in our word vector space with the highest cosine similarity to the predicted vector.</p><p>We find that that the models with b * s = 50 and n l = 4, 7 perform best on the LHD set. We report the test accuracies of these models and their dropout counterparts in <ref type="figure">Figure 4</ref>.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Discussion</head><p>Our stacked LSTM model has achieved moderate results on both BLESS and LHD, though they are difficult to compare due to the widely varied results of the piecewise-projection model on the two datasets.</p><p>The small size of the BLESS set, the abundance of many general words (object, artifact) and the repetition of several hyponyms (castle, glove, cottage) are likely biasing both models. It is clear that the LSTM model without dropout is overfitting on the BLESS set because of its small size relative to the number of total cells in the network. Though the model still performs well on the test set, this is likely due to the test set containing words which also appear in the training and validation sets <ref type="table">(Table 1</ref>) whose hypernyms the model has memorized.</p><p>On the other hand, it seems that the piecewise-projection is also simply learning features of the words in the BLESS set. For a low threshold, increasing the number of clusters greatly increases the model's F1 score on the validation set ( <ref type="figure" target="#fig_2">Figure 3</ref>). We would expect only a modest increase as our number of clusters approaches some "true" value that describes the different levels of hypernymy that exist in English. Nevertheless, all values of k converge to the same F1 score on both the BLESS and LHD sets, and we find two very different optimal values of k for both sets. This suggests the model is not learning linguistic information about hypernymy but is rather optimizing for the structure of the BLESS set.</p><p>Nonetheless, the test accuracy that the seven-layer LSTM achieves on the LHD set shows promise for learning a hypernymy mapping. The neural net should improve (or stabilize) as the dataset grows, especially if dropout prevents it from memorizing as it trains on more data. The significant positive offset in validation accuracy during training as the batch size is increased suggests that the model may benefit from seeing more "levels" of hypernymy in a single iteration. Though the information that the network state receives at a given time step from previous time steps is not particularly clear, the broad diversity of tokens present in the LHD set suggests that hypernymy is indeed complex but not so broad that it manifests itself differently in word vectors in different domain spaces and across pairs of varying generality. The model was able to pinpoint the location of the input's hypernym with some success in spite of these complexities without making any assumptions about hypernymy's behavior, like the piecewise-projection model does.</p><p>We note that the model still has a major shortcoming in that it only predicts a single hypernym vector for a given hyponym. Hypernymy, however, is a many-to-one mapping, and several papers <ref type="bibr" target="#b3">[4]</ref> have shown that the hypernyms of a single noun do not cluster together in vector space. As such, this stacked LSTM model, if successful, is still unable to disambiguate between the many hypernyms that a word may have. For example, there is little recourse for choosing between "fruit" and "food" for the word "apple" and also for a polysemous hypernym like "company". Even so, it would be possible train a model for different domains. More generally, the model could use the predicted vector to generate a probabilistic distribution of possible hypernyms and con-dition on other context words (say, those that appear with the hyponym in a given sentence) to select the most likely hypernym from this group.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>We note that future studies are necessary in order to verify and improve the validity of our stacked LSTM model. If the model indeed succeeded in learning a hypernymy mapping, it should perform well at predicting the hypernyms of a noun hierarchy. As such, a well-documented hypernymy tree like that of WordNet would serve as a reliable benchmark for testing this model.</p><p>Additionally, further tests can use different word vector models to see if other learned representations, such as those in GloVe, are "better" at learning semantic relationships which are more easily parsed from the vector components. If the LSTM cell is indeed capable of identifying these relationships, similar models could be built for other semantic relationships like synonymy.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Plots of the 3 principal components for each data set. Left: BLESS.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Analogy task accuracy of word vector models. The accuracy of the model with optimal parameters is shown as the black dot. Parameters are fixed at (d = 200, c = 5, s n = 3).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>F1 score of training phase for k clusters and a threshold δ. Left: 2.7k pairs, BLESS. Right: 1.5M pairs, LHD.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>5 Figure 4 :</head><label>54</label><figDesc>Test accuracies of models with highest validation performance on both the BLESS and LHD sets (F1 score for piecewise-projection classifier.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Accuracies for the piecewise-projection and stacked LSTM models over the LHD set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>6</head><label></label><figDesc></figDesc></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendices</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>APPENDIX I</head><p>Here, we present a list of some properties of the BLESS and Weeds datasets.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>BLESS</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Brevdo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Citro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Devin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ghemawat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Harp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Irving</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Isard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kudlur</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Levenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Mané</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Monga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Murray</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Olah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Schuster</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Steiner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Talwar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Tucker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Vasudevan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Viégas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Warden</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wattenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wicke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zheng</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+	<note>TensorFlow: Large-scale machine learning on heterogeneous systems, 2015. Software available from tensorflow.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">A study on similarity and relatedness using distributional and wordnet-based approaches</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">A</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">How we blessed distributional semantic evaluation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">B</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Learning semantic hierarchies via word embeddings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">F</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Distributed representations of words and phrases and their compositionality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">a neural probabilistic language model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><forename type="middle">B</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">word2vec explained: Deriving mikolov et al.s negative-sampling word-embedding method</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Levy</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Google. word2vec, tool for computing continuous distributed representations of words</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Linked hypernymys: Enriching dbpedia with targeted hypernym discovery</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Kliegr</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Learning hypernymy over word embeddings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Nayak</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Scikitlearn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Learning to distinguish hypernyms and co-hyponyms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weeds</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Collocational links in the L2 mental lexicon and the influence of L1 intralexical knowledge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Wolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Gyllstad</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

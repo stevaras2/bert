@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Food χ * : Building a Recommendation System for Chinese Dishes CS229 Group Project Final Report (Category: Natural Language Processing )</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-13">December 13, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu</forename><surname>Zeng</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yiting</forename><surname>Ji</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yogi</forename><surname>Huang</surname></persName>
+						</author>
+						<title level="a" type="main">Food χ * : Building a Recommendation System for Chinese Dishes CS229 Group Project Final Report (Category: Natural Language Processing )</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-13">December 13, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>As applications and websites develop the trend to provide customized service for users, building recommendation systems has gain more popularity and attention from businesses to improve user experience. While a great number of recommendation systems for movies, audios, books, or restaurants exist, surprisingly there is hardly any for dishes. As food lovers, we intend to address this issue by exploring models for recommending Chinese dishes.</p><p>We scrape data from a popular Chinese recipe website/app called Xia Chu Fang Cooking Recipe 1 , and implement word embedding algorithms and recommendation system algorithms to build our model. The original input to our algorithms are user IDs from Xia Chu Fang and dish names users have saved in their favourite list. We first preprocess our data and use word2vec on them. We then generate ratings and apply collaborative filtering to build our recommendation system. Specifically, we explore the skip-gram model in word2vec to calculate dish similarity, as well as apply the Non-Negative Matrix Factorization and Singular Value Decomposition methods in collaborative filtering to predict ratings on dishes. Limiting our dishes to Chinese cuisine allows us to focus on constructing a more tailored recommendation system, while still maintain a high practical value given the popularity and diversity of Chinese cuisines. We hope by doing this project, we can tackle a less touched topic of using Machine Learning for dish recommendation, and at the same time promote the greatness of Chinese food.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Multiple methods for building recommendation systems are discussed in literature. In the natural language processing domain, word2vec is a set of methods in word embeddings that produces promising results in recommendation systems <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr" target="#b1">[2]</ref>. It takes a text corpus as input to a shallow neural network and learn vector representations of words [3][4] <ref type="bibr" target="#b3">[5]</ref>. It could directly be used to extract similarities between text, but can be hard to interpret sometimes. Another commonly used method for product recommendations is collaborative filtering (CF) <ref type="bibr" target="#b4">[6]</ref>. User-based CF measures similarity between users based upon their opinions on items, and makes recommendations using similar users' highly rated items <ref type="bibr" target="#b5">[7]</ref>. Limitations to this method include its requirement of relatively large computational power and overlooking the fact that people's habits may change over time. Approaches that may improve user-based CF include Matrix-factorization (MF) methods, which prove to be highly accurate and scalable in addressing CF problems <ref type="bibr" target="#b6">[8]</ref>. The Non-Negative Matrix Factorization (NMF) algorithm is very suitable for solving CF problems with non-negative constraint <ref type="bibr" target="#b6">[8]</ref>. Singular Value Decomposition (SVD) is another MF algorithm applied to CF that reduces a matrix to two matrices with lower dimensions that represent generalized items and users. This generalization can capture vast amount of data more intuitively. And the lower ranked matrices often yield better estimates of the data than the original matrix <ref type="bibr" target="#b7">[9]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data</head><p>Xia Chu Fang is a platform where users can publicly post recipes of dishes. They can also search for recipes from other users and put them in their favourite, aka, "starred" list if they are interested in learning them. As one of the leading recipe websites in China, Xia Chu Fang has over 1.8 million published recipes and 100 million users, with at least 1.2 million registered users <ref type="bibr">[10]</ref>. Scraping all data from the website is too computationally expensive and time-consuming, so we randomly scrape a portion of the user ids and their starred dishes. We utilize parallel crawling and proxies to fetch data more efficiently, and run a spider on Google Cloud which creates two virtual machines (each containing 8 vCPUs). This way, we manage to scrape roughly 230,000 valid users and more than 2.5 million dishes in their starred list (roughly 12,000 unique dishes).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Data Preprocessing</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">Dish Name Mapping</head><p>The number of total dishes is an overestimate of the true number of dishes, because a lot of them are duplicates with slight variations 2 , resulting in sparseness of the data. Cleaning up dish names is quite challenging given Chinese dish names' different encoding and the complexity of the language itself. After trials and errors 3 , we decide to utilize an online database of Chinese dish names with their English translations [11] as a dictionary, which has 1,871 unique keys representing recipe names. Using Jaro-Winkler distance <ref type="bibr" target="#b2">4</ref> , we map our dishes to the dictionary and reduce our data to 198, 816 unique users and 1, 628 unique dishes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Ratings Calculation</head><p>Unlike most of the other datasets for building recommendation systems, our dataset does not have users' ratings on dishes. As a result, we need to generate ratings in order to implement NMF and SVD. We notice from the mapped data that many users put different versions of dishes in their starred list. Marking a dish multiple times implies that the user is really into this dish such that he or she is willing to save multiple recipes for it to try out different cooking methods. This indicates that the user is more interested in this dish than a dish that is only saved once. We therefore utilize this property and define a user's rating on a dish as:</p><formula xml:id="formula_0">R (i) k = count of dish i in user k's starred list</formula><p>This way, we generate ratings ranging from 1 to 18. We then normalize them by casting them to a number between 5 and 10 to minimize the effect of outliers and seperate it from the traditional rating scheme <ref type="bibr" target="#b3">5</ref> . <ref type="figure" target="#fig_0">Figure 1</ref> below is a sample of 10 user ratings on dishes. <ref type="figure">Figure 2</ref> shows a histogram of all calculated ratings <ref type="bibr" target="#b4">6</ref> . We can see that a majority of ratings are 5, with a small portion between 6 and 10. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Calculating Similarity Using Word2vec</head><p>We first try word embeddings on the original data without ratings. Among the various models in word2vec, we primarily focus on the skip-gram Neural Network Model <ref type="bibr" target="#b9">[13]</ref>. This model takes one word as input, trains a neural network with a single hidden layer to perform, and outputs words most likely to appear in the "context" of the input word <ref type="bibr" target="#b5">7</ref> . The default skip-gram model loss function to optimize each training iteration is defined as <ref type="bibr" target="#b9">[13]</ref>:</p><formula xml:id="formula_1">E = − log p(w o,1 , w o,2 , ..., w o,c |w) = − log C c=1 exp (u c,j * c ) V j =1 exp(u j ) = − C c=1 u j * c + C · log V j =1 exp (u j ),</formula><p>Heavy notations aside 8 , this merely calculates the probability of the output words being in the context of the given input word. The model also returns a a similarity score for each output word. The format</p><note type="other">for our data under this model looks like [user i, sentence], where the sentence consists of strings of [dish 1, dish 2, . . . , dish N i ], i.e., all N dishes in user i's starred list.</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Collaborative Filtering (CF)</head><p>We then explore CF on our user-dish dataset with our calculated ratings and compare predicted ratings generated by the NMF and SVD approaches.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1">Non-negative Matrix Factorization (NMF)</head><p>To perform NMF, we implement the Python library "surprise" 9 . The predicted rating that user k has on dish i iŝ</p><formula xml:id="formula_2">R (i) k = q T i p k ,</formula><note type="other">where user factors and dish factors, p k and q i , are kept positive. Regularized stochastic gradient descent is used with the following update rule for the factors f of user k and dish i at each step:</note><formula xml:id="formula_3">p kf ← p kf · i∈I k q if · R (i) k i∈I k q if ·R (i) k + λ k |I k |p kf , q if ← q if · k∈K i p kf ·R (i) k k∈K i p kf ·R (i) k +λi|Ki|q if ,</formula><p>where λ k and λ i are regularization parameters for user and dish (both set to a default of 0.06) [16].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2">Singular Value Decomposition (SVD)</head><p>Similarly, we exploit the surprise library <ref type="bibr" target="#b11">[15]</ref> to implement SVD 10 . The predicted rating is defined aŝ</p><formula xml:id="formula_4">R (i) k = µ + b k + b i + q T i p k .</formula><p>If user k is unknown, then the bias b k and the factors p k are assumed to be zero. The same applies for dish i with b i and q i . To estimate all the unknowns, we minimize the following regularized squared error:</p><formula xml:id="formula_5">R (i) k ∈Rtrain (R (i) k −R (i) k ) + λ(b 2 i + b 2 k + q i 2 + p k 2 ).</formula><p>And we perform the minimization using stochastic gradient descent with the following update rules:</p><formula xml:id="formula_6">b k ← b k + γ((e (i) k ) − λb k ), b i ← b i + γ((e (i) k ) − λb i ), p k ← p k + γ((e (i) k ) · q i − λp k ), q i ← q i + γ((e (i) k ) · p k − λq i ), where e (i)</formula><p>k is the difference between the predicted rating and actual rating that user k has on dish i. We use the default learning rate γ = 0.005 and a regularization factor λ = 0.02 (see <ref type="bibr">[16]</ref> for more details). <ref type="bibr" target="#b6">8</ref> In this equation, w I is the input word, and wo,c is the c th word in w I 's predicted context of length C, u c,j is the input to the j th node of the c th output word, and j * c is the index of the c th output word. 9 "Surprise" is a Python SciPy toolkit for building and analyzing recommender systems. It provides ready-to-use matrix factorizationbased algorithms such as NMF and SVD. See <ref type="bibr" target="#b11">[15]</ref> for more information and documentation on this library.</p><p>10 Theoretically, let A be a real m × n matrix with m ≥ n. Then we have A = U ΣV T , where U T U = V T V = V V T = In and Σ = diag(σ 1 , σ, ..., σn). The matrix U consists of n orthonormalized eigenvectors associated with the n largest eigenvalues of AA T , and V consists of the orthonormalized eigenvectors of A T A. The diagonal elements of Σ are the non-negative square roots of the eigenvalues of A T A, and are called singular values <ref type="bibr" target="#b12">[17]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head><p>Given our data size, we split our dataset into 80% training set, 10% development set, and 10% test set. This split results in 159, 053 samples in the training set, 19, 881 samples in the dev set and 19, 882 samples in the test set. We train our models on the training set, and calculate errors on the dev set for model comparison, and obtain errors on the test set to examine model robustness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Word2vec Results</head><p>The skip-gram model from word2vec calculates similarity scores of dishes, which allows us to directly output the context words with highest similarity scores as our recommendations of the input dish (see <ref type="figure" target="#fig_1">Figure 3</ref> for two examples). Note that by looking at the recommendations, while we can tell some of the dishes with similar main ingredients are likely to show up, it is still not entirely straightforward to interpret why these dishes are similar, because the model learns the word context based on the data of thousands of users and calculates similarity in a hidden layer. It is therefore hard to quantify errors. Instead, we provide a visualization of the word2vec results by generating t-SNE graphs 11 to represent the similarity of a sample of dishes. See <ref type="figure">Figure 4</ref>. The distance between two dishes in the graph represent their dissimilarity 12 . </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Collaborative Filtering Results</head><p>Adopting the ratings we have calculated, we run collaborative filtering on our training set through NMF and SVD. See <ref type="figure" target="#fig_2">Figure 5</ref> and <ref type="figure">Figure 6</ref> for the predicted ratings from the two methods. We can see that they produce somewhat different predictions: the NMF results look more symmetric, while the SVD predictions seem to skew more towards the left. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Error Metrics</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.1">RMSE of Prediction error</head><p>To evaluate prediction errors across models, we define the prediction error as the difference between the actual calculated rating and the predicted rating for the dish, i.e., e (i)</p><formula xml:id="formula_7">k =R (i) k − R (i) k , whereR (i)</formula><p>k is the estimated rating that user k has on dish i predicted by our model. And we calculate the RMSE of prediction accuracy, defined as</p><formula xml:id="formula_8">RM SE = [ (e (i) k ) 2 /N ] 1/2</formula><p>. Ideally a good model would have a small RMSE.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.2">Miss and Recall</head><p>An alternative way to calculate error is using miss and recall. If the estimated prediction error of dish rating e (i) k &lt;= 0.05, we define it as a prediction hit, and otherwise a miss <ref type="bibr" target="#b9">13</ref> . Then we can calculate the recall, which measures the proportion of actual positives (hits) that are correctly identified, i.e., T P T P +F N , where T P = number of true positives and F N = number of false negatives. So a higher recall indicates a higher model prediction accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.3">Errors Results</head><p>We fit our models on both the dev set and the test set, and obtain the following values of RMSE and recall <ref type="bibr" target="#b10">14</ref>  From the errors above, we can see that SVD has lower RMSEs in both the dev set and the test set compared to NMF. SVD also has much higher recall for both the dev set and the test set.</p><p>In addition, the test set RMSEs are very close to that of the dev set for SVD, whereas NMF has a larger gap between its test set RMSE and dev set RMSE (although still reasonably close). A similar observation can also be made for recall. This means that both the NMF and SVD algorithms are fairly robust and does not overfit, but SVD seems to outperform NMF in both accuracy and robustness.</p><p>As a result, SVD is selected as the winner and we provide <ref type="figure" target="#fig_3">Figure 7</ref> as a sample of the SVD prediction errors. And <ref type="figure">Figure 8</ref> is a histogram of all estimated prediction errors for SVD, with a vast majority of predictions having a prediction error less than 1. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion and Future Work</head><p>Comparing the models, we think that the skip-gram model tackles the issue of a cold start, and directly gives us recommendations based on the input keywords and other users's dish preferences in our database. This allows us to bypass the issue that our dataset lacks ratings. However, it is not easy to make sense of these recommendations or find a good way to quantify its errors. Unlike the skip-gram model, we are able to conduct an error analysis on SVD and NMF. From the results, we conclude that the SVD model performs better at predicting ratings since it has lower RMSE on the dev set. Its test set error is also closer to the dev set error compared to NMF, which means it does not overfit and is fairly robust. Therefore it is the best algorithm for our recommendation system of Chinese dishes.</p><p>We recognize that different results may arise from different datasets, so there is still a lot of room for improvement. For future work, we can explore other recommendation algorithms such as doc2vec (an extension of word2vec), a hybrid system that combines both collaborative filtering and content-based filtering, a memory-based algorithm, and modelbased algorithms. Implementing these models will allow us to conduct a more thorough error analysis and improve the prediction mechanism. We can also retrieve more data from Xia Chu Fang or even other recipe websites given the computational power to investigate model stability and robustness. Moreover, we can try to acquire more user and dish features and look for rating data on dishes so that we do not have to generate our own (which might introduce bias). Finally, we can also create a user interface where users can directly experience the dish recommendation system we build.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>All students contributed fairly equally to this group project, each putting more focus on certain parts according to their specializations. Yu Zeng contributed more to data scraping, word2vec and matrix-factorization algorithm implementations. Yiting Ji contributed more to literature review, SVD and NMF algorithm research, error analysis, project management, and report write-ups. Yogi Huang contributed more to collaborative filtering research, data compiling, and poster write-up. Our code can be found here: https://github.com/zengyu714/food-chi.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>Figure 1: A Sample of Users' Ratings Figure 2: Histogram of User Ratings</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Example of Word2vec Skip-Gram Model Recom- mendation Results (Similarity Scores in Parentheses) Figure 4: t-SNE Visual Representation of a Sample of Dish Names' Similarity</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 5 :</head><label>5</label><figDesc>Predicted Ratings Using NMF Figure 6: Predicted Ratings Using SVD</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 7 :</head><label>7</label><figDesc>Sample of Errors Using SVD Figure 8: Prediction Errors of SVD</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>:</head><label></label><figDesc>Model Dev Set RMSE Test Set RMSE Dev Set Recall Test Set Recall</figDesc><table>NMF 
+0.4574 
+0.5851 
+0.5081 
+0.5393 
+SVD 
+0.3317 
+0.3634 
+0.9173 
+0.9301 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">These are variations such as descriptive adjectives, unnecessary special characters, alternative name expressions, and typos.3  We have tried text segmentation techniques to remove wordiness in dish names, but did not get satisfying results.<ref type="bibr" target="#b2">4</ref> The Jaro-Winkler distance is a string metric measuring an edit distance between two sequences. We map our dishes to the dishes in the dictionary when their Jaro-Similarity is higher than a threshold of 0.5. See<ref type="bibr" target="#b8">[12]</ref> at https://ai.tencent.com/ailab/nlp/embedding.html for more details on the topic.<ref type="bibr" target="#b3">5</ref> Note that unlike the traditional rating scheme where a low rating implies that the user dislikes the item, a low rating in our rating system means the user likes the dish but simply not as much as the more highly rated ones. In other words, our rating system is a metric that shows the degree of fondness of a user on dishes they like.6 recipe name = dish name inFigure 1, encoded to numeric values for simplification.<ref type="bibr" target="#b5">7</ref> The skip-gram model typically represents the input word as a one-hot-vector with 300 features (represented as a 1 × 300 vector). It has no activation function, and uses softmax in the output layer. See<ref type="bibr" target="#b10">[14]</ref> for more information.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="11">T-Distributed Stochastic Neighbor Embedding (t-SNE) is a commonly used technique for dimensionality reduction and visualization of high-dimensional data. For more information, see<ref type="bibr" target="#b13">[18]</ref>.<ref type="bibr" target="#b8">12</ref> A complete and interactive version of the t-SNE graph is available in our github directory at https://github.com/zengyu714/foodchi/tree/master/res.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="13">As shown inFigure 8, errors are mainly densely distributed in range[0,<ref type="bibr" target="#b0">1]</ref>. Therefore, we have to choose a relatively small error threshold to calculate true positive rate (TPR), i.e., recall.14 Due to randomness, these values may vary slightly in each run, but are still very close to what is shown here.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Linguistic regularities in sparse and explicit word representations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Goldberg</surname></persName>
+		</author>
+		<ptr target="https://levyomer.files.wordpress.com/2014/04/linguistic-regularities-in-sparse-and-explicit-word-representations-conll-2014.pdf" />
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="171" to="180" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">From word embeddings to item recommendation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">G</forename><surname>Ozsoy</surname></persName>
+		</author>
+		<idno>abs/1601.01356</idno>
+		<ptr target="http://arxiv.org/abs/1601.01356" />
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Vector representations of words-tensorflow</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tensorflow</surname></persName>
+		</author>
+		<ptr target="Available:www.tensorflow.org/tutorials/representation/word2vec" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Rong</surname></persName>
+		</author>
+		<idno>abs/1411.2738</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+	<note>word2vec parameter learning explained</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Manipulation robustness of collaborative filtering systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Yan</surname></persName>
+		</author>
+		<ptr target="https://search-proquest-com.stanford.idm.oclc.org/docview/305004354?accountid=14026" />
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Efficient algorithms for collaborative filtering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Keshavan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">P</forename><surname>Raghunandan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">V</forename><surname>Montanari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Roy</surname></persName>
+		</author>
+		<ptr target="http://purl.stanford.edu/qz136dw4490" />
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+<note type="report_type">Ph.D. dissertation</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">An efficient non-negative matrix-factorization-based approach to collaborative filtering for recommender systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Zhu</surname></persName>
+		</author>
+		<ptr target="https://ieeexplore.ieee.org/abstract/document/6748996" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE/IET Electronic Library (IEL) Journals</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Evaluating prediction accuracy for collaborative filtering algorithms in recommender systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Safir</forename><surname>Najaf</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Salam</surname></persName>
+		</author>
+		<idno>927356/FULLTEXT01.pdf [10] 2018</idno>
+		<ptr target="http://www.xtecher.com/Xfeature/view?aid=8321" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+		<respStmt>
+			<orgName>Royal Institute of Technology, School Of Computer Science And Communication</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Directional skip-gram: Explicitly distinguishing left and right context for word embeddings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</title>
+		<meeting>the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies</meeting>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+	<note>Short Papers. short Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Available: mccormickml.com/assets/word2vec/Alex Minnaar Word2Vec Tutorial Part I The Skip-Gram Model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Minaar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mccormickml.com</title>
+		<imprint>
+			<date type="published" when="2015-04" />
+		</imprint>
+	</monogr>
+	<note>Word2vec tutorial part i: the skip-gram model</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<ptr target="Available:arxiv.org/pdf/1301.3781.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Arxiv.org</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">SciPy: A Python scikit for recommender systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Hug</surname></persName>
+		</author>
+		<ptr target="https://surprise.readthedocs.io/en/stable/matrixfactorization.html?highlight=matrix%20factorization" />
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="volume">16</biblScope>
+		</imprint>
+	</monogr>
+	<note>Matrix factorization-based algorithms</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Singular value decomposition and least squares solutions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">H</forename><surname>Golub</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Reinsch</surname></persName>
+		</author>
+		<idno type="doi">10.1007/BF02163027.pdf</idno>
+		<ptr target="https://link.springer.com/content/pdf/10.1007/BF02163027.pdf" />
+		<imprint>
+			<date type="published" when="1970" />
+		</imprint>
+	</monogr>
+	<note>Handbook Series Linear Algebra</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Accelerating t-sne using tree-based algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">J P</forename><surname>Van Der Maaten</surname></persName>
+		</author>
+		<ptr target="https://lvdmaaten.github.io/publications/papers/JMLR2014.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="3221" to="3245" />
+			<date type="published" when="2014-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

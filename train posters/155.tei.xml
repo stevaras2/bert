@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion/Challenges:</head><p>In <ref type="figure">Figure 1</ref>, Kaplan-Meier Survival Analysis shows that correlation between a complete response (CR) and survivability is higher than for patients with partial or no response. Looking at our results, we found that logistic regression, KNN (for K = 3), and bootstrapped random forest models all showed good performance, with test errors of 25% or less. Bootstrapped random forests demonstrated the best performance, with only a 7% error. However, the results may not be as reliable due to the small data set (m = 340) and sampling bias. Because our project focused on NAC patients, we were limited to a small subset of patients. Even though there was a strong correlation between patients with CR and higher chances of survivability, it is hard to make a conclusion about how reliable predicting survivability via the standard residual cancer burden (RCB) score is.</p><p>Future Steps (6 month plan):</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>Model (Logistic Regression)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>Breast cancer is the most common type of cancer in the United States, with an estimated 268,670 new cases expected by the National Cancer Institute in 2018 <ref type="bibr" target="#b0">[1]</ref> . In about 15-20% of cases, breast cancer patients receive neoadjuvant chemotherapy (NAC), chemotherapy before surgery, to improve chances of survival. Traditionally, a patient's survivability is calculated via a residual cancer burden (RCB) score <ref type="bibr" target="#b1">[2]</ref> :</p><p>Calculating RCBs is difficult because oftentimes, medical records are missing information needed to calculate the score. Therefore, in our project, we will observe complete (disappearance of all signs of cancer after treatment) or not complete response to predict survival instead.</p><p>Goal: To predict survivability of breast cancer patients after neoadjuvant chemotherapy, using overall AJCC <ref type="bibr" target="#b2">[3]</ref> cancer staging labels (complete or not a complete response) and supervised learning algorithms.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model (k-NN)</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Data:Figure 3 (Figure 4 (</head><label>34</label><figDesc>Breast cancer patient electronic health records (EHRs), provided by Oncoshare Database (with 340 NAC patients) ❖ Row = patient (anonymous IDs) ❖ Column = information about patient (ex. pathology report, tumor site, etc.) Figure 3 (left): Confusion matrix for logistic regression (used as our baseline for our machine learning analysis and is simple to compute) Figure 4 (above): Training vs validation curve for k-NN and associated confusion matrix, using k=3 (assigning a training datum to the label shared by a majority of the 3 nearest feature vectors). k-NN is simple and makes no assumptions about the data.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 (Figure 5 (Figure 1 (</head><label>251</label><figDesc>left): Example CCR Tumor Data *Used AJCC_P (AJCC staging label from electronic health records) and patient morbidity data for the ground truth for survivalFeatures:To determine features, we consulted our advisor and examined features with evidence of patient survivability correlation. These features included characteristics of the tumor(s) as well as characteristics of the patient themself. The categorical features were then mapped to discrete values indexed at 0 using a label encoder. Some features we used were:➢ site specific information about tumor and where it originated ➢ cell type and behavior of tumor (malignant, in situ, benign, or uncertain)➢ sequence of all reportable neoplasms during the patient's lifetime ➢ tumor count ➢ overall cancer stage Train Error (m=272) Test Error (m=68) Precision Recall Specificity Logistic Regression 0.09559 0.19118 0.77 0.89 0.81 KNN (K=3) 0.15441 0.25 0.5 0.78 0.65 Bootstrap Random Forest 0.01103 0.07353 0.81 0.91 0.95 Model (Bootstrap Random Forest) [1] "Common Cancer Types", National Cancer Institute, 2018. [Online]. Available: https://www.cancer.gov/types/common-cancers. [Accessed: 10-Dec-2018]. [2] W. Symmans, et al., "Measurement of Residual Breast Cancer Burden to Predict Survival After Neoadjuvant Chemotherapy", Journal of Clinical Oncology, vol. 25, no. 28, pp. 4414-4422, 2007. [3]S. Edge, AJCC cancer staging handbook. New York: Springer, 2010. [4] E. Kaplan and P. Meier, "Nonparametric Estimation from Incomplete Observations", Journal of the American Statistical Association, vol. 53, no. 282, pp. 457-481, 1958. Tools: Python 3, Jupyter Notebook, Numpy, Pandas, Matplotlib, Scikit-learnFigure 5 (above): Training vs validation curve for Bootstrap Random Forest and associated confusion matrix (bootstrap random forest is a computationally inexpensive algorithm and lets us learn about the data quickly without knowledge of labels) Anon_ID Tumor Site Behavior of Tumor 1 C500 Benign 2 C502 In Situ 3 C501 Unknown Figure 1 (left): Kaplan-Meier [4] Survival Analysis curve to show the correlation between complete response and likelihood of survival (0: partial/no response, 1: complete response) Survivability is increased for neoadjuvant patients with complete response.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>1. Gather the required information, by talking with pathologists and radiologists, to create a large enough dataset to calculate RCB (more reliable results) 2. Test/utilize more robust natural language processing techniques to process EHRs 3. Evaluate how well a mixture of RCB features and EHR features collected at the time of first diagnosis does for predicting RCB scores and determine how the model for predicting RCB can improve</figDesc><table>Motivation 
+
+Discussion/Challenges and Future Steps 
+
+Predicting the Survivability of Breast Cancer Patients after 
+Neoadjuvant Chemotherapy Using Machine Learning 
+
+Linda Banh, Robel Daniel, Preston Ng 
+{lbanh, robeld, plng}@stanford.edu 
+
+Special thanks to Dr. Haruka Itakura (oncologist and assistant professor at Stanford) and CS 229 TAs for their advice and help on 
+our project. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Test/train error and other performance metrics for logistic regression, k-NN, and bootstrap random forest models</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Common Cancer Types</title>
+		<ptr target="https://www.cancer.gov/types/common-cancers" />
+		<imprint>
+			<date type="published" when="2018-12" />
+			<biblScope unit="page">10</biblScope>
+		</imprint>
+		<respStmt>
+			<orgName>National Cancer Institute</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Measurement of Residual Breast Cancer Burden to Predict Survival After Neoadjuvant Chemotherapy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Symmans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Clinical Oncology</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">28</biblScope>
+			<biblScope unit="page" from="4414" to="4422" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">AJCC cancer staging handbook</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Edge</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+			<publisher>Springer</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Nonparametric Estimation from Incomplete Observations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Meier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">282</biblScope>
+			<biblScope unit="page" from="457" to="481" />
+			<date type="published" when="1958" />
+			<publisher>Jupyter Notebook</publisher>
+		</imprint>
+	</monogr>
+	<note>Tools: Python. Scikit-learn</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

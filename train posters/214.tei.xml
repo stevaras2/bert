@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine Learning for Materials Band Gap Prediction References Classification stage results Discussion Results Learning Models Metal -nonmetal classification Gap prediction for nonmetals Features and Input Encoding</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jacob</forename><surname>Marks</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><surname>Qu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilan</forename><surname>Rosen</surname></persName>
+						</author>
+						<title level="a" type="main">Machine Learning for Materials Band Gap Prediction References Classification stage results Discussion Results Learning Models Metal -nonmetal classification Gap prediction for nonmetals Features and Input Encoding</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Performance of the feature encodings neural nets have depth 1, width 10; random forests have 500 trees Energy Landscape of Silicon. The band gap is shaded.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><formula xml:id="formula_0">C ij = Z i Z j | r i − r j | , i ≠ j C ii = Z 2.4 i</formula><p>The Coulomb matrix</p><formula xml:id="formula_1">x 1 (arb.) x 2 (arb.)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset principle components (element one-hot encoding)</head><p>The model input for each material was a list of the atoms in the material's unit cell and their positions. This information is not a suitable feature set for machine learning, as positions are degenerate in coordinate axis.</p><p>Problem: A material's electronic properties-and technological utilitydepend on its band gap. Band gaps are notoriously difficult to compute from first principles and computationally intense to approximate, so their prediction represents a challenging yet consequential application for ML. We set out to predict band gap size with only elemental composition and atomic positions by training learning models on computationally generated datasets. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Regression stage results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reported on true positive examples</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Nonmetals gap size histogram</head><p>Band gap (eV)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Compounds</head><p>Small-gap insulators: nearly half of the nonmetals in the dataset had gaps between 0.01 eV and 0.1 eV. The classifier model struggled with these materials; removing them decreased the misclassification error to 10.6%.</p><p>Feature encoding: the one-hot representation of constituent elements in compounds performed best in both stages. A one-hot representation of element's groups performed well for classification but not for regression. Physically, an atom's group determines its valance, which is important for predicting its metallicity, whereas the gap magnitude depends on the atomic number (because of electric screening)-information that the group encoding removes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random forest classifier development</head><p>Number of trees Maximum features</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Misclass error</head><p>Performance: following literature, we used RMS error as a metric for the regression stage performance; we chose a neural network accordingly. A random forest regressor outperformed the neural net in median normalized error (0.318 versus 0.544) but had higher RMS absolute error (0.948 eV versus 0.881 eV). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random forest regressor development</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural net development</head><p>Layer width RMS error (eV)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural net development</head><p>Layer width</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Misclass error</head><p>Actual Gap Size (eV) Pred. Gap Size (eV)</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>T he Coulomb matrix's singular values contains this information, explaining why the Coulomb matrix singular values + group one- hot encoding performed reasonably well in the regression stage. IIT Delhi, NPTEL Online Course Lecture Notes, Fundamental concepts of semiconductors (2013). S. Curtarolo, G. L. W. Hart, M. B. Nardelli, N. Mingo, S. Sanvito, and O. Levy, Nature Materials 12, 191 (2013). K. Choudhary, I. Kalish, R. Beams, and F. Tavazza, Scientific Reports 7, 5179 (2017). K. T. Schütt, H. Glawe, F. Brockherde, A. Sanna, K. R. Müller, and E. K. U. Gross, Phys. Rev. B 89, 205118 (2014).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Pipeline: the regression stage operated only on predicted nonmetals from the classification stage. Both stages used a one-hot element encoding as features. A tuned random forest classifier was chosen for the 1st stage, and a tuned neural network (ReLU activation; linear output) for the 2nd stage.</figDesc><table>Z i 
+
+: atomic position 
+
+r i 
+
+: atomic number 
+
+Encoding 
+Element 
+one-hot 
+
+Group 
+one-hot 
+
+Coulomb 
+Matrix 
+
+Coulomb 
+svals 
+
+Coulomb + 
+group one-hot 
+
+Augmented 
+Coulomb 
+
+C svals + 
+elem 1-hot 
+
+LinReg 
+RMS Error (eV) 
+1.348 
+1.492 
+1.486 
+1.539 
+1.223 
+1.454 
+1.119 
+
+Median Norm. Error 
+0.648 
+0.801 
+7.521 
+8.198 
+3.977 
+6.845 
+3.773 
+
+Neural 
+Net 
+
+RMS Error (eV) 
+0.956 
+1.29 
+1.86 
+1.77 
+1.39 
+1.36 
+1.81 
+
+Median Norm. Error 
+0.484 
+0.654 
+1.53 
+2.32 
+3.26 
+6.79 
+1.94 
+
+Random 
+Forest 
+
+RMS Error (eV) 
+0.910 
+1.18 
+1.07 
+1.03 
+0.900 
+0.955 
+0.922 
+
+Median Norm. Error 
+0.363 
+0.486 
+0.802 
+0.779 
+0.598 
+1.51 
+0.493 
+
+Material Type: 
+Gap Size: 
+Metals 
+Small ( 0 or negligible) 
+Nonmetals S 
+emiconductors Intermediate 
+Insulators 
+Large ( &gt; 3.2 eV) 
+
+Challenges: 
+
+• Domain knowledge for feature 
+
+engineering 
+
+• Large space of possible materials 
+• differing crystal structures 
+• differing # of atoms/unit cell 
+• Size/consistency of available datasets 
+
+Pipeline for predicting gaps 
+
+non-metals 
+metals 
+
+regression 
+
+encoding 
+
+gap size 
+
+classification 
+
+input 
+
+Performance of the feature encodings 
+
+neural nets have depth 1, width 10; random forests have 200 trees 
+
+Data set: JARVIS Density 
+Functional Theory database 
+of 3D materials (14752 non-
+metals and 8703 metals) 
+
+F1 score: 0.767 
+
+RMS Error: 0.924 eV 
+
+Median Normalized 
+Error: 0.364 
+
+True 
+Pred 
+Metal 
+Nonmetal 
+
+Metal 
+
+(True neg. 
+rate) 
+0.694 
+
+(False 
+neg. rate) 
+0.188 
+
+Nonmetal 
+
+(False 
+pos. rate) 
+0.306 
+
+(True pos. 
+rate) 
+0.812 
+
+Metrics: misclassification error; error under receiver operating curve 
+Metrics: root mean square error (eV); median normalized error 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

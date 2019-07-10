@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Attribute extraction from eCommerce product descriptions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mikhail</forename><surname>Sidorov</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Suid</forename><forename type="middle">:</forename><surname>Msidorov</surname></persName>
+							<email>msidorov@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Attribute extraction from eCommerce product descriptions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Project category: Finance Commerce/ NLP</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>This project presents an implementation of named entity extraction for detecting attributes in the description of eCommerce products. This problem is very important for eCommerce search and catalog building systems. Effective named entity extraction could significantly improve quality of search results in eCommerce retail system and so the experience of customers. Because description of products is provided in plain text form without any structuring, this is also very challenging problem. Using as an example BestBuy eCommerce NER dataset we demonstrate the technology which includes feature extraction pipeline and trainig the model to recognize Brands, ModelNames, Price and other attributes from the product description. We provide a review of methods which are used for the information extraction. In our project we focused on three methids: SVM, Gradient Boosting Trees and Conditional Random Fields. Models we used were evaluated against the test set.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Here we will determine some terms we will use in current report. We define a product as any commodity exposed by a retailer. Product contains set of attributes, where attribute is a named property of product which has some attribute value represented by one or several terms. The axmples of attributes are: Brand, Color, Proce, ModelName etc.</p><p>We define product desciption as a set of attributes with corresponding values.</p><p>As a short example: a p p l e w a t c h s e r i e s 2 g r e y</p><p>Has following attributes: Brand: apple; Category: watch; Color: grey; ModelName: series; ModelName: 2 Let us mark product as p, α i as an anntribute and v i it's value -the task will be to extract from text product description p(α 1 : v 1 , ..., α m : v m ) Also we consider that each product description is represented as set of terms (x 1 , ..., x n ). We define our problem in the following way: for each attribute α i we need to find a function E αi which will extract from product description attribute values v i which belong to α i . I.e.</p><formula xml:id="formula_0">v i = (x j |x j ∈ E αi (x 1 , ..., x n ))</formula><p>Final CS229 project report. 2018</p><p>In our current project we use the data set provided: https://www.kaggle.com/dataturks/best-buy-ecommerce-ner-dataset/home and it's extension provided here: https://dataturks.com/projects/Dataturks/Demo%20Document%20Annotations Both data sets has the same format and we joined it and used it as one extended data set after deduplication. This joined data set has about 4000 records and 50% of these records are annotated (tagged) by experts. The structure of the annotated record is represented below. In this example we see that for the short description "Apple watch series 3 42mm from $339" expert annotated "Apple" as a Brand and "watch" as Category.</p><p>{ " c o n t e n t " : " Apple w a t c h s e r i e s 3 42mm from $339 " , " a n n o t a t i o n " : [ { " l a b e l " : [ " Brand " ] , " p o i n t s " : [ { " s t a r t " : 0 , " end " : 4 , " t e x t " : " Apple " } ] } , { " l a b e l " : [ " C a t e g o r y " ] , " p o i n t s " : [ { " s t a r t " : 6 , " end " : 1 0 , " t e x t " : " w a t c h " } ] } , { " l a b e l " : [ " ModelName " ] , " p o i n t s " : [ { " s t a r t " : 8 , " end " : 1 4 , " t e x t " : " s e r i e s " } ] } , { " l a b e l " : [ " ModelName " ] , " p o i n t s " : [ { " s t a r t " : 1 9 , " end " : 1 9 , " t e x t " : " 3 " } ] } , { " l a b e l " : [ " S c r e e n S i z e " ] , " p o i n t s " : [ { " s t a r t " : 2 1 , " end " : 2 4 , " t e x t " : " 4 2mm" } ] } , { " l a b e l " : [ " None " ] , " p o i n t s " : [ { " s t a r t " : 2 6 , " end " : 2 9 , " t e x t " : " from " } ] } , { " l a b e l " : [ " P r i c e " ] , " p o i n t s " : [ { " s t a r t " : 3 1 , " end " : 3 4 , " t e x t " : " $339 " } ] } ] } I.e. for annotated document the terms which expert marked as matched to some entity are mentioned in the annotation section of json.</p><p>Entities provided in the data set: Brand, Category, ModelName, ScreenSize, Storage, RAM. The frequency of the entities in the training set provided on graph below:</p><p>Because of the provided distribution on current phase we focused on the most frequent entities: Brand, Category and ModelName and train our algorithm to optimize metrics for these entities. Also we can see that, as we shopuld expect, Brand are represented by smaller subset of words, compare to Category and ModelName -it matched to the scenario when one company produce several caterories of product, and each category is represented by several models. So, we can expect different results of the extraction for these entities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">eCommerce data set for attribute extraction benchmark</head><p>We specially would like to mention a data set for eCommerce which has about 2 millions of tagged product descriptions which also contains images and which was created benchmark the task of the attribute extraction for eCommerce:</p><p>https://rloganiv.github.io/mae/ This data set contains annotated eCommerce descriptions as well as annotated images of products.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Metrics</head><p>For result esimation we use P recission, Recall and F 1 metrics. The definition are:</p><formula xml:id="formula_1">P recision = T P T P + F P Recall = T P T P + F N F 1 = P recision × Recall P recision + Recall</formula><p>We calculate per-entity metrics as well as total. Also we use accuracy to analyze classification of terms per entity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Feature extraction pipeline</head><p>One of the important aspect of the project was arrangement of the feature extraction pipeline. We build feature extraction arround the concept of the extractor function. So, feature extraction pipeline is implemented as a collection of FeatureExtractors. Each feature extractor is a function which is applied to the term and check if it's possible to generate the feature value for this term. We follow the approach described in <ref type="bibr" target="#b0">[1]</ref> and <ref type="bibr" target="#b4">[5]</ref>.</p><p>Feature extraction pipeline operates per product description, which is represented after normalization as (x 1 , ..., x n ).</p><p>Our pipeline could be represented as a function f [(x 1 , ..., x n ), position] → (f 1 , ..., f D ) which generate D dimensional feature vectir for term in position = 1, .., n. To descibe feature extraction we assume below w 0 = x position and index of w is a relative index to the position.</p><p>Below we provide a table with features we used with the short description. Note that we expect possibility of usage different set of features for the extraction of different entities.</p><p>So, in our machine learning model each term in product description is represented by the set of features, generated by feature extraction pipeline. One type of features could be specific for current term: for example is it numeric term or it consists only of letters, is term started from capital letter and length of term. Another type of features is contextual: value of feature depends on other terms in product description -bigramm is the simplest example. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Supervised classification approach</head><p>We use 2 classification methods for classification the entity for each token: SVM and Gradient Boosting Trees implemented scikit-learn package. Because we have a case of several classes (multinomial classification), we assign to the token an entity with the highest probability, if it exceeded the threshold. We assign threshoild based on the ROC AUC curve which we build for SVM and GBT classifiers.</p><p>Also we tried Conditional random field to assigng labels for the tokens.</p><p>For SVM we found that the optimal recognition has been provided by SVM with RBF kernel and below we provid the results for different enttities. Paramaters γ and C for RBF were obtained via cross validation and are different for different entities.</p><p>Below we provided an example of multinomial classification for SVM classifier. Here Tag is the original Tag and TagPred is predicted Tag. For each category we explicitly provided the probability and the assigned category is calculated as category with maximum probability if it's exceed the threshold.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Classification results for SVM classifier</head><p>Below we provide results for SVM classifier (RBF kernel). We tried several other cores, but RBF is the optimal one. With cross-validation we defined the optimal parameters and provide final results for training and test set below. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Classification results for GBT classifier</head><p>Next we used the same approach, but another classifier -Gradient Boosting Decision trees, also from scikit-learn package. Again, we determine parameters using cross-validation on training set and provide the results below for training and test set. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Conditional random fields</head><p>In CRF approach we estimate the probability of tags using:</p><formula xml:id="formula_2">p(y|x) = 1 Z(x) T t=1 exp K k=1 θ k f k (y t , y t−1 , x t )</formula><p>where {f k } are feature functions, {θ k } -parameters adjusted to model the observed statistics andZ(x) is a normalization constant. . The most probable label sequnce y * for input sequence x is: y * = argmax y p(y|x) The same model we applied for attribute extraction of CoNLL2002 data set (https://www.kaggle. com/nltkdata/conll-corpora) as a base line (actually we use data set conll2002 provided by nltk) and got with the same approach the following results:</p><p>For implementation we used CRF library https://sklearn-crfsuite.readthedocs.io/en/ latest/</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Discussion</head><p>In current project we applied supervised classification: SVM, GBT and Conditional random fields approaches to assign entities to the tokens from eCommerce product description. In general we can see based on F 1 − score that CRF demonstrated better results. We didn't use gazetteers as a source for additional features, but we assume that it will be very strong signal which can significantly improve the results.</p><p>Also we had very limited data set and we were not able to use other models like pretrained word embedding, which could compensate small data set, because we have ModelNames which are very specific and most likely are not a part of pretraing set like GloVe. Because our data set is relatively small, we were not able to solve the problem of overfitting, but even on this data set we can see good recognition of Brands.</p><p>It happened that SVM training demonstrated the longest computation time and CRF was the fastest one.</p><p>For future work we consider to apply approach described in <ref type="bibr" target="#b3">[4]</ref> (Draft available on Stanford site: https://web.stanford.edu/~jurafsky/slp3/17.pdf ) based on deep learning approach.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>List of features for entity extraction 
+w 0 
+Represents term in current position 
+w −1 , w 0 
+Represents bigram with the previous term 
+w 0 is number 
+1 if w 0 iconsists only on digits otherwise 0 
+w −1 == and 
+1 if previous term is "and" 
+w −1 is uppercase 
+1 if previous term is uppercase 
+w 0 is uppercase 
+1 if current term is uppercase 
+i the position of w 0 
+Position of current term 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table>Entity recognition metrics for SVM (RBF kernel) 
+Training Set Brand Category ModelName 
+Precision 
+0.900 
+0.900 
+0.930 
+Recall 
+0.750 
+0.800 
+0.780 
+F1-score 
+0.820 
+0.840 
+0.840 
+Dev Set 
+Brand Category ModelName 
+Precision 
+0.895 
+0.667 
+0.800 
+Recall 
+0.486 
+0.531 
+0.431 
+F1-score 
+0.630 
+0.591 
+0.560 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3 :</head><label>3</label><figDesc></figDesc><table>Entity recognition metrics for GBT 
+Training Set Brand Category ModelName 
+Precision 
+0.870 
+0.830 
+0.860 
+Recall 
+0.830 
+0.840 
+0.800 
+F1-score 
+0.850 
+0.840 
+0.830 
+Dev Set 
+Brand Category ModelName 
+Precision 
+0.793 
+0.603 
+0.727 
+Recall 
+0.697 
+0.620 
+0.480 
+F1-score 
+0.742 
+0.611 
+0.578 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 4 :</head><label>4</label><figDesc></figDesc><table>Conditional random field 
+Training Set Brand Category ModelName 
+Precision 
+0.925 
+0.869 
+0.908 
+Recall 
+0.928 
+0.964 
+0.940 
+F1-score 
+0.927 
+0.914 
+0.924 
+Dev Set 
+Brand Category ModelName 
+Precision 
+0.818 
+0.621 
+0.631 
+Recall 
+0.614 
+0.711 
+0.746 
+F1-score 
+0.701 
+0.663 
+0.684 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We used github as a code repository for the project https://github.com/masidorov/ cs229-project All calculation were implemented on Amazon AWS SageMaker platform https://aws. amazon.com/sagemaker/.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Attribute Extraction from Product Titles in eCommerce</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ajinkya</forename><surname>More</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<pubPlace>WalmartLabs, Sunnyvale CA 94089</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Named Entity Recognition using Support Vector Machine: A Language Independent Approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Asif Ekbal Sivaji</forename><surname>Bandyopadhyay</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+		<respStmt>
+			<orgName>World Academy of Science, Engineering and Technology</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Fast and Accurate Part of Speech Tagging: The SVM Approach Revisited</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jesus Gimenez Llus</forename><surname>Marquez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TALP Research Center</title>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+		<respStmt>
+			<orgName>LSI Department, Universitat Politecnica de Catalunya Jordi Girona Salgado</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dan</forename><surname>Jurafsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">H</forename><surname>Martin</surname></persName>
+		</author>
+		<title level="m">Speech and Language Processing</title>
+		<imprint>
+			<date type="published" when="2019" />
+		</imprint>
+	</monogr>
+	<note>3rd ed. draft). To be published</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Information Extraction: Algorithms and Prospects in a Retrieval Context (The Information Retrieval Series)</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marie-Francine</forename><surname>Moens</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

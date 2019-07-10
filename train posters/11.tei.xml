@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Metabolic Cost During Human-in-the-Loop-Optimization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erez</forename><surname>Krimsky</surname></persName>
+							<email>ekrimsky@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eley</forename><surname>Ng</surname></persName>
+							<email>eleyng@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Metabolic Cost During Human-in-the-Loop-Optimization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1109/TITB.2007.89949</idno>
+					<note>The dataset was taken from an ongoing study in the Stanford Biomechatronics Laboratory, which consists of multiple days of 72 minute human in the loop optimization trials. Two subjects&apos; data were used; this corresponds to approximately 180 sample points per subject. • Input features ○ 4 exoskeleton control parameters ○ 16 EMG sensors total (8 per leg) ○ 9 features from step data • Outputs features ○ Metabolic cost • Preprocessing ○ Metabolic data: normalized ○ EMG data: filtering ○ Step data: extracted from treadmill force sensors</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Input features ○ 4 exoskeleton control parameters ○ 16 EMG sensors total (8 per leg) ○ 9 features from step data </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stanford University</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Metabolic cost is a measurement of the rate of energy required to perform a task. Collecting metabolic cost data is difficult and limiting. We are interested in using human data collected during human-in-the loop optimization of exoskeleton control to predict metabolic cost. The ability to approximate human energy use during walking outside the laboratory environment will allow for more robust experimentation for exoskeletons and prosthetics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>. .</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>• EMG data is relatively more significant than step data as predictors for metabolic cost • The variations in predictions between the two subjects indicates that trying to create a network to generalize these predictions for multiple individuals would likely yield poor predictions • Control parameters as inputs has relatively low significance • There may be better models neural network for this problem</p><p>• Collect a larger data set with features from more individuals • Include more human-specific features (such as height, weight, etc.) for better generalization • Current dataset is relatively small with a large number of predictors; feature dimensionality could be reduced with feature selection or principal components analysis <ref type="table">Table 1</ref>. MSE of all subsets of models and learning algorithms used</p><p>We used a baseline linear regression model to predict metabolic cost. We also used a shallow, one hidden layer neural network to perform curve fitting. To tune the number of neurons in the hidden layer we used k-fold cross-validation while training with Bayesian Regularization. Regularization was also performed during linear regression (LASSO) to preven overfitting.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Fiers</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">A</forename><surname>Witte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">W</forename><surname>Jackson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">L</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Human-in-theloop optimization of exoskeleton assistance during walking</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">G</forename><surname>Poggensee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">H</forename><surname>Atkeson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Collins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">356</biblScope>
+			<biblScope unit="issue">6344</biblScope>
+			<biblScope unit="page">2801284</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Body-In-The-Loop: Optimizing Device Parameters Using Measures of Instantaneous Energetic Cost</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Felt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Selinger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">M</forename><surname>Donelan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Remy</surname></persName>
+		</author>
+		<idno>e0135342. pmid:26288</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Gait Analysis Using a Shoe-Integrated Wireless Sensor System</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">J M</forename><surname>Bamberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Benbasat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Scarborough</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">E</forename><surname>Krebs</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">A</forename><surname>Paradiso</surname></persName>
+		</author>
+		<idno type="doi">10.1109/TITB.2007.89949</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Information Technology in Biomedicine</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="413" to="423" />
+			<date type="published" when="2008-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

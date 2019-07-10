@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Res2Vec: Amino acid vector embeddings from 3d-protein structure</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><surname>Longwell</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tyler</forename><surname>Shimko</surname></persName>
+						</author>
+						<title level="a" type="main">Res2Vec: Amino acid vector embeddings from 3d-protein structure</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>The 20 naturally-occurring amino acids are the building blocks of all proteins. These residues confer distinct physicochemical properties to proteins based on features like atomic composition, size, and charge. Here, inspired by recent work in NLP, we create vector embeddings of each amino acid based on their contexts of neighboring residues within folded proteins. We then test the utility of these embeddings in a data-scarce supervised task, classifying amino acid mutations as "neutral" or "destabilizing" to T4 lysozyme.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>One of the greatest open challenges in medicine is to accurately predict a protein's function (or dysfunction) from the primary sequence of amino acids that comprise it. The ubiquity of full genome sequencing has made this challenge all the more salient, as we now possess an abundance of genomic and, therefore, protein sequence data, but are unable to experimentally assess how the thousands of mutations that are routinely uncovered manifest as changes to a protein's function. We lack this ability because a) experimental characterization of a single protein is costly and time consuming and b) the space of protein sequences is unfathomably vast. Together, these two factors conspire to yield a sparsely sampled sequence-function landscape.</p><p>The high cost of experiments to determine protein function from structure makes predictive algorithms an attractive alternative. While supervised deep learning algorithms perform well over complex, high-dimensional landscapes, they also rely on ample labeled training examples. Until recently, the field of natural language processing (NLP) was stymied by the same quandary computational biology now facesa preponderance of unlabeled sequences, with little way to generalize across small sets of labeled data. A breakthrough insight in NLP was that powerful models could be trained on smaller datasets providing their inputs -words -were featurized such that words with similar meanings had similar vector representations. To capture the meaning of a word, the idea of distributional semantics -that "you shall know a word by the company it keeps" -played a critical role. Leveraging the fact that words with similar meanings tend to be observed in similar contexts (e.g. sentences, documents), several models have been created to learn meaningful word embeddings from unlabeled text, most notably the watershed word2vec model <ref type="bibr" target="#b0">(1)</ref>. These word embeddings increasing performance on supervised tasks such as sentiment analysis and document classification because they effectively augment small datasets with information learned from an enormous text corpus.</p><p>Taking lessons of NLP into account, the obvious analogy for computational biology is to learn vector representations of amino acids that distill biochemical meaning from their context in proteins. Here, we adapt the word2vec algorithm to accept a 3D "context bubble" of neighboring amino acids surrounding a target amino acid as input and predict the target amino acid identity as output. The process of training this model, which we call Res2Vec or r2v, generates vector representations for each of the 20 naturally-occurring amino acid residues, the utility of which we validate on a protein mutation effect prediction task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>Unsupervised methods to generate vector embeddings of words, such as word2vec (1) and GloVe (2) have underpinned rapid advancement in (NLP). At their core, these methods leverage the fact that words with similar semantic meanings tend to appear in similar contexts (e.g. sentences, documents). The analogous problem in the fields of biochemistry and structural biology is to encode the biochemical meaning of an amino acid based on the contexts (e.g. domains, proteins) in which it is frequently situated. Prior attempts have used this principle to create amino acid embeddings (3) based on abundant 1D primary protein sequences. While these approaches yield useful embeddings which improve performance on supervised tasks relative to one-hot amino acid encodings, they disregard information about the 3D structural context of each residue.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Datasets and Features</head><p>The ability to predict a protein's 3D structure -or foldfrom its primary sequence of amino acids has been a longstanding challenge in the field of computational biology. To provide an unbiased benchmark for computational models addressing this challenge, the Critical Assessment of Protein Structure Prediction (CASP) competition provides biennial releases of unpublished protein structures to guarantee that computational models can be evaluated against truly unseen data (4; 5). These releases have been further curated and extended by the AlQuraishi laboratory to create standardized, rationally chosen training/validation/test datasets for problems relating to protein structure prediction. In combination, these resources amount to an equivalent of the ImageNet dataset, appropriately named ProteinNet, for protein structural data (https://github.com/aqlaboratory/ proteinnet). To create our embeddings, we employed the ProteinNet datasets with the predefined training/validation/test splits as both sequence and 3D structural information are available for each protein in the database. The positions for each atom/residue in each PDB file (a type of protein structure file) are given in 3D space using a Cartesian coordinate system. However, there exists no universal standard for the orientation of protein structures within the coordinate system of these files. We therefore had to develop a reoriented coordinate system within which each context window could be examined while maintaining a consistent notion of orientation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">A target-centric coordinate system</head><p>The 3D spatial arrangement of a specific amino acid's neighbors defines the physicochemical environment in which the target amino acid resides. Therefore, not only distance, but also the orientation, of the neighboring residues is important to understand a target residue's context. To provide an embedding model with information about the 3D context, we devised a change of basis system such that the α carbon of the target amino acid is at the origin with the three basis vectors positioned with respect to the nitrogen and carbonyl carbon of the target residue ( <ref type="figure" target="#fig_0">Fig. 1(a)</ref>). For each target amino acid, we first subtracted the Cartesian coordinates of the target α carbon from every atom in the structure. We then defined the z-axis by taking the crossproduct of the α carbon-nitrogen and α carbon-carbonyl carbon coordinate vectors to yield a vector orthogonal to the plane. We then normalized this vector to unit length and repeated this operation to yield the x and y basis vectors respectively. We then inverted this matrix to change the coordinate system of the entire protein structure such that the α carbon of the target residue was at the center and the three basis vectors of the coordinate system were orthogonal and consistently positioned. These adjusted coordinates for the α carbon of each context residue were then concatenated with a one-hot encoding vector indicating the identity of each context residue to yield the input to our embedding model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head><p>Notation example: matrix M; vector m; scalar dimension M; index m.</p><p>Assume a set of S one-hot encoded symbols S ∈ {0, 1} S×S</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Res2Vec</head><p>(e.g. words; amino acids).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">word2vec architecture choice</head><p>The word2vec algorithm has two flavors that generate dense vector representations of a symbol: skip-gram (SG) and continuous-bag-of-words (CBOW). Given a corpus of sequences (e.g. database of text documents or proteins sequences), either model will read through the sequences, at each step considering a context window of symbols C ∈ {0, 1} C×S around a target symbol t. However, SG and CBOW have different (reciprocal) tasks: SG takes t as input and tries to predict C as output; CBOW takes C as input and tries to predict t as output. Canonically, SG performs better on infrequent symbols, while CBOW is faster to train (1). Both models can generate useful embeddings, but the CBOW training task -predicting amino acid probability from context -is likely to capture more contextual information pertinent to the task of mutation effect prediction, so we selected it for further development.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Generation of weighted context vector x</head><p>CBOW must first "summarize" the C one-hot vectors in C to create an input vector x ∈ R S . Traditionally, CBOW accomplishes this through simple averaging:</p><formula xml:id="formula_0">x = 1 C C c s c</formula><p>This approach removes any information concerning the position (relative or absolute) of the context symbols. While this may be acceptable for a small window over a 1D sequence, we desired to provide our model with some notion of 3D position of the context residues. We first decided to calculate the inner product of the XYZ-coordinates of each context residue's alpha-carbon (D ∈ R C×3 ) and a 3D-vector of trainable parameters (w [0] ∈ R 3 ), then pass the result through a sigmoid activation. We reasoned that the resulting vector r ∈ R C should correspond to a learned pseudo-distance, which is then used to perform a weighted average of the context vectors to arrive at x:</p><formula xml:id="formula_1">r = σ(Dw [0] ) x = C T r</formula><p>We compared this sigmoid weighting to an alternative weighting scheme via 2 fully connected neural network layers, parameterized by weights W [0] ∈ R 3×3 and W <ref type="bibr" target="#b0">[1]</ref> ∈ R 3×1 , with ReLU activation over the coordinate matrix D such that:</p><formula xml:id="formula_2">r = σ(σ(DW [0] )W [1] ) x = C T r</formula><p>where σ is the ReLU function.</p><p>Finally, we also implemented an inverse distance weighting scheme where x was calculated as</p><formula xml:id="formula_3">r = (1 + d * ) −1 x = C T r</formula><p>where d * is the Euclidean distance to the α carbon of the context residue. During training time we compared the performance of all four of the above weighting schemes and ultimately selected the fully-connected neural network weighting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">CBOW model</head><p>Given an input vector x, the CBOW model is similar to a softmax classifier, consisting of a linear hidden layer followed by a softmax layer.</p><p>It first multiplies x by weight matrix W <ref type="bibr" target="#b0">[1]</ref> to realize a hidden layer z <ref type="bibr" target="#b0">[1]</ref> (no activation is applied here). A second network layer is then applied with softmax, along with a negative log-likelihood loss (NLL):</p><formula xml:id="formula_4">z [1] = W [1] x + b [1] y = a [2] = σ [2] (W [2] z [1] + b [2] ) J(y,ŷ) = −(y T lnŷ)</formula><p>where:</p><formula xml:id="formula_5">σ [2] (z) = 1 1 T e z e z</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiments</head><p>To selected a suitable model to generate the vector embeddings, we performed sweeps across the hidden layer size and learning rate hyperparameters of the standard word2vec-style model. We tested hidden layer sizes ranging from 10 up to 1,000 hidden units and learning rate values ranging from 1 to 0.0001. We found little difference in performance, as measured by validation set loss, when varying the hidden layer size. To make direct comparisons between our embedding vectors and standard one-hot encoding and BLOSUM (6) empirical substitution vectors, we ultimately decided on a hidden layer size of 20 <ref type="figure" target="#fig_1">(Fig. 2)</ref>.</p><p>In contrast to hidden layer size, we found learning rate to have a large impact on model performance, especially relating to convergence. We found a learning rate of 1 to</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Res2Vec</head><p>be too aggressive, with models failing to converge, and learning rates at or below 0.01 to be too relaxed, leading to delayed convergence. We used a learning rate of 0.1 to train all future models. To further boost model performance following selection of the hidden layer size and learning rate, we tested different methods of weighting the context residues surrounding the target residue. As noted in the Methods section, we first tried the weighted, sigmoid-activated coordinate system. We then also employed a pure average, the inverse distance metric, and a fully connected weighting system over the coordinates (all described in detail in the Methods section above). We found that the fully-connected weighting offered the best performance and selected this method for the final model. The final model was trained using the negative log likelihood loss function and all code employed the PyTorch library (7). Training and validation dataset losses for this model decreased to final values of roughly 2.12 and 2.14, respectively ( <ref type="figure" target="#fig_2">Fig. 3(a)</ref>).</p><p>For the final model, prediction accuracy on the validation dataset increased, eventually leveling off around 8.8% <ref type="figure" target="#fig_2">(Fig.  3(b)</ref>) Despite the low accuracy of the model, closer inspection of the confusion matrix over the training dataset <ref type="figure" target="#fig_3">(Fig.  4(a)</ref>) indicates common and expected mistakes made by the model. For instance, leucine and isoleucine tend to be mis- taken with high frequency. From a biochemical perspective, this is to be expected as these two residues are isomers of each other. Therefore, these two residues are similar in size and chemical properties, giving rise to a high level of confusion for the model. Comparison to the BLOSUM matrix ( <ref type="figure" target="#fig_3">Fig. 4(a)</ref>) <ref type="bibr" target="#b5">(6)</ref> indicates that this substitution is generally well-tolerated and, therefore, expected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Results/Discussion</head><p>The final set of weights before the softmax layer of the model provide the final embedding vectors for each amino acids and can be interpreted as carrying the biochemical "meaning" of each individual residue. To gauge whether these vectors were encoding biochemically meaningful information, we performed a principal components analysis of the matrix of embeddings. We note that the first two principal components seem to cluster the residues by important biochemical properties <ref type="figure" target="#fig_4">(Fig. 5)</ref>, such as charge and size, confirming the potential utility of these vectors. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Res2Vec</head><p>The purpose of generating vector representations from abundant data is to transfer generalizable features to label-scarce supervised tasks, enabling simple models to still make effective predictions. To validate the utility of our vector representations, we considered a small supervised task established by Torng and Altman (8): given 1 of 40 amino acid mutations to T4 lysozyme characterized in literature, classify the functional effect as "neutral" or "destabilizing" <ref type="bibr" target="#b7">(8)</ref>. For comparison, we considered 5 different approaches to featurize each example's wild type and mutant amino acid with vectors (which are concatenated to form the input):</p><p>• one-hot: zero-vector except at the index corresponding to the amino acid, which is given a value of 1</p><p>• BLOSUM62: corresponding row of the score matrix</p><p>• r2v-v freq: row of symmetric pseudo-score matrix generated from r2v confusion matrix (calculated by S f req as described in <ref type="formula">(8))</ref> • r2v-v dot: similar to above, but calculated with S dot</p><p>• r2v-W2: corresponding row of the second layer weights in <ref type="figure" target="#fig_1">Fig. 2</ref> (i.e. the r2v embedded vectors)</p><p>All vectorizations are of length 20. We had hoped to make a comparision to the 3D-CNN featurization presented in Torng and Altman, but their substitution matrices were not directly accessible from the manuscript or supplement.</p><p>Following the example of Torng and Altman, we performed 4-fold cross validation on the dataset and evaluated the performance of support vector classifiers (SVC) with radial basis functions (RBF), implemented by scikit-learn. For each featurization, we performed a grid search over two arguments: C, for which smaller values regularize the classifier by trading training accuracy for margin of separation, and γ, for which smaller values increase the influence radius of the support vectors.  For a given 4-fold split, we refer to the held out fold as the "test" set. The mean training and test accuracies of the SVC-RBF model which yielded the highest mean test accuracy for each featurization are summarized in <ref type="figure" target="#fig_6">Fig. 6</ref>. The confusion-matrix derived vectors (r2v-v freq and v dot) did better than one-hot encoding, demonstrating that the confusion of r2v helps a SVC understand which mutations are tolerable. However, it is important to note that the confusion matrix of a perfect embedding model will be a diagonal matrix, effectively recapitulating a weighted-one hot encoding. Thus, the generation of useful confusionmatrix representations is at odds with embedding model training tasks focused on maximizing accuracy. On the other hand, embedding model weights must extract useful features if the embedding model is to have high accuracy. Indeed, the r2v-W2 featurization gave a 10% increase in mean test accuracy over one-hot encoding, identical to the performance of the BLOSUM vectors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Conclusion and Future Work</head><p>The current performance of the model, at roughly 9% accuracy is lower than might be expected. To address this issue of model accuracy, we would change the way that context information is encoded and fed to the model. Primarily, we would reconsider the way in which the 10 closest residues are calculated. Currently, the distance between residues is calculated as the distance between the α carbons of each residue. However, given the great range of sizes for the side chains of the amino acids, we would suggest changing the distance calculation to reflect the distance between the two closest atoms of the residue side chains. This strategy would likely improve implicit encoding of spatial information and may have dramatic effects on contexts crowded with large amino acids residues. A second change that may improve context representation is encoding of the directionality of the α carbon-β carbon bond. Including this information would provide the model with the general directionality of the amino acid side chain (e.g. whether the chain is pointed toward or away from the target residue) that may be helpful in predicting the target residue.</p><p>Despite the relatively low accuracy of the model, the embedding vectors proved significantly better than residue identities alone at predicting mutational effects. The performance of the embedding vectors matched that of the BLOSUM62 (6) matrix, indicating that they may be helpful and informative for more intense mutation effect prediction tasks. Specifically, given more time, we would like to compare the performance of the one-hot, BLOSUM, and r2v encoding on a quantitative (continuous) effect prediction task. Such a task may be more sensistive to the implicit encoding of the r2v vectors, and it might be possible to distinguish performance of the r2v and BLOSUM vectors.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Definition of a target residue's 3D context. (a) To give each target residue a consistent notion of direction, we defined orthogonal (X, Y, Z) axes, shown as (R, G, B) arrows, to elicit a change of coordinate basis. (b) Example target residue (alanine) with context of 10 nearest amino acids by αC-αC distance. Side- chains are hidden; the α carbons of each residue are shown as small spheres with a rainbow color-mapping from N to C terminus. Note the structure's original basis (top-left) and redefined target-centric unit-vectors (center).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Core CBOW architecture employed by the r2v model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Loss and accuracy metrics over training epochs. The average negative log likelihood loss value is shown for the training (blue) and validation (orange) datasets are shown in (a). The accuracy of the model on the validation dataset is shown in (b).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>The confusion matrix for the model on the training dataset is shown in (a). For comparison, the scores present the BLOSUM62 empirical substitution matrix are shown in (b). The BLOSUM baseline indicates that some level of confusion is ex- pected based on empirical tolerated substitution frequencies.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>The first 2 principal components of the embedding vec- tors for each residue are shown (44.5% and 9.4% variance ex- plained, respectively). Residues are identified by single letter code and colored by chemical property (blue: polar positive, red: polar negative, green: polar neutral, black: non-polar aliphatic, purple: non-polar aromatic, yellow: cysteine, brown: other).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc>Comparison of mean accuracies of different input featur- izations on T4 lyzozyme mutant classifcation task.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 3 78 Table 1 .</head><label>3781</label><figDesc>displays the number of training example proteins within each of the ProteinNet data splits. SEQ. SIM. THRESHOLD PROTEINS 30% 22,344 50% 29,936 70% 36,005 90% 42,507 95% 43,544 100% 87,573 VAL 224 TEST 78 Table 1. ProteinNet dataset. The number of training example pro- teins is shown for each threshold of sequence similarity to the proteins withheld in the CASP11 test dataset. The number of ex- amples in the validation and test sets are also shown. Note that the number of amino acids per protein is on the order of 100s.</figDesc><table>SEQ. SIM. 
+
+THRESHOLD 
+
+PROTEINS 
+
+30% 
+22,344 
+50% 
+29,936 
+70% 
+36,005 
+90% 
+42,507 
+95% 
+43,544 
+100% 
+87,573 
+
+VAL 
+
+224 
+
+TEST 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Res2Vec</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Contributions</head><p>We note that the authors contributed equally to this work. Both authors conceived of and designed the initial implementation of this model. Both authors contributed substantially to the codebase necessary to download, process, clean, and store the data as well as to define, train, and run the models and apply them. Finally, both authors contributed to the drafting and revising of this report and the associated project poster.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<title level="m">Efficient Estimation of Word Representations in Vector Space. arXiv.org</title>
+		<imprint>
+			<date type="published" when="2013-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Glove: Global Vectors for Word Representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<meeting>the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)<address><addrLine>Stroudsburg, PA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Association for Computational Linguistics</publisher>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ehsaneddin</forename><surname>Asgari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohammad R K</forename><surname>Mofrad</surname></persName>
+		</author>
+		<title level="m">ProtVec: A Continuous Distributed Representation of Biological Sequences. arXiv.org</title>
+		<imprint>
+			<date type="published" when="2015-03" />
+			<biblScope unit="page">141287</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Lisa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wenlin</forename><surname>Kinch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dustin</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roland</forename><forename type="middle">L</forename><surname>Schaeffer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bohdan</forename><surname>Dunbrack</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andriy</forename><surname>Monastyrskyy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nick</forename><forename type="middle">V</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Grishin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CASP 11 target classification. Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="20" to="33" />
+			<date type="published" when="2016-09" />
+		</imprint>
+	</monogr>
+	<note>Suppl</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The Protein Data Bank</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Helen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Berman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zukang</forename><surname>Westbrook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gary</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T N</forename><surname>Gilliland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Helge</forename><surname>Bhat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Weissig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Ilya</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philip</forename><forename type="middle">E</forename><surname>Shindyalov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bourne</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="235" to="242" />
+			<date type="published" when="2000-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Amino acid substitution matrices from protein blocks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Henikoff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J G</forename><surname>Henikoff</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the National Academy of Sciences</title>
+		<meeting>the National Academy of Sciences</meeting>
+		<imprint>
+			<date type="published" when="1992-11" />
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="10915" to="10919" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sam</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soumith</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregory</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zeming</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alban</forename><surname>Desmaison</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luca</forename><surname>Antiga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Lerer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">3D deep convolutional neural networks for amino acid environment similarity analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wen</forename><surname>Torng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Russ B Altman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">302</biblScope>
+			<date type="published" when="2017-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

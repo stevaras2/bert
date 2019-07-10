@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Defending the First-Order: Using Reluplex to Verify the Adversarial Robustness of Neural Networks to White Box Attacks Research Goal 1: Do first-order methods well approximate the closest adversary? Motivation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Pahlavan</surname></persName>
+						</author>
+						<title level="a" type="main">Defending the First-Order: Using Reluplex to Verify the Adversarial Robustness of Neural Networks to White Box Attacks Research Goal 1: Do first-order methods well approximate the closest adversary? Motivation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>(adampah@stanford.edu), Daniel Lee (dan9lee@stanford.edu), Justin Rose (justrose@stanford.edu)</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fig. 1. (A) Simple linear classifier. (B)</head><p>Classifier is susceptible to adversarial examples off the data manifold. (C) Adversarially trained classifiers learn robustness to nearby adversarial examples. Adapted from Madry <ref type="bibr">[1]</ref> . . that separate data give rise to adversarial examples near inpu. Adverserially Are first-order attacks a good benchmark for verifying the adversarial robustness of a neural network? Do first-order defenses generalize to non-first order attacks?</p><p>I. First-order attacks provide a close approximations of the closest adversary over the entire input domain. Supports first-order attacks as good benchmarks for evaluating robustness II. Adversarial training against first order attacks generalizes to all attacks. Supports that first order defenses are good universal defenses</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem Statement</head><p>Limitations of Current Science and Approach</p><p>• Neural networks are non-linear and nonconvex, and verifying even simple properties about them (such as finding the closest adversary) is NP-hard <ref type="bibr">[2]</ref> ○ As a result, state-of-the-art adversarial defenses are constrained to benchmarking robustness against first-order gradient-based attacks • We overcome this limitation with Reluplex (developed by Katz et. al <ref type="bibr">[2]</ref> ), a tool to verify the satisfiability of neural networks given input and output constraints ○ Reluplex is sound and complete: given a set of input and output constraints, it will never miss a satisfying condition ○ Due to Reluplex's current difficulties in scaling to larger networks, we study a multi-layer perceptron with one hidden layer with 50 neurons</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>First-Order vs. Reluplex Attacks</head><p>• Fast-Gradient Sign Method: First-order iterative-optimization attack to find norm-bounded adversary</p><p>• If the adversary only has first-order information about a network, FGSM well-approximate the closest adversary <ref type="bibr">[3]</ref> • Whether non-first-order methods can generate closer attacks is an open research question</p><p>• Several white-box adversarial defenses have been shown to increase robustness against first order attacks ○ Research suggests many state-of-the-art techniques are shallow and only provide defenses to first-order attacks by obfuscating first-order gradients <ref type="bibr">[4]</ref> Case Study: Adversarial Logit Pairing  • Baseline: Adversarial logit pairing significantly improves robustness to first-order attacks <ref type="figure" target="#fig_1">(Fig. 5</ref>) </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•Fig. 10 .</head><label>10</label><figDesc>Matches logits from images and their corresponding FGSM-generated adversaries by minimizing the loss Research Goal 2: Do state-of-the-art adversarial defenses generalize to non-first-order attacks? Equation 1. FGSM update rule Equation 2. Adversarial logit pairing loss function A) B) C) Fig. 10. Perturbations generated by FGSM and Reluplex for different cosine similarities.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 5 .</head><label>5</label><figDesc>Baseline robustness comparison for FGSM-generated adversaries for vanilla (R 2 =0.93) and robust network (R 2 =0.95).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 .Fig. 2 .Fig. 4 .Fig. 7 .Fig. 6 .Fig. 8 .Fig. 9 .</head><label>3247689</label><figDesc>High cosine similarity indicates Reluplex's attacks are in a similar direction to FGSM's Fig. 2. Similar δ-robustness indicates Reluplex's attacks are not significantly closer than FGSM's Fig. 4. Perturbations are visually similar in both methods, indicating Reluplex finds similar attacksFig. 7. Lower cosine similarity indicates Reluplex's attacks explore different directions than FGSM's Fig. 6. Similar δ-robustness indicates Reluplex's attacks are not significantly closer than FGSM's Fig. 8. Perturbations are dissimilar: FGSM attacks on robust model more sensitive to initialization IV. Future work can expand the current study to large and deep networks, where non-first-order attacks can exploit the more complicated loss surface and greater variation in linear modes Vanilla Model Accuracy: 97% test, 14% adversaries Robust Model Accuracy: 96.5% test, 89% adversaries III. We conjecture first-order methods well-approximate the closest adversary because our network can only behave in a limited range of linear modes since ReLUs are fixed in a local region Conclusion Fig. 9. Average δ-robustness comparison for the vanilla and robust networks. Adversarial training significantly improves robustness under FGSM and Reluplex attacks. Reluplex finds slightly closer adversaries than FGSM.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

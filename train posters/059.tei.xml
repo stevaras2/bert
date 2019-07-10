@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Identifying Media Bias in Online News</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Identifying Media Bias in Online News</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Identify trends in the selection and presentation of online news</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Events are clusters of news articles by event registry by time, location and key words CS 229: Machine Learning -Final Project</p><p>• Trained Multinomial Naïve Bayes (NB) and Multiclass SVM models to discriminate between 8 news sources based on article title tokens.</p><p>• Accuracy of classifiers validates keyword analysis.</p><p>• NB yields ) for every (word, news outlet) pair • Informally, model how indicative a token is of a given news outlet as:</p><formula xml:id="formula_0">log ) )</formula><p>Tokens that maximize the above value for selected news sources: </p><formula xml:id="formula_1">Model Precision Recall</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>TIME, Los Angeles Times, Truthdig, DIE WELT, The Japan Times, San Francisco Gate, Ad Hoc News, The National, N24.de, Thomson Reuters Foundation, The Irish Times, www.greenpeace- magazin.de</figDesc><table>F 1 Score 
+
+Naïve Bayes 
+.48 
+.40 
+.38 
+
+SVM 
+.47 
+.48 
+.48 
+
+Source 
+Reputation 
+Keyword Tokens 
+
+Haaretz 
+Lib. Israeli 
+
+jewish, bid, live, watch, world, 
+lawmakers, probe, vote 
+
+Israel Hayom 
+Con. Israeli 
+
+israel, turkey, jews, mind, 
+caught, european, hamas, 
+blackmail, pm 
+
+Palestine Chronicle 
+Con. Palestinian 
+
+palestine, book, apartheid, 
+nakba, zionist, media, bds, 
+struggle 
+
+Palestine News 
+Agency (WAFA) 
+Lib. Palestinian 
+
+review, dailies, focus, 
+newspapers, highlight, killing, 
+premier, international 
+
+Fox News 
+Con. American 
+
+claim, site, holy, nations, 
+western, muslim, prepares, 
+holocaust 
+
+Reuters 
+Mod. International 
+
+treaty, solidifying, update, 
+kill, vatican, agrees, 
+relationship, troops 
+
+Keyword Analysis 
+
+To study event selection bias, we examined the news outlets by: 
+• Frequency: Number of articles on each event 
+• Binomial: Whether the source reported on each event 
+• Normalized: Frequency norm2 normalized and centered about zero 
+
+Figure 1: Frequency [left], binomial [center] normalized [right] vectors 
+of 600 events. PCA units omitted. Representing article frequency makes 
+all local news sources outliers due to report propensity. Event binomials 
+represent cherry picking. Events normalized show good spread. 
+
+KNN, Mixture of Gaussians, Hierarchal Clustering had similar results. 
+
+www.presstv.ir, Irish Sun, 
+International Business Times 
+UK, www.aa.com.tr, 
+www.albawaba.com, 
+www.palestine-info.co.uk, 
+Naharnet, News From 
+Antiwar.com, english.wafa.ps 
+
+GULF NEWS, The 
+Huffington Post, The Daily 
+Star Lebanon, ABC News, 
+CNN International, 
+english.farsnews.com, 
+Republika Online, Star 
+Tribune, ReliefWeb 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0" />
+			</div>
+
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

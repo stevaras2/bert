@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Clustering Reduced Order Models for Computational Fluid Dynamics</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gabriele</forename><surname>Boncoraglio</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Forest</forename><surname>Fraser</surname></persName>
+						</author>
+						<title level="a" type="main">Clustering Reduced Order Models for Computational Fluid Dynamics</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We introduce a novel approach to solving PDE-constrained optimization problems, specifically related to aircraft design. These optimization problems require running expensive computational fluid dynamics (CFD) simulations which have previously been approximated with a reduced order model (ROM) to lower the computational cost. Instead of using a single global ROM as is traditionally done, we propose using multiple piecewise ROMs, constructed and used with the aid of machine learning techniques. Our approach consists of clustering a set of precomputed non linear partial differential equations (PDE) solutions from which we build our piecewise ROMs. Then during the optimization problem, when we need to run a simulation for a given optimization parameter, we select the optimal piecewise ROM to use. Initial results on our test dataset are promising. We were able to achieve the same or better accuracy by using piecewise ROMs rather than a global ROM, while further reducing the computational cost associated with running a simulation.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Improving the design of aircrafts often requires solving PDEconstrained optimization problems such as maximizing the lift drag with respect to some parameters, µ. </p><p>Here µ is an optimization vector containing parameters that we want to optimize. It is also common practice to have a lower bound µ lb and upper bound µ ub on this vector µ.</p><p>To find the optimal µ˚we must update it iteratively, running a computational fluid dynamics (CFD) simulation at each optimization step. In figure <ref type="bibr" target="#b0">(1)</ref> we can see the multiple queried points to find the optimal solution. In our case, we want optimize the lift drag for the mAEWing2 glider with parameters µ " rµ 1 , µ 2 , µ 3 s P D Ă R 3 where µ 1 modifies the dihedral angle of the wing and tµ 2 , µ 3 u modify the sweep angle of the wing. Figure <ref type="bibr" target="#b1">(2)</ref> shows how the different parameters modify the shape of the aircraft. In figure <ref type="bibr" target="#b2">(3)</ref> we can see the result of running a CFD simulation on this aircraft, where we are calculating how the pressure varies along the surface of the aircraft for a specific choice of µ. CFD simulations are very computationally expensive. One technique in order to speed up CFD simulations is to use a reduced order model (ROM) <ref type="bibr" target="#b0">[1]</ref>. The objective of this project is to accelerate the optimization process further by using clustering/classification techniques to generate and use multiple piecewise ROMs for less expensive, yet still accurate simulations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">High Dimensional Model (HDM)</head><p>Fluid flow problems are governed by nonlinear partial differential equations (PDE). Solving these equations, using CFD techniques such as finite volume method, is equivalent to solving a set of nonlinear equations:</p><formula xml:id="formula_1">rpwpµq, µq " 0<label>(2)</label></formula><p>where µ is the set of parameters for our simulation and w is the unknown vector of dimension N , w P R N , called the "state" vector. Specifically, a row of the state, wris, represents a property of the fluid flow, such as pressure, at point i of the CFD mesh. Thus, the CFD mesh has N points. In <ref type="figure" target="#fig_4">figure (4)</ref> we can see some of the points of the mesh of the mAEWing2. Computing w allows us to compute the lift and drag generated by the mAEWing2 during the flight. This high dimensional model (HDM), Eq. (2), can be solved in a least squares sense by considering the following problem</p><formula xml:id="formula_2">min wPR N }rpwpµq, µq} 2 2 (3)</formula><p>Unfortunately, this problem is very expensive to solve when N is large, as it is in the case of solving CFD problems where N is in the order of thousands or millions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Reduced Order Model (ROM)</head><p>In order to solve CFD problems faster, a reduced order model (ROM) can be used in order to approximate the HDM, <ref type="bibr" target="#b1">(2)</ref>, reducing the number of unknowns in Eq. (3) and hence reducing the cost of solving the least squares problem. The fundamental assumption made in reduced order modelling is that the state w belongs to an affine subspace of R N , where the dimension n of the affine subspace is typically orders of magnitude smaller than N . Therefore, we search for an approximated solution for w in the form</p><formula xml:id="formula_3">wpµq " V gl w r pµq<label>(4)</label></formula><p>where V gl P R Nˆn denotes the global reduce order basis (ROB), and w r P R n denotes the new vector of unknowns, called the "reduced state". Substituting Eq. (4) into Eq. <ref type="formula" target="#formula_1">(2)</ref> results in the following system of N nonlinear equations in terms of n variables w r rpV gl w r pµq, µq " 0</p><p>Now the least squares problem to solve is min wrPR n }rpV gl w r pµq, µq} 2 2 (6)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.1">Global Reduce Order Basis (ROB) V gl</head><p>To build a ROM we first need to find the global reduced order basis (ROB), V gl . This is done by solving the non linear equation (2) for many optimization vectors µ. Thus, given a specific vector µ i we can define the solution state vector:</p><formula xml:id="formula_5">rpwpµ i q, µ i q " 0 Ð wpµ i q<label>(7)</label></formula><p>Therefore, for a set of k optimization vectors, tµu k 1 , we solve (3) and we get a set of state vectors, twpµ i qu k Finally, we perform a singular value decomposition (SVD) on the matrix M to compute the global ROB V gl :</p><formula xml:id="formula_6">M " UΣD " " V gl V 2 ‰ " Σ gl 0 0 Σ 2  " D gl D 2 <label>(9)</label></formula><p>Here, V gl is computed by only selecting the first n columns of the matrix U and therefore V g l P R Nˆn . Thus, the global ROM has dimension n and can be used in the entire domain D:</p><p>wpµq " V gl w r pµq, µ P D (10)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.3">Piecewise ROMs in the Design Space</head><p>In this project we propose creating multiple piecewise ROMs in the domain D, each having smaller dimensions than a global ROM would. These piecewise ROMs do not need to be accurate in the entire domain D but only in limited region of the design space D. By using machine learning techniques we hypothesize that we can improve quality of the reduced order basis (ROB) within a given design space D. Then, using these piecewise ROMs, will allow us to solve even cheaper least squares problems than (6), whilst maintaining a similar or better level of accuracy relative to the HDM.</p><p>To do this we must group the precomputed solutions twpµ i qu k 1 into multiple clusters and then create multiple piecewise reduced order basis tV i u c 1 where c is the number of clusters. For instance, choosing two clusters, in figure (5) we can see a schematic comparison of a global ROM versus 2 piecewise ROMs built by clustering twpµ i u k 1 into 2 clusters. On the left, all the training solutions tw i u 10 1 computed solving (2) using tµ i u 10 1 are used to create V gl and therefore a global ROM. On the right, we first cluster the training solutions tw i u 10 1 into 2 clusters and then we construct 2 reduced order basis V 1 and V 2 . V 1 is built using the solutions computed using the parameters tµ 1 , µ 5 , µ 6 , µ 7 , µ 10 u and V 2 using tµ 2 , µ 3 , µ 4 , µ 8 , µ 9 u. As such, the global ROM uses V gl P R Nˆn . The two piecewise ROMs, instead use V 1 P R Nˆn1 and V 2 P R Nˆn2 respectively, where, by construction n 1 ă n and n 2 ă n. Therefore, the first piecewise ROM makes the following approximation using V 1 wpµq " V 1 w r pµq (11) and the second piecewise ROM makes another approximation using</p><formula xml:id="formula_7">V 2 : wpµq " V 2 w r pµq<label>(12)</label></formula><p>Therefore by using either (11) or (12) we can solve min wrPR n }rpV i w r pµq, µq} 2 2</p><p>where i indicates which piecewise ROM i is used. Using this method with piecewise ROMs gives rise to two machine learning problems that we must solve.</p><p>1. Given multiple precomputed solutions tw i u k 1 , how do we cluster them most effectively into tV i u c 1 ?</p><p>2. Given an arbitrary µ, which piecewise ROM tV i u c 1 should we use to best represent the HDM?</p><p>In the next section we describe the methods we have implemented for addressing the above problems.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Overview</head><p>Our proposed methodology to solve a PDE-constrained optimization problem operates in two phases, an offline phase and an online phase. In the offline phase, we cluster precomputed training solutions, from which we build our piecewise ROMs that are used in the online phase.  In the online phase, we query multiple µ, during the optimization process. For each queried µ i , we need select which piecewise ROM (V i ) to use. Then we run the simulation to compute wpµ i q and lift drag pµ i q. <ref type="figure" target="#fig_8">Figure (7)</ref> shows the outline of this phase. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Clustering</head><p>Since our goal is to break our domain D into smaller sub domains, we believe clustering the training points based on the euclidean distance between features will be most effective. We have applied three algorithms in order to implement this; K-Means, Expectation-Maximization (to fit a gaussian mixture model) and Agglomerative Clustering.</p><p>In terms of clustering features, we have considered using µ</p><note type="other">in addition to the lift drag and B lift drag Bµ from our precomputed solutions. Intuitively if two vectors µ 1 and µ 2 are close together in terms of euclidean distance, then fluid flow properties should also be similar. Therefore, they should be clustered together as the resulting ROB can efficiently represent both wpµ 1 q and wpµ 2 q. We considered lift drag and B lift drag</note><p>Bµ a features as they provide more information on the physics problem we are trying to solve and obviously lift and drag are both related to the fluid state.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Classification</head><p>The number of training points used when constructing ROMs are relatively low when compared with other machine learning problems. Additionally, we do not have ground truth values for our classifications, and only are able to determine how well our algorithms performs after doing a ROM simulation. Therefore we have chosen to evaluate two simple methods, Nearest Centroid and Multinomial Logistic Regression as our algorithms for performing classifications. For Nearest Centroid, we simply select the piecewise ROM whose clustered points have the closest centroid to the queried point, while Multinomial Logistic regression is trained using a cross entropy loss and the labels output from clustering during the offline phase. Since during the online phase we will not have access to the lift or drag for a given query point, we are only able to use µ as a feature for classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Design of Experiment</head><p>In order to to create a train/validation/test set we sampled the parameter domain D Ă R 3 to compute 90 solutions twpµ i qu <ref type="bibr">90</ref> 1 . The sampling strategy adopted here is to use latin hypercube sampling in order to generate controlled random samples. Using this sampling strategy we created 90 vectors tµ i u 90 1 P D Ă R 3 . Once we created this set of vectors, we also compute the solutions of the HDM for each µ i , thus twpµ i qu 90 1 . We then randomly split our data into training/validation/test sets of size 50, 30 and 10 respectively. In our case, the validation set is used for finding the optimal clustering and classification algorithms and parameters, while the test set is used to do one final comparison of our piecewise ROM versus a global ROM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments Results</head><p>For all of the following experiments we define our error to be the difference in lift drag calculated with a ROM and lift drag calculated with the HDM. We refer to MSE as the mean squared error across our test points and Max Error % as the highest percentage deviation from the lift drag calculated with the HDM. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Model Parameter Experiments</head><p>For our first set of experiments we determine the best parameters for our methodology, given our design space. Specifically, we use the validation set to determine the:</p><p>• clustering algorithm</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• classification algorithm</head><p>• clustering features</p><p>• number of clusters For each experiment we ran three tests, each with 20 training points folded from our total 50 training points and test the error on our validation set. In subsection (4.3) we investigate using a predictor to automatically determine our parameters without having to run any simulations on a validation set.</p><p>First we tested for the best clustering algorithms; fixing our classification algorithm to Nearest Centroid, the number of clusters to 4, and clustering features to tµ, lift drag u.  Finally, we tested the effect of using different numbers of clusters. We used K-Means for clustering, Nearest Centroid for classification, and tµ, lift drag u as the clustering features. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Number of clusters</head><note type="other">MSE Max Error % 2 clusters 0.255 23.072 3</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Global ROM Comparison</head><p>With our optimal clustering/classification algorithms and features derived from subsection (4.1), and clusters of size 2 and 4, we tested the accuracy of our methodology versus a global ROM approach for calculating the lift drag , the objective function of the optimization problem. For the test with two clusters, we show the offline clustering phase in figure (12). In <ref type="figure" target="#fig_1">figure (13)</ref> we show how the test points are labeled after classification, in order to chose which ROMs to use for the simulation. The results in table <ref type="formula" target="#formula_0">(14)</ref> show that the cluster method either with two clusters or four clusters is able to have the same or better accuracy of the global ROM using a smaller ROM size. Here the ROM size indicates the number of columns of the reduced order basis (ROB), V i , used for the ROM approximation wpµq " V i w r pµq.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Predictor for ROM Accuracy</head><p>In practice, users would not want to have to use a validation set to determine the best clustering parameters, as the time required to do this may outweigh any efficiency savings from using piecewise ROMs. Therefore a predictor for a reliable set of clustering parameters is necessary for real world applications. We tested different cluster scoring methods, including Silhouette Score <ref type="bibr" target="#b1">[2]</ref>, Calinski-Harabaz Index <ref type="bibr" target="#b2">[3]</ref> and Davies-Bouldin Index <ref type="bibr" target="#b3">[4]</ref>, on all combinations of the clustering parameters described in subsection (4.3). Each combination was trained using 20 points from our training set, and the error calculated our validation set. Extreme outliers in terms of relative error were also removed. We then calculated the Pearson correlation coefficient for each scoring method, relative to the average error of the approximated lift drag for our validation points. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head><p>From our results we see that the K-Means and Agglomerative clustering perform somewhat similarly, compared to the Gaussian Mixture Model. This makes sense as the points used in the offline phase are not necessarily Gaussian distributed, while K-Means and Agglomerative clustering less strong of an assumption. As for clustering features, the difference between feature sets is relatively small. This makes sense as for many points in the design space our optimization vector, µ will be highly correlated with the lift and drag.</p><p>We are also able to see an interesting trade off when it comes to the number of clusters used. From the results we can clearly see that the error decreases with the number of cluster sizes. This is sensible because as we increase the number of clusters, the number of points are assigned points used to create each ROB decreases, decreasing the accuracy of the ROM approximation. However as the number of points used to build the ROB decreases, so does the computation cost of running a simulation with the corresponding ROM. Therefore the number of clusters used should be chosen on a per application basis, where the user would select the number of clusters corresponding to the acceptable error.</p><p>Overall, we can see that the our proposed methodology is superior when compared with using a global ROM. We can see that we are either able to get a much higher accuracy than the global ROM with a similar computational cost (related to the ROM size), or we are able to achieve a similar accuracy with half the computation cost of the global ROM.</p><p>With regards to predictors for parameter selection, we can see that all three cluster scoring methods show some indication that they could be used as a predictor for cluster ROM accuracy, at least for our design space. Silhouette Score and the Calinski-Harabaz Index may be slightly more correlated than the Davies-Bouldin as the distance between points on the edges of clusters are reflected in their scores, rather then only accounting for the distances between cluster centroids. However more rigorous testing is needed, especially we do not know if it will generalize to other PDE-constrained optimization problems.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Lift 0 µ lb ď µ ď µ ub</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Optimization process</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>µ 1 changes the dihedral angle (left) and tµ 2 , µ 3 u changes the sweep angle (right) of the mAEWing2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>CFD simulation of the mAEWing2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Mesh for the mAEWing2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>On the left global ROM approach. On the right our proposed piecewise ROM approach</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure ( 6</head><label>6</label><figDesc>) shows the outline of this phase.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 :</head><label>6</label><figDesc>Offline phase scheme</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 :</head><label>7</label><figDesc>Online phase scheme</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 :Figure 9 :Figure 10 :</head><label>8910</label><figDesc>Error of different clustering methods Second, we tested various different classification algorithms; fixing our clustering algorithm to K-Means, the number of clusters to 4, and clusters features to tµ, lift drag u. Classification algorithm MSE Max Error % Logistic regression 0.341 29.490 Nearest centroid 0.318 29.490 Figure 9: Error of different classification methods Next, we determined the best cluster features, fixing the clustering algorithm to K-Means, the classification algorithm to Nearest Centroid, and number of clusters to 4. Cluster features MSE Max Error % µ, lift drag¯0 .3543 30.955 µ, B lift drag Bµ˙0 .3145 30.955 µ, lift drag , B lift drag Bµ˙0 .3409 30.955Figure 10: Error with different clustering features</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 11 :</head><label>11</label><figDesc>Error with different numbers of clusters From the above experiments we see that K-Means with features tµ, B lift drag Bµ u, Multinomial Logistic Regression performs better than Nearest Centroid and lower numbers of clusters reduce the error.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 12 :</head><label>12</label><figDesc>On the left, gradient B lift drag Bµ of the training points. On the right, training points clustered into two clusters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 13 :Figure 14 :</head><label>1314</label><figDesc>Testing point labeled after classification. Method # Clusters ROM Sizes MSE Max Error % Cluster 2 (12, 8) 0.051 7.726 Cluster 4 (5, 7, 5, 3) 0.200 17.439 Global - 14 0.194 21.156 Figure 14: Relative error with different methods</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 15 :Figure 16 :</head><label>1516</label><figDesc>Clustering score correlation with relative error Figure 16: On the left, Silhouette Score versus average relative error. On the right, Calinski-Harabaz Index versus average relative error.</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion &amp; Future Work</head><p>In conclusion, we present a novel approach to solving PDEconstrained optimization problems by utilizing multiple piecewise ROMs. This approach has proven to be both more accurate and more computationally efficient than using a single global ROM. It shows particularly strong promise for time constrained applications with high dimensional design spaces. In these scenarios, the global ROM would need to be very large in order to be accurate across the whole design space and thus it might not be able to meet real-time deadlines. Piecewise ROMs on the other hand, can be more efficient and thus able to meet the timing constraints.</p><p>We would like to continue testing the performance of our approach in more realistic, higher dimensional design spaces (50-60 parameters). For this project we chose a limited design space due to time constraints, as running tests in higher dimensional design spaces is naturally more computationally expensive and takes more time. We would also like to continue research on predictors for clustering effectiveness, as this is a key component for this approach to be practical in real world problems.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>The first part of this project was discussing and creating a new methodology for solving PDE-constrained optimization problem. This was a significant part of the project where both Forest and Gabriele discussed on the optimal approach to take. To implement this methodology, Gabriele wrote code to build and run ROMs from a set of training points in addition to writing code to generate the data to start the experiments. Forest was responsible for implementing the machine learning algorithms from external libraries as well as automating testing. Both Gabriele and Forest contributed towards research and decision making for the use of machine learning techniques in this project in addition writing routines to output and post-process results for analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Code</head><p>Unfortunately the code must be run on a super computer with many external libraries from the Stanford Aeronautics &amp; Astronautics department. We have included a zip file containing the only the code written for this project available at:</p><p>https://drive.google.com/file/d/1BP4iW6RIR Cn3hxWL58cF-Pi5XppSI4W/view?usp=sharing</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">On the Use of Discrete Nonlinear ReducedOrder Models for the Prediction of Steady-State Flows Past Parametrically Deformed Complex Geometries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyle</forename><forename type="middle">M</forename><surname>Washabaugh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><forename type="middle">J</forename><surname>Zahr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charbel</forename><surname>Farhat</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">54th AIAA Aerospace Sciences Meeting</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="2016" to="1814" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Silhouettes: a Graphical Aid to the Interpretation and Validation of Cluster Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Peter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rousseeuw</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational and Applied Mathematics</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="53" to="65" />
+			<date type="published" when="1987" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A dendrite method for cluster analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Caliński</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Harabasz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications in Statistics-theory and Methods</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="27" />
+			<date type="published" when="1974" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Cluster Separation Measure</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">L</forename><surname>Davies</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Donald</forename><forename type="middle">W</forename><surname>Bouldin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and Machine Intelligence. PAMI</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="224" to="227" />
+			<date type="published" when="1979" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

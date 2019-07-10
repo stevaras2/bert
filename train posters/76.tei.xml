@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Foreign Exchange Forecasting via Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><forename type="middle">González</forename><surname>Rojas</surname></persName>
+							<email>cgrojas@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Molly</forename><surname>Herman</surname></persName>
+							<email>mrherman@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Foreign Exchange Forecasting via Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Finance has been revolutionized by the increased availability of data, the rise in computing power and the popularization of ML algorithms. Despite the boom in data-driven strategies, the literature analyzing ML methods in financial forecasting has focused on stock return prediction. Our intention is to implement machine learning methods in a relatively unexplored asset class: foreign exchange (FX).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Objective</head><p>The objective of this project is to produce FX forecasts that are able to yield profitable investment strategies. We approach the problem from two different perspectives:</p><p>1. Classification of long/short signals 2. Point forecasts of FX levels that yield long/short signals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Market Variables vs. Fundamentals</head><p>We use two different datasets to explore the forecasting power of two types of variables that we define as:</p><p>• Market variables: Indicators with daily to weekly frequencies that have a close relationship with traded securities.</p><p>• Fundamentals: Indicators with monthly frequencies that are closely related to the macroeconomy.</p><p>We limit to forecasting the USD vs. MXN exchange rate. Our data is sequentially split into train (60%), validate (20%) and test (20%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>All data was gathered from either Bloomberg, the Global Financial Dataset or the Federal Reserve Bank of St. Louis (FRED). We center and scale all of our features. Furthermore, we can divide our 25-27 features into the following categories:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>We employ the same models for the market variables and the fundamentals. The following frameworks are considered for classification/regression:</p><p>1. Logistic/Linear Regression: This serves as our baseline model. 2. Regularized Logistic/Linear Regression: . / and . 0 regularization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Gradient Boosting Classifier/Regression:</head><p>We use GBC/GBR to capture non-linear relationships. Random Forests not appropriate since bootstrap does not preserve time-series nature of the data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Support Vector Machines/Regression:</head><p>We consider a Gaussian kernel. The non-linear boundary produced by the infinite-dimensional mapping could better capture FX dynamics. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Binary Experiments</head><p>Since we are interested in classifying long/short signals, we modify the target variable to a binary classification: Parameters are tuned in the validation set using accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Continuous Experiments</head><p>We construct point-forecast model using the raw USDMXN data. We then modify the forecast output to produce long/short signals:      </p><formula xml:id="formula_0">9</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Market variables</head><formula xml:id="formula_1">• Fixed Income • Stock Market • Currency Fundamentals • Economic Activity • Labor Market • Debt • Sentiment</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>.</head><label></label><figDesc>Neural Networks: We consider the following set-up:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Future Work ML methods are promising for FX forecasting, with continuous variable models outperforming binary classification. In addition, market variables better explain FX movements. Future work should explore improvement via recursive validation and ensemble methods. References: Gu, S., Kelly, B. T., &amp; Xiu, D. (2018). Empirical Asset Pricing via Machine Learning. Chicago Booth Research Paper, No. 18-04.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 1 :</head><label>1</label><figDesc>Time series of the USD vs. MXN rate.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 3 :Fig. 4 :</head><label>34</label><figDesc>Density plot of 3-month MX yield conditional on binary targetFig. 4: Cumulative profits of binary market variable model Market: 03-Jan-03 -09-Nov-18, weekly. Fundamentals: Mar-90 -Oct-18, monthly.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 2 :Fig. 5 :</head><label>25</label><figDesc>Confusion matrix: Binary market SVM (upper) and continuous market Ridge (lower) Fig. 5: Cumulative profits of continuous market variable model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Accuracy (%)   </figDesc><table>Binary Experiments 
+Continuous Experiments 
+
+Market Variables Fundamentals Market Variables Fundamentals 
+
+Tr 
+V 
+T 
+Tr 
+V 
+T 
+Tr 
+V 
+T 
+Tr 
+V 
+T 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

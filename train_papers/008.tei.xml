@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Humanities Research Recommendations via Collaborative Topic Modeling</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nitya</forename><surname>Mani</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andy</forename><surname>Chen</surname></persName>
+						</author>
+						<title level="a" type="main">Humanities Research Recommendations via Collaborative Topic Modeling</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-We present two novel applications of collaborative topic modeling to the broad datasets of humanities research article recommendations. In the first, we present an adaptation of the semisupervised collaborative topic regression model to a situation in which no user feedback by simulating users to develop a much better contentbased recommendation model (over 95% precision and relevant recall) than several implemented in the status quo, including the recommendations platform implemented by eScholarship, host to the International Journal of Comparative Psychology. In the second, we demonstrate how differential weightings on algorithm parameters can be used to provide relevant recommendations for humanities researchers based on sparse, noisy, varied information and a small dataset.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Currently, academically motivated parties (whether for research, industry purposes, or casual interest) have access to a wealth of scholarly information to meet their information needs. In fact, in the current age with thousands of articles and papers constantly being published in hundreds of journals, most conducting research have the opposite problem of having to sift through too much, often not incredibly relevant information to find what they are looking for. Thus, automated recommendation platforms are becoming increasingly more relevant to uncovering helpful resources and potentially interesting articles that cannot simply be found by following a trail of citations or an unfocused keyword search.</p><p>Current article recommendation platforms generally fall under one of two umbrella categories. Content-based models <ref type="bibr" target="#b3">[4]</ref> seek to understand the content of an article and compare that to the content of articles a user is interested when making recommendations. Filtering-based models <ref type="bibr" target="#b7">[8]</ref> seek to identify users similar to the current user and thus make article predictions without ever modeling the content of the article.</p><p>Collaborative topic modeling is a class of recommendation algorithms that combine topic modeling of articles with implicit feedback from users (i.e. information about user's article preferences that is not based on an explicit ranking system) or explicit evaluations of articles. However, the majority of such algorithms currently in place tend to be heavily skewed in favor of one model over another. Collaborative topic modeling has been most prominently used in news article recommendations that focus on filtering and user similarity matrices, only modeling content for broad keywords and for articles released within the hour. On the other hand, scientific article recommendations tend to heavily rely on topic modeling based on the content of the title and abstract, given that these snippets tend to be filled with keywords that give fairly accurate insight into the content of the article <ref type="bibr" target="#b9">[10]</ref>, <ref type="bibr" target="#b0">[1]</ref>, <ref type="bibr" target="#b1">[2]</ref>.</p><p>In this paper we seek to apply an adaptation of the collaborative topic regression model to make recommendations for humanities research and nonfiction writing based on a combination of implicit network and user feedback and topic modeling. Non-scientific academic publications and nonfiction writing have topics that can be modeled somewhat effectively, but abstracts and titles tend to be metaphorical in nature and less clustered around a small number of technical terms and clear cut ideas. Further, articles tend to be concentrated around specific niches with respect to readership and reader interest. On the other hand, such publications also tend to come with lower readership and citation count, and thus any recommendation platform needs to be robust with respect to relatively small amounts of implicit feedback. Thus, the different environments of humanities research are not necessarily optimally modeled by either a purely content or filtering-based model or the same parameters and combinations effective for high-volume article sites or technical STEM papers. Finally, we will examine if a similar model can be used to effectively simulate users to iteratively update purely content-based recommendation platforms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. THEORETICAL BACKGROUND</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Topic Modeling via Latent Dirichlet Allocation</head><p>Latent Dirichlet Allocation (LDA) <ref type="bibr" target="#b3">[4]</ref> is a generative probabilistic model for text corpora and other collections of discrete data. Unlike other information retrieval schemes such as tf-idf, the LDA model reveals aspects of interdocument statistical structure in the corpus. Each document is modeled as a mixture of topics, where each word is assigned to one of those topics. Here, each document represents a "bag of words" i.e. sentence structure does not play a role in the model. More precisely, given M documents, suppose we have K topics β1, . . . , βK , each of which represents a distribution over a fixed vocabulary V . This vocabulary should be free of non topicspecific stop words, such as pronouns or common verbs. Given fixed hyperparameters α, β, ξ, the generative model is then as follows: for each document Wi in the corpus: 1) Choose the word length Ni ∼ Poisson(ξ) 2) Assign a topic distribution θi ∼ Dirichlet(α) over the K topics. 3) For each word wij ∈ Wi: a) Choose a topic zij ∼ Multinomial(θi). b) Choose the word wij ∼ p(wij|βz ij ), which is the multinomial probability conditioned on the topic βz ij . The goal of this LDA algorithm, given the value of the hyperparameter α, is to maximize the likelihood of the corpus data with respect to β and the θi. To do so, we use the EM algorithm to learn the K topics β1, . . . , βK and topic distributions θ1, . . . , θM . Note that our unsupervised technique is not a clustering technique on topics, as each document can contain words in different topics.</p><p>Note also that the probability of generating each document is P (Ni)P (Wi|Ni), so argmax β,θ log P (Wi) = argmax β,θ i (log P (Ni) + log P (Wi|Ni)) = argmax β,θ i log P (Wi|Ni), as Ni is drawn from a Poisson distribution independent of β and θi.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Collaborative Filtering via Matrix Factorization</head><p>Collaborative filtering <ref type="bibr" target="#b5">[6]</ref> to find recommendations for a certain user involves looking at the preferences of other similar users. Suppose there are I users and J articles. If users i1 and i2 have similar interests, then for each article j, collaborative filtering can look at whether user i2 recommends article j and use that information to determine whether user i1 should read article j.</p><p>Matrix factorization for recommendations is a latent factor model, in which manifest variables relate to latent, or nonobservable, variables. In this scenario, we only observe the set of all rij, which represents the rating that user i gives article j. Notice that while a high rating is unambiguous, a low value can symbolize one of two situations:</p><p>• User i has read the article and does not recommend the article to others.</p><p>• User i has never seen the article and thus cannot recommend it. Therefore, the goal of the CTR method is to change zero entries of the second type into predictions about whether user i would recommend article j. This distinction is especially critical in light of the fact that the majority of user-document pairs would fall under the latter, rather than former category.</p><p>We represent both users and items as latent K-dimensional vectors ui and vj, where K is significantly smaller than the number of users or articles. We predict new ratings by computing:</p><formula xml:id="formula_0">rij = u T i vj (1)</formula><p>The goal of the algorithm is to minimize the least squared error over all user-article pairs. If U = {ui} I i=1 is the set of all user vectors and V = {vj} J j=1 is the set of all article vectors, then the algorithm finds:</p><formula xml:id="formula_1">argmin U,V i,j (rij − u T i vj) 2 + λu||ui|| 2 + λv||vj|| 2<label>(2)</label></formula><p>where λu and λv are regularization parameters. We use probabilistic matrix factorization (PMF) to model the generation of user and article vectors, as it scales linearly with the number of observations and performs well with large, sparse data.</p><p>[3] The generative process for producing the user and article data is as follows: 1) For each user i = 1, . . . , I, choose a latent user vector ui</p><formula xml:id="formula_2">∼ N (0, λ −1 u IK ). 2) For each article j = 1, . . . , J, choose a latent article vector vj ∼ N (0, λ −1 v IK ). 3) For each user-pair (i, j), assign a rating rij ∼ N (u T i vj, c −1 ij )</formula><p>, where cij is the precision parameter. The precision parameters cij measure the confidence of the rating rij. As mentioned previously, a high rating rij unambiguously represents a positive rating that user i gives to article j; therefore, cij should be high in magnitude. However, a lower rating rij can symbolize multiple scenarios, so cij should be lower in magnitude. Specifically, in our algorithm, the input data rij consists of only binary values, so we assign, for hyperparameters 0 ≤ a &lt; b:</p><formula xml:id="formula_3">cij = a if rij = 1 b if rij = 0</formula><p>(Note, however, that each u T i vj can be a decimal value.) To find the optimal values of U and V given a set of binary rij, we use gradient coordinate ascent on each ui and vj to find U and V in Equation 2. We may then generate a set ofrij = u T i vj to use as the prediction ratings.</p><p>CTR on its own, however, cannot make accurate recommendations for articles that few or no users have seen. Therefore, we must complement the CTR method with LDA topic modeling in our model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. THE REGRESSION MODEL</head><p>Collaborative topic regression <ref type="bibr" target="#b9">[10]</ref> models users as having interests based on implicit article "recommendations" and models documents with topic proportions θj naively learned from Latent Dirichlet Allocation. Thus CTR is as a regression model is able to differentiate document topics that characterize content from those that might characterize readership interest of a body of academics. CTR uses an algorithm in the vein of expectation maximization to indirectly learn the MAP estimates of the log likelihood function of all the parameters being estimated U, V, θ given the initial conditions on the LDA and matrix factorization models.</p><p>Matrix factorizations learns short feature vectors to represent each user and document, and predicts the recommendation status of the pair user i and document j asrij = u T i vj. When incorporating content modeling of the documents, we continue to predict u T i vj, but here vj = θj + j , where θj is the topic proportion learned via LDA and j is a latent error variable to offset θj, the purely content based proportion that enables the document's latent vector to diverge from θj. Thus as more users rate an article, the prediction becomes increasingly dependent on the recommendations of users and less so on the LDA model of the document proportions. The CTR model has very strong similarities to collaborative filtering as can be seen in the generative process that characterizes the model and its assumptions about how these articles and feedback are generated. Assume that we begin with K topics derived from an LDA analysis of the documents β1....</p><formula xml:id="formula_4">β k : 1) For each user i = 1, . . . , I, choose a latent user vector ui ∼ N (0, λ −1 u IK ). 2) For each article j = 1, . . . , J choose a latent article vector vj ∼ N (θ, λ −1 v IK ). 3) For each document j, select word w (j) n ∼ Mult(β α (j) n )</formula><p>where</p><formula xml:id="formula_5">α (j) n ∼ Mult(θj) 4)</formula><p>For the user-document pair (i, j), assume the rating can be modeled as rij ∼ N (u T i vj, c −1 ij ) Given this generative model, the expectation of rij is (similar to collaborative filtering) E(rij) = u T i vj, with the primary difference in how we model the latent document vector, incorporating the content-based proportion: vj = θj + j where j ∼ N (0, λ −1 v IK ). Thus, learning each of these parameters can be done by finding a maximum a posteriori estimate of ui, vj, θj, and rij, where he can find the MAP estimates of U, V, R using coordinate ascent. We compute the MAP estimates by maximizing the log likelihood of the data (in particular the overall log likelihood of each of U, V, R, θ1...θj), minimizing the least squared error of our eventual prediction with regularization: LL(U, V, θ1:J , R; β, λu, λv)</p><formula xml:id="formula_6">= − λu 2 I i=1 ||ui|| 2 2 + J j=1 ||vj − θj|| 2 2 + J j=1 n log K k=1 θ (j) k β k,w (j) n − 1 2 J i=1 J j=1 cij(rij − u T i vj) 2</formula><p>Then, we can iteratively maximize this function using coordinate ascent by setting the gradient of the log likelihood to 0 and determining the the new optimal values for each user and document latent vector ui and vj as:</p><formula xml:id="formula_7">ui := (V diag(cij|1:J )V T + λuIK ) −1 V diag(cij|1:J )Ri vj := (U diag(cij|1:I )U T + λvI k ) −1 (U diag(cij|1:I )Rj + λvθj)</formula><p>Here Ri = (rij)| J j=1 and Rj = (rij)| I i=1 . For the moment, we will fix θj as the original LDA proportions and treat the proportion vectors as constants.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. MAKING RECOMMENDATIONS</head><p>For the moment, we predict the expected ratingrij = u T i vj where vj = θj if there is no user information about document j. We will eventually employ an algorithm in the style of <ref type="bibr" target="#b6">[7]</ref> to rank our recommendations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. EMPIRICAL STUDY: SIMULATING RECOMMENDATIONS WITH ESCHOLARSHIP</head><p>Collaborative topic regression and similar models have been studied in a wide variety of largely scientific contexts ( <ref type="bibr" target="#b9">[10]</ref>, <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b8">[9]</ref>) as a mechanism by which to incorporate implicit and explicit user feedback about documents into a recommendation system. However, even in situations in which little or no user data has been collected, collaborative topic regression and similar models can be applied to iteratively update existing recommendations. Here, we reimagine the model in a novel context, one in which no real userfeedback is present, but where we can simulate users to improve traditional content-based recommendations. We consider by way of example the International Journal of Comparative Psychology, hosted on the site eScholarship with the journal issues. For each journal article, the website provides a listing of approximately 20 "similar articles" generated by a content modeling process that selects other journal articles most similar in content/keywords to the one being viewed.</p><p>However, many of these recommendations are largely if not completely irrelevant to the content of the article. Thus, we sought to improve these recommendations, by using CTR on a set of simulated recommendations to iteratively update these "similar article" recommendations. We simulated users by considering each list of 20 similar articles corresponding to a particular article to be recommendations of a user and then applying CTR on this set of articles and "user" (note that we discard the article from which we generated the simulated user) to arrive at a new list of recommendations for this user, which hopefully present a better set/ranking of similar articles to the original article.</p><p>In order to test this, we gathered data from 580 "users" and 4827 articles from the International Journal of Comparative Psychology. Each "user" had a total of 20 similar articles, from which we isolated the odd numbered ones as user recommendations. This gave a total of 5800 user-item observed pairs. Experimentally, we considered a variety of values for the model hyperparameters to optimize precision and recall using a restricted grid search, settling on K = 100, λu = 0.01, λv = 0.1, a = 1, b = 0.01. Some example topics yielded have top words 'species patterns california populations habitat', 'public policy states issues economic', and 'expression gene genetic function levels'. Some of the hyperparameter search statistics for K are pictured below:</p><p>Some sample data for hyperparameter configurations illustrates more completely the relative performance and confidence of our model in predicting training, witheld testing, and new articles in its top recommendations.</p><p>As desired, the learning model predicted all of the userrecommended articles with high ratings, and 100% of the time recommended the original article from which the "user" was created with a rating at least 0.75 or in the top 20 recommendations (note that we withheld these articles for testing purposes from the training data set). Additionally, 100% of the time, the top 3 withheld recommendations were recommended by the CTR algorithm. Overall, the recall on the relevant withheld and provided recommendations was 95%. As the data suggest, not all of withheld <ref type="figure">Fig. 1</ref>. This graph shows the accuracy of model on the withheld testing data for a variety of choices for the number of topics/size of latent feature vectors K. Given the irrelevance of many of the articles recommmended by the journal, selecting K = 100 optimized the recall of relevant articles with respect to the precision of the overall model, and was high enough to ensure user-provided recommendations were maintained with high confidence. <ref type="figure">Fig. 2</ref>. This graph shows the model accuracy on the training data with respect to the number of topics/size of feature vectors K when conducting the hyperparameter search. Note that for the purposes of low computation costs, parameters were treated as independent when conducting this search and were sequentially optimized although a grid search would have likely been more optimal.</p><p>articles were predicted, in part because the content-based model used by the International Journal of Comparative Psychology often made predictions irrelevant to the bulk of the other recommended articles that were thus discarded. In this sense, our model performed far better in recommending relevant articles.</p><p>To compute the precision quantitatively, we took a random sample of 20 of the 580 users and classified each of the original recommendations from the International Journal of Comparative Pyschology as + (relevant) or − (irrelevant) by hand, where only articles clearly about a different subject entirely were marked as −. Then, we saw that in aggregate, our model correctly recommended (with a rating at least 0.75 or in the top 20 recommendations) over 90% of the + articles, and less than 5% of the − articles. As a This graph shows the proportion of documents that received predicted rating r ij in the intervals depicted on the x-axis for K = 25, where a higher rating corresponds to a prediction that user i is more likely to like document j. The blue bars represent training data and the green bars represent withheld "user" information. As the data suggest, the provided recommendations received high scores (as they should given that a user has expressed interest already) and many of the withheld documents (around 50%) occurred as a top 20 prediction for the article. This graph shows the proportion of documents that received predicted rating r ij in the intervals depicted on the x-axis for K = 25, including new predictions of articles not originally predicted by the Comparative Psychology journal model with the yellow bars. Given the sparseness of the training matrix and also the high confidence in predicting original "user" recommendations, there are a large number of new articles predicted, especially as the confidence decreases.</p><p>case study, consider user 19, created from the recommendations generated for the article 'The Development of Juvenile-Typical Patterns of Play Fighting in Juvenile Rats does not Depend on Peer-Peer Play Experience in the Peri-Weaning Period'. Below is a table summarizing the results we obtained as far as the journal recommendations. Our model predicted 8 new articles not included in this set, the highest rank of which (rank 8) was the original article from which we drew the simulated user data, and which included all 7 other articles scored as a +, like 'Altruism in Animal Play and Human Ritual' and 'How Studies of Wild and Captive Dolphins Contribute to our Understanding of Individual Differences and Personality'. Thus our final model was able to achieve around 95% precision and relevant recall on the dataset, making it a far better article recommendation platform than the existing content-based platform  employed by the International Journal of Comparative Psychology, that recommended at least 30% irrelevant () articles for each of the randomly sampled papers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. EMPIRICAL STUDY: HUMANITIES RESEARCH WITH CITEULIKE</head><p>After simulating user data, we implemented our algorithm on user-given ratings data. For this scenario, the user-article interactions are much sparser and noisier than in the first scenario; while the simulated users for eScholarship each had at least ten recommendations, the average number of recommendations in our CiteULike dataset is roughly 6.4, with most users recommending fewer than 5 articles. In addition, users rarely recommended articles that were all in the same topic.</p><p>We also expanded the diversity of our article corpus by not limiting our articles to one journal; while the eScholarship articles primarily originated from International Journal of Comparative Psychology, our CiteULike articles were found in journals ranging from Latin American Research Review to Asian Theatre Journal. Some were even written in foreign languages (see more details in the discussion section). These articles, compared to scientific articles, collectively had fewer abstracts. These humanities abstracts also tended to be less summary-focused.</p><p>We collected all 2115 of the user profiles whose declared research areas lay in European, Eastern, Asian, African, American, or Australasian language or literature studies. Of these, 223 had at least one article in her personal library; collectively, the set of users had 1269 articles. Like in the previous empirical study, we withheld half of our collected user-article interactions (ratings) to reserve for the test set. Therefore, the training set of user-article interactions consisted of 715 instances of a user recommending an article.</p><p>As before, we used grid search to find the hyperparameter values that maximized our precision and recall. For each set of hyperparameters, we ran LDA-CTR on the training data and produced recommendations for our set of users. For this study, the hyperparameter values that optimized our precision and recall were K = 40, λu = 0.01, λv = 100, and cij = 1, 0.01, where cij = 1 when user ui recommended vj and cij = 0.01 otherwise.</p><p>As previously mentioned, we hide half of the users' ratings and use them to evaluate our algorithm's recall performance; to calculate recall, for each user ui, we compute how many articles in the entire dataset that user ui rated positively, both in the hidden and training halves of the recommendation data. We then take an average of our results. Our algorithm then has a 64% recall rate, which means that our algorithm predicts at least 28% of the hidden articles (note that it is possible for our algorithm to choose to not recommend articles associated with ui supplied in the training set). Though the nominal value is low, our algorithm performs relatively well compared to other recommendation systems.</p><p>To consider our algorithm's performance in the context of CiteULike's current recommendations, we analyze our algorithm's accuracy only for users who have rated at least 20 articles; users with accounts can only receive recommendations after adding at least 20 articles to their libraries. We calculated precision in a similar manner as in the previous empirical study; for each user in a random sample, we classified the recommendations for which the algorithm-provided rating were above 0.75 for that user. We then manually classified the recommendations as relevant (+) or irrelevant (-) in a similar manner as in the previous experiment. With this metric, 89% of the algorithm's recommendations fell into the (+) category, giving us an 89% precision value.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. DISCUSSION</head><p>Based on our analysis, we conclude that composing LDA topic modeling with collaborative filtering significantly improves the existing recommendations from eScholarship's International Journal of Comparative Psychology. For each psychology article, our algorithm not only adds relevant "similar articles", but also removes irrelevant articles from the original set of given recommendations. This means that our LDA-CTR algorithm can augment eScholarship's existing recommendation system. When we apply our LDA-CTR model to the CiteULike humanities articles database, given the sparse and noisy user data, we achieve precision and recall results that compare to those of previous recommendation algorithms.</p><p>An interesting observation was that the LDA algorithm on the CiteULike data categorized words from foreign languages (besides English) into their own topic. This phenomenon has a theoretical explanation; articles written in Spanish, French, and Italian comprised a significant portion of the articles retrieved from the CiteULike database, and within these documents, foreign word tokens appear together. Therefore, to effectively assign topics to foreign documents, we must employ a machine translation model in the future.</p><p>For our other future progress, we are looking to implement our algorithm in practice; we are in the process of communicating with both eScholarship and CiteULike to inform them of our suggest improvements to their recommendation algorithms. In terms of improving our current model, we plan to employ the following changes to our algorithm:</p><p>• Accounting for documents with the same author as previous recommendations: given a user ui and document vj, we set a different document v k with the same author as vj to have c ik = 0.1. Implementing this change would allow the algorithm to have less sparse data concerning users who do not rate many articles.</p><p>• Extending the LDA to run on introductions rather than only abstracts: as many humanities articles lack legitimate abstracts, introductions would expand the dataset to include more articles.</p><p>• Incorporating citation sources into the learning model: given a user ui and document vj, we set a different document v k that cites or is cited by vj to have c ik = 0.1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>Thank you to Professor Duchi for advice on the project and to Chong Wang and David Blei for sample data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 3 .</head><label>3</label><figDesc>Fig. 3.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 4 .</head><label>4</label><figDesc>Fig. 4. This graph shows the proportion of documents that received predicted rating r ij in the intervals depicted on the x-axis for K = 25, including new predictions of articles not originally predicted by the Comparative Psychology journal model with the yellow bars. Given the sparseness of the training matrix and also the high confidence in predicting original "user" recommendations, there are a large number of new articles predicted, especially as the confidence decreases.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 5 .</head><label>5</label><figDesc>This table shows the rankings of the provided article recommen- dations, where as illustrated irrelevant articles received lower rankings than more relevant articlesFig. 6. This table shows the rankings of the withheld articles, with NP indicating that the withheld article in question was not predicted as a similar article of interest by our CTR algorithm. Note that all of these withheld articles with the possible exception of 1 that were not recommended were classified as − or irrelevant to the user.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 7 .</head><label>7</label><figDesc>This table shows the rankings of the new recommendations (within the top 20) provided by our recommendation platform that were not present in the list of similar items generated by the IJCP content-based recommendation.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">flda: matrix factorization through latent dirichlet allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B.-C</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the third ACM international conference on Web search and data mining</title>
+		<meeting>the third ACM international conference on Web search and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="91" to="100" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A correlated topic model of science</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Lafferty</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Applied Statistics</title>
+		<imprint>
+			<biblScope unit="page" from="17" to="35" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Latent dirichlet allocation</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<publisher>ACM</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Latent dirichlet allocation. the Journal of machine Learning research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Recommending scientific articles using citeulike</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Bogers</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Van Den</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bosch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2008 ACM conference on Recommender systems</title>
+		<meeting>the 2008 ACM conference on Recommender systems</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="287" to="290" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Collaborative filtering for implicit feedback datasets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Koren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Volinsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Data Mining, 2008. ICDM&apos;08. Eighth IEEE International Conference on</title>
+		<imprint>
+			<publisher>Ieee</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="263" to="272" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The perron-frobenius theorem and the ranking of football teams</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Keener</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM review</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="80" to="93" />
+			<date type="published" when="1993" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Matrix factorization techniques for recommender systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Koren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Volinsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computer</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="30" to="37" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Improving collaborative filtering in social tagging systems for the recommendation of scientific articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Parra-Santander</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Brusilovsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Web Intelligence and Intelligent Agent Technology (WI-IAT), 2010 IEEE/WIC/ACM International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2010" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="136" to="142" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Collaborative topic modeling for recommending scientific articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 17th ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the 17th ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2011" />
+			<biblScope unit="page" from="448" to="456" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

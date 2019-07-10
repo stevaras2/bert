@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Drawing: A New Way To Search (Computer Vision)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nguyet</forename><forename type="middle">Minh</forename><surname>Phu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Connie</forename><surname>Xiao</surname></persName>
+							<email>coxiao@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jervis</forename><surname>Muindi</surname></persName>
+							<email>jmuindi@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Drawing: A New Way To Search (Computer Vision)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Computers having the ability to understand our quick line drawings will allow for broader forms of expression and communication. In our project, we aim to use machine learning techniques to efficiently recognize labels of handdrawn images. After implementing and analyzing classical and deep learning models, we found that a simplified Convolutional Neural Network was best for this task.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>1. Introduction</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1.">Motivation</head><p>Using words can be limited when communicating across cultures and literacy levels. Drawing images is a shared communication method that can bridge those divides. If successful, this model can be applied for a variety of interesting tasks, including a new search interface where someone can draw what they need and search for it, or an app where a language learner can draw an image and get the translation immediately. These applications require computers to understand our quick line drawings or doodles.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.">Goal</head><p>Our goal is to develop an efficient system to recognize labels of hand-drawn images from Google's QuickDraw dataset. The input to our algorithm is an image. We use Logistic Regression, Support Vector Machines (SVMs), Convolutional Neural Networks (CNNs), and Transfer Learning to output a predicted class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Image Recognition</head><p>Deep learning has proven to be very successful in general image classification. Past ImageNet <ref type="bibr" target="#b0">[1]</ref> competition winners have used deep learning techniques, CNNs in particular, to achieve high accuracies ever since 2012 <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b15">16]</ref>. Our interest in CNNs is motivated by the favorable outcomes as demonstrated in the area of computer vision.</p><p>2.1.1. Transfer Learning. The idea behind Transfer Learning is that we can apply knowledge from a generalized area to a novel task <ref type="bibr" target="#b14">[15]</ref>. There are two broad strategies <ref type="bibr" target="#b5">[6]</ref>. The first is to use the pre-trained model as a fixed feature extractor. New candidate inputs would be run through the pre-trained model, but stopped at the penultimate fullyconnected layer to get a feature vector. The other approach is fine-tuning which uses back-propagation to update the weights of the pre-trained model. When layers are fine-tuned to the new tasks, the model generally does well on that new task <ref type="bibr" target="#b9">[10]</ref>.</p><p>While pre-trained ImageNet models have been widely used in Transfer Learning for other natural image classification tasks, they have not commonly been used for handdrawn images. However, researchers, Lagunas and Garces, have successfully used Transfer Learning with VGG <ref type="bibr" target="#b16">[17]</ref> for artistic illustration <ref type="bibr" target="#b11">[12]</ref>. Artistic illustrations could be considered as high-quality doodles. We wanted to explore if Transfer Learning would also be good for quickly-drawn doodles of varying qualities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Our Contributions</head><p>We are working on a relatively new dataset (released under two years ago) with a focus on efficiency. Our project could be seen as within the domain of image recognition. However, doodles only consist of lines and have two colors, black and white, which could render complex features learned by image recognition models useless. We want to focus on not just accuracy but also efficiency. Efficiency (i.e model size, training time) is critical to allow deployment of the system in real-life applications, yet it has not received sufficient attention in research. We used the bitmap version of the data. Each drawing consists of 28 by 28 raw pixel inputs with values from 0 to 255. We took advantage of the fact that each image has only two colors, black and white, to binarize the pixels for a more compact representation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset</head><p>To make training more tractable on modest computing resources, we elected to work with a subset of the data. The classes selected were chosen randomly from the overall pool of classes and were fixed throughout our experimentation. The number of examples per class is 20,000. We picked 3, 10, and 50 classes to train. For each of the classes, we split our data into training, validation, and test sets with the ratio of 80:10:10.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head><p>Broadly speaking we looked at two classes of algorithms for our task: traditional machine learning approaches and deep learning techniques. The link to our Github with our code is here: https://github.com/jervisfm/cs229-project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Classical Machine Learning</head><p>4.1.1. Logistic Regression. For our baseline, we used Logistic Regression, a simple and fast model to train.</p><p>The log likelihood for our logistic model <ref type="bibr" target="#b12">[13]</ref> to be optimized is given by:</p><formula xml:id="formula_0">l(θ) = m i=1 y (i) log h θ (x (i) ) + (1 − y (i) )log (1 − h θ (x (i) ))</formula><p>where h θ (x) = 1 1 + e −θ T x 4.1.2. Support Vector Machine. Support Vector Machines are optimal margin classifiers and the optimization objective for these models <ref type="bibr" target="#b13">[14]</ref> is given below:</p><formula xml:id="formula_1">min w,b 1 2 w s.t y (i) (w T x (i) + b) &gt;= 1, i = 1, ..., m</formula><p>We explored using Support Vector Machines with various kernels to find empirically the kernel most suited for the task of doodle classification. The types of kernels we experimented with are Linear, RBF (Radial Basis Function), Polynomial, and Sigmoid.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Deep Learning 4.2.1. Convolutional Neural Network (CNN).</head><p>We started out with a CNN, a natural candidate for image recognition given the convolutional layer's ability to capture spatial dependency. A key insight is that since a doodle is a simple image, some components of the CNN may be unnecessary. By identifying and removing these layers, we developed a compact model that is both fast to train and still accurate. The CNN architecture is given in <ref type="figure" target="#fig_1">figure 2</ref>. We used a simple architecture because we wanted to find a time efficient model that can perform well. Much research has focused on developing more complex models (as mentioned in section 2.1). However, these models are also more expensive to train and do inference on. After implementing the CNN, we simplified it by progressively removing layers and dense units to analyze the impact on accuracy and runtime (figure 3).  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2.">Transfer Learning.</head><p>Even with a simple CNN, we noticed that training a deep-learning model from the ground up can be time and resource intensive. Since a doodle is also an image, we explored if it is feasible to transfer knowledge from winning ImageNet architectures to our specific problem of doodle classification via Transfer Learning. We used four different baseline models, namely Inception V3, VGG, MobileNet and ResNet50 from the ImageNet competition, and extended them for doodle classification (figure 4). More specifically, we added a global spatial average pooling layer after the original architecture, followed by a dense layer of 128 units with ReLu activation, and finally a softmax layer for classification. We used stochastic gradient descent with an Adam optimizer to fine-tune the added layers. Due to constraints on computational resources, we optionally finetuned the top two-layers of the original network. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.2.">Efficiency. We measured training time in seconds.</head><p>For Logistic Regression and SVMs, we ran these models locally. Due to our local machines' computational power constraints, we ran the CNNs and transfer learning models on Google Cloud on a virtual machine with 320GB of local disk, 12 Cores of CPU, 64GB of RAM, and an NVIDIA P100 GPU with 16GB of memory. We used Google Cloud Deep Learning machine image <ref type="bibr" target="#b6">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Logistic Regression</head><p>Logistic Regression was implemented using Python's SciKit Learn framework <ref type="bibr" target="#b3">[4]</ref>. The solver used was lbfgs and the multi_class setting was multinomial to classify our many classes. To keep training time reasonable on the larger dataset, the maximum number of iterations was set to 100. The results for Logistic Regression are reported in The accuracy scores reported in the confusion matrix are normalized with 1 representing 100% accuracy. The best performance for Logistic Regression was with 3 classes where we achieved 79% accuracy and it took less than a minute to train. On the other hand, with a larger dataset of 50 classes, training time increased 40 times to half an hour and the overall accuracy fell to 43%.</p><p>Putting these numbers in context, for the 50-class dataset, a classifier that randomly guesses the class would have expected accuracy of 2%. We see that the Logistic Regression classifier did relatively well.</p><p>That said, there was still room for improvement and we performed error analysis next to understand the types of errors that the classifier was making. Looking at the confusion matrix, we can see that Logistic Regression performs relatively well. The diagonal of the confusion matrix carries the most weight, indicating it often makes the correct prediction. We notice that in the wrongly classified regions, the true label banana is highly misclassified with hockey stick. This is expected as a hand-drawn banana is very similar to a hand-drawn hockey stick as seen in figures 6 and 7. Thus, this experiment suggests that in order to predict hand-drawn doodles, contrary to our initial belief, we may need a more sophisticated model instead of a simpler model because the quality of the drawing may not be very good.  To our surprise, the SVMs performed worse than Linear Regression overall. However, this could be due to the fact that we have not done extensive hyperparameter tuning for SVMs.</p><p>Among our different choices of kernels, the RBF kernel performed the best, followed by the Polynomial kernel with degree 5, then the Linear kernel. The Sigmoid kernel performed the worst with an accuracy equitable to assigning a category at random.</p><p>This result is consistent with what we expected. The accuracy corresponds to the complexity of the feature space with RBF corresponding to an infinite feature space and Polynomial and Linear having fewer features. Although the Sigmoid corresponds to a higher dimensional feature space, its corresponding kernel matrix is not guaranteed to be positive semi-definite. Therefore, if the chosen parameters are not well-tuned, the algorithm can perform worse than random <ref type="bibr" target="#b4">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4.">Convolutional Neural Network</head><p>We tested four different variations of a basic CNN using binarized and non-binarized data. A base V1 model included two convolutions and two max-pool layers from which we then iteratively simplified as shown in <ref type="figure" target="#fig_2">figure 3</ref>. The performance of these models is given in the tables below: Because the binarized input contains less information than the non-binarized input, we saw an analogous drop in accuracy and training time across classes.</p><formula xml:id="formula_2">Accuracy (%)</formula><p>We find that the best performing CNN on the larger classification task of 50 classes was V2 which attained a validation set accuracy of 81.83% with the confusion matrix below. There is a close correlation between the training accuracy and validation accuracy. Testing this V2 model on the test set, we obtained a final accuracy score of 81.87%. This shows that our trained model is able to generalize well to unseen data.</p><p>In general, simple CNNs performed well for our task. With fewer classes the accuracy is roughly the same when taking away layers, but the training time decreases. With more classes, accuracy decreases with fewer layers as expected, but the lowest accuracy is still significantly greater than the accuracy found using Logistic Regression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5.">Transfer Learning</head><p>We ran Transfer Learning with weights pre-trained on the ImageNet dataset with four different architectures:</p><p>• VGG: a model proposed in the ImageNet 2013 challenge which was widely used due to its simple architecture consisting of only repeated units of convolutional layers followed by max-pooling <ref type="bibr" target="#b16">[17]</ref> • Inception V3: also known as GoogLeNet which uses skip connections to form "Inception Modules" that are repeated throughout the network <ref type="bibr" target="#b17">[18]</ref> • ResNet50: the winner of the 2015 ImageNet which uses a very deep architecture with "Residual Blocks" <ref type="bibr" target="#b7">[8]</ref> • MobileNet: a streamlined model optimized for mobile and embedded applications <ref type="bibr" target="#b8">[9]</ref> Due to the large size and number of parameters of these models, we had to train them on the cloud using GPUs. The GPU used was an NVIDIA Tesla P100 with 16GB of memory. Even then we ran into challenges with our GPU running out of memory especially on VGG. To address these, we elected to only tune our last custom layers and also reduce the batch size by an order of magnitude.</p><p>The results of Transfer Learning experiments are discussed below:  <ref type="bibr" target="#b1">[2]</ref>. <ref type="bibr" target="#b1">2</ref> QuickDraw's accuracy refers to the accuracy on 3 classes on our validation set. <ref type="bibr" target="#b2">3</ref> Accuracy is calculated after fine-tuning the top-most 2 Inception layers. There is not a strong correlation between the performance of the base model on ImageNet with that of the QuickDraw dataset. In fact, the best performing model on ImageNet, Inception V3, performed poorly on the QuickDraw dataset, obtaining only 45.72% accuracy on 3 classes.</p><formula xml:id="formula_3">Accuracy (%)</formula><p>We noticed, however, that the best performing model on the QuickDraw dataset, VGG, is also the one with the simplest architecture. This suggests that more complex architectures such as the "Inception Module" used in Inception V3 or the "Residual Block" used in ResNet50 may not be beneficial for the problem of doodle classification. Since doodles are simple drawings, only using the classic convolutional and max-pool layers may be the best. This also corroborates our earlier finding with CNN, where our simple CNN built from the ground up did well on the QuickDraw dataset. In terms of training time, MobileNet performed the best. This is expected since the model is optimized for efficiency and has the smallest number of parameters. Overall, the trend in training time follows the number of parameters in the base model, which is expected. The exception of Inception v3, whose training time is the largest despite it having the second largest number of parameters of all the four models. This was due to us additionally fine-tuning the parameters of the two top-most layers of Inception V3. This was because Transfer Learning with Inception V3 was performing poorly in terms of accuracy, and we wanted to see if further tuning hyper-parameters would help. Overall, we find that optimizing the model by reducing the number of parameters will help with reducing training time, which further supports our initial push for simplifying the models to achieve higher efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>No</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>Our project aimed to recognize the meaning of doodles, a critical first task in order to build any system that uses hand-drawn images for communication. We focused on doodle recognition with an emphasis on efficiency in conjunction with accuracy. After implementing Logistic Regression, SVMs, CNNs, and Transfer Learning and analyzing our results, we found that a simplified CNN was best for the task, balancing both accuracy and training time. We also found that for simpler images such as doodles, using classic architectures such as a combination of convolutional and max-pool layers can outperform complex architectures.</p><p>For future work, we would further develop our most promising approach by performing more extensive experiments to determine the effect of each layer in the CNN.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Examples of the data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>CNN architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>CNN Versions: a sketch of how we progressively simplified our CNN for doodle classification</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4</head><label>4</label><figDesc>Accuracy is the percentage of correctly classified doodles over the total number of doodles. Our reported accuracy is on the validation set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Linear Regression's Confusion Matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>Banana</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 .Figure 9 .</head><label>89</label><figDesc>Confusion matrix for V2Below is a plot of loss and accuracy over time for this model during training:Figure 9. CNN Training plot</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>table 1 .</head><label>1</label><figDesc></figDesc><table>Accuracy (%) 
+Training Time 1 (s) 
+Classes 
+3 
+10 
+50 
+3 
+10 
+50 
+Baseline 79.51 64.64 43.89 25 122 
+1089 
+1 Ran with 100 iterations. 
+TABLE 1: Logistic Regression Results 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>For training, we used non-binarized data and normalized the inputs to the range [−1, 1]. We trained for 500 iterations. The initial parameters that we used are:• Polynomial: degree of 5, coefficient of 1• RBF: gamma of 1</figDesc><table>5.3. SVM 
+
+We implemented SVMs with four different kernels: Lin-
+ear, RBF, Polynomial, and Sigmoid. The results are reported 
+in table 2 
+
+• 
+
+• 
+
+• 
+
+Sigmoid: coefficient of 1 
+
+Accuracy (%) Training Time 1 (s) 
+Classes 
+3 
+10 
+3 
+10 
+Linear Kernel 
+40.8 
+22.22 204 
+1831 
+RBF Kernel 
+62.68 61.01 317 
+2842 
+Polynomial Kernel 51.7 
+50.89 448 
+6673 
+Sigmoid Kernel 
+33.08 11.72 478 
+6971 
+1 Ran with 500 iterations. 
+TABLE 2: SVM Results 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="false"><head>TABLE 5 :</head><label>5</label><figDesc>Transfer Learning Accuracy Results</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5" validated="false"><head></head><label></label><figDesc>. Parameters Training Time/Iters Inception v3 23,851,784 540 1 MobileNet 4,253,864 103 ResNet50 25,636,712 152 VGG 138,357,544 207 1 Training time includes fine-tuning of the top-most 2 In- ception layers TABLE 6: Transfer Learning Training Time Results</figDesc><table>Inception v3 
+23,851,784 
+540 1 
+MobileNet 
+4,253,864 
+103 
+ResNet50 
+25,636,712 
+152 
+VGG 
+138,357,544 
+207 
+1 </table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We would also explore using Transfer Learning as a fixed feature extractor for Logistic Regression, our fastest model. Given more time, we would also love to explore working on efficiency in conjunction with smaller datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Contributions</head><p>Each team member contributed equally to this project.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Imagenet</surname></persName>
+		</author>
+		<ptr target="http://www.image-net.org/.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Models for image classification with weights trained on imagenet</title>
+		<ptr target="https://keras.io/applications/.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">The quick, draw! dataset</title>
+		<ptr target="https://github.com/googlecreativelab/quickdraw-dataset.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<ptr target="https://scikit-learn.org/stable/.Accessed" />
+		<title level="m">Machine learning in python</title>
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Practical selection of svm supervised parameters with different feature representations for vowel recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Amami</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">B</forename><surname>Ayed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Ellouze</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1507.06020</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Convolutional neural networks for visual recognition: Transfer learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cs231n</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Cloud deep learning vm image</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Google</surname></persName>
+		</author>
+		<ptr target="https://cloud.google.com/deep-learning-vm/" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">G</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kalenichenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Weyand</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Andreetto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Adam</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.04861</idno>
+		<title level="m">Mobilenets: Efficient convolutional neural networks for mobile vision applications</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Do better imagenet models transfer better? CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kornblith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><forename type="middle">V</forename><surname>Le</surname></persName>
+		</author>
+		<idno>abs/1805.08974</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Imagenet classification with deep convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2012" />
+			<biblScope unit="page" from="1097" to="1105" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Transfer learning for illustration classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lagunas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Garces</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.02682</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Supervised learning lecture notes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<ptr target="http://cs229.stanford.edu/notes/cs229-notes1.pdf" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Support vector machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A survey on transfer learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">J</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on knowledge and data engineering</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1345" to="1359" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Imagenet large scale visual recognition challenge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Russakovsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Satheesh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Khosla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Bernstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="211" to="252" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Very deep convolutional networks for large-scale image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1409.1556</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Going deeper with convolutions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Sermanet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Reed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Anguelov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Erhan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Rabinovich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

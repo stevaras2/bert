@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reconstructing Pore Networks Using Generative Adversarial Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>kmguan@stanford.edu</roleName><forename type="first">Kelly</forename><surname>Guan</surname></persName>
+						</author>
+						<title level="a" type="main">Reconstructing Pore Networks Using Generative Adversarial Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Understanding fluid flow in porous media at the microscale is relevant to many fields, such as oil and gas recovery, geothermal energy, and geological CO 2 storage. Properties such as porosity and permeability are often calculated from laboratory measurements or direct imaging of the microstructure. However, due to acquisition times and experimental costs, it is difficult to evaluate the variability due to rock heterogeneity. Instead, researchers often use statistical methods to reconstruct porous media based on two-point or multi-point statistics <ref type="bibr" target="#b0">[1]</ref>, <ref type="bibr" target="#b1">[2]</ref>, <ref type="bibr" target="#b2">[3]</ref>. Reconstruction using these methods often require knowledge about the pore and throat size distribution before and can be costly to generate multiple realizations of the same rock sample.</p><p>Recent advances in deep learning have shown promising use of generative adversarial networks (GANs) for rapid generation of 3D images with no a priori model <ref type="bibr" target="#b3">[4]</ref>, <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b5">[6]</ref>. In this project, we investigate the feasibility of using a Deep Convolutional GAN to generate 2D reconstructions of a binarized dataset of a sandstone sample. The accuracy of the reconstructed images are evaluated against real images using morphological properties such as porosity, perimeter, and Euler characteristic. We find that training using a log loss function versus the Wasserstein distance with a gradient penalty yields more accurate images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Generative adversarial networks</head><p>GANs are made of two components: 1) a generator G that creates a synthetic training image and 2) a discriminator D that tries to differentiate between the synthetic and real training image. As the GAN is trained, the generator tries to create more realistic training images to "fool" the discriminator, while the discriminator tries to become better at classifying real (label = 1) vs. fake (label = 0) images. z is the latent space vector sampled from a normal distribution, so G(z) maps the latent vector to the image space. x is the data from an image (real or fake), and D(G(z)) is the probability that the generated image is real. The two competing objectives result in the following value function,</p><formula xml:id="formula_0">min G max D V (D, G) = E x∼pdata(x) [log D(x)] + E z∼pz(z) [log(1 − D(G(x))]<label>(1)</label></formula><p>Researchers have shown that using a deep convolutional network in the generator and discriminator models can improve synthetic image generation and training of the network. The overall guidelines for training a DCGAN usually involes: 1) using strided convolutions instead of pooling so that * Energy Resources Engineering, Stanford University the network can learn its own pooling functions, 2) using batch normalization to improve gradient flow, 3) removing fully connected hidden layers, and 4) using a specific set of activation functions in the generator and discriminator (explained further in the methods) <ref type="bibr" target="#b6">[7]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. OBJECTIVE AND SCOPE</head><p>The main objective of this project is to investigate the accuracy and feasibility of generating 2D/3D sandstone images through training a DCGAN model. While this has been already studied in the literature, it is a relatively new field with many ongoing areas of interest, such as ways to improve training stability, image quality, and incorporating grayscale and multiscale images <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b5">[6]</ref>.</p><p>This project first aims to successfully create and train a 2D GAN before eventually training a 3D GAN. We can then evaluate how modifying the GAN architecture affects the loss and accuracy of the generated images. Once trained, these images would then be able to be used as inputs into digital rock physics calculations of properties such as permeability and capillary pressure. Understanding how permeability is affected by variations in porosity and connectivity is necessary in many research areas involving fluid flow through porous media.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET</head><p>The dataset was obtained from micro-x-ray tomography scans of a Bentheimer sandstone. The original data is a greyscale representation of the 3D solid, and has been processed and binarized into the pore and solid phases. The full dataset is 512 3 voxels large with a voxel size of 3.06 µm. In order for the training image (64 x 64 voxels) to capture an adequate area, the image was downsampled to 256 3 voxels with a voxel size of 6.12 µm. For data augmentation, subvolumes were extracted every 16 voxels to yield 36, 864 training images. Initial tests were also done on a larger dataset of 72, 728 images and yielded comparable results. To reduce training time, we used the smaller training set for the majority of our tests.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. NETWORK ARCHITECTURE</head><p>We used a deep convolutional GAN (DCGAN), which uses convolutional-transpose layers in the generator and convolutional layers in the discriminator, as our network model <ref type="bibr" target="#b6">[7]</ref>. The model is based on the tutorial from <ref type="bibr" target="#b7">[8]</ref>, with modifications to allow for single-channel input images and one-sided label smoothing. <ref type="figure" target="#fig_0">Figure 1</ref> shows the general architecture of a DCGAN, and the generator and discriminator architectures are shown in <ref type="table" target="#tab_0">Table I</ref>.  The architecture follows the architecture described in <ref type="bibr" target="#b7">[8]</ref> with the number of channels modified to be 1 (binarized image) instead of 3 (RGB) The images are loaded and normalized between [−1, 1] prior to training. Batch normalization is done on sets of mini-batches of real and fake images. The model weights are randomly initialized from a normal distribution with µ = 0 and σ = 0.2. For DCGAN, two separate Adam optimizers are used to optimize D and G. A one-sided label smoothing was also applied to the true label (1) as it has shown to improve model stability <ref type="bibr" target="#b8">[9]</ref>. Parameters such as the leraning rate and label smoothing were varied to investigate the effect on training stability and accuracy. <ref type="figure" target="#fig_3">Figure 4</ref> shows the results of some trial runs to highlight the effect of changing different parameters. <ref type="table" target="#tab_0">Table II</ref> shows the parameters that were used for the optimal network. The network was trained using a Nvidia GeForce GTX 1070 GPU for about 1 hour.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. TRAINING: LOSS FUNCTION</head><p>To train D and G, we used two different loss functions. We first use the binary cross entropy loss function (model DCGAN-1),</p><formula xml:id="formula_1">(x, y) = L = {l 1 , ..., l N } T , l n = −[y n log x n + (1 − y n ) log(1 − x n )]<label>(2)</label></formula><p>Training is performed in two steps: 1) train the discriminator to maximize</p><formula xml:id="formula_2">E x∼pdata(x) [log D(x)] + E z∼pz(z) [log(1 − D(G(x))] (3)</formula><p>while keeping the generator fixed, and 2) train the generator to minimize</p><formula xml:id="formula_3">E z∼pz(z) [log(1 − D(G(x))]<label>(4)</label></formula><p>while keeping the discriminator fixed. In practice, due to the effect of vanishing gradients, it is easier to maximize</p><formula xml:id="formula_4">E z∼pz(z) log(D(G(z)) instead.</formula><p>Convergence is theoretically reached when the generator can generate a distribution p g (x) that equal to p data (x), which corresponds to a discriminator output of 0.5. Further details about the training steps can be found in <ref type="bibr" target="#b7">[8]</ref>.</p><p>We also investigated the effect of using the Wasserstein distance as the loss function instead (model DCGAN-2).</p><p>The primary advantages of using the Wasserstein loss are that it can prevent mode collapse in the generator and allow for better convergence. The Wasserstein distance measures the distance between two probability functions and the discriminator now becomes a "critic" that evaluates the Wasserstein distance between the real and synthetic images. The distance is calculated by enforcing a Lipschitz constraint on the critic's model, either through weight clipping or a gradient penalty <ref type="bibr" target="#b9">[10]</ref>. In our model, we use a gradient penalty to enforce the Lipschitz constraint which results in the following value function,</p><formula xml:id="formula_5">min G max D E x∼pdata(x) [D(x)] − E z∼pz(z) [D(G(z))]+ λE x [(||∇ x D(x)|| 2 − 1) 2 ]<label>(5)</label></formula><p>Where λ is the gradient penalty coefficient and is set to 10 for our model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. MORPHOLOGICAL EVALUATION METRICS</head><p>The objective of using a DCGAN with our dataset is to recreate a pore network image with similar morphological properties as the original porous media. To evaluate the accuracy of our model, we use a set of morphological descriptors known as Minkowski functionals. In 2D, there are 3 Minkowski functionals that describe the surface: area, perimeter, and Euler characteristic. The area is simply the percent of pixels that are labeled as pore, n pore divided by the total number of pixels n total , Area = n pore n total <ref type="bibr" target="#b5">(6)</ref> The perimeter can be calculated using the Crofton formula, which takes a set of lines with varying orientations and counts the number of intersections with the region of interest. In our case, we consider the intersections with pixels that are labeled as pores. This is also normalized against the total number of pixels,</p><formula xml:id="formula_6">P = n intersect n total (7)</formula><p>Finally, the Euler characteristic in 2D describes the connectivity of the surface and is defined as the difference between the number of connected regions (solid) and the number of holes (pores).</p><formula xml:id="formula_7">χ = n connected − n holes n total<label>(8)</label></formula><p>A region with a negative Euler characteristic will have more holes than connected regions, which indicates low connectivity across the area. A region with a positive Euler characteristic will have more connected regions and therefore a high connectivity across the area, which can allow for fluid flow.</p><p>For evaluation, after the model is fully trained, we create 64 realizations of 100 2 pixel images using the generator and randomly select the same number of images from our training set. The generator outputs images with values between [−1, 1]. The images are normalized, filtered using a median filter with a neighborhood of 2 pixels and binarized using Otsu's method. An example of the final synthetic image used for evaluation is shown in <ref type="figure" target="#fig_1">Figure 2</ref>. The Minkowski functionals were calculated using the MorphoLibJ and BoneJ plug-ins in ImageJ <ref type="bibr" target="#b10">[11]</ref>, <ref type="bibr" target="#b11">[12]</ref>. VII. EXPERIMENTAL RESULTS <ref type="figure" target="#fig_2">Figure 3</ref> shows the loss function of the generator and discriminator vs. number of iterations for our DCGAN-1 model (using the log loss function). We see that loss function initially increases, which corresponds to random noise images. After about 4000 iterations, the generator loss function drops and the image structure begins to resolve itself. This behavior is not unexpected and has been observed in training 3D GANs on similar datasets <ref type="bibr" target="#b4">[5]</ref>. Further training shows that the image begins to resolve itself at 15, 000 iterations and further refinement occurs at 35, 000 iterations. We do not observe any mode collapse as the output images are all different from one another.</p><p>We next show the effect of varying different model parameters during the training process. <ref type="figure" target="#fig_3">Figure 4a</ref> shows the effect of changing the generator activation functions to leaky ReLU rather than ReLU. The resulting image quality is lower, which is expected given previous research results <ref type="bibr" target="#b12">[13]</ref>. <ref type="figure" target="#fig_3">Figure 4b</ref> shows the result when using the Wasserstein distance (DCGAN-2) as the loss function instead of the log loss. <ref type="figure" target="#fig_4">Figure 5</ref> shows the corresponding loss function of the discriminator while training our DCGAN-2 model.  <ref type="table" target="#tab_0">Table III</ref> shows the morphological evaluation metrics used on our training set and two DCGAN models. We see that DCGAN-1 produces images with similar Minkowski functional values as the training set, while DCGAN-2 performs significantly worse. While we expected the Wasserstein loss would improve training stability, the loss function and metrics indicate otherwise. One explanation is that the training time was not long enough, since the final images appear rather noisy. Another possibility is that the generator and discriminator architecture may need further modification, as previous papers have shown that batch normalization with the Wasserstein loss should be avoided <ref type="bibr" target="#b9">[10]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. CONCLUSION AND FUTURE WORK</head><p>We were able to successfully implement and train a 2D DCGAN model to generate reasonable images with similar morphological properties to the original rock sample. However, it is still unclear if the generator is accurately capturing the underlying probability distribution of the real data. Further investigation could involve using the Wasserstein loss, as it is a measurement of the distance between two probability distributions. While our model using the Wasserstein loss did not perform as well, there have been extensive studies on ways to improve GANs and DCGANs and only some of the suggestions have been implemented here <ref type="bibr" target="#b8">[9]</ref>, <ref type="bibr" target="#b13">[14]</ref>, <ref type="bibr" target="#b12">[13]</ref>.</p><p>The ultimate goal of this work is to create a 3D GAN to create 3D pore networks for use in digital rock physics. The major challenge when scaling from 2D to 3D is expected to be in the computational train required to train the 3D network. Therefore, it is still important to understand the underlying architecture in 2D and knowledge gained from this project will be invaluable when constructing the 3D model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IX. ACKNOWLEDGEMENTS</head><p>Thanks to Tim Anderson and Prof. Anthony Kovscek for their guidance on this project. Part of this work was performed at the Stanford Nano Shared Facilities (SNSF), supported by the National Science Foundation under award ECCS-1542152.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>X. PROJECT CODE</head><p>Project code can be downloaded by clicking here (Stanford Google Drive).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>High level architecture of DCGAN</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Synthetic 100 2 pixel image after processing (white = pore, black = solid)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 .</head><label>3</label><figDesc>Discriminator and generator loss function over 60 epochs for 36 , 864 training images. Numbers correspond to sequence images shown to the right</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 4 .</head><label>4</label><figDesc>Effect of changing (a) generator activation function from ReLU to LeakyReLU (b) loss function from log loss to Wasserstein distance</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5 .</head><label>5</label><figDesc>Discriminator loss while training DCGAN-2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I GENERATOR</head><label>I</label><figDesc>AND DISCRIMINATOR ARCHITECTURE</figDesc><table>Layer 
+Type 
+Filters Kernel Stride Padding Batch Normalization Activation 
+
+Generator 
+1 
+ConvTransp2D 512 
+4 x 4 
+1 
+0 
+Yes 
+ReLU 
+2 
+ConvTransp2D 256 
+4 x 4 
+2 
+1 
+Yes 
+ReLU 
+3 
+ConvTransp2D 128 
+4 x 4 
+2 
+1 
+Yes 
+ReLU 
+4 
+ConvTransp2D 64 
+4 x 4 
+2 
+1 
+No 
+Tanh 
+Discriminator 
+1 
+Conv2D 
+64 
+4 x 4 
+2 
+1 
+No 
+LeakyReLU 
+2 
+Conv2D 
+128 
+4 x 4 
+2 
+1 
+Yes 
+LeakyReLU 
+3 
+Conv2D 
+256 
+4 x 4 
+2 
+1 
+Yes 
+LeakyReLU 
+4 
+Conv2D 
+512 
+4 x 4 
+1 
+0 
+No 
+Sigmoid 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II DATA</head><label>II</label><figDesc>PARAMETERS Image size 64 3 voxels Batch size 64 Size of z latent vector 100 Generator filters 64 Discriminator filters 64 Learning rate, α 2 × 10 −5 Momentum, β 1 0.5 Label smoothing, 0.2 Parameters used for training DCGAN-1. Label smoothing refers to replacing the class label of 1 by 1 −</figDesc><table>Image size 
+64 3 voxels 
+Batch size 
+64 
+Size of z latent vector 
+100 
+Generator filters 
+64 
+Discriminator filters 
+64 
+Learning rate, α 
+2 × 10 −5 
+Momentum, β 1 
+0.5 
+Label smoothing, 
+0.2 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE III EVALUATION</head><label>III</label><figDesc>RESULTS FOR DCGAN MODELS</figDesc><table>Model 
+Area 
+Perimeter, ×10 −2 
+Euler char., χ × 10 −4 
+
+Train set 
+0.220 6.94 
+−3.89 
+DCGAN-1 
+0.217 6.82 
+−4.28 
+DCGAN-2 
+0.268 42.26 
+−88 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reconstruction of Berea sandstone and porescale modelling of wettability effects</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P.-E</forename><surname>Øren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Bakke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Petroleum Science and Engineering</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="177" to="199" />
+			<date type="published" when="2003-09" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Porous Structure Reconstruction Using Convolutional Neural Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">H</forename><surname>Arns</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">S</forename><surname>Rahman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">Y</forename><surname>Arns</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematical Geosciences</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="19" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Pore space reconstruction of vuggy carbonates using microtomography and multiple-point statistics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Okabe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Blunt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Water Resources Research</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<date type="published" when="2007-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wardefarley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Nips</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Reconstruction of threedimensional porous media using generative adversarial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Mosser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Dubrule</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Blunt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Stochastic Reconstruction of an Oolitic Limestone by Generative Adversarial Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Mosser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Dubrule</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Blunt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Transport in Porous Media</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="81" to="103" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Unsupervised Representation Learning With Deep Convolutional Generative Adversarial Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Metz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page">16</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">DCGAN Tutorial</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Inkawhich</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Improved Techniques for Training GANs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page" from="1" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Improved Training of Wasserstein GANs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Gulrajani</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">MorphoLibJ: integrated library and plugins for mathematical morphology with ImageJ</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Legland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Arganda-Carreras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Andrey</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">BoneJ: Free and extensible bone image analysis in ImageJ</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Doube</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">M</forename><surname>Kłosowski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Arganda-Carreras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">P</forename><surname>Cordelières</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">P</forename><surname>Dougherty</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">S</forename><surname>Jackson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">R</forename><surname>Hutchinson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">J</forename><surname>Shefelbine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bone</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page" from="1076" to="1079" />
+			<date type="published" when="2010-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">How to Train a GAN? Tips and tricks to make GANs work</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Denton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Arjovsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mathieu</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<title level="m">NIPS 2016 Tutorial: Generative Adversarial Networks</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">School Specific Estimates of Returns to Increased Education Spending in Massachusetts</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Isaac</forename><surname>Kasevich</surname></persName>
+							<email>isaack97@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zane</forename><surname>Kashner</surname></persName>
+							<email>zkashner@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ethan</forename><surname>Oro</surname></persName>
+							<email>eoro@stanford.edu</email>
+						</author>
+						<title level="a" type="main">School Specific Estimates of Returns to Increased Education Spending in Massachusetts</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Currently, most-if not all-of the existing literature estimating the effect of educational investment on a variety of output metrics do so using linear regression with relatively unimpressive explanatory power. From these models researchers tend to find weakly positive causal relationships between increased investment and increased achievement. We seek to improve upon this by using more sophisticated models to model outcomes based on investment and a number of other controls. We find that there are great gains to be made in explanatory power from these new models, but they still support the findings of the existing literature: that the relationships between increased investment in a variety of arenas and many different measures of school success are weakly positive.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>At the state and the district level a great deal of debate and resources go towards funding public education. There are a number of studies that estimate the returns of increased school resources to student achievement <ref type="bibr" target="#b0">[1]</ref>  <ref type="bibr" target="#b1">[2]</ref>. We seek to build upon these papers by building a model that estimates different measures of high school performance based on policy-relevant factors, as well as exogenous factors, such as the community context of a given school.</p><p>Within the social science literature there are a number of different metrics upon which schools are judged. Some of the most common ways that outcomes are measured include standardized test scores, graduation rates, and the rate at which students progress to college. Given that although all of these are measures of how "good" a school is, the mechanisms by which they are changed are likely different. We try using a number of different models to estimate each of these outputs. Massachusetts has rigorous standardized testing, the MCAS, that all students are required by law to participate in the tenth grade <ref type="bibr" target="#b2">[3]</ref>. Since this occurs so early in high school, we also consider composite SAT as another standardized test.</p><p>In the analysis of school performance that we found within the literature, school specific models were limited to linear regression. We seek to build upon this by developing more accurate models using a variety of more sophisticated techniques. We seek to determine whether these models agree with the assertions from the social science literature about the effects of changing expenditures, class sizes, and teacher salaries. In order to estimate the effect on the performance of a given school we approximate the limit definition of a derivative near the current levels of any of these explanatory variables.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>There has been a considerable body of research by economists and policymakers looking into the relationship between school spending and outcomes. A recent metaanalysis of 377 different publications investigating the relationship between schools funding and academic outcomes notes that irrespective of the the input feature -class size, teacher quality and expenditure per pupil -between 10 and 20 percent of studies found a statistically significant positive correlation, between 5 and 10 percent of studies found a statistically significant negative correlation and the rest were unclear <ref type="bibr" target="#b6">[8]</ref>. However, upon further investigation of many of the studies cited, as well as a host of recent studies, we noticed a few trends: many of the studies used an ordinary least-squares linear regression model to find a relationship between school spending and academic outcomes <ref type="bibr" target="#b7">[9]</ref> [10] <ref type="bibr" target="#b9">[11]</ref>. It was also made clear through these studies that school inputs and school-specific variables were not going to be sufficient to generate a sufficiently comprehensive picture of student achievement; we needed to collect zip-code level census data in order to account for such factors as median income and parental education, profession and hours spent around the home. <ref type="bibr" target="#b8">[10]</ref> Thus, we sought to apply more advanced machine learning methods that might be able to draw more complex relationships between input features and output markers as discussed in existing social science literature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND FEATURES</head><p>We combined data from a variety of sources to augment school level data-sets with information about their surrounding areas. In order to estimate public school performance we needed context about the income, cost, demographics, and education levels of the communities they served.</p><p>Massachusetts individual school level data was sourced from a Kaggle dataset from the Mass. Department of Education <ref type="bibr">[4]</ref>. This data has demographic information about each school and enrollment statistics in addition to standardized testing results, graduation rates, college progression rates and funding levels for each school.</p><p>We combined these school level inputs with data scraped from towncharts.com using both Beautiful Soup 4's html parser and Selenium Webdrivers <ref type="bibr" target="#b3">[5]</ref>  <ref type="bibr" target="#b4">[6]</ref>. This scraped data is from a website that aggregates data from the Census, American Community Survey, Bureau of Labor Statistics, US prop start(t)dt to define the proportion of adults who begin work at times such that we would expect them to be away when students are going to or returning from school <ref type="bibr" target="#b5">[7]</ref>.</p><p>Throughout our analysis we removed a number of features we determined to be largely peripheral to the measures of success. This was done in order to reduce over-fitting. Most features removed were ones that theoretically should have no effect on student performance, but were captured in our initial data process.</p><p>We transformed categorical variables into one-hot dummy variables. Once we joined our school-level data source by zip-code with our scraped data source, we split our full school data into Elementary, Middle and High Schools and ran our analysis on the 290 high schools in our sample that are public, non charter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head><p>As mentioned previously, social scientists have attempted to statistically observe the correlation between school funding and student performance using unsophisticated methods such as ordinary least-squares linear regression. We hope to model this relationship using more sophisticated machine learning techniques. After developing a suitably accurate closed predictive model, we apply continuous intervention to attempt causal inference to isolate the effects of key input variables.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Principal Components Analysis for Data Visualization</head><p>Before attempting to fit predictive models to our dataset, we visualized our data to see, observationally, if a correlation could exist. To visualize such a high-dimensional feature space in three dimensions, we reduced our exogenous feature space to R 2 using Principal Components Analysis on only those features unaffectable by policymakers. For example, a feature such as classroom size would not be included in PCA since we presume that classroom size could be affected by spending. Rather, we only considered demographic features perceived to be outside the scope of increased scholastic funding.</p><p>We plot the two principal components of the demographic data along with Average spending per Pupil against one output metric, % Attending College: From <ref type="figure" target="#fig_0">Fig. 1</ref> above we can identify a correlation between spending and the output metric, though we do see significant variance in the principal component space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Closed predictive models to predict student performance</head><p>We began by benchmarking performance against the model utilized by many of the existing studies (linear regression) and achieved similar R 2 performance to that of the studies. After observing significant training/validation set performance disparity, we attempted to reduce variance using regularization in ridge and lasso regressions. Though we maintained similar training set performance, we saw marked improvement in validation set performance. Given the high relative dimensionality of the feature space with respect to the number of training examples, we then experimented with several different ensembled tree-based models, on which we elaborate below. We considered and tested more complex models including Support Vector Machines and fully-connected Neural Networks, though abysmal performance on these models indicated an insufficient number of training examples for effective use of SVMs or NNs. Models were implemented in Python using a combination NumPy and SkLearn libraries <ref type="bibr" target="#b10">[12]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tree-Based Models</head><p>Our most accurate models fell under the broader category of tree-based models. We experimented with a number of ensembling methods and combinations thereof, including bagging and boosting. We sought to find robust models and prevent overfitting. Models included XGBoost, Tree Regression, Random Forrest, AdaBoost Tree Regression, Extra Trees Regression, and Bagged XGBoost Tree Regressionwhich ended up being the most successful model of those discussed.</p><p>Hyperparameter tuning increased model performance and reduced overfitting. We capped tree-depth in RandomForest to 4, which prevented overfitting while remaining complex enough to predict accurately. Extra Trees Regressor (Extremely Randomized Trees) performed best with a maximum tree depth of 5 and 120 estimators. Adaboost, a metaestimator that uses errors in current predictions to slightly adjust tree weights, performed best using 68 estimators. XGBoost, with a tree depth of 3, achieved exceptional training performance but overfit badly on the validation set. Bagging multiple XGBoost trees reduced overfitting and increased validation set performance. Across all bagged tree models, we found greatest performance using approximately 100 trees.</p><p>We delve more thoroughly into the performance differences between various models in the results section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Derivative Estimation and Causal Inference</head><p>Using our most successful model, Bagged XGBoost, we used a technique known as Continuous Intervention, Causal Inference <ref type="bibr" target="#b11">[13]</ref> to isolate the effect of variables we believed government spending could impact. The goal of causal inference methods is to estimate the derivative of the model's cost function on a single test example x with respect to a specific input feature x j about the original value of that input feature x j0 . We feed a trained model slight perturbations of the same example, holding all features constant except for the augmented feature x j . In our implementation, we iteratively augmented the analyzed input feature using 50 values a sequentially selected from the range a ∈ [0.950 × x j0 , 1.050 × x j0 ] and fed each augmented input x j = x j0 + a through our model, denoted M (x). We then used ordinary least-squares linear regression to approximate the numerical interpretation of the derivative:</p><formula xml:id="formula_0">∂M (x 0 ) ∂x j = lim a−→0 M (x : x j = x j0 + a) − M (x 0 ) a .</formula><p>Concretely, we find the slopeb 1 in the linear model p(y|x) = b 0 +b 1 x which minimizes the cost function</p><formula xml:id="formula_1">b(x) = arg min b M (x) − bx 2 2</formula><p>using data points generated by M in the small interval around x j0 . We interpret this slope as the direct causal relationship between an independent parameter and the output metricthe degree to which the output metric is affected by the input feature in question.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS</head><p>We were able to observe significant gains in predictive accuracy using more complex models against the baseline of linear regression. However, even with more accurate predictive models, we still observed weak correlation between government spending and student performance in line with existing studies on the matter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Predictive Model Performance</head><p>We chart the performance of each model on its training set and an unseen test set. In general, tree-based regression models significantly outperformed other regressive models in R 2 score, defined as</p><formula xml:id="formula_2">R 2 (y,ŷ) = 1 − m i=1 (y i −ŷ i ) 2 m i=1 (y i −ȳ) 2 ,</formula><p>whereŷ is the model's prediction, y is the ground-truth output andȳ is equal to E[y]. Thus, a model that simply predicts the expected value of y would achieve an R 2 score of 0.0 and a model that predicts perfectly achieves an R 2 of 1.0. Note that, using this version of R 2 , R 2 (y,ŷ) ∈ (−∞, 1]; a model can be arbitrarily bad, thus generating an R 2 &lt;&lt; 0. We ran each of our models using four different ground truth metrics, and we present the results for each below:</p><p>In TABLE I, using the College Progression output metric, we saw best test-set performance with a Bagged XGBoost Tree Regression model, which achieved an R 2 score of 0.67, a 0.24 improvement on linear regression.</p><p>In TABLE II, using the Graduation Rate output metric, we saw best test-set performance with an Extra Trees Regression model, which achieved an R 2 score of 0.65, a 0.19 improvement on linear regression.</p><p>In TABLE III, Using the Composite MCAS score metric, we saw best test-set performance with Bagged XGBoost, which achieved an R 2 score of 0.75, a 0.10 improvement on linear regression.</p><p>In TABLE IV, using the Composite SAT score metric, we saw best test-set performance with Bagged XGBoost, which achieved an R 2 score of 0.86, a 0.08 improvement on linear regression.  output metrics, this is likely due to drastic differences in metric scale relative to the Graduation Rate and College Progression metrics, which are measured as percentage values between 0 and 100. Composite SAT scores, by contrast, fall within the 1000 − 2400 range. We saw statistically significant performance improvements against linear regression in all output metrics, though the most substantial improvement in R 2 value occurred using the College Progression metric using Bagged XGBoost Tree Regression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Causal Inference Results and Implications</head><p>Using the most successful model for each output metric, we proceeded with the previously discussed causal inference model. We conducted this analysis for all combinations of critical input features: {Average Expenditure per The approximated derivative for each of these combinations for a single school, Athol High School, Athol, Mass., appears in TABLE V below: Before analyzing these results, we note that, since our predictive models tended to have high variance and lessthan-ideal performance, the causal inference results should be taken as a proof of concept and not as definitive. That said, we do notice some interesting trends that corroborated results of social science research.</p><p>Most interestingly, average classroom size generally had weakly positive correlation with output metrics. This runs counter to our initial intuition, as we hypothesized that smaller classrooms would increase student performance. In addition, we notice weakly positive correlations between teacher salary and three of the four output metrics. Coupled with the average class size results, for this school the recommended allocation of funds would be to hire better teachers at higher salaries as opposed to simply hiring more teachers to reduce classroom size. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION</head><p>We found that there were substantial gains to the status quo -which used linear regression -to be made in the accuracy of models predicting student outcomes by using more sophisticated models. In particular, tree modelsled by XGBoost with Bagging -outperformed all other models. Bagged XGBoost had R 2 values 0.24 higher for predicting college attendance, 0.10 higher for predicting MCAS scores and 0.08 higher for predicting composite SAT scores compared to the linear regression baseline. Extra Trees Regression performed 0.19 better than linear regression in predicting graduation. We hypothesize that these models were higher performing because they better incorporated the interactions between different variables, a key factor in the complicated task of predicting school-wide achievement.</p><p>We used these more informative models to perform causal analyses of the effect of slightly changing expenditures per pupil, student teacher ratio, and average teacher salary for all schools in our sample. In a comprehensive literature review performed by Eric Hanushek, 66%, 82% and 73% of studies of these respective effects have statistically insignificant relations <ref type="bibr" target="#b6">[8]</ref>. Our analysis supported this near consensus, We also found modest -but statistically insignificantrelationships that were generally in the direction we would expect.</p><p>In the future, we would like to incorporate other states' school data into our analysis. Building a framework to normalize test scores and researching laws to ensure that variables were comparable was outside the scope of what we could achieve in this project, but we hypothesize that great gains to accuracy could be made with a larger sample set of schools. We also believe that having year-over-year funding and test result data (which we could not find for the schools in our initial dataset) could provide additional insights into progress made by schools. Further, with more accurate predictive models and more data, we would like to solve the constrained optimization problem of reallocating existing education dollars to achieve whatever education goals the state may have, which we attempted but found intractable given the time constraints of this project. Finally, we could extend this analysis to elementary and middle schools, rather than limiting it to high schools.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONTRIBUTIONS</head><p>Most discussion of project topics, datasets, and goals was between all three of us as a group. However, given each member's unique skills we often worked in complementary manners. In all arenas, different group members assisted their teammates with advice and debugging assistance.</p><p>Isaac Kasevich was primarily responsible for creating the data pipeline. He cleaned the inputs, and linked zip code data to specific school information. He created the general framework by which any model we used was trained, tested, and validated. Isaac implemented the PCA analysis and data visualization. He also assisted with using the causal inference framework on a bevy of different models for explanatoryresponse pairs. Additionally, Isaac explored using convex optimization for budget optimization given our modelswhich did not make it into our paper.</p><p>Zane Kashner created the causal inference framework. He created the process by which we estimate the local effects of small changes of certain inputs on a variety of measures. Zane played a part in the data process, generating new features and with cleaning. Additionally, he found the datasets that we used for both school level and zip code level information. Zane also created the framework for a two staged model linking spending to inputs dependent upon spending -which did not make it into our paper.</p><p>Ethan Oro was in charge of implementing a number of models as well as the corresponding hyperparameter optimization. In addition to this role, he was the team member responsible for scraping the zipcode level data. He also headed up the literature review of the existing research in this area. Ethan also investigated integrating Illinois school data into our analysis -which is not yet integrated in our analysis.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Principal Components Analysis using % Attending College output metric</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Pupil, Average Teacher Salary, Average Class Size} and output metrics: {% Graduated, % Attending College, Composite MCAS, Composite SAT}.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 2 .</head><label>2</label><figDesc>Causal Inference of Avg. Expenditures per Pupil vs. % Graduated for a single school (Athol High School) Fig. 2 shows a graphic representation of the causal in- ference method, where the red line indicates the result of the linear regression. We take the slope of this line as the approximated derivative of the Graduation Rate output metric with respect to Average Expenditures per Pupil about it's initial value for this school.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Geological Survey, Medicare and Medicaid, Common Core of Data and more. We linked these two datasources by the zip codes in which the schools were located.We collapsed many categorical features into single features that seemed more informative. For example, we aggregated two zip-code level features</figDesc><table>absent morning = 
+
+7:30AM 
+
+12:00AM 
+
+prop start(t)dt 
+
+absent evening = 
+
+12:00P M 
+
+11:00AM 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE I</head><label>I</label><figDesc>METRIC: % OF STUDENTS PROGRESSING TO COLLEGE Model Training Set R 2 Score Test Set R 2 Score Least-Squares 0.76 0.44 Ridge 0.74 0.58 Lasso 0.65 0.57 SVM 0.99 -0.03 Random Forest 0.94 0.62 XGBoost 0.98 0.63 AdaBoost 0.87 0.56 Extra Trees Reg. 0.87 0.68 Bagged XGBoost 0.93 0.68 TABLE II METRIC: GRADUATION RATE Model Training Set R 2 Score Test Set R 2 Score Least-Squares 0.77 0.46 Ridge 0.76 0.47 Lasso 0.65 0.54 SVM 0.99 -0.03 Random Forest 0.93 0.55 XGBoost 0.98 0.52 AdaBoost 0.87 0.52 Extra Trees Reg. 0.89 0.65 Bagged XGBoost 0.93 0.64 We note that though the R 2 values are much higher across all models for the Composite MCAS and Composite SAT</figDesc><table>Model 
+Training Set R 2 Score Test Set R 2 Score 
+Least-Squares 
+0.76 
+0.44 
+Ridge 
+0.74 
+0.58 
+Lasso 
+0.65 
+0.57 
+SVM 
+0.99 
+-0.03 
+Random Forest 
+0.94 
+0.62 
+XGBoost 
+0.98 
+0.63 
+AdaBoost 
+0.87 
+0.56 
+Extra Trees Reg. 
+0.87 
+0.68 
+Bagged XGBoost 
+0.93 
+0.68 
+
+TABLE II 
+METRIC: GRADUATION RATE 
+
+Model 
+Training Set R 2 Score Test Set R 2 Score 
+Least-Squares 
+0.77 
+0.46 
+Ridge 
+0.76 
+0.47 
+Lasso 
+0.65 
+0.54 
+SVM 
+0.99 
+-0.03 
+Random Forest 
+0.93 
+0.55 
+XGBoost 
+0.98 
+0.52 
+AdaBoost 
+0.87 
+0.52 
+Extra Trees Reg. 
+0.89 
+0.65 
+Bagged XGBoost 
+0.93 
+0.64 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE III METRIC</head><label>III</label><figDesc>: AVERAGE COMPOSITE 10 th GRADE MCAS</figDesc><table>Model 
+Training Set R 2 Score Test Set R 2 Score 
+Least-Squares 
+0.84 
+0.65 
+Ridge 
+0.83 
+0.68 
+Lasso 
+0.75 
+0.66 
+SVM 
+0.99 
+-0.02 
+Random Forest 
+0.95 
+0.60 
+XGBoost 
+0.99 
+0.67 
+AdaBoost 
+0.92 
+0.64 
+Extra Trees Reg. 
+0.94 
+0.73 
+Bagged XGBoost 
+0.95 
+0.75 
+
+TABLE IV 
+METRIC: AVERAGE COMPOSITE SAT SCORE 
+
+Model 
+Training Set R 2 Score Test Set R 2 Score 
+Least-Squares 
+0.90 
+0.78 
+Ridge 
+0.89 
+0.79 
+Lasso 
+0.89 
+0.80 
+SVM 
+0.49 
+-0.02 
+Random Forest 
+0.97 
+0.81 
+XGBoost 
+0.99 
+0.82 
+AdaBoost 
+0.93 
+0.79 
+Extra Trees Reg. 
+0.94 
+0.85 
+Bagged XGBoost 
+0.97 
+0.86 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>TABLE V</head><label>V</label><figDesc>CAUSAL INFERENCE DERIVATIVE APPROXIMATIONS FOR A SINGLE SCHOOL</figDesc><table>% Grad. 
+% Att. College MCAS 
+SAT 
+Avg. $/pupil 
+1.94 
+-2.07 
+2.65 
+-27.57 
+Avg. Salary 
+2.62 
+0.44 
+2.67 
+-16.52 
+Avg. Class Size 
+1.26 
+1.43 
+1.69 
+-2.07 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">The Effect of School Resources on Student Achievement</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rob</forename><surname>Greenwald</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Larry</forename><forename type="middle">V</forename><surname>Hedges</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><forename type="middle">D</forename><surname>Laine</surname></persName>
+		</author>
+		<imprint/>
+		<respStmt>
+			<orgName>University of Chicago, Illinois State Board of Education</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">How Money Matters: The Effect of School District Spending on Academic Achievement</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Harold</forename><surname>Wenglinsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Educational Testing Service</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<ptr target="http://www.doe.mass.edu/mcas/participation.html" />
+	</analytic>
+	<monogr>
+		<title level="j">Massachusetts Comprehensive Assessment System. Massachusetts De</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Education data for all Counties in Massachusetts</title>
+		<ptr target="http://www.towncharts.com/Massachusetts/Massachusetts-county-index-Education-data.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Economy data for all Counties in Massachusetts</title>
+		<ptr target="http://www.towncharts.com/Massachusetts/Massachusetts-zipcode-index-Economy-data.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Students find more awareness with later starts</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Vaznis</surname></persName>
+		</author>
+		<imprint>
+			<pubPlace>Boston Globe</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Assessing the Effects of School Resources on Student Performance: An Update . Educational Evaluation and Policy Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">A</forename><surname>Hanushek</surname></persName>
+		</author>
+		<idno type="doi">10.3102/01623737019002141</idno>
+		<ptr target="https://journals.sagepub.com/doi/pdf/10.3102/01623737019002141" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Roope Uusitalo School resources and student achievement revisited: new evidence from panel data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Iida</forename><surname>Hakkinen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tanja</forename><surname>Kirjavainen</surname></persName>
+		</author>
+		<ptr target="https://ac.els-cdn.com/S0272775702000602/1-s2.0-S0272775702000602-main.pdf?tid7492da58-3ddb-45de-9644-d3972c8fc657&amp;acdnat=1544678687ec77e066b3029adfb5f22f0c1d69ffe1" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Duggan Scholastic achievement: its determinants and effects in the education industry</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dennis</surname></persName>
+		</author>
+		<ptr target="https://www.nber.org/chapters/c4489.pdf" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">William Sander Expenditures and student achievement in Illinois</title>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/004727279390043S" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pedregosa</surname></persName>
+		</author>
+		<ptr target="https://scikit-learn.org/stable/" />
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Judea Pearl An Introduction to Causal Inference</title>
+		<idno type="doi">10.2202/1557-4679.1203</idno>
+		<ptr target="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2836213/" />
+	</analytic>
+	<monogr>
+		<title level="j">Int J Biostat</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2010-01-06" />
+		</imprint>
+	</monogr>
+	<note>Published online</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

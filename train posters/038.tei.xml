@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="it">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note type="title">o n e t r a i n e d u s i n g N a ï v e B a y e s a n d a n o t h e r u s i n g a n S V M wi t h a G a u s s i a n k e r n e l . T h e i n p u t d a t a c o n s i s t e d o f a ma t r i x wi t h e a c h r o w r e p r e s e n t i n g t h e e n d i n g s t a t e o f a g i v e n s i mu l a t i o n a n d e a c h c o l u mn r e p r e s e n t i n g a p r o p o s i t i o n ( o r a n a t t r i b u t e o f t h e g i v e n s t a t e ) .</note>
+					<note>E x p l o r i n g t h e E ff i c a c y o f Ma c h i n e L e a r n i n g i n G e n e r a l G a me P l a y i n g E a c h g a me wa s p l a y e d b y t wo d i ff e r e n t p l a y e r s : O n e -P l a y e r G a me s T wo -P l a y e r G a me : N a ï v e B a y e s v s . K e r n e l i z e d S V M</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="it">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>H u n t e r H a mi l t o n B a t t l e o f N u mb e r s</head><p>Wi n s v s . L o s s e s H u n t e r i s a s i n g l e p l a y e r g a me p l a y e d o n a 5 x 3 b o a r d .</p><p>T h e g a me b e g i n s wi t h a s i n g l e k n i g h t i n t h e u p p e r l e c o r n e r o f t h e b o a r d a n d p a wn s o n a l l o t h e r s q u a r e s . O n e a c h s t e p , t h e k n i g h t mo v e s l i k e a k n i g h t i n C h e s s , c a p t u r i n g p a wn s o n a n y s q u a r e s t o wh i c h i t mo v e s . T h e g o a l o f t h e g a me i s t o c a p t u r e a s ma n y p a wn s a s p o s s i b l e i n 1 4 mo v e s . N o t e t h a t i t i s i mp o s s i b l e t o c a p c a p t u r e a l l p a wn s i n 1 4 mo v e s , a n d t h u s , i t i s i mp o s s i b l e t o r e a c h 1 0 0 p o i n t s .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E x a mp l e P r o p o s i t i o n s :</head><p>-( t r u e ( c e l l 1 2 p a wn ) ) -( t r u e ( c e l l 5 2 p a wn ) ) -( t r u e ( c e l l 1 3 p a wn ) ) -( t r u e ( c e l l 4 1 p a wn ) ) -( t r u e ( c e l l 2 1 p a wn ) ) -( t r u e ( -( t r u e ( c e l l 3 1 b l a n k ) ) -( t r u e ( s t e p 1 4 ) ) -( t r u e ( c e l l 5 3 p a wn ) ) -( t r u e ( c e l l 3 2 p a wn ) ) -( t r u e ( c e l l 2 3 k n i g h t ) ) -( t r u e ( c e l l 4 3 b l a n k ) ) -( t r u e ( c e l l 1 1 b l a n k ) ) -( t r u e ( -( t r u e ( c a p t u r e s 4 )</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E x a mp l e P r o p o s i t i o n s : -( t r u e ( v i s i t e d t ) ) -( t r u e ( v i s i t e d l ) ) -( t r u e ( s c o r e 3 6 ) ) -( t r u e ( v i s i t e d b ) ) -( t r u e ( v i s i t e d k ) ) -( t r u e ( v i s i -( t r u e ( v i s i t e d s ) ) -( t r u e ( s t e p 2 0 ) ) -( t r u e ( v i s i t e d i ) ) -( t r u e ( v i s i t e d j ) ) -( t r u e ( v i s i t e d r ) ) -( t r u e ( v i s i t e d q ) ) -( t r u e ( v i s i t e d p ) ) -( t r u e ( v i s i -( t r u e ( v i s i t e d m ) )</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E x a mp l e P r o p o s i t i o n s :</head><p>-( l e g a l 2 _ t mp 7 2 2 g r e e n g r e e n 1 5 ) -( l e g a l 2 _ t mp 7 2 2 g r e e n r e d 2 4 ) -( l e g a l 2 _ t mp 7 2 2 r e d r e</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>d 4 5 ) -( o c c u p i e d c e l l _ t mp 1 g r e e n 1 1 ) -( o c c u p i e d c e l l 4 5 ) -( t r u e ( -( t r u e ( c e l l 1 4 3 r e d ) )</head><p>-( o p e n c e l l 4 5 ) -( t r u e ( c a p t u r e g r e e n 1 ) ) -( t r u e ( c e l l 2 5 1 r e d ) ) -( we n t t o 4 1 ) -( l e g a l 2 _ t mp 7 5 4 g r e e n r e d 2 2 ) H a mi l t o n i s a s i n g l e p l a y e r g a me p l a y e d o n a g r a p h wi t h t wo i n t e r c o n n e c t e</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>d n o d e s . T h e p l a y e r s t a r t s o u t o n o n e o f t h e t we n t y n o d e s , a n d o n e a c h s t e p mo v e s t o a n a d j a c e n t n o d e . T h e o b j e c t i v e o f t h e g a me i s t o v i s i t a s ma n y n o d e s a s p o s s i b l e i n t we n t y s t e p s . T h e r e wa r d a t t h e e n d o f t h e g a me i s a n i n c r e a s i n g f u n c t i o n o f t h e n u mb e r o f n o d e s v i s i t e d . ( T h e o r e t i c a l v e v e r s i o n o f t h i s p r o b l e m -t r y i n g t o f i n d a H a mi l t o n i a n p a t h u n d e r r e s o u r c e c o n s t r a i n t s . )</head><p>B a t t l e o f N u mb e r s i s a g a me p l a y e d o n a 5 x 5 r e c t a n g u l a r b o a r d . T e a m r e d s t a r t s o n t h e l e c o l u mn , a n d t e a m g r e e n s t a r t s o n t h e r i g h t . E a c h t e a m h a s f i v e n u mb e r f i g h t e r s 1 , 2 , 3 , 4 , 5 . O n l y o n e f i g h t e r i s p e r mi t t e d o n a s q u a r e a t a t i me . A n o p p o n e n t ' s f i g h t e r s c a n b e c a p t u r e d d i a g o n a l l y o n l y . G e n e r a l l y , a n u mb e r c a n " e a t " a n y s ma l l e r o r e q u a l n u mb e r , e x c e p t t h a t n u mb e r 1 c a n e a t 5 b u t 5 c a n n o t e a t 1 . T h e wi n n e r i s t h e p l a y e r wi t h t h e l a r g e r n u mb e r o f f i g h t e r s a t t h e e n d o f t h e g a me .</p><p>C S 2 2 9 F I N A L P R O J E C T A a r o n B r a c k e t t , Ma r t i n K a l e v , T o n y T a n -T o r r e s</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

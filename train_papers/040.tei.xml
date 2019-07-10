@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of Hand Gestures using Surface Electromyography Signals For Upper-Limb Amputees</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregory</forename><surname>Luppescu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford Univeristy</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Lowney</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford Univeristy</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Raj</forename><surname>Shah</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford Univeristy</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Classification of Hand Gestures using Surface Electromyography Signals For Upper-Limb Amputees</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>For our project we classified hand movements based on surface electromyography (EMG) signals from upper-limb amputees. Approximately 38 to 50 percent of patients with upper-limb amputations discontinue use of their prosthetic because the cost of carrying it outweighs its (limited) usage <ref type="bibr" target="#b0">[1]</ref>. Machine learning has the potential to greatly improve the functionality of myoelectric prosthetic limbs. After a patient loses a limb, they still contain all the necessary nerves to control their non-existing limb. By using EMG to measure the electrical signals sent through these nerves, amputees can potentially control a robotic prosthetic in the same way that they once controlled their original limb. Much research still needs to be done in order for the latest generation of prosthetics to understand the electrical signals coming from the user. In our project, we utilize Linear Discriminant Analysis, Naïve Bayes, and Support Vector Machines to classify a set of gestures based on EMG signals provided by several upper-limb amputees. We also propose our own collection of features to use for each classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dataset</head><p>The data set was provided by <ref type="bibr" target="#b1">[2]</ref>, and consists of raw EMG signals recorded from nine different transradial amputees (seven traumatic and two congenital) with unilateral amputation, where electrodes were placed on and around the stump where a hand (or prosthetic) would be located. Ten pairs of electrodes were placed on each subject, providing 10 channels of EMG data. Each amputee imagined to perform six different hand gestures using their amputated limb. The six gestures in the data set are the spherical grip, index flexion, hook grip, thumb flexion, fine pinch, and tripod grip. For each of the six gestures, three levels of forcelow, medium, and high -were imagined as well. Each trial (signal) consists of an 8-12 second holding phase of a gesture, and 5-8 trials were recorded for each force level, giving a total of over 810 distinct gesture signals. An example of a raw EMG signal is shown in <ref type="figure" target="#fig_0">Fig. 1</ref>. For our project, we used data from four of the nine subjects. These four subjects all had traumatic amputations on their left forearm. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Features</head><p>A total of 18 features were examined in our project. These features are popular in modern research for EMG pattern recognition <ref type="bibr" target="#b3">[4]</ref>. Fifteen of the features were extracted in the time domain, and three were extracted from the frequency domain. Six of the time domain features were time-dependent Power Spectrum density features suggested in <ref type="bibr" target="#b1">[2]</ref>. All the features except the time-dependent Power Spectrum density features are listed in <ref type="table" target="#tab_0">Table I</ref>. To compute the other features, we first calculate the zero, second, and fourth order root squared moments by</p><formula xml:id="formula_0">m 0 = N ∑ i=1 x 2 i m 2 = N ∑ i=1 ∆x 2 i m 4 = N ∑ i=1 ∆ 2 x 2 i</formula><p>where N is the total number of samples, and x i is the sample at index i. The moments are then scaled and normalized by a factor of γ to make them more robust to noise</p><formula xml:id="formula_1">m k = m γ k γ</formula><p>where a value of γ = 0.1 was used. The six features f 1 , f 2 , . . . f 6 are extracted as follows:</p><formula xml:id="formula_2">f 1 = log(m 0 ) f 2 = log(m 0 − m 2 ) f 3 = log(m 0 − m 4 ) f 4 = log( m 0 √ m 0 − m 2 √ m 0 − m 4 ) f 5 = m 2 √ m 0 m 4 f 6 = log ∑ N−1 j=0 |∆x| ∑ N−1 j=0 |∆ 2 x|</formula><p>f 4 is a measure of sparseness and f 5 is a measure of the ratio of the zero crossings to the number of peaks as given in <ref type="bibr" target="#b1">[2]</ref>. f 6 is simply the ratio of the waveform length of the first derivative to that of the second derivative. In order to negate the effects of force, the final six features are found by a cosine similarity measure between the six features mentioned above and their logarithmically scaled versions. This helps in negating the force effects and only takes into account the orientation of the features <ref type="bibr" target="#b1">[2]</ref>. The final 6 time-dependent Power Spectrum density features are defined as</p><formula xml:id="formula_3">F i = −2 * f i * log( f 2 i ) f 2 i + log( f 2 i ) 2</formula><p>Thus, we have defined all of our features taken into consideration for each channel. Each feature describes a particular aspect of the EMG signal. For example, Waveform Length gives a measure of the EMG signal's complexity, and both Wilson Amplitude and Log Detector give a metric for the level of muscle contraction observed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features Definition Time domain features</head><p>Mean absolute value (MAV)</p><formula xml:id="formula_4">1 N ∑ N i=1 |x i | Integrated EMG (IEMG) ∑ N i=1 |x i | Variance (VAR) 1 N−1 ∑ N i=1 x 2 i Root Mean Square (RMS) 1 N−1 ∑ N i=1 x 2 i Waveform Length (WL) ∑ N−1 i=1 |x i+1 − x i | Log detector (LD) exp( 1 N ∑ N i=1 log(|x i |)) Wilson Amplitude (WA) ∑ i 1(|x i − x i+1 | &gt; ε Slope Sign Change (SSC)</formula><p>The number of times the sign of the slope changes (with a threshold ε)</p><p>Zero Crossing (ZC)</p><p>The number of times the signal crosses a threshold ε (ε=0.05) Frequency domain features</p><formula xml:id="formula_5">Mean Frequency (MF) ∑ M i=1 f j P j / ∑ M i=1 P j Median Frequency (MEF) Median Frequency of the Power Spectrum Modified-mean Frequency (MMF) ∑ M i=1 f j A j / ∑ M i=1 A j</formula><p>Time domain Power Spectrum Descriptors</p><formula xml:id="formula_6">F 1 , F 2 , F 3 , F 4 , F 5 , F 6 as defined in II B.</formula><p>x i -i th sample of the EMG signal, N -Length of the EMG signal, f j -Frequency at the j th sample of the spectrum, P j -Power spectrum at f j , A j -Amplitude spectrum at f j , M -Length of the spectrum </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. METHODOLOGY</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Preprocessing</head><p>Before extracting features, it is important to process the raw EMG signals to ensure the features of interest are not obfuscated by various sources of noise. To do this, we apply a cascade of five filters: a high pass fifth order Butterworth filter with a cutoff frequency of 20 Hz, a low pass third order Butterworth filter with a cutoff frequency of 450 Hz, and three notch filters with stop bands centered at 50 Hz, 150 Hz, and 250 Hz <ref type="bibr" target="#b2">[3]</ref>. The low-pass and high-pass filters smooth the data and restrict the frequency components of our signal to the frequency range of normal EMG signals, and the notch filters suppress interference caused by power lines and electrical wires (50 Hz in most countries, 60 Hz in the United States).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Extraction</head><p>The preprocessed signals are segmented into windows of length 300 ms with 50% overlap. This is done to leverage the fact that the signals are "pseudostationary" in small regions, and leads to better classification results than if one used non-overlapping windows <ref type="bibr" target="#b3">[4]</ref>. For each window, the 18 features described in the previous section are extracted for each of the ten channels, giving a grand total of 180 features per window. An example window is shown in <ref type="figure" target="#fig_1">Fig. 3</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Feature Selection</head><p>Real time classification is needed for modern myoelectric prosthetics. For this reason, it would be advantageous to reduce the size of the feature set from 180 to a smaller number to reduce computation time. For each classifier, we performed forward feature selection to determine what the optimal features were, and how few features could be used while maintaining high test accuracy.</p><p>There are two potential ways to perform feature selection: one in which we consider all 180 features across the ten channels, and one in which we find a subset of the 18 features which is applied to each of the ten channels. Due to changes in electrode placement from subject to subject, we chose to find which of the 18 features per channel would give the best results. Using this method, the optimal feature set can be applied irrespective of the channel placement or number of channels.</p><p>Feature selection was run on each individual for each classifier. The test errors were calculated using 5-fold cross-validation. The optimal feature set for each classifier was decided by using a voting scheme to average the results across each of the four subjects. A weighting was applied to each feature depending on its rank in the output of feature selection. We chose the optimal feature set for each classifier based on the features that cumulatively ranked the highest across all individuals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Training Procedure</head><p>We trained three different classifiers to predict hand gestures: Linear Discriminate Analysis (LDA), Naïve Bayes, and multiclass SVM. For the Naïve Bayes classifier the feature vectors are discretized into 128 different values. The classifier is then trained using a multivariate model. For the multiclass SVM, we took the "one-vs-all" approach, where we trained a single classifier per class, with the samples of a specific class as positives and all other samples as negatives. For testing, the classifier yielding the highest confidence level determined the predicted gesture. The classifiers were trained on each subject individually due to the fact that EMG signals can vary from person to person due to biological and environmental factors. Two different training and testing procedures were performed, one in which only the gestures were classified (6 classes), and one in which both the gesture and force level were classified (18 classes). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. RESULTS AND DISCUSSIONS</head><p>The feature selection algorithm was run for the classification of hand gestures without force labels. The selected feature sets for each classifier were then used to classify hand gestures with and without force labels. The results of the feature selection algorithm on LDA and Naïve Bayes are shown in <ref type="figure" target="#fig_2">Fig 4.</ref> The Naïve Bayes classifier quickly experiences over-fitting when there are six or more features. Also, the training and testing accuracy is the lowest for Naïve Bayes. This was expected as Naïve Bayes makes some strong assumptions about the independence between different features, which is certainly not the case in this application. The optimal feature set for Naïve Bayes was of size five and can be found in <ref type="table" target="#tab_0">Table II</ref>. The features are listed in the order they were selected from the feature selection algorithm. The LDA classifier did not experience any over-fitting, but we still decided to pick the top eight features in order to reduce the feature set, which would be needed in real time applications. The optimal feature set for LDA can also be found in <ref type="table" target="#tab_0">Table  II</ref>  The confusion matrices for LDA and NB lead to an interesting result. Among both methods, the two gestures that are mistakenly classified for one another are the hook grip gesture and the spherical grip gesture. These rates of misclassification (when compared to all other rates of misclassification) are in accordance with the fact that the two gestures are similar to each other. In general, the rate of misclassification between two gestures seems to be correlated with the level of similarity between gestures. For SVM, the optimal feature set can be found in <ref type="table" target="#tab_0">Table II</ref>. Due to time and computational constraints, we only ran feature selection for 14 out of the 18 features, but noted that features after this point were most likely either causing over-fitting, or were not contributing much more to the test accuracy. Thus, we felt it was valid to halt the process early. We initially implemented the SVMs with linear kernels, which gave poor testing accuracy. Consequently, we implemented multiclass SVM with Gaussian kernels which achieved high training accuracy, most likely due to the fact that the Gaussian kernel can theoretically fit an infinite number of points. However, the testing accuracy was also considerably high and hence, we decided to go with a Gaussian kernel. The feature selection also presented some important observations. Firstly, all the features selected for the  <ref type="bibr" target="#b1">[2]</ref> are a part of the optimal feature set. This implies that these features coupled with others could prove to be a strong feature set for classifying EMG signals.</p><p>Finally, LDA proved to be best classifier for this application with high training and test accuracy. Also, it was observed that increasing the number of features did not lead to overfitting for the LDA classifier, unlike Naïve Bayes and SVM. SVM gave high training accuracies, but testing accuracies lesser than LDA hinting that regularization may have helped to improve the testing error.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CONCLUSIONS AND FUTURE WORK</head><p>In this project, we provided an effective feature set for real time classification of EMG signals using LDA, Naïve Bayes, and multiclass SVM, and showed that LDA provided the best overall performance. We were also able to predict with fairly high accuracy common gestures that would be useful for modern prosthetic limbs. We also demonstrated that the same set of features resulted in fairly high performance for the classification of gesture and force simultaneously. For future work, it is worth exploring ways to make the multiclass SVM classifier more efficient and effective by regularization and by using different kernels. Feature selection can be implemented for all 180 features across all channels, which can help to understand the dependence of features on different channels (different locations on the arm). Also, it would be useful to implement a method to identify important channels out of the 10 channels. This information could be used to make prosthetic arms less cumbersome by including only the necessary channels for classficiation. Lastly, it would be worthwhile to explore if the feature sets chosen could generalize to all EMG signals by testing on data acquired from other sources of the body. For instance, one could acquire data on a lower limb amputee to characterize foot movements and use our methodologies for prediction.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Raw EMG signal from a single channelFig. 2. Experimental setup used in<ref type="bibr" target="#b1">[2]</ref> to acquire EMG data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3 .</head><label>3</label><figDesc>Windowed EMG signal for which we extracted features</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>Test accuracy vs. number of features per channel for LDA and NB classification</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 .</head><label>5</label><figDesc>Confusion matrix for LDA gesture only classification Fig. 6. Confusion matrix for NB gesture only classification</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7 .</head><label>7</label><figDesc>Confusion matrix for SVM gesture only classification classification classifiers were time domain features. This suggests that there is little variance in the frequency domain features to help classify the EMG signals. Also, a number of time-dependent Power Spectrum density features from</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I THE</head><label>I</label><figDesc>DEFINITIONS FOR THE FEATURES USED FOR EACHCHANNEL.</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>.</figDesc><table>Classifier 
+Features used for each channel (by 
+ranking) 
+
+LDA 
+F1, F6, RMS, F4, WL, F5, F3, IE 
+
+Naïve Bayes 
+F6, F5, WA, F1, F3 
+
+SVM 
+WL, F3, F1, F4, RMS, MAV, F5 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE II THE</head><label>II</label><figDesc>FEATURE SETS CHOSEN FOR EACH CLASSIFIER</figDesc><table></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Classification of Hand Gestures using Surface Electromyography Signals For Upper-Limb AmputeesGregory Luppescu Stanford University</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>This project was a part of the CS229 Machine Learning course at Stanford conducted by Prof. John Duchi. We would like to thank Prof. Duchi and the TAs for this insightful course and for guiding us through this project.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Feedforward control strategies of subjects with transradial amputation in planar reaching</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><forename type="middle">W</forename><surname>Dromerick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of rehabilitation research and development</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page">201</biblScope>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Improving the performance against force variation of emg controlled multifunctional upper-limb prostheses for transradial amputees</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ali</forename><surname>Al-Timemy</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A comparison of classification based confidence metrics for use in the design of myoelectric control systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Scheme</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Englehart</surname></persName>
+		</author>
+		<idno type="doi">10.1109/EMBC.2015.7320072</idno>
+	</analytic>
+	<monogr>
+		<title level="m">37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)</title>
+		<imprint>
+			<publisher>Milan</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="7278" to="7283" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Current state of digital signal processing in myoelectric interfaces and related applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hakonen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Piitulainen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Visala</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biomed Signal Process Control Elsevier Ltd</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page">33459</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

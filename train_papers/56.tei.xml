@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Weakly Supervised Pneumonia Localization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Mars)</roleName><forename type="first">Shih-Cheng</forename><surname>Huang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Medi</forename><surname>Monam</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emanuel</forename><surname>Cortes</surname></persName>
+						</author>
+						<title level="a" type="main">Weakly Supervised Pneumonia Localization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We have developed a weakly supervised method for localizing Pneumonia on chest X-rays. Our model includes two parts 1) a 10-layer Convolutional Neural Network (CNN) that predicts the presence of Pneumonia and 2) a Class Activation Map (CAM) that localizes the Pneumonia manifestation without requiring bounding box labels. By having our weakly supervised approach achieve slightly better performance than a supervised method (R-CNN), we believe that this brings tremendous value in labeling diseases in images that are often unannotated in medical records. Thus, our method has the potential to provide care to populations with inadequate access to imaging diagnostic specialists, while automate other medical image data-sets.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Pneumonia is an inflammatory condition of the lung that is responsible for more than 1 million hospitalizations and 50,000 deaths every year in the United States. Globally, Pneumonia is responsible for over 15% of all deaths of children under the age of 5 <ref type="bibr" target="#b3">(4)</ref>. Currently, chest X-rays are the best available method for diagnosing pneumonia <ref type="bibr" target="#b7">(8)</ref>, playing a crucial role in clinical care <ref type="bibr" target="#b2">(3)</ref> and epidemiological studies <ref type="bibr" target="#b1">(2)</ref>.</p><p>However, Chest X-Ray images generated from hospitals do not specify the precise location of the Pneumonia, which is a significant challenge when training a machine learning model for this purpose. At most, doctors will keep a brief description, such as "aggregation of lung opacity on the patient's lower right lung". This is because the precise pixel location of lung opacity on the X-ray image is only part of the equation for diagnosing, and only the final conclusion is recorded in the Electrical Health Record (EHR). To developed a machine learning algorithm that predicts Pneumonia location using traditional supervised methods requires the 0 precise x,y coordinate-labels that datasets lack. Hence, this deficiency in labelled datasets commonly observed in the medical imaging field is the motivation behind our work.</p><p>In this work, we tackle this challenge in a novel approach: we use a weakly supervised approach to automate localizing Pneumonia in chest X-rays. Our model is considered "weakly" supervised because it only needs the binary labels (Pneumonia vs. No Pneumonia) during training to estimate a bounding box around the region of the lung opacity. At a high-level, our "weakly" supervised algorithm works as follows: 1) input an X-ray image in U-Net architecture for data augmentation, 2) input augmented image and original image in a 10-layer CNN architecture to classify if given image is Pneumonia positive, and 3) if image is Pneumonia positive, apply CAM to precisely localize the Pneumonia aggregation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>There have been recent efforts in detecting Pneumonia using X-ray images. For instance, the CheXNet(10) team modified ChestX-ray14's (13) algorithm to increase the accuracy in detecting 14 diseases, including Pneumonia. However, neither effort localizes using bounding boxes, and both use ImageNet to pretrain their models. Despite the fact that both works achieve high accuracy, neither solves the problem of clearly annotating the Pneumonia manifestation using bounding boxes in the X-ray images. As such, we leverage the work of four algorithms in our approach: 1) R-CNN(6), 2) CAM(14), 3) VGG architecture <ref type="bibr" target="#b11">(12)</ref>, and 4) U-Net . Each of these algorithms and approaches was implemented in a different part of the project. For instance, we used a VGG model for the supervised portion to make accurate classification of Pneumonia images. However, we had to modify the VGG architecture to optimize it for our data-set, while making the model compatible with the Class Acticatiom Map. The CAM paper gave us the inspiration to extract regions of the input image contributed to the prediction of Pneumonia without training labels. Furthermore, we bench-marked our CAM output results by comparing it to that of a supervised R-CNN model. Lastly, the U-Net architecture allowed us to segment the lung portion of our input image and provide extra features to our model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and Feature Engineering</head><p>3.0.1. DATASET We acquired our dataset from Kaggles RSNA Pneumonia Detection Competition <ref type="bibr" target="#b12">(13)</ref>. The dataset consists of 28,989 X-ray images (8964 with pneumonia, 8525 Healthy, 11,500 not healthy/ no Pneumonia). A diseased/no Pneumonia label is for any diseased lung that has no Pneumonia but the manifestation of any of other disease, such as fluid overload (pulmonary edema), bleeding, volume loss (atelectasis or collapse), lung cancer, or post-radiation/surgical changes. For the purpose of demonstrating the feasibility of our model without complicating the training and evaluation, we removed the diseased/no Pneumonia labelled images from our dataset. This was valuable in balancing our dataset: 51.25% Pneumonia and 48.74% Healthy. Further, we segmented our data into a 70/20/10 train, validation, and test split. Images with Pneumonia labels are also associated with ground truth bounding box of Pneumonia regions. On average, the bounding box area is approximately 50,000 pixels, with an average dimension of 300w by 400h pixels. These bounding boxes were recorded as the X,Y coordinates of the lower left corner of ground truth bounding boxes of regions with Pneumonia, along with the widths and heights of these boxes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.0.2.">FEATURE ENGINEERING</head><p>Each pixel of the images was normalized by subtracting the mean and dividing by the standard deviation at that location. We also compressed the original image from 1024*1024 pixels down to 128*128 pixels, allowing us to expedite the training of our neural network. A U-Net neural network was used to predict the confidence of each pixel belonging to the lung. Then we segmented the lung by multiplying the original image matrix with the localization matrix (figure 2). Both the original and the segmented images were fed into our model as inputs to provide our model with a hypothesis of lung location. The first part of our work is to build a CNN model that can accurately classify whether a given image is labeled as Pneumonia or not. The images that were predicted as Pneumonia positive are then fed into our localization model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baseline</head><p>Since the first part of this project is a supervised classification task, SVM, Random Forest and Logistic Regression were used to baseline our classification model. These models could not take a matrix of pixels as an input, so we flatten the images into one dimensional vectors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN architecture</head><p>Our best model contains 10 convolutional layers, each with zero padding to keep the size of the original image, and we used ReLU as the activation function. The convolution filters are matrix of weights that slides through the original image to pick up patterns for prediction. The CAM requires our model to only have one Fully Connected (FC) layer and a Global Average Pool (GAP) layer before that. The GAP layer takes the average of the output for each of the convolution filters. The FC layer connects the flattened averages to the two classes. The model was trained with an Adam optimizer with 0.0001 learning rate on 20 epochs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.0.2.">LOCALIZATION</head><p>The second part of our project is to build a weakly supervised model that can predict the localization of Pneumonia on the positively classified images, without the training labels of the locations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supervised R-CNN Approach (Benchmark)</head><p>To generate region proposals, we slide a small network over the convolutional feature map output by the last shared convolutional layer. This layer comes from the classifier that is trained on predicting Pneumonia. This small network takes in a small spatial window from the CNN feature map and predicts whether or not these windows contain pneumonia or not Pneumonia. A window is defined as having four coordinates: x1, y1, x2, y2. We only keep the windows that are classified as having pneumonia and by how much these spatial windows overlap with the ground truth labels. Then for each spatial window, the features from the original CNN feature map is mapped back to the CNN feature map from the classifier and these windows are pooled to the same size and are feed to two networks, one network to predict class (background or pneumonia) and another network to predict the coordinates (figure 3 b).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weakly Supervised Approach</head><p>Our weakly supervised portion of the model consists of the following components (figure 3C):</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">CAM</head><p>A CAM that takes in the output of the final CNN model and the FC layer weights for the Pneumonia class neuron and sums up the weighted outputs using the following formula:</p><formula xml:id="formula_0">M c (x) = k w c k f k (x)</formula><p>Where x is the input image features, f k give the output from the last convolution layer given x, and w c k is the fully connect weight for the k th filter output to class c. In our case, class c is the Pneumonia class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Heatmap</head><p>The output from CAM was then scaled into a 3-channel RGB heatmap.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">DFS Clustering</head><p>To find individual clusters of predictions on the heatmap, we applied a Depth First Search Clustering algorithm (Algorithm 1) on a random non-zero pixel on the heatmap, and repeated until all non-zero pixels are clustered.</p><p>Algorithm 1 DFS Cluster Algorithm class index = 0 while still exist non-zero pixel without class label do pick a random non-zero pixel without class label, assign pixel to class index for each neighbor pixel do if if neighbor is also a non-zero pixel without class then recursively apply DFS end end end class index += 1</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Bounding box</head><p>Lastly, we drew a bounding box around each clusters by finding the minimum and maximum X,Y coordinates of the clusters, and only kept boxes that are within 2 standard deviations of all predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experimentation</head><p>Input features Running any localizing model on the original X-rays yielded low IoU scores. We discovered that often time the model will localize matter denser than the lung, such as muscle tissue and equipment, as Pneumonia positive (figure 4 right). And since a high IoU score correspond to a more accurate and tightly fitted localization, we experimented with a number of approaches to increase our IoU score.</p><p>We started by only feeding in the segmented lungs from U-Net as the input for our model. Though initially the classification results were promising, the IoU score did not improve significantly. We soon discovered that in instances of sever Pneumonia infection, where the density of that part of the lung and surrounding tissue were almost identical, the U-Net algorithm segmented out that part of the lung. This, in turn, yielded inaccurate localization results, where the algorithm localizes on the healthy part of the lung (figure 4 left, mid) After testing out different combination, we found the best results can be achieved when we use both the original and segmented image simultaneously by running them through two channels of the network. We hypothesize that including the segmented healthy part of the lung provides the model with extra information on where the likely locations of the lung opacity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model architecture and parameter tuning</head><p>We started our classification model using the VGG16 model, which includes 26 layers and 138,357,544 weights. It was clear that the large number of weights caused our model to quickly overfit, with training accuracy as high as 96% but 72% for validation. We then modified the architecture by removing layer by layer until bias of the model dropped but still were able to make above 90% accuracy on the validation set.</p><p>Then, we tested different filter sizes of the convolutional layers to improve the classification. Our highest validation accuracy was achieved starting with small 3x3 filters and gradually increase the filter size to 16x16 at the last layer. However, a big filter size at the last convolution layer gave us imprecise prediction of the the bounding boxes, and caused a sharp decrease in the IoU score. Therefore, we decided to sacrifice some classification accuracy for an increased IoU score, by keeping all filters to 3x3.</p><p>Finally, different optimizers were tested to train our model. The standard Stochastic Gradient Descent Algorithm trains very slowly and does not converge to above 85% accuracy. Adam and Adagrad converge faster, but Adam achieved a higher validation accuracy. We also tested out different learning rates (0.001, 0001, 0.0001) for each optimizer. Learning rate of 0.001 caused the weights to blow up and achieve lower than 50% accuracy. However, a learning rate of 0.0001 with Adam optimizer gave us our higher accuracy in the shortest period of time. <ref type="formula">(7)</ref> Localization For the clustering portion of our work, we experimented using K-mean and EM with mixture of Gaussian to cluster the pixels. For K-means, we ran it with the possible number of bounding boxes observed in the dataset as the number of clusters (k), and choose the k with the highest silhouette score. However, we realized that silhouette score cannot be calculated with one cluster. Also, we seem to get higher silhouette score as the number of clusters increase. We did consider using EM to cluster the heatmap pixels, however that requires us to know the number of clusters beforehand.  Since we have a balanced dataset, we used accuracy as a metric to evaluate the performance of our classifier as compared to the baselines ( <ref type="table">Table 1)</ref>. As it is important to correctly label as many Pneumonia positive images as possible to draw a the bounding box on, a confusion matrix was also generated for our model to evaluate the true positive rate and sensitivity of our model (  To evaluate the localization task, we used the IoU metric (Formula 2) by calculating the intersection over union of the prediction and ground truth bounding boxes. Our best weakly supervised model achieved an IoU of 0.1508.</p><p>Formula 2: The IoU formula</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Discussion</head><p>Our CNN significantly outperformed traditional classifiers without over-fitting <ref type="table">(Table 1)</ref>, with almost a 10% increase of accuracy as compared to the best baseline model. We acknowledge that CNNs are designed for images, and the flattened images that the baseline models took in as an input might lose some of the local pattern information. Since the flattened images has more features than training data (128*128), it is hard for the traditional supervised learning algorithm to learn. Analyzing false-negatives images gave us an insight on how we can improve on our classifier. For instance, even though the left image in <ref type="figure" target="#fig_6">figure 7</ref> is clear, it is labeled as Pneumonia positive. The right image did not fit into the frame and is slightly rotated, also causing misclassification. Going forward, our model can be improved by introducing random image augmentations such as rotation and zoom. Full resolution images should also be experimented if computing power permits. With regards to localization, our model localizes Pneumonia with higher IoU than the supervised approach, with an increase of 0.0242 <ref type="table">(Table 1B)</ref>. This is significant as we do not need to train a localization model nor location labelled training data. Though this is still far from Human level labelling we see a great potential in our approach. Finally, by analyzing the predictions, we deduced a few ways to improve our models. First, when our CNN classified a lung to be Pneumonia negative, our algorithm does not draw a bounding box. Each example with no bounding boxes will receive an IoU score of 0 (figure 8), which significantly lowers the average of IoU score. If all the images were correctly labeled and fed into CAM, our IoU score increases to 0.379. <ref type="figure" target="#fig_8">Figure 9</ref> shows us that our network also tends to classify the human spine as part of the lung opacity. Second, our model also struggles to localize very small bounding boxes. We can possibly improve this by using an even smaller filter size for our CNN. Lastly, the heatmap cutoff should be dynamic, as different images might have different severity of lung opacity or pixel contrast.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Conclusion</head><p>Based on our result, we have shown that our weakly supervised method is able to localize Pneumonia slightly better than a supervised method. We predict that our model can perform even better if we have the computing power to train on the full images, as a lot of information are lost during compression. We also expect improvements by including more training data or transferring learned models from similar works, such as ChestXNet. If improved to human level performance, our weakly supervised model not only can automate pneumonia location annotation and classification tasks, but also can be used to automate other medical image datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.">Contribution</head><p>Mars Huang -Came up with project idea and methodology. Build the CNN classifier and tested different architectures. Modified the classifier to fit in to Class Actiation Mapping. Implemented CAM, DFS clustering algorithm. Made functions to draw bounding box, calculate IoU and feature engineering. Tried to implement EM and kmeans to cluster heatmap regions. Attempted to reduce dimentions of the data for baseline by using factor analysis. Tested all baselines for classification portion of the project and experimentation in the classification and weakly supervised localization. Created mltoolkit for baselines. Generated all figures, major contributed to the paper and poster. Set up google cloud.</p><p>Medi Monam -Lead in reading literature to gather knowledge in the field. UNet segmentation feature engineering. Experimented with methods to cluster Heatmap islands. Experimented with implementation of VGG16. Contributed to poster and paper. Printed poster.</p><p>Emanuel Cortes -Built the supervised model for classification and localization. Implemented a resnet backbone classifier, custom region proposal layer, ROI pooling, and a bounding box regressor that is pretrained on the COCO dataset and finetuned on Kaggles RSNA Pneumonia Detection Competition dataset. Experimented with feeding other CNN-based backbone classifier architectures, whose out-</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>(left) Lung with Pneumonia, (mid) Unhealthy/Diseased Lung (no Pneumonia), (right) Healthy lungFigure 1contains examples of the three types of labels that are found in our dataset (Pneumonia, Diseased/No Pneu- monia, Healthy). Both the Pneumonia and Diseased/No Pneumonia images have a opaque areas in the lung that make the lung more cloudy than the healthy lung. The main difference between Pneumonia and a Diseased/No Pneumo- nia lung is the shape of these opaque areas. Pneumonia's exact region tends to be hard to define, while diseased lungs, generally, have clearly defined opacities.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>(left) Original input image, (mid) predicted lung location,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>a) classification model b) R-CNN localization baseline c) CAM localization model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>(Left) Original image, (mid) segmented lung (right) Class activation heatmap when we feed in only original image</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Heatmap with threshold cutoff value of (left) 0</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>Train</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>Examples of False Negative Predictions</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc>IoU distribution (in 100s)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 9 .</head><label>9</label><figDesc>Examples of prediction with no overlapping</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2 ).</head><label>2</label><figDesc></figDesc><table>Confusion Matrix Predicted True Predicted False 
+Actual True 
+2230 
+210 
+Actual False 
+110 
+1823 
+
+Table 1: Confusion matrix for our model 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The effect of comparison films upon resident interpretation of pediatric chest radiographs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Berbaum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">A</forename><surname>Jr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Franken</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Investigative radiology</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="124" to="128" />
+			<date type="published" when="1985" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Standardized interpretation of paediatric chest radiographs for the diagnosis of pneumonia in epidemiological studies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Cherian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kim</forename><surname>Mulholland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">B</forename><surname>Carlin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Harald</forename><surname>Ostensen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ruhul</forename><surname>Amin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Margaret</forename><surname>De Campo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Greenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rosanna</forename><surname>Lagos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marilla</forename><surname>Lucero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Shabir</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Madhi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bulletin of the World Health Organization</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page" from="353" to="359" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Imaging of pneumonia: trends and algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Franquet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">European Respiratory Journal</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="196" to="208" />
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Epidemiology of communityacquired respiratory tract infections in adults: incidence, etiology, and impact. The American journal of medicine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Garibaldi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1985" />
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="page" from="32" to="37" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Region-based convolutional networks for accurate object detection and segmentation. IEEE transactions on pattern analysis and machine intelligence</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeff</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jitendra</forename><surname>Malik</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="142" to="158" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Mask r-cnn</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georgia</forename><surname>Gkioxari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Piotr</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="2980" to="2988" />
+		</imprint>
+	</monogr>
+	<note>Computer Vision (ICCV</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jimmy</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">World Health Organization et al. Standardization of interpretation of chest radiographs for the diagnosis of pneumonia in children</title>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Effect of clinical history data on chest film interpretation-direction or distraction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ej Potchen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Gard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lazar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lahaie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Andary</surname></persName>
+		</author>
+		<idno>404-404. LIPPINCOTT-RAVEN PUBL 227 EAST WASHING- TON SQ</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Investigative Radiology</title>
+		<meeting><address><addrLine>PHILADELPHIA, PA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1979" />
+			<biblScope unit="volume">14</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pranav</forename><surname>Rajpurkar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeremy</forename><surname>Irvin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaylie</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brandon</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hershel</forename><surname>Mehta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tony</forename><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daisy</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aarti</forename><surname>Bagul</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Curtis</forename><surname>Langlotz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katie</forename><surname>Shpanskaya</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1711.05225</idno>
+		<title level="m">Radiologist-level pneumonia detection on chest x-rays with deep learning</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Interpretation of plain chest roentgenogram</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Suhail</forename><surname>Raoof</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Feigin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arthur</forename><surname>Sung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sabiha</forename><surname>Raoof</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lavanya</forename><surname>Irugulpati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward C Rosenow</forename><surname>Iii</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chest</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="545" to="558" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karen</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1409.1556</idno>
+		<title level="m">Very deep convolutional networks for large-scale image recognition</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Chestx-ray8: Hospital-scale chest x-ray database and benchmarks on weakly-supervised classification and localization of common thorax diseases</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaosong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yifan</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Le</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhiyong</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohammadhadi</forename><surname>Bagheri</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ronald M</forename><surname>Summers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="3462" to="3471" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Learning deep features for discriminative localization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bolei</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aditya</forename><surname>Khosla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Agata</forename><surname>Lapedriza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aude</forename><surname>Oliva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Antonio</forename><surname>Torralba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+		<meeting>the IEEE Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="2921" to="2929" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

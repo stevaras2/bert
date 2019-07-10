@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Improving Product Categorization from Label Clustering</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Friedman</surname></persName>
+							<email>ajfriedman@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandra</forename><surname>Porter</surname></persName>
+							<email>amporter@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Rickman</surname></persName>
+							<email>arickman@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Improving Product Categorization from Label Clustering</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1145/nnnnnnn.nnnnnnn</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ABSTRACT</head><p>From Amazon web-crawl data, we obtain a network of labels, where the weight of an edge between two nodes is determined by how many books have both labels. While the labels are organized into a hierarchy by Amazon, it contains numerous redundancies and uninteresting labels which reduce the useability as a user-facing shopping tool. To address this problem, we propose a method of exploring and visualizing the label graph so that a more effective organization can be implemented. We use node2vec [3] to compute feature representations of the nodes and then apply clustering to identify improvements that should be made to the labeling system. We concluding by discussing findings involving anomaly detection, identification of redundant or closely associated labels, and label hierarchical organization.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION 1.Motivation</head><p>In a massive online store such as Amazon, keywords to describe books can easily be acquired by either seller input or automatic searching of the text. However, the size and organization of the set of labels can quickly become intractable, making it difficult to assign a clean and concise categorization hierarchy. Our goal is to determine how a set of labels applied to a set of books should be organized into a categorization system.</p><p>We implement an algorithmic and application based project to analyze data from Amazon web-crawl data of books and their categorizations. We interpret this as a network, in which category label strings are nodes. Edges of the network indicate which labels appear together: for each pair of labels shared by a book, we add an edge between the labels. Here we take a novel approach of applying clustering techniques to achieve our goal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Related Work</head><p>1.2.1 Graph Clustering. Recent work on labeled graph clustering includes "Using Node Identifiers and Community Prior for Graph-Based Classification" <ref type="bibr" target="#b12">[13]</ref>, in which Ye et al. propose ways to implement traditional classification algorithms to make predictions as to the labels of nodes in a graph. They propose an algorithm called identifier-based relational neighbor classifier (IDRN) to solve the within-network multi-label classification problem. This paper provides clear motivation for traditional clustering on graph embeddings.</p><p>Zhou et al. <ref type="bibr" target="#b13">[14]</ref> present another graph clustering method for complex networks, using a novel approach to node similarity based on attracting and recommending power of nodes.  <ref type="bibr" target="#b6">[7]</ref>, which describes a way to apply fuzzy set theory to better model product categorizations that involve both discrete and continuous data. By evaluating set membership with degrees, Childers and Viswanatha were able to get more nuanced categorizations and evaluate membership over multiple categories. "The Future of Retailing" <ref type="bibr" target="#b1">[2]</ref> surveys key areas of technology in stores, including visual displays and tools to facilitate decision making. In particular, they cite <ref type="bibr" target="#b3">[4]</ref>, which suggests that retailers need to make assortments easier for customers to understand, including by reducing the size of the selection. This concept applies to online stores, and is our motivation for this work.</p><p>Liu et al. <ref type="bibr" target="#b5">[6]</ref> analyze the Google Play app market with a goal similar to ours: to determine the class hierarchy and unique relationships. However, they take the approach of crowd sourcing ground truth labels to combine with an NLP step of the app keywords to train a classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.3">Applications and Extensions of Node2Vec.</head><p>Other works applying Node2Vec include "Node2vec in Telco: An Application of the Novel Feature Learning Method for Predictions in Call Networks" <ref type="bibr" target="#b7">[8]</ref>, which demonstrates how Node2Vec can be applied to a call network of customers of a telecommunication company in order to predict caller characteristics such as age and gender. They performed this under a semi-supervised learning regime, where a fraction of the customers provided information on these topics (known labels), with the goal of predicting the unknown labels for the remaining customers.</p><p>Extensions of Node2vec include metapath2vec <ref type="bibr" target="#b0">[1]</ref>, which incorporates metadata on different types of nodes and edges, and struc2vec <ref type="bibr" target="#b9">[10]</ref>, which learns node representations based on their structural identity in the graph.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">METHODS</head><p>We analyze the relationships between labels of books using Node2Vec node embeddings and clustering methods. The Node2Vec algorithm generates real-valued feature vectors for each node in the graph for some selected dimension d. We then perform clustering on these points in d-dimensional space to determine groupings of nodes. The parameters of Node2Vec allow us to emphasize either the structural similarity or connectivity of nodes. Thus by analyzing multiple embeddings by applying clustering, we can learn which labels are similar in both role and actual meaning. <ref type="table">Table 1</ref> summarizes the data from the Amazon web crawl, which was compiled in Summer 2006. The dataset contains Amazon products and the category groupings ("labels") to which they belong. To compile our graph dataset, we created a node for every label which a book belonged to, and created edges between two labels if a book belonged to both labels. The weight over edges corresponds to the number of books with both labels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Dataset</head><p>Labels in the original Amazon dataset can be described as a forest, and there are multiple trees to which a book may belong. For example, one book in the original dataset belongs to two trees with labels: 1.) Books &gt; Subjects &gt; Arts &amp; Photography &gt; Photography &gt; Photo Essays AND 2.) Amazon Web Store &gt; Categories &gt; Camera &amp; Photo &gt; Photography Books &gt; Photo Essays</p><p>These categories are somewhat redundant, and one of the goals of our model will be to detect categories which can be merged or used to provide additional recommendations to a user. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Node2Vec</head><p>The main idea of Node2Vec is that we want to represent the vertices of the graph such that vertices "close" together have similar representations, where this closeness is some mixture of proximity in the graph and similarity in role, or neighborhood structure. The Node2Vec algorithms samples a set of random walks and then performs stochastic gradient descent on the feature representation of the vertices, where the loss function is the similarity of the pairs of representations given the vertices appear together. We first describe how embedding is set up as a stochastic gradient descent method. Let f : V → R d be mapping to features representation; i.e. f is |V | × d parameter matrix. For u ∈ V , N S (u) ⊂ V is neighborhood with sampling strategy S. Maximize objective function: max f u ∈V log Pr (N S (u)| f (u)). Conditional independence is assumed such that this becomes:</p><formula xml:id="formula_0">Pr (N S (u)| f (u)) = n i ∈N S (u) Pr (n i | f (u)).</formula><p>Since the network is un-directed, relationships between nodes are symmetric:</p><formula xml:id="formula_1">Pr (n i | f (u)) = exp(f (n i )·f (u) v ∈V exp(f (v)·f (u))</formula><p>. Thus the maximum function simplifies to</p><formula xml:id="formula_2">max f u ∈V       − log Z u + n i ∈N S (u) f (n i ) · f (u)       .</formula><p>Node2Vec allows for random walks to be selected "between" Depth-First Search and Breadth-First Search strategies. This is accomplished by using parameters which weight the probability of a  <ref type="bibr" target="#b11">[12]</ref> walk step returning to the source and the probability of exploring further into the graph. These parameters define the sampling strategy S used to generate the neighborhoods in the above formulas.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Clustering Methods</head><p>Above we discussed the motivation for an algorithm from which we use clustering techniques to improve the modularity of a given network based on co-purchasing data. In this section, we dive deeper into the clustering algorithms implemented. In each iteration, as discussed above, we use Node2Vec and then K-means to determine optimal modules. Before discussing the setup, in Algorithm 1 we provide the pseudo code for the K-means algorithm. K-means runs with O(n*k*t), where n is the number of iterations, k the cluster number, and t the number of data points. <ref type="bibr" target="#b4">[5]</ref> Algorithm 1 K-Means Algorithm 1: procedure K-means(k) <ref type="bibr">2:</ref> Select k points at random as cluster centers <ref type="bibr">3:</ref> Assign objects to closest centroid by Euclidean distance <ref type="bibr">4:</ref> Calculate the centroid or mean of all objects in each cluster <ref type="bibr">5:</ref> Repeat steps 2, 3 and 4 until the same points are assigned to each cluster in consecutive rounds. <ref type="bibr" target="#b10">[11]</ref> Being that we cannot a priori estimate the number of product categories corresponding to the number of clusters, k, to set our algorithm searching for, we hypothesized that running an algorithm such as DBSCAN (density-based spatial clustering of applications with noise) on the data before could improve performance by finding the optimal clustering number for us. DBSCAN takes in inputs of the radius and minimum number of data points for a cluster, and determines the optimal number of clusters based on this. DBSCAN is robust to noisy data sets and would seemingly be efficient in discarding outliers in our Node2Vec represented network before our iteration segment of the algorithm designed to do this even begins. We ultimately decided to abandon this DBSCAN step in our code on the basis of its low performance compared to manual selection of cluster number for K-means. This project can be taken further by studying the reasons for this, and tuning the logic and/or parameters to reintegrate DBSCAN into this method more constructively. <ref type="figure">Figure 2</ref> shows the result of K-means and DBSCAN applied to the same data set (generated from our network Node2Vec representation discussed above), indicating our choice to abandon this approach. As shown in <ref type="figure" target="#fig_1">Figure 3</ref>, after interpreting the web-crawl data as a network, we iterate through a workflow of embed, cluster, plot, analyze, and repeat. In this process we adjust parameters of both the Node2Vec and clustering models. We can use this system to detect/remove outliers before optionally re-embedding. We can also select a cluster from the initial run, then re-embed and re-cluster that cluster, repeating numerous times in order to collect redundant categories and analyze label hierarchies. After analysis, we select an induced subgraph of the original graph to re-embed and continue  <ref type="table">Table 2</ref>: Anomalous labels the cyclic process. We use the scikit-learn package to cluster and plot <ref type="bibr" target="#b8">[9]</ref>.</p><p>Throughout the process, the clusters of smallest radii indicate groups of labels which may be similar enough to combine into one category. Outliers indicate labels which are not closely related to any others; in practice these are labels which do not need to be included in a user-facing system or simply the lowest level (i.e. most specific) labels. Since we do not have a ground-truth into how labels should be interpreted, our tool is designed to present options for improving the label set to a user who would not be able to parse through the massive label set any other way.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5">Analysis Methods</head><p>The main result of our system is a visualization of the label space. While we use the full dimensionality of the embedding to cluster and identify outliers numerically (by distance from cluster center) our system is also useful as a user-facing tool. We use PCA to select two dimensions for plotting. We compared this to 3-dimensional plots and plots of other dimensions besides the principal ones, but the 2-dimensional PCA plots conveyed the full structure of the point set while being much more concise.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">EXPERIMENTS</head><p>We present visualizations of the label space created using two variations of our workflow ( <ref type="figure" target="#fig_1">Figure 3)</ref>; one in which we remove anomalies to determine if they had a disproportionate effect on the embedding, and one where we recursively repeat the process on each cluster to divide the data into a hierarchy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Anomaly Detection and Removal</head><p>We use Euclidean distances of points from K-means centroids to detect outliers (as seen in the table below). We can directly remove these outliers from the plots, but we hypothesized that removing outliers from the graph and re-embedding before re-plotting would produce more cohesive clusters. As seen in <ref type="figure" target="#fig_2">Figure 4</ref>, removing anomalies results in less clearly defined clusters, likely due to the cluster structure being primarily defined by the anomalies. We hypothesize that the graph induced by non-anomalous nodes is relatively uniform and thus lacks structure for our method to identify. <ref type="table">Table 2</ref> lists the top anomalies removed, which are all fairly general labels, including some that may not be useful for a uer at all within a book store, such as "Books" and "General. " </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Nested Label Associations</head><p>After two iterations of embedding and clustering, we see that groups are mostly made up of labels which are redundant or closely related. The first pass on embedding and clustering, show in <ref type="figure" target="#fig_4">Figure 5</ref>, is constructed using 10 random walks of length 10, with embedding parameters p = 0.1, q = 1, and clustered with k = 4. The outliers identified in blue boxes include <ref type="table">Table 3</ref> shows examples of label sets clustered together, as visualized in <ref type="figure" target="#fig_5">Figure 6</ref>; each subplot of <ref type="figure" target="#fig_5">Figure 6</ref> is created by selected the subgraph of the origin network induced by the nodes of a cluster in <ref type="figure" target="#fig_4">Figure 5</ref> and running the full embed and cluster process. Thus we can interpret these results as a two-layer hierarchy, where the clusters in <ref type="figure" target="#fig_4">Figure 5</ref> specify the groups corresponding to nodes in the upper layer and the clusters in each plot of <ref type="figure" target="#fig_5">Figure 6</ref> specify the children of each of these nodes. Note that in all plots, multiple labels with the same text appear; this means there are multiple underlying system tags corresponding to that label string. As indicated by the annotations in <ref type="figure" target="#fig_5">Figure 6</ref>, we found the following groups of labels which are related and possibly redundant, especially because they also appear together as outliers relative to the main clusters. Some of these relationships, such as between "Professional &amp; Technical" and "Medicine", or "Sacred Text" and "Bible", are not obvious from the labels themselves, but indicate that these labels are most often used together in this dataset.</p><p>• Europe <ref type="figure" target="#fig_5">(Fig. 6(a))</ref> • Photography, Camera, Photo ( <ref type="figure" target="#fig_5">Fig. 6(a)</ref>)</p><p>• United States, Regions ( <ref type="figure" target="#fig_5">Fig. 6(a))</ref> • Bible, Sacred Text, Christianity <ref type="figure" target="#fig_5">(Fig. 6(b))</ref> • Mystery, Suspense, Thrillers <ref type="figure" target="#fig_5">(Fig. 6(b)</ref>)</p><p>• Professional Science, Medicine, Professional &amp; Technical <ref type="figure" target="#fig_5">(Fig. 6(c)</ref>  <ref type="figure" target="#fig_5">6(d)</ref>) The following label sets appear as anomalies. Labels called "General" most often appear as leaves in the label tree in the Amazon labeling system and thus appear in a wide variety of categories.</p><p>• Guidebook, Guidebook series ( <ref type="figure" target="#fig_5">Fig. 6(a))</ref> • Accessories, note cards ( <ref type="figure" target="#fig_5">Fig. 6(a)</ref>  <ref type="figure" target="#fig_5">(Fig. 6(c))</ref> • Science <ref type="figure" target="#fig_5">(Fig. 6(c))</ref> • Books, Subjects, Entertainment, General, Education <ref type="figure" target="#fig_5">(Fig. 6(c))</ref> • Amazon.com Stores, General <ref type="figure" target="#fig_5">(Fig. 6(d)</ref>) </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">CONCLUSION &amp; FUTURE WORK</head><p>We have shown that our method produces a visualization tool for understanding the label set, including anomalous and redundant labels. While mostly accurate, some labels did appear in unexpected clusters, most likely due to books which fit multiple categories and thus add edges between very different labels. The next step that should be taken with these results is to establish a ground truth based on crowd-sourced human preferences for labels, since the end-goal is human readability. Further research could also examine optimization of node2vec parameters, including search strategy. Parameter tuning could also be applied to K-Means clustering and outlier thresholds. Additionally, further research could look at the necessary number of nested label clustering steps and re-embedding steps to find all redundancy. And finally, similar methods could be applied to financial transaction networks, telecommunication networks, and healthcare data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>K-Means: Onset to Convergence</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Full Method Workflow Diagram</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>(a) Original clustering (6 clusters), (b) Anomalies removed from graph and re-embedded before another clus- tering.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>) • Authors &amp; Illustrators, A-Z, General, Ages 9-12, History &amp; Historical Fiction (Fig. 6(b)) • Medical</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Embedding and clustering of top sales-ranked books.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Annotated results of the embed and cluster process applied to the clusters in Figure 5: (Figure 5 cluster, Figure 6 subplot) relationships are (Orange, Figure 6(a)), (Red, Figure 6(b)), (Purple, Figure 6(c)), (Green, Figure 6(d))</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>CS229, Fall 2018, Stanford University 2018. ACM ISBN 978-x-xxxx-xxxx-x/YY/MM. . . $15.00 https://doi.org/10.1145/nnnnnnn.nnnnnnn 1.2.2 Studying Online Stores. Our research was applied to Ama- zon categorizations of products. Other approaches to machine learn- ing on product categorization include "Understanding How Product Attributes Influence Product Categorization: Development and Val- idation of Fuzzy Set-Based Measures of Gradedness in Product Categories"</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head></head><label></label><figDesc>) • Computer &amp; Internet Books, Software Design, Specialty Stores, Digital Business &amp; Culture, Design, Development, Project Management (Fig. 6(d)) Cluster 1 Cluster 2 Cluster 3 Regions[17228] Computer Arts Regions[640504] Computers Camera States[17263] Design Categories[493964] States[640538] Digital Collections, United Internet[768564] Collections, United Programming[3839] General[2050] Project Photo Software Photo Specialty Photographers, [229534] Photography Photography[2020] [172282] Table 3: Examples of clusters identified • Pure Mathematics, Applied, Physics, Sciences, Mathematics, Engineering (Fig.</figDesc><table>Project Management (Fig. 6(d)) 
+
+Cluster 1 
+Cluster 2 
+Cluster 3 
+Regions[17228] 
+Computer 
+Arts 
+Regions[640504] Computers 
+Camera 
+States[17263] 
+Design 
+Categories[493964] 
+States[640538] 
+Digital 
+Collections, 
+United 
+Internet[768564] 
+Collections, 
+United 
+Programming[3839] General[2050] 
+Project 
+Photo 
+Software 
+Photo 
+Specialty 
+Photographers, 
+[229534] 
+Photography 
+Photography[2020] 
+[172282] 
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A APPENDIX: CODE</head><p>Code can be found at: https://github.com/aporter468/embedandcluster Note that the necessary Node2Vec library is not included, it can be found at: https://github.com/aditya-grover/node2vec/tree/master/src B APPENDIX: CONTRIBUTIONS Friedman: Experimented with different combinations of DBScan, K-Means, PCA, and colors to create visualizations. Helped write motivation section and ran preliminary data characterization to help create graph interpretation of dataset.</p><p>Porter: Implemented code for converting web crawl data into a graph, selecting subgraphs induced by sets of labels, computing cluster distances, and constructing label lists for plots. Ran node2vec embeddings and analyzed results. Performed literature review. Rickman: Researched and tested different clustering algorithms and devised a scheme to apply DBSCAN and K-means in sequence as a potential means to achieve our categorization goal described above. Optimized clustering parameters to improve performance and visualization.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">metapath2vec: Scalable representation learning for heterogeneous networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">V</forename><surname>Chawla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Swami</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<meeting>the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="135" to="144" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The future of retailing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Grewal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">L</forename><surname>Roggeveen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Nordfält</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Retailing</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="6" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">node2vec: Scalable feature learning for networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Grover</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Leskovec</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the 22nd ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="855" to="864" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Using visual design to improve customer perceptions of online assortments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">E</forename><surname>Kahn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of retailing</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="42" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">The cost function of k-means</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kldavenport</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Com</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Macro-scale mobile app market analysis using customized hierarchical categorization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Baldi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P.-N</forename><surname>Tan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">INFOCOM 2016-The 35th Annual IEEE International Conference on Computer Communications</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Understanding how product attributes influence product categorization: Development and validation of fuzzy set-based measures of gradedness in product categories</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">L C</forename><surname>Viswanatha</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Marketing Research</title>
+		<imprint>
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Node2vec in telco: An application of the novel feature learning method for predictions in call networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">B</forename><surname>Marãŋa Ãşskarsdãşttir</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>DataMiningApps</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Learning node representations from structural identity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">F</forename><surname>Ribeiro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">H</forename><surname>Saverese</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">R</forename><surname>Figueiredo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<meeting>the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="385" to="394" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title/>
+	</analytic>
+	<monogr>
+		<title level="j">Saedsayad.com. K-means clustering</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Visualizing k-means clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>University</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Using node identifiers and community prior for graph-based classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Data Science and Engineering</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="68" to="83" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A graph clustering method for community detection in complex networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Cui</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physica A: Statistical Mechanics and Its Applications</title>
+		<imprint>
+			<biblScope unit="volume">469</biblScope>
+			<biblScope unit="page" from="551" to="562" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

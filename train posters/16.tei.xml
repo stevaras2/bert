@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HitPredict: Predicting Billboard Hits Using Spotify Data!</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Elena</forename><surname>Georgieva</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Machine Learning Poster Session | Stanford</orgName>
+								<address>
+									<postCode>2018</postCode>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcella</forename><surname>Suta</surname></persName>
+							<email>msuta@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Machine Learning Poster Session | Stanford</orgName>
+								<address>
+									<postCode>2018</postCode>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicholas</forename><surname>Burton</surname></persName>
+							<email>ngburton@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Machine Learning Poster Session | Stanford</orgName>
+								<address>
+									<postCode>2018</postCode>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Machine Learning Poster Session | Stanford</orgName>
+								<address>
+									<postCode>2018</postCode>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><surname>Dror</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Machine Learning Poster Session | Stanford</orgName>
+								<address>
+									<postCode>2018</postCode>
+									<region>California</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">HitPredict: Predicting Billboard Hits Using Spotify Data!</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features and Data</head><p>• Ten audio features were extracted from the Spotify API 4 ( • Bagging using random forests corrected SVM from over-fitting.</p><p>• Decision Tree performs poorly as it suffers from severe over-fitting.</p><p>• Neural Network with regularization, using one hidden layer of six units with the sigmoid activation function. The L 2 regularization function was applied to the cost function to avoid over-fitting.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Ten audio features were extracted from the Spotify API <ref type="bibr">4</ref> (   The Billboard Hot 100 Chart 1 remains one of the definitive ways to measure the success of a popular song. We investigated using machine learning techniques to predict which songs will become Billboard Hot 100 Hits.</p><p>• We were able to predict the Billboard success of a song with ~75% accuracy using machine-learning algorithms including Logistic Regression, GDA, SVM, Decision Trees and Neural Networks.     </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 3 .</head><label>3</label><figDesc>Billboard hit prediction accuracy results for five machine- learning algorithms. LR and NN give the highest prediction accuracy on the validation set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Illustration of audio features for the 5 top tracks of December 2018. Our algorithm predicted their Billboard success with 100% accuracy.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Algorithms yield higher accuracy for more recent songs. Features of pop songs are unique to their time period.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 .</head><label>5</label><figDesc>Features of songs released in winter vary from features of other songs. We did not observe the same trends for song of summer.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 )</head><label>1</label><figDesc>.• We created the Artist Score metric, assigning a score of 1 to a song if the artist previously had a Billboard hit, and 0 otherwise. R</figDesc><table>esults 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 1 .</head><label>1</label><figDesc>Audio features extracted from Spotify's API. Spotify assigns each song a value between 0 and 1 for these features, except loudness which is measured in decibels.•Data for ~4000 songs was collected from Billboard.com 3 and the Million Song Dataset 5 . Songs were from 1990-2018. • Songs were labeled 1 or 0 based on Billboard success. • Audio features for each song were extracted from the Spotify Web API 4 . • Five machine-learning algorithms were used to predict a song's Billboard success. F igure 2. A plot of songs' danceability vs. energy vs. loudness (dB). Black circles represent Billboard hits and red marks represent non-hits. References [1] Billboard. (2018). Billboard Hot 100 Chart. [2] Chinoy, S. and Ma, J. (2018). Why Songs of the Summer Sound the Same. Nytimes.com. [3] Guo, A. Python API for Billboard Data. Github.com. [4] Spotify Web API. https:// developer.spotify.com/ [5] Thierry Bertin-Mahieux, Daniel P.W. Ellis, Brian Whitman, and Paul Lamere. The Million Song Dataset. ISMIR Conference, 2011.•</figDesc><table>features 
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 2 .</head><label>2</label><figDesc></figDesc><table>Error analysis 
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

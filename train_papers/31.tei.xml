@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction and Background</head><p>Several prominent pathologies, such as Cerebral Palsy, Parkinson's disease, and Alzheimer's disease, can manifest themselves in an abnormal walking gait. Abnormal gait is characterized by irregular patterns in step length, step cadence, joint angles, and poor balance. Early detection of these abnormalities can help in diagnosis, treatment, and effective post-treatment monitoring of patients.</p><p>A comprehensive metric used to assess the extent of gait pathology is the Gait Deviation Index score, or GDI <ref type="bibr" target="#b0">[1]</ref>. By analyzing gait kinematics (the position, orientation, and velocity of body segments over time), physicians score patients on GDI, which is then used to influence decisions on treatment. GDI is a pivotal metric used by biomechanists and physicians for gait analysis throughout the world.</p><p>The current gold-standard method of measuring GDI, marker-based motion capture, places a set of reflective markers on body segments and tracks their trajectories over time. Sessions with patients can last multiple hours and cost hundreds or thousands of dollars. A potential less expensive and less time-consuming alternative is to analyze video captured by commodity devices (i.e. mobile camera phone) using machine learning algorithms to predict GDI.</p><p>Previous attempts have been made to predict GDI from monocular video footage using a projection of joint centers onto the two-dimensional plane of the camera. In this project, we leverage cutting-edge computer vision tactics to extract three-dimensional features from each frame of video. By stacking processed frames into a video sequence, relevant spatiotemporal features can be modeled for gait characterization. Thus, the project goal is to use monocular video footage to predict GDI score with lower root mean squared error (RMSE) than existing methods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p>Our work builds on the efforts of many machine learning scientists who developed models to extract spatiotemporal features from video, as well as biomechanists who have analyzed human motion to help physicians assess neuromuscular pathology. A leader in this field is Lukasz Kidzinski, a member of Stanford's Mobilize Center, who was our advisor for this project. We met with Lukasz throughout the project for guidance on data processing and model generation. In 2017, Lukasz and his team used a temporal convolutional network built on videos processed through OpenPose to predict GDI <ref type="bibr" target="#b1">[2]</ref>. OpenPose is a system that detects key points of the human body on an image and projects them onto the 2D frame of the camera <ref type="bibr" target="#b2">[3]</ref>[4] <ref type="bibr" target="#b4">[5]</ref>. Lukasz's team predicted GDI with great accuracy; his work is considered state-of-the-art (exact performance will not be disclosed as results have yet to be published).</p><p>A critical component to our analysis is the refeaturization of images into a spatial representation of human pose. Specifically, we leveraged the DensePose algorithm which converts Red-Green-Blue images toeach pixel in an image to one of thousands of surface locations on a modeled human mesh. DensePose builds on prior work in human pose estimation, most notably the Skinned Multi-Person Linear Model <ref type="bibr" target="#b6">[7]</ref>.</p><p>Our models and experiments were motivated by researchers who have used machine learning to extract spatial and spatiotemporal features from video. IBM used a CNN with a multi-layer perceptron to classify images into one of many types <ref type="bibr" target="#b7">[8]</ref>. Mahendran et al. leveraged a CNN to predict the distance, position, and orientation of an automobile within a continuous regression framework <ref type="bibr" target="#b8">[9]</ref>. These efforts helped motivate the spatial component of our model, which was used to extract lower level features for each frame. For our task though, we found processing a single frame via pose estimation frameworks was insufficient to predict GDI with high accuracy. As such, our most successful models incorporated temporal components.</p><p>A guiding work for extracting spatiotemporal features from images was Harvey's blog post <ref type="bibr" target="#b9">[10]</ref>. Harvey outlines five methods for identifying spatiotemporal features in a video. Our experiments focused on two methods from Harvey's blog: featurizing each frame with a CNN and passing to an RNN and featurizing each frame with a CNN and passing to a 1D CNN along the time dimension. Tran et al. leveraged 3D convolution blocks to extract spatiotemporal features for a variety of video analysis tasks. In his work, he used 3D convolutional networks on 10-frame clips to study pole vault performance, makeup application, and activity recognition <ref type="bibr" target="#b10">[11]</ref>. Tran and Harvey's work helped guide our team's decision around kernel size and stride length when convolving over the time dimension. Another guiding work here was Lukasz's team, who leveraged a 1D CNN to predict GDI <ref type="bibr" target="#b1">[2]</ref>. While naturally the most relevant based on application, Lukasz's team used a different input feature space (i.e. OpenPose outputs) than our team (i.e. DensePose outputs). Further, to our knowledge, there has been no previous efforts to predict GDI score using DensePose processed images. By combining prior research and our own experimentation, we found that a CNN with LSTM was the most successful framework.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>Our dataset comprises of ~3,000 videos of patients walking in a room at Gillette Children's Specialty Healthcare Center for Gait and Motion Analysis <ref type="bibr" target="#b11">[12]</ref>. This dataset, collected as part of the patient's routine care, is split into 80% training and 20% validation set. The videos have a ground truth GDI (i.e. they are labeled with a GDI score based on assessments from a physician).</p><p>The videos have a resolution of 640x480 and are 25 frames per second. Each frame is processed using DensePose, which maps all pixels of an RGB image to the surface of a modeled human mesh <ref type="bibr" target="#b5">[6]</ref>. The DensePose-RCNN finds dense correspondence by partitioning the human body surface, assigning each pixel to a body partition and determining the pixel location in 2D parameterization (UV coordinates) of the body part. The parametric surface model that DensePose fits is the Skinned Multi-Person Linear (SMPL) model <ref type="bibr" target="#b6">[7]</ref>. A sample image and the regressed correspondence by DensePose-RCNN is shown in <ref type="figure">Figure 1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1: A sample RGB image (left) processed by</head><p>DensePose (right). Each pixel is assigned to a corresponding point on a human skin mesh <ref type="bibr" target="#b5">[6]</ref>.</p><p>The processed frames consist of three channels -I (Part Index), U and V (Coordinates) -and are passed as inputs to the different learning models. In the case of a model with a temporal component, 10 outputs (i.e. processed frames) are concatenated in sequence per training example.</p><p>Before running any initial experiments, substantial work was performed to process data. This included running DensePose algorithm on top of thousands of videos and organizing them into folders. Subsequently, the folders were assigned a GDI score based on the corresponding examID from a joined file of physician assessments. Due to the massive data volume and limits of memory, we did not leverage the entire dataset in our experiments. We typically accessed 500-1,500 videos depending on the model's computational demands. As such, though we considered using video slicing, image mirroring, or other data augmentation techniques, we decided not to implement these as generating additional augmented data was not necessary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods and Experiments</head><p>Patient videos are transformed into I-U-V channels by DensePose and are then passed as inputs to our model, which we call GDI-Net. GDI-Net is a machine learning algorithm with spatial and temporal components to predict a patient's GDI score. GDI-Net was implemented in Keras, an open-source neural network library which runs on top of TensorFlow environment <ref type="bibr" target="#b12">[13]</ref> <ref type="bibr" target="#b13">[14]</ref>. The performance of predictions is judged on the basis of minimizing RMSE as compared to the ground truth. The flow of information is presented in <ref type="figure" target="#fig_0">Figure 2</ref>. by DensePose <ref type="bibr" target="#b14">[15]</ref>. These DensePose frames are then passed through GDI-Net to predict GDI score.</p><p>Our initial implementations were quick and simple. We built a linear regression model, implemented in Scikit Learn package, using 5 frames of 480x640x3 resolution for each training example <ref type="bibr" target="#b15">[16]</ref>. The resulting input vector had a length of 4,608,000, with roughly 435 training examples used to train the regression model and 109 examples used to validate RMSE.</p><p>As the model complexity was gradually increased, a sole spatial component was added to GDI-Net architecture. We trained the spatial component, which consisted of VGG16 (an off-the-shelf CNN architecture) or a custom 2D CNN, with 3,834 training frames of 480x640x3 dimension. The model was validated against 951 examples to quantify performance on unseen examples.</p><p>The VGG16 model is pre-trained, and only the last layer of the model was replaced by a linear function and trained to perform our regression task. The motivation behind using the pre-trained weights was to investigate the possibility of transfer learning. Since collecting patient data and building custom models is expensive and cumbersome, transfer learning is desirable and could reduce the lead time of any application development. After receiving advice from CS229 course assistants at the course poster session, we also ran a VGG16 model in which all weights were re-trained <ref type="bibr" target="#b16">[17]</ref>.</p><p>A challenge in executing VGG16 was that it requires an image with a standard size of 224x224x3 as an input. Since the DensePose output has a resolution of 480x640x3, the outputs had to be cropped before being passed to VGG16. The crop was made in a manner to preserve as much information as possible (i.e. by selecting pixel values where patients are most likely to appear in the frame); however, some loss is inevitable.</p><p>DensePose outputs were passed whole to the custom CNN. The inspiration behind the CNN's architecture was Mahendran et al.'s model that leveraged a CNN to predict the pose of a vehicle within a continuous regression framework. In addition, Lukasz Kidzinski provided instrumental guidance for making important architecture choices in the CNN.</p><p>Although the spatial component identifies human poses in a frame, it cannot track the pose trajectories over time. To detect temporal characteristics, a temporal model (either an LSTM or 1D CNN) was added to GDI-Net. The input to a temporal model had 2,920 training examples of 10 frames of 480x640x3 resolution concatenated into a single array. Hyperparameter tuning was performed to further optimize models, mainly tuning learning rate, batch size, and dropout. The majority of this effort focused on tuning hyperparameters for our most promising model, the CNN with LSTM. The complete architecture of the highest performing model is outlined in the Results and Discussion section of this paper.</p><p>The immense size of the dataset and the desire to concatenate frames sometimes led to issues with memory overload. In those scenarios, hyperparameters such as batch size and kernel size, were adjusted to avoid memory limits. Further, for computationally expensive models, we leveraged Sherlock, a high-performance computing cluster available to Stanford University affiliates, to reduce run time <ref type="bibr" target="#b17">[18]</ref>. More efficient memory management and resource utilization will allow for further data processing and augmentation. <ref type="table">Table 1</ref>  The initial models, guessing the mean and linear regression, as expected, performed poorly on the validation set. The most successful frame-specific model was a custom-built CNN that was able to reach 8.2 RMSE. The highest performing model overall was a video model that consisted of a CNN and an LSTM network; the model reached RMSE of 4.4 on the validation data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A summary of experiments and results is shown in</head><p>One of the interesting findings from our experiments was the relatively poor performance from using an off-the shelf model. The initial goal in these experiments was to exploit transfer learning to build complex networks with millions of parameters that are pre-trained. We used VGG16, a model that is readily available within the Keras API and has reported success with image classification tasks <ref type="bibr" target="#b7">[8]</ref>. Though this architecture is built for classification, we thought it could still be valuable after replacing the final softmax layer with an appropriate linear activation. The model performed poorly, reaching an RMSE of 9.6. We hypothesize the poor performance was due to a combination of factors: the architecture and parameter weights were tuned with classification in mind; the network expects to receive RGB data by pixel, not IUV coordinates; images were cropped and resized to fit into the VGG16 architecture. To test our first hypothesis, we decided to train the model parameters from scratch. The trained model performed worse than the fixed-weights model. It is possible that better hyperparameter tuning can lead to enhanced performance here. Nevertheless, our current hypothesis is that the cropping and resizing images led to lost information which reduced the ability to predict GDI. Our cropping procedure was to manually scan images and pick a subsection of the 480x640x3 images that we could fit into the 224x224x3 VGG16 input. This had damaging effects to the model. A next set of experiments could involve adding dimension-reducing convolution layers to the beginning of VGG16 or picking a new pre-trained network that better fits our application.</p><p>Frame specific models that only captured spatial features of a given frame did not perform well. This is expected, as GDI is largely determined by trajectories of body parts, and individual frames do not hold temporal information describing how the patient moves over time. As such, we spent most of our time and effort experimenting with spatiotemporal models.</p><p>The best performing model combined a 2D CNN on each frame and an LSTM to capture temporal patterns. The learning curve, regression plot, and detailed architecture are outlined in <ref type="figure" target="#fig_1">Figure 3</ref>. We believe this model had the greatest performance because GDI is based on trajectories, and incorporating an LSTM allowed the model to identify time-based patterns which ultimately translate into trajectories. We also leveraged much of the CNN architecture of our best-performing frame model, which we believe did a good job featurizing each frame into a relevant vector to be sequenced into the LSTM. The final model used an initial learning rate of 0.01 which decayed linearly to 0.001 at the end of 100 epochs. As seen in the learning curve, the model is overfit to the training data. Further hyperparameter tuning, such as increasing dropout, could help reduce this overfit. Another shortcoming worth highlighting is that we did not train the model on the full dataset due to limited memory. We also used a small batch size of 4 to allow our machines to process each calculation, which resulted in a more stochastic model than desired. If we implemented better techniques to store and manipulate large matrices, we could train on a larger dataset and potentially reduce overfit. Nevertheless, the results achieved by the best model are promising. As seen in the regression plot comparing true GDI to predicted GDI, the model successfully captured the variance in GDI scores, with an R 2 of 0.86. Lukasz Kidzinski and his team, who spent months tuning a model based on OpenPose pre-processing, was able to achieve a slightly lower RMSE on a similar dataset (exact performance will not be disclosed as results have yet to be published). Though our models did not outperform the cutting edge, our results suggest DensePose-based algorithms have the potential to compete with state-of-theart techniques.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions and Future Work</head><p>In this study, we implemented a machine learning approach to develop a cheap and automated way to assess gait abnormalities. The results, especially that of a CNN with LSTM model, are very promising. We are excited by our model's potential to help diagnose and track the progression of neuromuscular disease.</p><p>Although the CNN with LSTM model was able to achieve a low RMSE, error analysis should be performed to investigate the deviations between the model and ground truth. Once the nature of these errors is understood, the model and the architecture can be fine-tuned for better accuracy.</p><p>An option to enhance our architecture is to implement 3D convolution blocks instead of a separate spatial and temporal component. We hypothesize that it may perform better than the spatiotemporal model, as it can capture lower level features in time and is not affected by the way data is passed from the spatial component to the temporal component.</p><p>In our experiments, we observed a growing gap between training error and validation error as training progressed, which suggests overfitting. Although we attempted to mitigate this using dropout, more could be done to generalize our model. Future experiments can focus on reducing model complexity or incorporating L2-regularization.</p><p>An interesting approach we would like to implement is building a classification network by bucketing GDI scores to the nearest integer. Using a softmax layer, we can take the probability-weighted sum of bucket values to determine a scalar GDI score. In other words, we can train the network as a classification task but derive the scalar GDI score using the appropriate weighted sum of the softmax output. This option also opens the opportunity to use off-the-shelf classification frameworks for our task.</p><p>Our capacity to experiment was constrained by memory overload issues. The efficient management of memory and resource utilization would allow for more rapid experimentation. Chunking, memory swapping, or simply accessing machines with larger random-access memory can be applied to address this issue.</p><p>Future experiments should explore refeaturizing the processed DensePose outputs to global X-Y-Z coordinates. This would allow us to manually engineer additional relevant features, such as knee flexion angle, that are expected correlates of GDI score. We can further compress our data by considering only the X-Y-Z coordinates of the most relevant body landmarks, as movements of the hip, knee, and ankle are particularly important for gait analysis. This process would require the manipulation of DensePose outputs to a customized SMPL human body model.</p><p>The potential for future work is enormous as we have just scratched the surface of DensePose's capabilities. A determined effort can lead to the development of a robust, reliable, and low-cost alternative to analyzing human gait.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>Adam Gotlin collaborated closely with the Stanford Mobilize Center and other project partners to secure data and share knowledge. He orchestrated meetings with advisors and experts and helped identify best practices for time-series and movement data. He led efforts on building temporal CNN models.</p><p>Apurva Pancholi spearheaded initial experiments and was involved in data preprocessing. He owned data transfer from the Mobilize Center to our project team. Apurva developed a custom CNN that was the primary spatial component for our highest performing model. Umang Agarwal led data processing and consolidation. He owned efforts to read and interpret DensePose source code in order to generate GDI-Net model inputs. He led efforts to exploit transfer learning and contributed to tuning neural network models to maximize performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>Code for this project can be found at: https://github.com/agotlin/CS229DP</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Flow of information for GDI prediction. Video is captured by Gillette Children's hospital and processed</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>(Top) Learning curve for top performing model. (Middle) Regression plot comparing True GDI vs. Predicted GDI on the validation set. (Bottom) Architecture of top performing model. Each frame is separately processed by the 2D CNN and concatenated in sequence before passing to the LSTM.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>below. Model Input Type Training Error Validation Error Guess Mean Frame 13.7 13.7 Linear Regression Frame 0.0 13.0 VGG16 (pre- trained) Frame 10.1 9.5 VGG16 (trained) Frame 11.6 11.4 CNN Frame 8.1 8.2 CNN + LSTM Video 1.4 4.4 CNN + 1D-CNN Video 4.2 11.3 Table 1: Key results from experiments. Models are distinguished by input type, whereby each training examples were either defined as individual frames or by video (i.e. sequence of frames). The error metric reported is RMSE of GDI score.</figDesc><table>Model 
+Input 
+Type 
+
+Training 
+Error 
+
+Validation 
+Error 
+Guess Mean 
+Frame 
+13.7 
+13.7 
+Linear 
+Regression 
+
+Frame 
+0.0 
+13.0 
+
+VGG16 (pre-
+trained) 
+
+Frame 
+10.1 
+9.5 
+
+VGG16 
+(trained) 
+
+Frame 
+11.6 
+11.4 
+
+CNN 
+Frame 
+8.1 
+8.2 
+CNN + LSTM 
+Video 
+1.4 
+4.4 
+CNN + 
+1D-CNN 
+
+Video 
+4.2 
+11.3 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Index-UV coordinates that act as inputs to our model. This algorithm was developed by Facebook AI Research group in February of 2018 [6]. The DensePose RCNN is a leading open-source pose estimation model that assigns Automated Identification of Gait Abnormalities Adam Gotlin Stanford University SUNetID: agotlin agotlin@stanford.edu Apurva Pancholi Stanford University SUNetID: apurva03 apurva03@stanford.edu Umang Agarwal Stanford University SUNetID: uagarwal uagarwal@stanford.edu</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The gait deviation index: a new comprehensive index of gait pathology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Schwartz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rozumalski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Gait &amp; posture</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="351" to="358" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Automatic diagnostics of gait pathologies using a mobile phone</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Łukasz</forename><surname>Kidziński</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bryan</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennifer</forename><surname>Hicks</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Scott</forename><surname>Delp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Schwartz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">technical report</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Realtime Multi-Person 2D Pose Estimation using Part Affinity Fields</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhe</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shih-En</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yaser</forename><surname>Sheikh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page">2017</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Hand keypoint detection in single images using multiview bootstrapping</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hanbyul</forename><surname>Joo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Iain</forename><surname>Matthews</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yaser</forename><surname>Sheikh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Shih-En</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Varun</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Takeo</forename><surname>Ramakrishna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yaser</forename><surname>Kanade</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sheikh</surname></persName>
+		</author>
+		<title level="m">Convolutional pose machines&quot;. CVPR</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">DensePose: Dense Human Pose Estimation In The Wild</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Natalia</forename><surname>Riza Alp Guler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Neverova</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Iasonas Kokkinos</title>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CVPR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">SMPL: A Skinned Multi-Person Linear Model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Loper</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Naureen</forename><surname>Mahmood</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Javier</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gerard</forename><surname>Pons-Moll</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">J</forename><surname>Black</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+		<respStmt>
+			<orgName>Max Planck Institute for Intelligent Systems</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Image Classification Using CNN and Keras</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Apache</forename><surname>Software License</surname></persName>
+		</author>
+		<ptr target="https://github.com/IBM/image-classification-using-cnn-and-keras" />
+	</analytic>
+	<monogr>
+		<title level="m">GitHub repository</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">3D Pose Regression using Convolutional Neural Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haider</forename><surname>Siddharth Mahendran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rene</forename><surname>Ali</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Vidal</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Center for Imaging Science, Johns Hopkins University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Five video classification methods implemented in Keras and TensorFlow</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matt</forename><surname>Harvey</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Learning Spatiotemporal Features with 3D Convolutional Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Du</forename><surname>Tran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lubomir</forename><surname>Bourdev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rob</forename><surname>Fergus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lorenzo</forename><surname>Torresani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manohar</forename><surname>Paluri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CV</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">The authors acknowledge the staff of the Center for Gait and Motion Analysis at Gillette Children&apos;s Specialty Healthcare for collection and curation of the subject data</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">TensorFlow: Large-scale machine learning on heterogeneous systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Software available from tensorflow.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francois</forename><surname>Chollet</surname></persName>
+		</author>
+		<title level="m">Keras&quot;. Software available from keras.io</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Gillette Children&apos;s Specialty Care</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nick</forename><surname>Hanson</surname></persName>
+		</author>
+		<ptr target="www.gillettechildrens.org/khm/topics/gait-analysis" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+	<note>Kids Health Matters</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in {P}ython</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">The authors acknowledge the CS229 course staff who provided advice and guidance throughout this project</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Some of the computing for this project was performed on the Sherlock cluster</title>
+	</analytic>
+	<monogr>
+		<title level="m">We would like to thank Stanford University and the Stanford Research Computing Center for providing computational resources and</title>
+		<imprint/>
+	</monogr>
+	<note>support that contributed to these research results</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Perceiving 3D Humans in the Wild</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Angjoo</forename><surname>Kanazawa</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+			<pubPlace>Stanford, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Get the Most out of LSTMs on Your Sequence Prediction Problem</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><surname>Brownlee</surname></persName>
+		</author>
+		<ptr target="https://machinelearningmastery.com/machine-learning-with-python/" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">API design for machine learning software: experiences from the scikit-learn project</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Buitinck</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

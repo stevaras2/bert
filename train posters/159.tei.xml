@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yong</forename><surname>Deng</surname></persName>
+							<email>yongdeng@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuxin</forename><surname>Huang</surname></persName>
+							<email>xxhuang@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guanyang</forename><surname>Wang</surname></persName>
+							<email>guanyang@stanford.edu</email>
+						</author>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>. &amp;</p><p>Analyzing the disease progression in individual patients is one of the fundamental questions in medical practice. In this project, we focus on the study of the progression of motor impairment in children with Cerebral Palsy by analyzing the Gait Deviation Index (GDI) <ref type="bibr">[1]</ref> , a quantitative characterization of gait impairments, collected over time for each patient. Due to the sparsity and irregularity of the data in time, we have applied regression methods with rank-constraints relying on matrix completion to the dataset <ref type="bibr">[2]</ref> and have successfully explained 40% of the error compared with the baseline.  <ref type="table" target="#tab_0">Table.</ref> 1. To improve the prediction, we modify the data using surgery information and compare results from different algorithms in <ref type="table" target="#tab_0">Table.</ref> 2.</p><p>The GDI dataset used in this project is provided by Dr. Łukasz Kidziński from the Department of Statistics at Stanford. We implemented Soft-Longitudinal-Impute (SLI), a singular value thresholding (SVT) based algorithm <ref type="bibr">[2]</ref> to solve for W. The regularization term is added to restrict the rank of W.</p><p>l Regression:</p><p>Extend to the case of multiple variables:</p><p>We formulate our trajectory prediction problem as a regression of Y on X:</p><p>This is solved by Sparse-Regression algorithm <ref type="bibr">[2]</ref> l Dimensionality Reduction + Regression:</p><p>U is the latent component retrieved from W=USV T obtained from dimensionality reduction of X. A can be solved by Sparse-Longitudinal-Regression (SLR) algorithm <ref type="bibr">[2]</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion:</head><p>The SLI results using the original data can explain 30% of the error of the baseline. After we include the effect of surgery, the predictions of both SLI and SLR are improved and can explain up to 40% of the error of the baseline. However even after we consider the effect of surgery, the performances of SLI and SLR are still not as good as fPCA.</p><p>We can perform feature selection to further improve our matrix-completion based methods. This can be done by forward selection or by using the top components from the dimension reduction of covariates as new features. and data with surgery information (right)</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Schwartz, Michael H., and Adam Rozumalski. "The Gait Deviation Index: a new comprehensive index of gait pathology." Gait &amp; posture 28.3 (2008): 351-357. [2]Kidziński, Łukasz, and Trevor Hastie. "Longitudinal data analysis using matrix completion." arXiv preprint arXiv:1809.08771 (2018). [3]James, Gareth M., Trevor J. Hastie, and Catherine A. Sugar. "Principal component models for sparse functional data." Biometrika 87.3 (2000): 587-602. This project is in corporation with postdoctoral researchers Dr. Łukasz Kidziński and Dr. Yumeng Zhang from the Department of Statistics at Stanford. Y represents the data matrix. Each row is the GDI of a patient collected over time. B is a time dependent spline basis. P Ω is a projection on the observed indices Ω. The goal is to fit the coefficient matrix W. SLI and functional principal component analysis (fPCA) are applied to the original data. The results are compared with baseline (column mean of Y) in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 1 :</head><label>1</label><figDesc>Sample data from a subset of about 40 patients.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 2 :</head><label>2</label><figDesc>Fitted GDI vs true GDI from SLI on original data (left)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table . 1</head><label>.</label><figDesc></figDesc><table>: 
+Original data. 
+
+Table. 2: Data 
+with surgery 
+information. 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

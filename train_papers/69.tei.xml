@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LendingClub Loan Default and Profitability Prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peiqian</forename><surname>Li</surname></persName>
+							<email>peiqian@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gao</forename><surname>Han</surname></persName>
+						</author>
+						<title level="a" type="main">LendingClub Loan Default and Profitability Prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Credit risk is something all peer-to-peer (P2P) lending investors (and bond investors in general) must carefully consider when making informed investment decisions; it is the risk of default as a result of borrowers failing to make required payments, leading to loss of principal and interest. In this project, we build machine-learned models trained on LendingClub (a leading P2P lending platform) historical loan data that help investors quantify credit risks using sci-kit learn <ref type="bibr" target="#b0">[1]</ref>. Our classifier, predicting whether a given loan will be fully paid or not, achieves 0.89 in terms of both weighted precision and recall metrics; our regressor leads to a loan selection strategy that invests in 1.76% of available loans with 15% annualized return, when simulated on our independent test set.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Credit risk is something all peer-to-peer (P2P) lending investors (and bond investors in general) must carefully consider when making informed investment decisions; it is the risk of default as a result of borrowers failing to make required payments, leading to loss of principal and interest. In this project, we build machine-learned models trained on LendingClub (a leading P2P lending platform) historical loan data that help investors quantify credit risks using sci-kit learn <ref type="bibr" target="#b0">[1]</ref>. Our classifier, predicting whether a given loan will be fully paid or not, achieves 0.89 in terms of both weighted precision and recall metrics; our regressor leads to a loan selection strategy that invests in 1.76% of available loans with 15% annualized return, when simulated on our independent test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. MOTIVATION</head><p>With the rising popularity of peer-to-peer lending platforms in recent years, investors now have easy access to this alternative investment asset class by lending money to individual borrowers through platforms such as LendingClub, Prosper Marketplace, and Upstart, or to small businesses through Funding Circle.</p><p>The process starts with borrowers submitting loan applications to the platform, which performs credit reviews and either approves or denies each application. The platform also uses a proprietary model to determine the interest rate of approved loans based on the credit-worthiness of borrowers. Approved loans are then listed on the platform for investor funding. Investors usually want to diversify their portfolio by only investing a small amount, e.g. $25, in each loan. Hence, it is desirable for investors to be able to independently evaluate the credit risk of a large number of listed loans quickly, and invest in those with lower perceived risks.</p><p>This motivates us to build machine-learned classification and regression models that can quantify the credit risk with a LendingClub historical loan dataset. Specifically, we build and evaluate classifiers that predict whether a given loan will be fully paid by the borrower, as well as regressors that predict the annualized net return from investment in a given loan. Finally, we simulate and evaluate a simple loan selection strategy by investing in loans that pass a certain regressor prediction threshold.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>There have been many studies on classification models predicting LendingClub loan default. Chang et al. <ref type="bibr" target="#b1">[2]</ref> built Logistic Regression, Naive Bayes, and SVM classifiers, all of which are able to achieve a G-mean score of around 0.86, the geometric mean of true positive and true negative rates. However, we find it questionable that loans with a Current status were treated as positive examples, along with Fully Paid loans. Since current loans may become default in the future, this practice invariably labels some true negatives as positive. In light of this, we decide to restrict our dataset to finalized loans only.</p><p>Tsai et al. <ref type="bibr" target="#b2">[3]</ref> also experimented with the three models above along with Random Forest, but with an emphasis on precision at the expense of recall and negative predictive value (i.e. precision for the negative class). They find that Logistic Regression achieves a greater precision than the other models; they also break down the metrics by LendingClub's assigned loan grades (A-G) and subgrades (e.g. A-1). We believe that precision for both classes and their recalls are equally important metrics to optimize for, as a naive model which always predicts positive already achieves a good precision since the majority of examples are positive, but its negative predictive value would be zero.</p><p>In addition to classification models that predict loan default, Gutierrez and Mathieson <ref type="bibr" target="#b3">[4]</ref> built regression models that predict the annualized return of a given loan. The loan selection strategy derived from a combination of these models was able to achieve better investment performance as measured by the Sharpe ratio than the baseline. This encourages us to build regression models and evaluate an investment strategy that select loans with high enough annualized return predictions.</p><p>Pujun et al. <ref type="bibr" target="#b4">[5]</ref> built classification and regression models, but the goal was to predict LendingClub loan approval and their assigned interest rates. They applied k-means clustering and PCA techniques to detect latent trends in LendingClub approved loans. One of their most interesting findings is that loan approval standard had been gradually relaxed over the years. This reaffirms the desirability and usefulness of developing an independent and effective model for evaluating credit risks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dataset Overview</head><p>We worked with public dataset published by Lending Club <ref type="bibr" target="#b5">[6]</ref>. Lending Club loans are in either 36-month or 60-month terms; we chose to work with Lending Club loans issued in 2012-2015 so that the loans have at least three years to mature. We filtered out loans whose statuses are not yet final, such as "Current" and "Late (less than 30 days)". We treat "Paid Off" as our positive label, and "Default" or "Charged Off" as negative. This leaves us with a dataset of size 745,529, with 19% negative and 81% positive examples. We split the data using a random (0.7, 0.3) split into training and test sets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Preprocessing</head><p>Columns with empty values for most of the rows as well as columns with the same values across all rows are dropped in order to have a cleaner dataset. Free form text columns are also dropped because we posited that these fields would have more noise and are better tackled at a later stage when we have better understanding of the problem.</p><p>For features with missing values, they are categorized into three cases and treated differently: mean-set, zero-set and max-set. For mean-set fields, we took the average of the non-empty values. One such example is debt-to-income ratio (DTI): borrowers with lower DTI likely have lower risks compared to those with higher DTIs. For loan applicants missing DTI information, it is unreasonable to reward them by assigning zero DTI, hence taking average is a good starting point. In the case of max-set, missing values are replaced with a constant factor multiplied with the maximum value in that column. For instance, if the data for the number of months since last delinquency is missing, it would be unfair to punish the applicants by assigning zero for missing data. Finally, zeros are given for zero-set, which we believe would be a neutral replacement for the missing data.</p><p>Categorical features, such as obfuscated zipcode (e.g. "940xx"), are replaced with their one-hot representations. Features with date values are converted into the number of days since epoch. Normalization is then performed at the end on all features so they have zero mean and one standard deviation.</p><p>After the above preprocessing, we ended up with 1,097 features. We then ran PCA on the dataset with the hope to further reduce feature size. Unfortunately, the 95% variance threshold corresponds to around 900 features, which is close to 95% of the total number of features and therefore means that we cannot significantly reduce the feature size without sacrificing variances (see <ref type="figure" target="#fig_0">Figure 1</ref> for correlation among select numerical features). Hence, we decided to keep all features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Label Definition</head><p>For classification model, both Default and Charged Off are assigned label 0 and Fully Paid is assigned label 1. For regression model, we use annualized return rate calculated from loan amount, total payment made by the borrower, and the time interval between loan initiation and the date of last payment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. CLASSIFICATION PROBLEM OVERVIEW</head><p>Our classification goal is to predict which class the loan belongs to: either Default or Fully Paid. In the following sections, we will share and discuss our experiments using Logistic Regression, Neutral Networks and Random Forest for classification problem. For metrics to evaluate classification performance, we use confusion matrix whose columns represent predicted values and rows represent true values. We also measure precision, recall, f1-score (the harmonic mean of precision and recall) and weighted average as defined  </p><formula xml:id="formula_0">Precision = T P T P + F P Recall = T P T P + F N F1-score = 2T P 2T P + F P + F N Support =</formula><formula xml:id="formula_1">, i.e. h θ (x) = g(θ T x) = 1 1+e −θ T x .</formula><p>To derive optimal parameters, the model iteratively updates weights by minimizing the negative log likelihood with L2 regularization</p><formula xml:id="formula_2">− m i=1 y (i) log h θ (x (i) ) + (1 − y (i) ) log(1 − h θ (x (i) )) + λ θ 2 2</formula><p>To tackle the class imbalance problem (only 19% of our dataset are negative examples), we used balanced weight for class labels, which is inversely proportional to class frequencies in the input data: n samples total n classes * label count After running Logistic Regression with the above setting for a maximum of 1000 iterations, we arrived at the following results: As we can see, Logistic Regression is doing fairly well compared to naive models that blindly predict positive for all examples, or randomly guess positive and negative with 50% chance. Thanks to L2 regularization, we did not observe overfitting issues. One thing that we noticed and would like to improve upon is the precision and recall for negative class. Although we used balanced class weights to offset data imbalance, the prediction precision is only slightly better than randomly guessing. Therefore, we suspect there may be non-linear relationships in the dataset that is not learned by Logistic Regression, which leads to our exploration with Neural Network next.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Neural Network</head><p>We constructed a fully connected neural network with 4 hidden layers of shape <ref type="bibr" target="#b9">(10,</ref><ref type="bibr" target="#b9">10,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b2">3)</ref> and Sigmoid activation for all neurons. We arrived at these hyper-parameter values by experimenting with various settings. Inputs are pushed through the model layer by layer. For neurons in each layer, the j-th output in layer i is computed as</p><formula xml:id="formula_3">a [i] j = g(W [i] j T x + b [i]</formula><p>j ). The final output of the network uses cross entropy (log loss) as loss function:</p><formula xml:id="formula_4">o = −(y log(ŷ) + (1 − y) log(1 −ŷ)).</formula><p>To arrive at optimal parameters, the model iteratively updates weights within each layer using Gradient Descentbased solver with a mini-batch size of 200, learning rate of 0.001 and L2 regularization penalty of 0.0001.</p><p>We obtained the following results:</p><p>Training set result The model has high variance and is suffering from overfitting. Compared with the logistic regression model, this neural network model achieves a better weighted precision at the expense of weighted recall and the difference between precision and recall is less polarized compared to that of the Logistic Regression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Random Forest</head><p>Random Forest classifier is one of the tree ensemble methods that make decision splits using a random subset of features and combine the output of multiple weak classifiers to derive a strong classifier of lower variance at the cost of higher bias.</p><p>We started off our venture into Random Forest with 200 trees using Gini loss 1 − 1 j=0 p 2 j . Decision splits are based on at most 50 features to reduce variance. After training, we reached the following result: Although the performance is on par with Neural Network and Logistic Regression, Random Forest's overfitting problem is much more prominent than any other models even after restricting the maximum number of features considered for decision splits to 50.</p><formula xml:id="formula_5">Training</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Classification Model Conclusion</head><p>Based on our explorations with Logistic Regression, Neural Network and Random Forest, we are able to achieve weighted average of 0.89 for both precision and recall. More specifically, our classification results appear to be better than the works done by the previous project <ref type="bibr" target="#b6">[7]</ref> in terms of higher precision and recall, and more logically reasonable and practical than the work done by Chang et al. <ref type="bibr" target="#b1">[2]</ref>. However, classification models can only predict the probability of loan defaults. This does not offer us a very fine-grained view in terms of how much return each loan can generate, which is essential for investors. Therefore, we would also like to predict the expected return rate, which naturally leads to our experiments with regression models next.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. REGRESSION PROBLEM OVERVIEW</head><p>We strive to predict the investment return if we were to invest in a given loan. Our goal is to build regression models that predict the net annualized return (NAR) of a given loan in a way similar to how LendingClub calculates NAR for investors <ref type="bibr" target="#b7">[8]</ref>. For a given example x, our label y is the NAR defined as</p><formula xml:id="formula_6">y = ( x T P x LA ) 1 365/D − 1</formula><p>where x LA is the loan amount, x T P is total payment made by the borrower, and D is the number of days between loan funding and date of last payment.</p><p>We evaluate regression models in terms of mean square error (MSE) and coefficient of determination R 2 .</p><formula xml:id="formula_7">M SE = 1 m m i=1 (ŷ (i) − y (i) ) 2 R 2 = 1 − m i=1 (ŷ (i) − y (i) ) 2 m i=1 (y (i) −ȳ) 2 whereŷ (i) is model prediction on x (i) , andȳ = 1 m m i=1 y (i)</formula><p>is the mean of the true labels. The coefficient of determination tells us how much variability of the true NARs can be explained by the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. REGRESSION METHODS AND RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Linear Regression</head><p>The goal of linear regression is to find a linear hyperplane that minimizes the ordinary least squares. Specifically, it finds parameters θ that minimizes</p><formula xml:id="formula_8">J(θ) = m i=1 (θ T x (i) − y (i) ) 2</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance of linear regression:</head><p>Split MSE R 2 train 0.040 0.243 test 5.014 −9.494 × 10 22</p><p>The extremely skewed MSE and R 2 values on the test set clearly indicate a high-variance problem of the model which overfits the training examples. To rectify this, we employ L2 regularization in our next model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Ridge Regression</head><p>Ridge regression adds an L2 regularization term to the cost function of linear regression</p><formula xml:id="formula_9">J(θ) = m i=1 (θ T x (i) − y (i) ) 2 + α θ 2 2</formula><p>but otherwise works the same way as linear regression.</p><p>Performance of ridge regression with α = 1:</p><p>Split MSE R 2 train 0.040 0.243 test 0.040 0.238</p><p>As expected, L2 regularization mitigated the problem of overfitting, giving similar metrics for both train and test sets. R 2 = 0.24 means that 24% of the NAR's variability can be explained by the ridge regression model. We next try nonlinear models to further decrease MSE and increase R 2 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Neural Network</head><p>The fully-connected neural network regression model is very similar to the classifier described earlier in section V-B. The only difference is that all neurons use the ReLU activation function f (x) = max(0, x), and the neural network tries to minimize the squared loss on the training set.</p><p>We used the Adam stochastic gradient-based optimizer <ref type="bibr" target="#b8">[9]</ref></p><note type="other">, a batch size of 200, L2 regularization penalty parameter of 0.0001, four hidden layers with (20, 10, 5, 3) neurons, and obtained the following results: Split MSE R 2 train 0.036 0.324 test 0.037 0.306</note><p>We see that the neural network regressor performs much better than ridge regression thanks to its ability to model non-linear relationships.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Random Forest</head><p>A decision tree regression model infers decision rules from example features by finding a feature split for each non-leaf node that maximizes the variance reduction as measured by MSE. The mean of leaf-node example labels is the output of the decision tree regressor.</p><p>Decision trees tend to overfit, especially when the tree is deep and leaf nodes comprise too few examples. Limiting the maximum depth or the minimum leaf node examples not only reduces overfitting, but also speeds up training significantly, as random forest model builds numerous decision trees before taking the average of their predictions.</p><p>Specifically, random forest regressor repeatedly builds decision trees on a bootstrap sample drawn from the training set, and considers a random subset of features as candidates when finding an optimal split. From these results, we see that as we allow the decision trees to grow deeper, bias increases while variance decreases. The performance of Random Forest regressor beats both ridge regression and neural network, likely due to the fact that decision trees are able to capture very nuanced and nonlinear relationships.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. LOAN SELECTION STRATEGY</head><p>Our best Random Forest regressor achieves a root-MSE of √ 0.036 = 0.19 on the test set, which implies that the predicted NAR is estimated to differ from the true NAR by 0.19. While this may appear very large at first glance, the model can actually be very useful in formulating a loan selection strategy. Loan defaults usually happen soon after loan funding, and the chance of default decreases as more payment is made. As a result, most true NARs of defaulted loans are well below −0.5, so the model can still very accurately tell us that investing in loans like these likely result in losses.</p><p>In light of this, we experimented with the strategy of investing in loans with model NAR predictions higher than a reasonable threshold M &gt; 0. Intuitively, the threshold M can serve as a parameter investors can tune according to their investment account size: the bigger M is, the more stringent the loan selection is, so less amount of money can be invested, but hopefully the annualized return will be higher due to investing in loans more selectively.</p><p>In order to determine a reasonable range of values for M , we rank the training set examples by model predictions from high to low. <ref type="figure" target="#fig_2">Figure 2</ref> shows a decreasing annualized return as we invest in more loans, which is consistent with our expectation that less stringent threshold results in a lower average annual return.</p><p>For a specific threshold M = 0.132, on both training and test set, the strategy yields an annualized return of 15% with 1.7% loans picked and invested.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IX. CONCLUSION</head><p>Comparing our models with those from related work, ours have better precision / recall and are more practical in terms of enabling implementable investment strategies. In the case of classification models, Random Forest achieved 0.89 weighted average precision and recall. But it is also important to note that the Random Forest and Neural Network models do have higher variance than desired and have space for improvement. For the regression counterpart, Random Forest is able to attain 0.315 coefficient of determination and to deliver predictions that lead to a profitable and actionable loan selection strategy in the sense that the return rate is higher than S&amp;P 500's 10% annualized return for the past 90 years <ref type="bibr" target="#b9">[10]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>X. FUTURE WORK</head><p>We obtained a regression prediction threshold based on the training set, and simulated the strategy on the test set. Both sets comprise loans initiated within the same periods <ref type="bibr">(2012)</ref><ref type="bibr">(2013)</ref><ref type="bibr">(2014)</ref><ref type="bibr">(2015)</ref>. We can check to see if the strategy generalizes to future loans by testing it on 2016-2018 loans that have finalized. Practically speaking, this would be a much more useful metric for investors.</p><p>We worked with a 70% training and 30% test split for simplicity in this project. The absence of a development set didn't afford us much opportunity to tune the hyperparameters of our models, such as the number of decision trees to use in random forest models, and the number of hidden layers and neurons of each layer in neural network models. Having a small development set would enable us to tune some hyper-parameters quickly to help improve model performance metrics.</p><p>There are definitely factors that contribute to default not captured by features in our dataset. We can add external features such as macroeconomic metrics that have been historically correlated to bond default rate. For categorical features like employment title, we can join them with signals such as average income by industry, similar to what Chang et al. <ref type="bibr" target="#b1">[2]</ref> did for zip code with average income of each neighborhood.</p><p>We can also make better use of existing features in the LendingClub dataset. One example is loan description which the borrower enters at the time of loan application. Instead of dropping such freeform features, we can try applying some statistical natural language processing techniques such as TF-IDF as Chang et al. <ref type="bibr" target="#b1">[2]</ref> did.</p><p>Finally, we notice that LendingClub also publishes declined loan datasets <ref type="bibr" target="#b5">[6]</ref>. We can add these declined loans as negative examples to our dataset, which helps further alleviate the class imbalance problem.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>XI. CONTRIBUTIONS</head><p>The two of us paired up on all components of this project, including dataset cleaning, feature engineering, model formulation / evaluation, and the write-up of this report and the poster.</p><p>Codebase: https://goo.gl/Sxf1Rm</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Feature</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>the number of true instances for each label Weighted-avg metric = metric weighted by support V. CLASSIFICATION METHODS AND RESULTS A. Logistic Regression Logistic Regression takes in a list of features as input and outputs the Sigmoid of a linear combination of features weighted by learned parameters</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 2 :</head><label>2</label><figDesc>Annualized return vs. percentage of loans invested on training (top) and test (bottom) sets.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>set result</figDesc><table>Predicted Default Predicted Paid Off 
+True Default 
+81,517 
+17,646 
+True Paid Off 
+863 
+421,844 
+
+class 
+precision recall f1-score support 
+Default 
+0.99 
+0.82 
+0.90 
+99,163 
+Paid Off 
+0.96 
+1.00 
+0.98 
+422,707 
+Weighted Avg 
+0.97 
+0.96 
+0.96 
+521,870 
+
+Test set result 
+
+Predicted Default Predicted Paid Off 
+True Default 
+27,760 
+15,007 
+True Paid Off 
+8,750 
+172,142 
+
+class 
+precision recall f1-score support 
+Default 
+0.76 
+0.65 
+0.70 
+42,767 
+Paid Off 
+0.92 
+0.95 
+0.94 
+180,892 
+Weighted Avg 
+0.89 
+0.89 
+0.89 
+223,659 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Predicting default risk of lending club loans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">D</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Kondo</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Peer lending risk predictor</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ramiah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS229 Autumn</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Optimizing investment strategy in peer to peer lending</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gutierrez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Mathieson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Demystifying the workings of lending club</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pujun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Nick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Max</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Lending club statistics -lendingclub</title>
+		<ptr target="https://www.lendingclub.com/info/download-data.action" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Predict lendingclubs loan data</title>
+		<ptr target="https://rstudio-pubs-static.s3.amazonaws.com/203258_d20c1a34bc094151a0a1e4f4180c5f6f.html" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">How we measure net annualized return -lendingclub</title>
+		<ptr target="https://www.lendingclub.com/public/lendersPerformanceHelpPop.action" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<idno>abs/1412.6980</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">What is the average annual return for the s&amp;p 500</title>
+		<ptr target="https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

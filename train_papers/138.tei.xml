@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Appliance Level Energy Disaggregation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samir</forename><surname>Sen</surname></persName>
+							<email>samirsen@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fred</forename><surname>Lu</surname></persName>
+							<email>fredlu@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Appliance Level Energy Disaggregation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We build and experiment with various models for separating total electric energy usage (kWh) into usage by appliance in a given household. We formulate the task of energy disaggregation as a regression problem for each appliance, where we predict a continuous valued usage in kWh at each time step conditioned on the total energy used from m previous time steps. We note that the challenge in this task is building a predictive network that is able to learn a mapping from R → R n appliances. We therefore experiment with a sparse coding model in which we attempt to learn signatures of each home appliance that together sum to aggregate energy signal. We achieve the best results on the REDD dataset (plug-wise meter data from 6 homes) using a Random Forest model with 89% accuracy on the test set as well as our sparse coding model with 91% accuracy.</p><p>Mentor: Akhila Yerukola Code repository: https://github.com/fl16180/disaggregate-NRG</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>For years, we have watched the sticker shock of utility bills affect many around us. We know there is a meter at theback of the house that measures how much electricity we consume in total as a household and we receive a bill onceevery month. Friends and family remain in a dilemma as to what causes these bills to be so high many of the times. We scrutinized our electric bills in detail looking for clues as to why, but kilowatt hour was aggregated for the whole month. Listening in on calls my mom made to Clark Public Utilities, she inquired about what appliances specifically could be the main cause of our high bill. Although apologetic, the call center agent could offer no help despite her best effort, besidessome general energy saving tips like setting thermostats to 68 F, use efficient lighting and so on. Too general.</p><p>For our project, we experiment with and build several disaggregation models to separate total home/building electricity usage by appliance. We use the REDD dataset and formulate the task as a regression problem predicting the energy usage time series of each of n appliances given an input time series of total building energy consumption. By learning the signature for individual appliances, we hope to build a generalized model for predicting usage percentage per appliance and give an accurate estimate of a given home's energy profile.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>The development of machine learning approaches to energy disaggregation is a relatively new field of research. To a large extent, this is due to a scarcity of large-scale public datasets with buildings that have been submetered. For this reason, research in this area is often highly centered around specific datasets. In the past several years, some small-to medium-sized datasets have been presented, including the REDD dataset used in our analysis. Because the REDD dataset, released in 2011, is one of the oldest and most well-known, it serves as a reference standard for algorithm development and testing <ref type="bibr" target="#b0">[1]</ref>. For this reason, we will use this dataset. Solutions to energy disaggregation are clustered around two approaches. The first and original method is combinatorial optimization, which basically solves a subset sum problem with appliances adding up to the aggregate signal at each time interval <ref type="bibr" target="#b1">[2]</ref>. The original method models time steps as independent, which leads to a simple optimization. Nevertheless, this is an exponential-time problem and quickly becomes intractable as the number of appliances increases <ref type="bibr" target="#b2">[3]</ref>. A more recent model that has Factorial hidden Markov models (FHHM), an extension of the hidden Markov model for multiple states and multiple appliances <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b4">5]</ref>. The FHHM constructs a joint probability density such that each individual appliance is marginally a simple hidden Markov model, where the hidden states being predicted are whether the appliance is on or off. In terms of modeling accuracy, FHHM has proven itself to be state-of-the-art <ref type="bibr" target="#b2">[3]</ref>. However, it too is an exponential-time algorithm, and as of now, does not appear feasible on a large scale.</p><p>For this reason, we turn our attention to alternative approaches to energy disaggregation. In 2010, a study by Kolter, Batra, and Ng showed that a modified sparse coding methodology produced accurate disaggregation of whole-building energy signals <ref type="bibr" target="#b5">[6]</ref>. Sparse coding first learns a dictionary of atoms for each appliance, essentially decomposed time series whose span includes the original signals for that appliance. The whole-building signal is then decomposed into linear combinations of these atoms following a regularized optimization procedure. While this formulation is unsupervised, the authors developed a discriminative training step which led to improved results <ref type="bibr" target="#b5">[6]</ref>.</p><p>Despite the promising finding, few subsequent papers have applied sparse coding <ref type="bibr" target="#b6">[7]</ref>. In addition, the work centered solely on a dataset that is not publicly available. For this reason, we decided to implement their methodology and test its generalizability to the REDD dataset. We compare the result with benchmarks that we developed based on autoregressive time series models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset REDD</head><p>We used the REDD dataset for our analyses, available from <ref type="bibr" target="#b7">[8]</ref>. The data consists of six houses measured over a period of around 4-6 weeks. Each house has a building energy meter as well as separate appliance and circuit submeters. While the dataset is measured in a low frequency (1Hz) and a high frequency (15kHz), we only used the low frequency data because such data would be more widely collectable for future datasets.</p><p>The data was downloaded in a raw form and processed using tools from NILMTK, a Python library designed for the processing of energy disaggregation data <ref type="bibr" target="#b2">[3]</ref>. In this processing stage, we aggregated the data into equally spaced intervals and saved the outputs as csv files. Missing values were imputed linearly. Note that our algorithm reference paper <ref type="bibr" target="#b5">[6]</ref> used a time-scale of 1 hr, but their dataset spanned more than two years. For our much shorter dataset, we decided to aggregate in 300-second intervals using the mean. This resulted in around T = 10000 separate observations. Each house contains a varying amount of submeters. We sorted the appliances by energy usage and selected the top six for each house, so that we could train our models over a consistent set of devices.</p><p>Because we anticipated heterogeneity between houses, we decided to train the models separately for each house. Thus for buildings 2-6, the period from Apr. 19, 2011 -May 11, 2011 was designated as the training set. The period from May 12, 2011 to the end was used as the validation set for the models fitted specifically on the training set from the same building. Then once hyperparameters were tuned over the validation set, building 1 was saved as the final test set. The final configuration of the models were trained over the period Apr. 19, 2011 -May 11, 2011 on building 1, and then the period May 12, 2011 to the end was used as the final test set. Thus no tuning was done on building 1, which functions as the holdout set. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weather</head><p>We explored if adding weather data would benefit our models. Since the REDD data is collected from the Greater Boston Area, we obtained historical weather data from Boston, MA over the period Apr. 19, 2011 -June 30, 2011 from the National Centers for Environmental Information <ref type="bibr" target="#b8">[9]</ref>. We collected three variables: temperature, precipitation, and air pressure, anticipating that temperature and cloud cover would be associated with patterns of climate-control and lighting appliances. We aggregated the data to follow the same intervals as the REDD data and imputed missing values linearly.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>Suppose that for each house, there are T observations of n appliances, which we are trying to predict. Thus in this formulation, we have n different target variables, represented as Y ∈ R T ×n , with Y i representing each appliance. Following the procedure of <ref type="bibr" target="#b5">[6]</ref>, we took the sum of the appliance energies over each time step as our predictor variable X ∈ R T ×1 , the whole-home energy time series. We also have the weather matrix X ∈ R T ×3 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baselines</head><p>We formulated the baseline as n separate regressions Y i ∼ X. We first attempted a KNN model where we predict the continuous-valued kWh usage of each appliance at each time step by finding the k nearest observations that are close to the aggregated energy usage at t i . Find the k nearest neighbors over all time steps T gives us a matrix of size T × n × k, where n is the number of appliances from the training data. We then reduce along the second dimension by taking the mean of the k observations to attain a prediction for our model. We experimented with k = 3, 5, 7 as k is ideally odd and tuned our choice of k by tracking accuracy on a validation set which consisted of 10% of our training set (homes 2 -6), with home 1 as the testing home.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Time series models</head><p>We again run n separate regressions Y i ∼ X. However, instead of a single predictor variable, we constructed a 100-lag matrix X * ∈ R T ×100 , where the first column is just X, the second is X lagged by one observation, etc., since clearly a wide range of past values of the total home time series could be informative. We added weather data to the above models simply by concatenating the matrices to get [X * , X ]. We constructed three models of increasing complexity:</p><p>1. Ridge regression: This minimizes (Y − Xβ) T (Y − Xβ) + λ||β|| 2 . Because lagged predictors are highly autocorrelated, simple least squares regression would be unstable. Thus we use L 2 -regularization to stabilize the model. For each model, we fit λ over the training set using 10-fold cross-validation. 2. Support vector regression: In order to fit a higher-dimensional feature-space of the predictors using the optimal margin classifier, we used the support vector machine, with rbf kernel set at C = 1.0, = 0.1. Specifically, we use the Gaussian kernel</p><formula xml:id="formula_0">k(x i , x j ) = exp − ||x i − x j || 2 2σ 2 to map x i · x j to φ(x i ) · φ(x j )</formula><p>, where φ can be infinite-dimensional output. 3. Random forest: Although the support vector machine can fit infinite-dimensional feature-space, we used a random forest model because it is non-parametric and an ensemble, and capable of learning discontinuous patterns of features. For example, plateaus or troughs of the lag matrix over certain magnitude or duration could be highly informative of certain appliances. 100 separate decision trees were fit on the data, and the mean of the trees was used as the prediction. KNN, Ridge, SVM, and random forest were fit using scikit-learn <ref type="bibr" target="#b9">[10]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supervised sparse coding</head><p>Modeling the problem of energy disaggregation as a sum of components where we learn a mapping R =⇒ R n , we are reminded of ICA. Reading into literature, we find that Ng. et. al. <ref type="formula">(2009)</ref> apply dictionary and spare encoding matrices to attempt source separation where we learn a set of k basis functions represented by B i ∈ R T ×k for each of i = 1, ..., n class of appliance. We now, instead, design an input matrix to the model as X i ∈ R T ×m where m is the number of homes. The idea is to learn a dictionary representation that captures the signature of each appliance such that X i ≈ B i A i , where A i ∈ R k×m are activations of the basese. Thus, we are learning A * i and B * i that minimize the objective given by:</p><formula xml:id="formula_1">min Ai,Bi 1 2 ||X i − B i A i || 2 F + λ p,q (A i ) pq</formula><p>where we enforce sparsity on activation matrix A through regularization and also subject the L2 norm of ||B i || 2 ≤ 1 for each appliance i ∈ 1..n. In training, we thus perform 2 optimization steps much similar to k-means where we first initialize A and B with small positive values and for each appliance, first find the optimal A i and then treat A i as constant to optimize for B i subject to the constraints. At testing time, we store our trained dictionary of basis functions for each appliance B * and recompute the optimization for activations. We can then predict for each appliance using the dot product, B * i A i .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results and Discussion</head><p>Our primary evaluation metric was the fraction of total energy assigned correctly, defined as: n min n y n,t n,t y n,t , nŷ n,t n,tŷ n,t where y n,t is true value for appliance n at time t, andŷ n,t is the predicted value. The value ranges from 0 to 1, with 1 being perfect assignment.</p><p>We tuned the hyperparameters for KNN and ridge regression over the validation sets from houses 2-6 (see Methods for details). The other methods did not require any tuning. Refer to <ref type="table" target="#tab_0">Table 1</ref> for our model performances, and the following figures for the plotted fractions. As expected, KNN showed the poorest performance. Our time series models performed surprisingly well, even the ridge regression, which only models linear combinations of the input features. The SVM did not significantly outperform the linear model. However, the random forest showed large improvement and performs comparably wiwth the sparse coding model. This suggests that nonparametric feature modeling may be a powerful tool for energy disaggregation.</p><p>Interestingly, performance on the test set was high, especially compared to the dev set, which we believe is due to the data from building 1 being relatively more well-behaved compared to the other buildings. Thus, with or without fine-tuning,  <ref type="figure">Figure 3</ref>: Random forest prediction for lights and washer / dryer models tended to fit better on building 1. As expected due to the complex nonparametric modeling, the random forest achieves extremely accurate results over the training set but drops significantly out-of-sample, while the other time series models show less of a drop. In addition, we found that weather did not seem to influence prediction performance. Finally, sparse coding proved to be a strong-performing model, being roughly comparable to random forest.</p><p>Our finding lends support to the success of the modified sparse coding method. As its pie chart shows, it predicts each device class roughly equally well. On the other hand, the SVM is less accurate, overpredicting socket usage for example. Sparse coding also shows robustness to overfitting, which may be related to the effect of regularization, which lowers variance while introducing some bias. It is interesting that random forest simply on a matrix of lagged time series data proved to be one of the top-performing models. That may be because it is an ensemble, which increases robustness and reduces variance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>Here we have explored several algorithms for disaggregating whole home energy consumption into individual appliances. Starting with low accuracy on our baseline KNN model, we have been able to find that non-linear models such as Random Forests and Sparse coding performed the best on the prediction task with 0.91 and 0.89 accuracy on our testing home. We also experiment with data augmentation using limited amount of weather data and we hypothesize that adding a larger amount of metadata will help increase model accuracy. Seeing the relationship in previous time steps to current is non-linear, we hope to explore a few additional approaches including convolution and possibly gated recurrent networks with attention. We also note that our model may not be general training with only 6 homes in a single city, and thus hope to train our systems with a larger and more representative dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>SS and FL contributed equally to all sections of the project. In particular, Samir worked on building the sparse coding, KNN and experimental neural networks while Fred worked on building the data processing and visualization, random forest, Multi-task + Ridge Regression, SVM. Both worked on data preprocessing and augmentation as well as visualization.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>True energy disaggregation from REDD building 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>Results for models 
+Model 
+Train Dev Test 
+
+KNN 
+0.57 0.46 0.49 
+Ridge 
+0.85 0.80 0.83 
+SVM 
+0.86 0.81 0.84 
+RF 
+0.95 0.85 0.89 
+RF + weather 
+0.95 0.84 0.89 
+Sparse coding 
+0.92 0.90 0.91 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Redd: A public data set for energy disaggregation research</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zico</forename><surname>Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew J Johnson</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Workshop on Data Mining Applications in Sustainability (SIGKDD)</title>
+		<meeting><address><addrLine>San Diego, CA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Citeseer</publisher>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="59" to="62" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Nonintrusive appliance load monitoring</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George William</forename><surname>Hart</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the IEEE</title>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1870" to="1891" />
+			<date type="published" when="1992" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Nilmtk: an open source toolkit for non-intrusive load monitoring</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nipun</forename><surname>Batra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jack</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oliver</forename><surname>Parson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haimonti</forename><surname>Dutta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><surname>Knottenbelt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Rogers</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amarjeet</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mani</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 5th international conference on Future energy systems</title>
+		<meeting>the 5th international conference on Future energy systems</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="265" to="276" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Unsupervised disaggregation of low frequency power measurements</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hyungsul</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manish</forename><surname>Marwah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><surname>Arlitt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoff</forename><surname>Lyon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiawei</forename><surname>Han</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2011 SIAM international conference on data mining</title>
+		<meeting>the 2011 SIAM international conference on data mining</meeting>
+		<imprint>
+			<publisher>SIAM</publisher>
+			<date type="published" when="2011" />
+			<biblScope unit="page" from="747" to="758" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Approximate inference in additive factorial hmms with application to energy disaggregation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zico</forename><surname>Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tommi</forename><surname>Jaakkola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Artificial Intelligence and Statistics</title>
+		<imprint>
+			<date type="published" when="2012" />
+			<biblScope unit="page" from="1472" to="1482" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Energy disaggregation via discriminative sparse coding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siddharth</forename><surname>J Zico Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew Y</forename><surname>Batra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="1153" to="1161" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Energy disaggregation via learning powerlets and sparse coding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ehsan</forename><surname>Elhamifar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shankar</forename><surname>Sastry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="629" to="635" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">The reference energy disaggregation data set</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zico</forename><surname>Kolter</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">National Oceanic and Atmospheric Administration. National centers for environmental information</title>
+		<ptr target="https://www.ncdc.noaa.gov/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gaël</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandre</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bertrand</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olivier</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mathieu</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ron</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Dubourg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

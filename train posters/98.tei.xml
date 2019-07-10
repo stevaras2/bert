@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:20+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Baseline: 1-Nearest Neighbor • Calculate each category&apos;s centroid by averaging together training examples • Classify test example with closest centroid</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Baseline: 1-Nearest Neighbor • Calculate each category&apos;s centroid by averaging together training examples • Classify test example with closest centroid</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Models produced scores that were significantly higher than randomly guessing (~0.3% MAP@1 and ~0.5% MAP@3) • Running k-means with k-means++ initialization successfully produced different representations of centroids for each category (Figure 4) • Some categories produced nearly identical centroids ( <ref type="figure">Figure 5</ref>), making it difficult to classify drawings by only comparing pixels with L2 distance in KNN</p><p>• KNN with weighted votes by rank produced the highest scores out of the KNN models and provided stable performance at high k values • KNN was able to differentiate between general structures of doodles (i.e., it often guessed onion, apple, and blueberry together) • KNN models were unable to learn local features such as the stem of onions or apples that distinguish them from blueberries ( <ref type="figure">Figure 6)</ref> • CNN on the other hand utilizes the convolutional filters to learn these local features and outperformed baseline models by a large margin</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>• Experiment with advanced CNN architectures (VGG-Net, ResNet) • Train models on complete dataset along with stroke order information ○ e.g., velocity and acceleration ○ Stroke order allows for interesting RNN models • Build ensembles to achieve even higher scores  •   </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]•</head><label>1</label><figDesc>Ha, D., &amp; Eck, D. (2017). A neural representation of sketch drawings. arXiv preprint arXiv:1704.03477. Quick, Draw! • Players draw a picture of a given object • Computer attempts to guess object category Our Project: • Classify 28x28 hand-drawn doodles into 345 categories • Goal: Compare performance of KNN with CNN and discover underlying features of doodles Extension 1: KNN with Multiple Clusters • Goal: find distinct category representations • Calculate 5 centroids per category using k-means (with k-means++ initialization) • Take the top k closest centroids to use as votes for the example's classification Convolutional Neural Network Mean Average Precision @ 3 (MAP@3) • blah • U: # scored drawings in the test data • P(k): the precision at cutoff k • n: # predictions per drawing Mean Average Precision @ 1 (MAP@1) • Measures single-prediction accuracy Evaluation Extension 2: KNN with Weighted Votes • Weight centroids that are further away from the examples less • Distance weighting: w i = 1/dist[x i , c] • Ranking weighting: w i = 1/sqrt(i) Cross Validation • Randomly selected 1% of dataset • Split that into train/val/test folds with 70/15/15 distribution • Dataset sizes: ○ Training: 352,955 examples ○ Validation: 75,655 examples ○ Test: 75,832 examples [3] Kim, J., Kim, B. S., &amp; Savarese, S. (2012). Comparing image classification methods: K-nearest-neighbor and support-vector-machines. Ann Arbor, 1001, 48109-2122. [2] Lu, W., &amp; Tran, E. (2017). Free-hand Sketch Recognition Classification.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>32 Figure 1 .</head><label>321</label><figDesc>Dense layers use ReLu activation function • Dropout with rate 0.2 after each dense layer • Train over 20 epochs with 1e-3 learning rate and batch size of 32 Figure 1. MAP@3 scores plotted against different values of k for KNN++ with weighted voting (rank, distance).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>CNN loss (top) and MAP@3 scores (bottom) on training and validation set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc>MAP@3 accuracy distributions on the test set for KNN++ (weighted by rank) and CNN.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 .</head><label>1</label><figDesc>MAP@1 and MAP@3 scores for all methods on all three datasets.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

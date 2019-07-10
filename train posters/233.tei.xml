@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A &quot;generative&quot; model for computing electromagnetic field solutions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ben</forename><surname>Bartlett</surname></persName>
+							<email>benbartlett@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Applied Physics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A &quot;generative&quot; model for computing electromagnetic field solutions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model approach and architecture</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future work</head><p>• Predicting complex (non-cavity) fields -trickier to do • 3D model to "seed" iterative FDFD solver, faster performance • Generalizable dimensionality reduction for 2D/3D systems Model learns to compute fields from structure completely unsupervised</p><p>• Inputs: permittivity structure , source location (constant)</p><p>• "Generator" maps permittivity to predicted fields • "Discriminator" (non-trainable) evaluates realism of fields • Loss is Many architectures tested, best model similar to convolutional autoencoder</p><p>• Convolutional / dense / transposed convolutional, dropout(p=0.1) and ReLU (sans last)</p><p>• Model implemented in PyTorch <ref type="bibr" target="#b3">[4]</ref>, trained on NVIDIA Tesla K80</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and features</head><p>• Given an EM source in a cavity containing arbitrary permittivity distribution, predict electric field • Unsupervised training: arbitrarily many randomly generated permittivity structures, no labels needed • Validation: generate unseen permittivities, compare against FDFD results calculated using angler <ref type="bibr" target="#b2">[3]</ref> Unsupervised learning: Maxwell residual Middle 10/10000</p><p>Worst 10/10000 Generalization to untrained distribution</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Maxwell's equations in non-magnetic, uncharged linear material (typical environment):FDFD steady state solution , rearrange to solve for "Maxwell residual" expression: Element-wise measure of realism of predicted field Progression of training model on single permittivity input only: Validation, trained on 10 6 silicon/vacuum structures: (&gt;10x faster than FDFD!) Related findings 1:16 dimensionality reduction with generative model: Kernel weights for transmissivity of Si/SiO2 structures: Discussion • Training unsupervised model on single permittivity converges to FDFD results even for pathological structures • Convolutional / dense / deconvolutional architecture ideal for cavity simulations -combines local and nonlocal factors • Model performs well when trained on many permittivities, can generalize to permittivities outside training distribution • More than 10x speedup over FDFD method! • Dimensionality reduction and physical interpretability Best 10/10000</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Inversedesign and implementation of a wavelength demultiplexing grating coupler</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Piggott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M</forename><surname>Babinec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">G</forename><surname>Lagoudakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Petykiewicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vuckovic</surname></persName>
+		</author>
+		<idno type="doi">10.1038/srep07210</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Nanophotonic particle simulation and inverse design usingartificial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Peurifoy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Cano-Renteria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">G</forename><surname>Delacy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Joannopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tegmark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Soljacic</surname></persName>
+		</author>
+		<idno type="doi">10.1126/sciadv.aar4206</idno>
+		<ptr target="DOI:10.1126/sciadv.aar4206" />
+	</analytic>
+	<monogr>
+		<title level="j">Science Advances</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">23752548</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Adjoint method and inverse designfor nonlinear nanophotonic devices</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">W</forename><surname>Hughes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Minkov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">A D</forename><surname>Williamson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Fan</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1811.01255.4" />
+		<imprint>
+			<date type="published" when="2018-11" />
+		</imprint>
+	</monogr>
+	<note>arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">PyTorch: tensors and dynamic neural networks in Python with strongGPU acceleration</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">I</forename><surname>Facebook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Research</surname></persName>
+		</author>
+		<ptr target="https://pytorch.org/" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

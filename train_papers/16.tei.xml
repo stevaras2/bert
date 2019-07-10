@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HITPREDICT: PREDICTING HIT SONGS USING SPOTIFY DATA STANFORD COMPUTER SCIENCE 229: MACHINE LEARNING</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Elena</forename><surname>Georgieva</surname></persName>
+							<email>egeorgie@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Center for Computer Research in Music and Acoustics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcella</forename><surname>Suta</surname></persName>
+							<email>msuta@stanford.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicholas</forename><surname>Burton</surname></persName>
+							<email>ngburton@stanford.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">HITPREDICT: PREDICTING HIT SONGS USING SPOTIFY DATA STANFORD COMPUTER SCIENCE 229: MACHINE LEARNING</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ABSTRACT</head><p>In the current study, we approached the Hit Song Science problem, aiming to predict which songs will become Billboard Hot 100 hits. We collated a dataset of approximately 4,000 hit and non-hit songs and extracted each songs audio features from the Spotify Web API. We were able to predict the Billboard success of a song with approximately 75% accuracy on the validation set, using five machine-learning algorithms. The most successful algorithms were Logistic Regression and a Neural Network with one hidden layer.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">INTRODUCTION</head><p>The Billboard Hot 100 Chart <ref type="bibr" target="#b0">[1]</ref> remains one of the definitive ways to measure the success of a popular song. We investigated using machine learning techniques to predict whether or not a song will become a Billboard Hot 100 hit, based on its audio features. The input to each algorithm is a series of audio features of a track. We use the algorithm to output a binary prediction of whether or not the song will feature on the Billboard Hot 100.</p><p>This research is relevant to musicians and music labels. Not only will it help determine how best to produce songs to maximize their potential for becoming a hit, it could also help decide which songs could give the greatest return for investment on advertising and publicity. Furthermore, it would help artists and music labels determine which songs are unlikely to become Billboard Hot 100 hits.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">RELATED WORK</head><p>The initial idea for this research project stemmed from a New York Times article that used the Spotify audio features to illustrate the similarity of summer songs <ref type="bibr" target="#b2">[3]</ref>. Music technology companies such as The Echo Nest, ChartMetric, and Next Big Sound have been using data analytics to help artists and labels predict and track a song s success for almost a decade. This problem is referred to as Hit Song Science (HSS) in the Music Information Retrieval (MIR) field.</p><p>Machine learning is a popular research and industry tool to approach the HSS question. Researchers have used Convolutional Neural Networks <ref type="bibr" target="#b9">[10]</ref> and K-Means Clustering <ref type="bibr" target="#b5">[6]</ref> to predict pop hits. Both of these studies were engaging and successful, but focused more heavily on the signal-processing involved in audio analysis.</p><p>Another group of researchers used Support Vector Machines (SVM) to predict top 10 Dance Hits <ref type="bibr" target="#b3">[4]</ref>. By narrowing the scope of the study to only dance music, researchers were able to present a more focused work. Another study attempted to classify songs based on lyric content <ref type="bibr" target="#b6">[7]</ref>. While they successfully classified many hits, they also returned many false positives and concluded that analyzing lyrics is an ineffective approach to this problem.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Dataset and Features</head><p>A dataset of 10,000 random songs was collected from the Million Songs Dataset (MSD) <ref type="bibr">[9]</ref>, a free dataset maintained by labROSA at Columbia University and EchoNest. This was narrowed down to songs released between 1990 and 2018. Next, we collected a dataset of all unique songs that were featured on the Billboard Hot 100 between 1990-2018, using the Billboard API library <ref type="bibr" target="#b1">[2]</ref>. The datasets provided the artist name and song title, as well as other miscellaneous features. To balance the dataset between positive (hits) and negative (non-hits) examples, we removed two thirds of the songs collected from the Billboard Hot 100. Finally, we removed overlapping songs to form a dataset of approximately 4,000 songs.</p><p>Tracks were labeled 1 or 0: 1 indicating that the song was featured in the Billboard Hot 100 (between 1991-2010) and 0 indicating otherwise. Next, we used the Spotify API to extract audio features for these songs <ref type="bibr" target="#b7">[8]</ref>.</p><p>The Spotify API provides users with 13 audio features, of which we chose nine for our analysis: Danceability, Energy, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Loudness, and Tempo. The first seven features are represented as values between 0 and 1 by Spotify. Loudness is measured in decibels and tempo refers to the speed of the song in beats per minute.</p><p>To account for artist recognisability, we defined an additional metric: the artist score. Each song was assigned an artist score of 1 if the artist had a previous Billboard Hot 100 hit, and 0 otherwise. We looked back to 1986 for this metric. There is some inherent inaccuracy in this measure. If an artist had a hit song before 1986, but not after, they were given an artist score of 0.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Algorithms</head><p>To predict a song s success, we used six different machine-learning algorithms: Expectation Maximization (EM), Logistic Regression (LR), Gaussian Discriminant Analysis (GDA), Support Vector Machines (SVM), Decision Trees (DT), and Neural Networks (NN). We focused mainly on the accuracy of results, but we report the precision and recall as well. False positive predictions may be costly if a music label invests in a song that is unlikely to become a hit.</p><p>For an initial identification of clusters in the data, we used the EM algorithm assuming no labelled data, then compared the clusters to the actual labels. This algorithm creates clusters of the data, according to a specified probability distribution. In each iteration, the parameters of each cluster are calculated, and the probability of each data point being in each cluster is calculated. We used a Gaussian distribution with the following update rule.</p><formula xml:id="formula_0">w (i) j = P (z i = j)P (z i = j) K k=1 P z i = kP (z i = k) (1) θ := argmax θ m i=1 K j=1 w (i) j log P (x i , z i ; θ) w (i) j<label>(2)</label></formula><p>We then used the semi-supervised EM algorithm with the labels of a randomly selected 20 percent of the examples. This algorithm incorporates the known labels into the calculation of parameters as above.</p><p>For each supervised learning algorithm, we split the data into training and validation examples using a 75/25 split. An additional test set was not needed. We tested the accuracy against both the training and validation labels. LR and GDA both fit a decision boundary to the data. LR uses Newtons Method to maximise the logarithmic likelihood on the training set, with the following algorithm.</p><formula xml:id="formula_1">H a,b = 1/m m i=1 x (i) a x (i) b σ(θ T x (i) )(1 − σ(θ T x (i) )) (3) ∇ a l(θ) = 1/m m i=1 x (i) a y (i) − x (i) a σ(θ T x (i) )<label>(4)</label></formula><formula xml:id="formula_2">θ := θ − H −1 ∇l(θ)<label>(5)</label></formula><p>GDA fits a probability distribution to positive and negative examples, and calculates the decision boundary that maximizes the logarithmic likelihood on the training set, using the following equations.</p><formula xml:id="formula_3">P (x (i) ; θ) = 1 1 + exp(−θ T x (i) )<label>(6)</label></formula><formula xml:id="formula_4">θ := argmax θ log m i=1 P (x (i) , y (i) ; θ) = argmax θ log m i=1 P (x (i) |y (i) ; µ j , Σ)P (y (i) ; ψ) (7)</formula><p>We then used SVM, which creates a decision boundary based on the data points closest to the decision boundaries, creating support vectors. We maximize the Lagrangian on the training set with respect to values of alpha as follows.</p><formula xml:id="formula_5">m i=1 α i − 1/2 m i,j=1 y (i) y (j) α i α j &lt; x (i) , x (j) &gt; (8) α i &gt;= 0, i = 1, ..., m (9) m i=1 α i y (i) = 0<label>(10)</label></formula><p>We used three different kernels (linear, radial basis function (RBF) and polynomial), with notably different results.</p><p>DT creates a series of decision boundaries on the training set. Each boundary splits the data into two clusters (within the current cluster) at a value of a feature that minimizes the Gini loss.</p><formula xml:id="formula_6">|R 1 |L(R 1 ) + |R 2 |L(R 2 ) |R 1 | + |R 2 | (11) L(R m ) = K k=1 P mk (1 − p mk )<label>(12)</label></formula><p>Our final approach in this hit predicting problem was to use a Neural Network. We used a neural network regularization, with one hidden layer of six units and the sigmoid activation function. The L 2 regularization function was applied to the cost function to avoid over-fitting.</p><formula xml:id="formula_7">J(W ) = N i=1 (y −ŷ) + ||α 1 W 1 + α 2 W 2 || 2<label>(13)</label></formula><p>Where W 1 is the weight matrix mapping the features to the hidden layer and W 2 is the weight matrix mapping the output of the hidden layer to the final output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">RESULTS</head><p>We used accuracy, precision and recall on the training and validation sets to evaluate the performance of each algorithm ( <ref type="figure" target="#fig_1">Figure 2</ref>). Note that plots in this section show only two features: Danceability and Acousticness.</p><p>The EM algorithm gave a poor accuracy of 50.1%, with predictions on data points matching poorly to their actual labels <ref type="figure" target="#fig_0">(Figure 1)</ref>. The semi-supervised EM algorithm also gave a poor accuracy of 46.9%. We concluded that unsupervised learning algorithms are inappropriate for this supervised learning problem.</p><p>LR and GDA yielded a reasonable accuracy of 75.9% and 73.7% against the validation data, with similar accuracy against the training data indicating no overfitting. The  average cross-entropy loss was 1.372. The precision and recall on the validation set were acceptable. The confusion matrix on the validation set shows that there are some false negatives, meaning that songs that could potentially become hits could be unnoticed <ref type="figure" target="#fig_2">(Figure 3</ref>). Using random forests did not significantly improve the precision or recall. We could potentially increase the precision by collating a larger validation set with more positive examples.</p><p>For the SVM, each kernel yielded reasonable accuracy on the training data but poor accuracy on the validation data, indicating significant overfitting.</p><p>The DT algorithm can achieve full accuracy on the training data, by creating closely spaced decision boundaries that split the data perfectly. However, this is likely to cause high overfitting, with an accuracy of only 51.5% on the validation set. We used random forests to correct the SVM (linear and polynomial kernels) and DT against overfitting. Four sets of parameters were considered and the accuracy was recorded <ref type="figure" target="#fig_0">(Figure 10</ref>).</p><p>Using 10 trials of 500 random samples was the most successful measure for each algorithm. The accuracy on the training and validation sets were roughly equal, implying that overfitting was reduced significantly. Furthermore, to prevent overfitting of the DT, we experimented with different maximum depths. Using a maximum depth of n (the number of features) gave the optimal result ( <ref type="figure" target="#fig_5">Figure 6)</ref>.</p><p>The NN gives similar accuracy to LR, but interestingly generates significantly higher precision. This shows the      robustness of the NN prediction. The regularization prevented overfitting. The optimal number of epochs was investigated in order to achieve the highest accuracy ( <ref type="figure" target="#fig_6">Figure  7</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">DISCUSSION</head><p>We used LR and NN, the most successful algorithms, for further investigation. We performed error analysis for both algorithms to determine the features with the greatest influence on predictions. Ablative analysis was used, beginning with one feature and subsequently adding the features which provide the greatest improvement in accuracy, until the maximum accuracy has been achieved (features which reduced the accuracy of the prediction were subsequently removed from the analysis). This provides a ranking of the features in terms of their influence on predictions. The artist score proved to be the major feature for  LR and danceability was found to be the prominent feature for NN ( <ref type="figure" target="#fig_8">Figure 9</ref>). The features at the end of the list decreased the accuracy of predictions.</p><p>Next, we investigated seasonal effects of the algorithms, focusing on two periods: summer months (June to August) and the holiday period (November to January). By training on songs released outside of the focus period and validating on songs released in the period, we were able to identify whether the general trends in pop music in the period were different. There was no difference observed for songs released in summer, but there was a noticeable reduction in the accuracy when the algorithms were validated on the holiday set. We can conclude that the features of a hit song are different in the holiday period ( <ref type="figure" target="#fig_0">Figure 10</ref>).</p><p>We also investigated whether trends in pop music change over time. We divided the data into subsets of fiveyear periods and split each subset into training and validation sets using an 80/20 split. In most cases, the accuracy on both the training and validation set improved, implying that the features of pop music are somewhat unique to the time period of the songs release. The period from 2000 to 2004 saw a worsening of both the training and validation accuracy compared to that computed over all examples, and the period from 1995 to 1999 saw a decrease in the training accuracy <ref type="figure" target="#fig_0">(Figure 11</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">CONCLUSION AND FUTURE WORK</head><p>The analysis showed that LR and NN yielded the highest accuracy, precision and recall of the algorithms tested. SVM and DT suffered from overfitting. We would like to use more data to reduce the variability of results. Instead of using 4,000 songs, we hope to include all Billboard Hot 100 hits taken from a longer time period, and a similar number of non-hits from the MSD. Furthermore, we would like to look into additional audio features, such as duration, which was not included in this project but has the potential to predict a songs Billboard success.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Original data and EM predictions. The accuracy of the predictions is poor.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Analysis Results</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>LR Confusion Matrix on the Validation Set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Decision boundaries for LR and GDA Algo- rithms. Boundaries from the two algorithms were very similar.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Results from Bagging Using Random Forests.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>Analysis Results for Different Maximum Depth of DT.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>Accuracy of NN with increasing epoch. The peak accuracy on the validation set with regularization was achieved with approximately 19000 epochs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc>Analysis results. The LR and NN algorithms were the most successful.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 9 .</head><label>9</label><figDesc>Error analysis for the two strongest-performing algorithms.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 10 .</head><label>10</label><figDesc>Features of hit songs released in winter vary from features of other songs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 11 .</head><label>11</label><figDesc>Accuracy on the validation set for specific time periods. Accuracy improves for individual time periods, indicating that hit songs have features unique to their time period.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Billboard Hot 100 Chart</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Billboard</surname></persName>
+		</author>
+		<ptr target="https://www.billboard.com/charts/hot-100" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Why Songs of the Summer Sound the Same</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chinoy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ma</surname></persName>
+		</author>
+		<ptr target="https://www.nytimes.com/interactive/2018/08/09/opinion/do-songs-of-the-summer-sound-the-same.html" />
+	</analytic>
+	<monogr>
+		<title level="j">Nytimes.com</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Python API for Billboard Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Guo</surname></persName>
+		</author>
+		<ptr target="https://pypi.org/project/billboard.py/" />
+	</analytic>
+	<monogr>
+		<title level="j">Github.com</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Dance Hit Song Prediction</title>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of New Music Research</title>
+		<editor>Dorien Herremans, David Martens Kenneth Srensen</editor>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="291" to="302" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">The Evolution of Popular Music: USA 19602010</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mauch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">M</forename><surname>Maccallum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Leroi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>R. Soc. open sci</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Multiscale approaches to music audio feature learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sander</forename><surname>Dieleman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Schrauwen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Int. Soc. Music Information Retrieval Conf</title>
+		<meeting>Int. Soc. Music Information Retrieval Conf</meeting>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page">116121</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Hit song detection using lyric features alone</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abhishek</forename><surname>Singhi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><forename type="middle">G</forename><surname>Brown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Society for Music Information Retrieval</title>
+		<meeting>International Society for Music Information Retrieval</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<ptr target="https://developer.spotify.com/" />
+	</analytic>
+	<monogr>
+		<title level="j">Spotify Web API</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The Million Song Dataset</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Thierry Bertin-Mahieux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">W</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Whitman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lamere</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th International Society for Music Information Retrieval Conference</title>
+		<meeting>the 12th International Society for Music Information Retrieval Conference</meeting>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+	<note>ISMIR 2011</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Hit Song Prediction for Pop Music by Siamese CNN with Ranking Loss</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lang-Chi</forename><surname>Yu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1710.10814</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Marcella collected song information from the Million Song Database and developed the neural network. Elena collected data from the Billboard API and coordinated the creation of the poster and final report. Nicholas collected audio features from the Spotify API and developed the unsupervised and supervised learning algorithms</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Link</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Code</surname></persName>
+		</author>
+		<ptr target="https://tinyurl.com/yb6cvtek" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

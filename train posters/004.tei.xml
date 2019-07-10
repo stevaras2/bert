@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Driver Behavior with Convolutional Neural Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Diveesh</forename><surname>Singh</surname></persName>
+							<email>diveesh@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predicting Driver Behavior with Convolutional Neural Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Initial Results Problem</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>With the number of car accidents rapidly increasing, insurance companies need to ensure that they are keeping their prices and policies up to date. It can help to know the cause of accidents, so they can provide better coverage. By using Convolutional Neural Networks, we can train various models to look at pictures of drivers and predict what they are doing. The approach</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Dataset</head><p>The data was obtained through State Farm Insurance via the Kaggle website. The dataset consists of about 4GB worth of photos, where each photo belongs to one of 10 classes. The classes are as follows: Safe Driving, Texting -Right, Talking on the Phone -Right, Texting -Left, Talking on the Phone -Left, Operating the Radio, Drinking, Reaching Behind, Hair and Makeup, and Talking to Passenger. The data is divided up into groups, where each group contains multiple frames of a timelapse</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Experimentation and Formulas</head><p>We performed training for 5 epochs on both models using the softmax approach and a reduced version of the training set. Using the accuracy metric provided below, we obtained a training loss of 14.387 and a validation loss of 14.399 with the first approach; the second approach gave us very similar results, which makes sense as 5 epochs of training is not a lot Based on the dataset, there were 2 main approaches to designing a model. The first approach was a basic 10-layer CNN that was trained from scratch solely on the provided dataset, where each picture was treated as an individual training example. The second approach was to take a pretrained CNN (VGGNet-19) and then perform transfer learning on our dataset, still treating each picture as an individual training example assigned to a specific class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion and Future Work References</head><p>We trained the both models from approach #1 and approach #2 for 25 epochs, with a training set of approximately 10,000 training examples, divided evenly from each class. We used a validation split of 0.2. After training for 25 epochs, approach #1 gave us a training loss of 13.985 and a validation loss of 14.082, which was not much better than the results obtained from 5 epochs. Approach #2 gave us a training loss of 11.445 after 20 epochs and a validation loss of 11.923. Below are the loss graphs Further Experimentation</p><p>[1] Karpathy, Andrej. Large Scale Video Classification Using Convolutional Neural Networks Initially, both models used a softmax activation on the final layer The accuracy metric that was used to evaluate the model was</p><p>The above loss function is very similar to the loss function for categorical cross entropy Experimenting with the learning rate could prove fruitful, as training a model from scratch (approach #1) may require a decaying learning rate. Also, the dataset is not just a conglomerate of individual pictures, but is also divided up into segments, where each segment contains an individual frame of a video. Taking advantage of this by using techniques like Early Fusion, Late Fusion, and Slow Fusion 1 would also be fruitful</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Data / Problem Formulation Experiments Conclusions Future Work Analysis and Evaluation Appliance Level Energy Disaggregation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samir</forename><surname>Sen</surname></persName>
+							<email>samirsen@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fred</forename><surname>Lu</surname></persName>
+							<email>fredlu@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Data / Problem Formulation Experiments Conclusions Future Work Analysis and Evaluation Appliance Level Energy Disaggregation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>• Successfully implemented a variety of predictive networks for disaggregating home energy data</p><p>• Model can decipher appliance identity conditioned on aggregate energy over previous time steps</p><p>• Nonlinear models are able to capture more sophisticated dependencies, as hypothesized.</p><p>• Generalizability remains a challenge </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>KNN Inference</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>True Predicted</head><p>Regression SVM Approach -Train a separate models for each class of appliance into a dictionary. Use these models to separate aggregate signal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Loss =</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>True Predicted</head><p>Learned Appliance Signatures -Sparse coding network predicts each appliances' time series. Through our base lines, we see that linear models perform poorly.</p><p>-Seeking to capture nonlinear relationships, we find that SVMs, Neural Networks and Sparse Coding are able to better identify each appliances' signature.</p><p>-We also find that adding more meaningful features (boston weather data) helps build a more powerful predictive network. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>o The way we think about energy is in need of reform! o Even with the rise of smart meters, we have very limited information of the way we consume energy</figDesc><table>o In Roble alone, utility bills have exceeded over $4 
+million over the past 10 years 
+
+o Every winter, Roble saves 1000 metric tons CO2 
+
+o How can we conserve our energy and save money? 
+
+• Gather larger dataset representative of true population 
+• Utilize user metadata as predictive features 
+• Experiment with RNN to capture temporal dependence 
+• Experiment with ensembling 
+
+Sparse Coding Network 
+
+Base Modeling 
+Model Performance 
+
+-We monitor model loss for sparse coding, the frobenius norm between 
+the sparse reconstruction of the electricity usage time series 
+
+Dictionary Loss 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Train / Test Accuracy</figDesc><table>Model 
+Train Acc 
+Test Acc 
+
+KNN 
+56.94% 
+45.68% 
+
+Regression 
+73.72% 
+68.54% 
+
+SVM 
+82.18% 
+78.22% 
+
+Sparse Coding 
+92.89% 
+90.14% </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Project Report</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laura</forename><surname>Miron</surname></persName>
+							<email>lmiron@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benoit</forename><surname>Pit-Claudel</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">CS229 Project Report</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>A primary goal in biology is to fully understand the mechanisms by which DNA, specifically the coding sections or genes, control all biological processes within every organism. Two main obstacles to this goal are: (i) laboratory methods for definitively determining the function of a gene can require years and hundreds of thousands of dollars in research for even a single gene, and (ii) historically, independent research groups have not followed the same system for categorizing and labelling gene function, making sharing data across group prohibitively difficult. Recently, however, the scientific community has come to recognize the Gene Ontology (GO) hierarchy <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref> maintained by the Gene Ontology Consortium as a unified standard for gene annotations, and great strides have been made in applying machine learning techniques to predicting gene function and GO annotations programmatically, based on a number of possible features such as sequence, pairwise interaction data, presence of histone markers, microarray gene expression data, and more. This paper replicates results from "Hierarchical multilabel prediction of gene function" by Zafer <ref type="bibr">Barutcuoglu et al., 2006 [3]</ref>, which proposes a novel way of predicting GO labels for genes from Saccharomyces cerevisiae (yeast), by training individual support vector machine (SVM) classifiers for each node of the GO, predicting membership or non-membership for input genes. Other papers publish similar techniques for using SVMs to predict functional annotation, however, the central insight of <ref type="bibr">Barutcuoglu et al.</ref> is that the hierarchical nature of the GO can be leveraged to improve the accuracy of the SVM predictions by constructing a Bayes net from the SVM results for each GO node, and making a single prediction for each input about membership/non-membership to all classes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Data Collection and Processing</head><p>Training examples were constructed by combining pairwise interaction and microarray expression data for each of 5493 yeast genes (all genes for which relevant data was available), and labeled according to their GO annotationssee <ref type="table">table 1</ref> for a summary of the properties of the datasets used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Gene Ontology Labels</head><p>The GO is a directed, acyclic graph where each node consists of a term name, a unique alphanumeric identifier, a definition with cited sources, and a namespace to which it belongs. The three namespaces are cellular component, the parts of a cell or its extracellular environment, molecular function, the elemental activities of a gene product at the molecular level, and biological process, operations or sets of molecular events with a defined beginning and end, pertinent to the functioning of cells, tissues, and organisms.</p><p>GO annotation data from UniProtKB <ref type="bibr" target="#b3">[4]</ref> was used, with additional node relationships drawn from the GO graph downloaded from the GO Consortium website 1 (go-basic.obo) and parsed with Obonet <ref type="bibr" target="#b4">[5]</ref> as a Networkx <ref type="bibr" target="#b5">[6]</ref> object. An important note is that GO definitions are constantly updated based on new biological discoveries. Since the publication of Barutcuoglu et al., several ids have been renamed, deemed to be duplicates of existing ids, or retired. UniProtKB was used to update go ids from all the data sources to be consistent with the newest version of the GO; this processing might have been a key contributor to the improved accuracy of the presented predictions versus <ref type="bibr">Barutcuoglu et al.</ref> Each data point has 95 labels, describing whether the gene has been annotated or not with each of the 95 nodes of the GO included in this study. Of the 1000 nodes in the GO which have direct annotations for yeast, this paper considers only the 95 nodes that correspond to the 105 selected in <ref type="bibr" target="#b2">[3]</ref> in the last version of the GO hierarchy, in accordance with their reasoning that these nodes have both a reasonable number of annotations (at least 1 direct and 15 total) and are specific enough to have some biological significance if a new gene were predicted to belong there. All chosen nodes are drawn from the biological process hierarchy of the GO, so while some edges in the full ontology represent relationships across domains, within the obtained graph every edge represents a parent-child relationship where the parent describes a superset of the functions described in each child.</p><p>The training labels take the valuesŷ j ∈ {−1, 0, 1}. A gene is a positive example of both the most specific nodes to which it is annotated, and all parents of that node. This propagation accurately captures the hierarchical nature of the GO, increases the available number of positive training examples for each class, and ensures that all training labels are hierarchically consistent by definition.</p><p>Because GO annotations are almost exclusively positive, and typical machine learning algorithms require a balanced amount of positive and negative examples, all examples not annotated to a particular node or any of its parents were labeled to be a negative example. Thus, a gene that is annotated to a parent of class i, but not to class i is considered a 0 example, and is left out of the training set for the ensemble of SVMs for node i.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">BioGRID Data</head><p>While Barutcuoglu et al used a BioGRID <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref> dataset of interactions among yeast genes filtered on specific types of interaction, this paper considers all of the recorded interaction data, regardless of the type of interaction. This choice was primarily due to the numerous changes in interaction type classifications, which rendered their filtering obsolete.</p><p>BioGRID datasets each include a certain number of experience records; each interaction type corresponds to a certain type of experiment. Each record includes -The two genes interacting with each other, using different types of labelling (NCBI classification, also known as entrez gene IDs, or formerly LocusLink <ref type="bibr" target="#b8">[9]</ref>, Bio-GRID ID, as well as their aliases in these classifications),</p><p>-The publication that showed this interaction, -The Taxonomy ID <ref type="bibr" target="#b8">[9]</ref> uniquely identifying the specie in which the interaction was observed.</p><p>-The specific interaction type, using the Molecular Interactions Controlled Vocabulary <ref type="bibr" target="#b9">[10]</ref>, Pairwise interaction data is typically represented as a square boolean matrix with genes along both axes, where a nonzero entry denotes an interaction exists between the row gene and the column gene. Each column of this matrix was treated as a feature vector for an example, with the existence or non-existence of an interaction with each other example forming the features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Microarrays</head><p>DNA microarrays are grids of microscopic spots containing DNA probes subjected to various experimental conditions and used to measure gene expression levels. Microarray datasets are real-valued matrices where the rows are genes or other DNA snips, and the columns are standardized conditions. The microarray data was retrieved from several sources <ref type="bibr">(Chu et</ref>   <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15]</ref>), obtained through the NBCI Gene Expression Omnibus <ref type="bibr" target="#b8">[9]</ref>. </p><note type="other">From these datasets, 161 features were selected, corresponding to experimental conditions for which data is available for all 5493 training examples. For each example, this real-valued 161 degree feature vector was concatenated with the BioGRID feature vector. Due to experimental imperfections, microarray results often include missing values. These values were filled in using the KNNimpute which had been proven effective by Troyanskaya et al., 2001 [16] with k = 15. A separate KNN model was created for each feature using scikit.learn [17], trained on all examples that are not null in that feature. The training examples for each KNN model are additionally preprocessed by replacing other null features with the class average for that feature</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Statistical Methods</head><p>The method presented in this section is similar to the one presented by Barutcuoglu et al. It consists in using Bayesian inference on separately trained SVM classifiers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">SVM Classifiers on Individual GO Nodes</head><p>First, individual support vector machines are trained for each of the 95 chosen GO nodes. SVM classifiers are machine learning methods that separates positive and negative examples with a linear decision boundary or hyperplane, in a feature space. The scikit.learn implementation of SVMs was used, and experiment with both linear and RBFkernel SVMs using various γ and C parameter values. Results of these tests are presented in section 4.1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Dev/Tests Sets Given Few Positive Examples</head><p>Since a validation set was needed, but the total number of positive examples for each class is relatively small, bootstrapping (random sampling with replacement) is used to create 10 samples for each classifier, each using 0.632 of the full set of training examples. At test time, each test example is evaluated only on the classifiers for which it is not part of the training set and labeled according to the median of the 10 predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Bayesian Inference</head><p>After training the individual classifiers, a Bayes net representing the 93-node GO hierarchy is constructed, with two Bayes nodes for each GO node, whereŷ i represents the SVM prediction for node i and y i represents true membership in class i, as illustrated by figure 2.</p><p>P (ŷ i | y i ) is estimated with maximum likelihood estimation during SVM training. P (y i = 1 | anychild(y i ) = 1) is assumed to be 1.0 before Laplace smoothing, since training labels are enforced to be hierarchically consistent, i.e. if a training example is positive for any child class, it is guaranteed to be positive for its parent classes.</p><p>Finally, exact inference is performed using pgmpy <ref type="bibr" target="#b17">[18]</ref>. For each test example, eachŷ i is assigned according to the SVM predictions for that example, and the assignment of all y i that maximizes the joint distribution P (y 1 , y 2 , ..., y i ) is found. By enforcing consistency among predictions for different nodes for a single input example the Bayes net predictions improve the accuracy of the SVM classifier predictions alone.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results and Discussion</head><p>The results presented in this section show significant improvement compared to Barutcuoglu et al., both for the SVM node classifiers considered separately, and for the Bayesian network made of all these nodes. Some biological functions reached an accuracy of 1 over the more than 1,000 test examples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">SVM</head><p>Grid search was applied on the most represented GO node (GO:0045944, positive regulation of transcription by RNA polymerase II) to find the optimal kernel and the optimal penalty parameter for the error term. Heatmaps of these grid searchs are presented in <ref type="figure" target="#fig_1">figure 1</ref>.</p><p>The scores were computed using a 10 fold cross validation using scikit-learn <ref type="bibr" target="#b16">[17]</ref> implementation of SVMs and accuracy and area under the receiver operating characteristic (AUROC) scores.</p><p>AUROC represents the probability that a random positive example will be ranked higher by the classifier than a random negative example. Given datasets with a small fraction of positive examples, it is possible to achieve a high accuracy simply by classifying every example as negative, and the AUROC score is therefore a better measure of the performance of a classifier.</p><p>Precision and recall were computed counting the number of correctly and incorrectly classified positive and negative examples.</p><p>Since the implementation includes a Bayesian network, and since the number of positive examples is small compared to the number of negative examples, it is mostly important to classify as many positive examples as positive. Indeed, the Bayesian network will have an easier time correcting false positives than false negatives. Therefore, the kernel that maximizes the recall was selected, i.e. linear kernel with C ∼ 1000. Using these values, the precision was multiplied by more than 2.5 and the recall by 10 when compared to the results from Barutcuoglu et al. The average obtained accuracy over all the GO nodes is over 97.7%, and the average AUROC is over 0.787.</p><p>It is interesting to note that Barutcuoglu et al. used high C value, and an RBF kernel. While the high C value is to be expected, given, as they noted, the high number of features compared with the number of examples, the fact a different kernel was found to be the most efficient could possibly be explained by the updates to the datasets over the years: more experiments were made, giving classifiers used in this project more training examples -Barutcuoglu et al. acknowledge "noisy data" as a reason for wrongly predicted examples.</p><p>In particular, the choice made in this paper to include all types of interactions, initially based on the fact that the interaction types singled out by Barutcuoglu et al. were obsolete, seems to have had a very positive impact on the final results.</p><p>Another explanation could come from the updates to the GO classification: as mentioned in section 2.1, the 105 GO nodes selected by Barutcuoglu et al. correspond in the current classification to 95 nodes; equivalent functions have been united in single nodes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Bayesian Results</head><p>Due to time and computational constraints, as well as having to solve several bugs in the pgmpy code base, the Bayes net prediction code was only run on the subset of GO nodes presented in <ref type="figure">figure 3</ref>. The accuracy and AUROC score on this subset of GO nodes, are displayed in table 2.</p><p>The Bayes net predictions universally improved upon both the accuracy and AUROC score of the SVM classifiers alone. Although the accuracy was already very high for the SVMs alone, the AUROC was not, and the Bayes net provided significant improvement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusion</head><p>This paper successfully reproduced the method developed in Barutcuoglu et al. <ref type="bibr" target="#b2">[3]</ref> to classify gene functions using machine learning. The results obtained are very promising in that they show that it is possible to predict almost    perfectly gene functions based on interaction and microarray data only (thus not using other data such as colocalization data-where the gene is expressed-or transcription factor binding sites data-with which other genes is a specific gene expressed). The implementation of Barutcuoglu et al. presented in this paper achieved far better score than those presented in the original paper. Reasons for these vast improvements may include, among others, more comprehensive datasets, and slightly different choices in data selection.</p><p>An interesting future step would be to try to apply this model to both more complex species-for example humans, and less studied ones-for example newly discovered species. Since the number of features was important com-pared with the number of training examples, it is possible that the model presented in this paper does some overfitting. Classifying genes from another specie would therefore probably require the model to be retrained, even for the features share by this specie and the yeast.</p><p>While this model reduces the amount of experiments needed to determine the functions of all the genes of a specie, it still requires a large amount of experiments. Especially for newly discovered species, it would be interesting to determine the threshold in terms of the number of experiments required to achieve good accuracy, i.e. the most significant features, in order to limit the amount of biological experiments needed, and thus reduce the cost and length of the process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Code and Contributions</head><p>Code: https://github.com/BenoitPitClaudel/CS229 Laura: selection of paper to replicate, collection and processing of microarray data, implementation of Bayes net predict (and all code in project.py), contributed to poster and writeup.</p><p>Benoit: collection and processing of GO annotations, collection and processing of BioGRID pairwise interaction data, SVM experiments and parameter selection, contributed to poster and writeup.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Comparison of SVM performance depending on parameters. Scale from violet (low score, minimum at 0), to bright yellow (high score, maximum at 1, for example the precision of all the RBF kernel SVM).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :Figure 3 :</head><label>23</label><figDesc>Structure of Bayes net.ŷ i represent SVM pre- dictions, y i represent the true label of the input example for GO node i [3]Figure 3: Subtree of GO nodes used in Bayesian predictions (some ids are from out of data GO)<ref type="bibr" target="#b2">[3]</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>al., 1998[11]; Spellman et al., 1998[12]; Sudarsanam et al., 2000[13]; Gasch et al., 2000</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>.</figDesc><table>Dataset 
+
+BioGRID Microarray 
+data 
+
+Final 
+
+Number of different 
+genes represented 
+
+7,157 
+5493 
+5395 
+
+Number of positive 
+interactions 
+
+738,333 -
+737,000 
+
+Datatype 
+Boolean Float 
+Mix 
+
+Table 1: Summary of properties for the datasets used in this 
+study. The final number of genes is the intersection of com-
+mon genes represented in both datasets. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 2 :</head><label>2</label><figDesc>Accurary and AUROC scores for SVM classifiers alone versus Bayes net predictions for selected GO nodes</figDesc><table></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">http://www.geneontology.org/page/ download-ontology</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Gene ontology: tool for the unification of biology. The Gene Ontology Consortium</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Ashburner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">A</forename><surname>Ball</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">A</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Butler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">M</forename><surname>Cherry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">P</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Dolinski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">S</forename><surname>Dwight</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">T</forename><surname>Eppig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Harris</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Hill</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Issel-Tarver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kasarskis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Matese</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Richardson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Ringwald</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">M</forename><surname>Rubin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Sherlock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Genet</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="25" to="29" />
+			<date type="published" when="2000-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Expansion of the Gene Ontology knowledgebase and resources</title>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="331" to="338" />
+			<date type="published" when="2017-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Troyanskaya. Hierarchical multi-label prediction of gene function</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zafer</forename><surname>Barutcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><forename type="middle">E</forename><surname>Schapire</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olga</forename><forename type="middle">G</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="830" to="836" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Uniprot: the universal protein knowledgebase</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>The Uniprot Consortium</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="158" to="169" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Obonet</surname></persName>
+		</author>
+		<ptr target="https://pypi.org/project/obonet/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Networkx</surname></persName>
+		</author>
+		<ptr target="https://networkx.github.io/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The BioGRID interaction database: 2017 update</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Chatr-Aryamontri</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Oughtred</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Boucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Rust</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">K</forename><surname>Kolas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>O&amp;apos;donnell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Oster</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Theesfeld</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Sellam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Breitkreutz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Dolinski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tyers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="369" to="379" />
+			<date type="published" when="2017-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">BioGRID: a general repository for interaction datasets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Breitkreutz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Reguly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Boucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Breitkreutz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tyers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="535" to="539" />
+			<date type="published" when="2006-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Ncbi geo: archive for functional genomics data sets-update</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tanya</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><forename type="middle">E</forename><surname>Wilhite</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pierre</forename><surname>Ledoux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carlos</forename><surname>Evangelista</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Irene</forename><forename type="middle">F</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maxim</forename><surname>Tomashevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kimberly</forename><forename type="middle">A</forename><surname>Marshall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katherine</forename><forename type="middle">H</forename><surname>Phillippy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patti</forename><forename type="middle">M</forename><surname>Sherman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michelle</forename><surname>Holko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrey</forename><surname>Yefanov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hyeseung</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Naigong</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cynthia</forename><forename type="middle">L</forename><surname>Robertson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="991" to="995" />
+			<date type="published" when="2013" />
+			<publisher>Sean Davis, and Alexandra Soboleva</publisher>
+		</imprint>
+	</monogr>
+	<note>Nadezhda Serova</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title/>
+		<ptr target="https://www.ebi.ac.uk/ols/ontologies/mi" />
+	</analytic>
+	<monogr>
+		<title level="j">European bioinformatics institute</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">The transcriptional program of sporulation in budding yeast</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Derisi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Eisen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Mulholland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">O</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Herskowitz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">282</biblScope>
+			<biblScope unit="issue">5389</biblScope>
+			<biblScope unit="page" from="699" to="705" />
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Comprehensive identification of cell cycleregulated genes of the yeast saccharomyces cerevisiae by microarray hybridization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><forename type="middle">T</forename><surname>Spellman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gavin</forename><surname>Sherlock</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vishwanath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kirk</forename><surname>Iyer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">B</forename><surname>Anders</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patrick</forename><forename type="middle">O</forename><surname>Eisen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bruce</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gerald</forename><forename type="middle">R</forename><surname>Futcher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Fink</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Biology of the Cell</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">9843569</biblScope>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Whole-genome expression analysis of snf/swi mutants of saccharomyces cerevisiae</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Priya</forename><surname>Sudarsanam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vishwanath</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patrick</forename><forename type="middle">O</forename><surname>Iyer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fred</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Winston</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="3364" to="3369" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Genomic expression programs in the response of yeast cells to environmental changes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Audrey</forename><forename type="middle">P</forename><surname>Gasch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><forename type="middle">T</forename><surname>Spellman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Camilla</forename><forename type="middle">M</forename><surname>Kao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Orna</forename><surname>Carmel-Harel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">B</forename><surname>Eisen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gisela</forename><surname>Storz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patrick</forename><forename type="middle">O</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pamela</forename><forename type="middle">A</forename><surname>Silver</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Biology of the Cell</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="4241" to="4257" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Genomic expression responses to dna-damaging agents and the regulatory role of the yeast atr homolog mec1p</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Audrey</forename><forename type="middle">P</forename><surname>Gasch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mingxia</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sandra</forename><surname>Metzner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><forename type="middle">J</forename><surname>Elledge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Patrick</forename><forename type="middle">O</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Walter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Biology of the Cell</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">11598186</biblScope>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Missing value estimation methods for dna microarrays</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olga</forename><surname>Troyanskaya</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Cantor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gavin</forename><surname>Sherlock</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pat</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Russ</forename><forename type="middle">B</forename><surname>Altman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ankur</forename><surname>Ankan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pgmpy</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

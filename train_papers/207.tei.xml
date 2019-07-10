@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Data-Driven Approach for Predicting the Elastic Properties of Inorganic Materials Final Project</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Camila</forename><surname>Cendra</surname></persName>
+							<email>ccendra@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Materials Science and Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Data-Driven Approach for Predicting the Elastic Properties of Inorganic Materials Final Project</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Rational design of application-specific materials is the ultimate goal of modern materials science and engineering <ref type="bibr" target="#b0">[1]</ref> . Both materials discovery and materials' properties prediction in silico are very active areas of research; currently, large data sets of materials properties obtained from firstprinciple computational methods are being developed <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3]</ref> .</p><p>Nevertheless, first-principle calculations require tremendous amounts of computational resources <ref type="bibr" target="#b6">[4]</ref> . Machine Learning (ML) methods can provide a way to tackle this computational bottleneck: materials properties can be quickly predicted using a trained ML model, enabling accelerated materials discovery and faster and cheaper development of materials for novel applications.</p><p>One intrinsic property of substantial relevance in the screening of materials for novel applications is the material's elastic modulus, which describes the response of the material to external forces. Furthermore, it correlates with many of the material's mechanical and thermal properties <ref type="bibr" target="#b7">[5]</ref> . The goal of this project is to aid in the rapid design and screening of new materials by bypassing the need for first-principle computational methods and, instead, use fast supervised ML algorithms to predict the elastic modulus. We use linear regression, a simple neural network, and a random forest regressor to output the predicted elastic modulus.</p><p>Our ML models work by performing a preprocessing step to generate a set of descriptive attributes as input features (X): using well-known atomic properties, we generate a list of chemical and physical descriptors. The true labels of the model during training (Y) are the elastic moduli calculated from first-principle computations. We show that simple ML algorithms can be used to predict elastic moduli with relatively high accuracy, achieving a coefficient of correlation of 0.9 and low RMSE.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>To date, several repositories containing materials data have been developed <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b8">6,</ref><ref type="bibr" target="#b9">7]</ref> , including a dataset with the complete elastic properties of inorganic crystalline compounds <ref type="bibr" target="#b7">[5]</ref> . The emergence of comprehensive databases of materials properties is enabling machine learning approaches to quickly predict properties of new materials systems <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b10">8]</ref> . Previous work in the field has shown that ML models can be used to predict a variety of material properties, such as the enthalpy of formation of crystalline compounds <ref type="bibr" target="#b11">[9]</ref> , bandgap energies of certain classes of crystals <ref type="bibr" target="#b12">[10]</ref> , vibrational free energies and entropies of crystalline materials <ref type="bibr" target="#b6">[4]</ref> , and mechanical properties of metallic alloys <ref type="bibr" target="#b13">[11,</ref><ref type="bibr" target="#b14">12]</ref> , among others.</p><p>Previous examples of ML models for materials properties are constructed from three parts: training data, a set of attributes that describe each material, and a ML algorithm to map attributes to predicted properties. Different sets of descriptive attributes have been designed, proposed <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b6">4]</ref> , and successfully used to uniquely describe each material in the dataset, and they are generally related to fundamental physical and chemical properties of the material of interest. For instance, Zhang et al. <ref type="bibr" target="#b12">[10]</ref> used a series of manually crafted chemical parameters as descriptive attributes to model the band gaps of binary semiconductors from a small dataset, achieving a Pearson correlation coefficient (r) of 0.86. On similar lines, Legrain et al. <ref type="bibr" target="#b6">[4]</ref> recently analyzed the effect of different classes of descriptors in predicting the vibrational free energies and entropies of inorganic solids, revealing that, for large databases a set of descriptors simply based on the compound's chemical formula is able to predict vibrational entropies quite accurately, whereas smaller databases require additional and more elaborate descriptors. Overall, previous work shows that a wide range of materials properties can be successfully predicted by defining a set of <ref type="bibr" target="#b0">1</ref> Citrine Informatics: https://citrine.io/ descriptive attributes. In this work, we use the guidelines described above to generate a set of descriptive attributes in order to predict the elastic modulus.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and Feature Extraction</head><p>As shown in <ref type="figure">Figure 1</ref>, two datasets were utilized to extract the features and true labels for our ML models. The first dataset is a large materials database obtained from the Materials Project <ref type="bibr" target="#b2">[3]</ref> and it was curated by Citrine Informatics <ref type="bibr" target="#b0">1</ref>   <ref type="figure">Figure 1</ref>. Schematic representation of the dataset and feature generation for training of the ML models. Two parameters are extracted from the materials database (blue box): true elastic modulus and the chemical name of the material (e.g. aluminum oxide, Al2O3). Using well-known elemental properties (red box) and the chemical formulation of the material, a set of descriptive attributes are generated. The ML models are then trained using as features descriptive attributes and as labels the elastic modulus for a given material in the training set.</p><p>The elastic modulus distribution of the dataset is shown in <ref type="figure" target="#fig_0">Figure 2</ref>. The second dataset is a periodic table of elements including commonly known chemical and physical properties, which was obtained from the web 2 and manually completed. An algorithm was developed to generate a set of descriptive attributes (input X) based on the chemical composition of the material and is further described below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Descriptive Attributes</head><p>The features (X) of the ML models consist of 135 descriptive attributes, 118 of which encode the particular chemical composition under consideration and 17 of which encode heuristic quantities developed using chemical intuition <ref type="bibr" target="#b11">[9]</ref> . For example, in aluminum oxide (Al2O3), only two of the 118 descriptive attributes are non-zero (Al_fraction = 0.4, O_fraction = 0.6). The remainder 17 descriptive attributes are heuristic quantities <ref type="bibr" target="#b11">[9]</ref> obtained for the material:</p><p> Average atomic mass  Average column on the periodic </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Data Preprocessing</head><p>After generating a set of descriptive features (X) for the materials database, the data was split into a 3939/537/632 train/test/dev set. The X matrix was standardized to zero mean and unit variance using the training data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head><p>We used three models available from the sklearn Python package <ref type="bibr" target="#b15">[13]</ref> : Ridge Regression (RR), Multi-layer Perceptron (MLP) and Random Forest Regressor (RFR).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Ridge Regression</head><p>Ridge regression was used as a benchmark model and it consists of a linear model that minimizes the least squares loss while penalizing the size of the coefficients. The normal equation is as follows:</p><formula xml:id="formula_0">= ( + )</formula><p>where is the identity matrix of size 135x135 and is a pre-chosen penalty term (here, = 0.5).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Multi-layer Perceptron</head><p>MLP is a fully-connected neural network (NN) consisting of at least three layers of nodes: an input layer, a hidden layer, and an output layer. Briefly, in a NN the input layer receives features (X) which are put into linear combination and fed into neurons in the hidden layer(s), where they are passed into an activation function; in our case, we decided to use a single hidden layer with a rectified linear unit (ReLU) activation function. The outcomes of the hidden layer(s) are then put into linear combination and fed into the output layer. As common in regression problems, we used an identity function for the output layer. Training of the NN is carried out through backpropagation, which allows for minimization of the square error loss function:</p><formula xml:id="formula_1">( , ) = 1 2 ‖ − ‖ + 2 ‖ ‖</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Random Forest Regressor</head><p>RFR is a type of ensembling technique that fits decision trees on subsets of a dataset and uses averaging over the decision trees to improve accuracy of the predictions. Optimization of the number of trees and maximum depth was performed <ref type="figure" target="#fig_1">(Figure 3)</ref>, revealing that the model's performance on the validation set depends on the maximum depth. For our model, we utilized 100 trees and a conservative maximum depth of 15.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Evaluation Metrics</head><p>10-fold cross validation (CV) was used to evaluate model performance. The advantage of CV is that all the instances in the dataset are tested once using a model that did not see that instance while training. The elastic moduli database was randomly divided into 10 segments. 9 segments were used to fit the model and the remaining segment was used to test the model. This procedure was repeated 10 times with different segments. The evaluation criteria employed to evaluate the predictive performance of the models are the coefficient of correlation (r) and the Root-Mean-Squared-Error (RMSE). They are defined as follows:</p><formula xml:id="formula_2">= ∑ − ( − ) ∑ − ∑ ( − ) = ∑ ( − )</formula><p>where and are the predicted and target elastic modulus, respectively, and and are the mean of the predicted and target elastic modulus.</p><p>is the number of samples. The coefficient of correlation is a measure of the strength of the relationship between the predicted and the measured values, determining the accuracy of the fitting model (i.e. r = 1 shows a perfect positive correlation). RMSE is an error measurement, with smaller error indicating a better prediction accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head><p>Parity plots reflect the performance of the models <ref type="figure" target="#fig_2">(Figure 4)</ref>. From RR, we can see that the predicted values are somewhat scattered, with decaying accuracy both in the test and train sets for materials with high elastic modulus. For MLP we see a tendency to overfitting, with training points very close to actual values and test points slightly scattered. In the RFR, there is a slight scattering tendency for the test points, though much reduced in comparison to MLP. This is possibly due to the low risk of overfitting random forests. Like RR, the RFR model presents  <ref type="table" target="#tab_1">Table 1</ref> shows the evaluation metrics of the different models. Overall, MLP and RFR exhibit good and comparable performance, with low RMSE and high coefficients of correlation. The performance achieved in this work is in agreement with previous studies using sets of descriptive attributes to predict properties of materials using ML models <ref type="bibr" target="#b6">[4,</ref><ref type="bibr" target="#b12">10,</ref><ref type="bibr" target="#b17">14]</ref> .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusions and Future Work</head><p>We have demonstrated promising results for predicting the elastic modulus of inorganic materials from a set of descriptive attributes which can be readily obtained for any chemical composition. Both MLP and RFR are suitable predictors given the chosen descriptive attributes.</p><p>There are many possible routes for future work. The most straightforward route consists on predicting other elastic properties using the developed set of descriptors, such as the shear modulus. Longer-term approaches can focus on implementing advanced ensembling algorithms and partitioning the dataset into groups of similar materials to boost predictive accuracy.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Elastic modulus distribution across the dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Parameter optimization of the random forest regressor. 5 decreased accuracy for high elastic modulus materials, possibly due to datapoint scarcity (Figure 2).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Parity plots for three different regressors: a) RR, b) MLP, and c) RFR. Blue and orange dots denote datapoints corresponding to the train and test sets, respectively. Black continuous lines are shown as a guide to the eye to indicate perfect parity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>. It contains first-principle calculations of ~57000 different materials and includes a stream of different relevant materials properties. An algorithm was developed to extract from this large database the chemical name (raw X) of materials in which the elastic modulus (true Y) was reported, entailing 4208 different samples.</figDesc><table>Al 2 O 3 
+
+232 
+
+Chemical name 
+[raw X] 
+
+Elastic Modulus 
+(GPa) [true Y] 
+
+elemental properties 
+database 
+Materials database 
+(4208 samples) 
+
+Y 
+X 
+
+coefficients 
+
+ML model 
+
+set of descriptive attributes 
+[input X] 
+
+• chemical composition 
+• elemental property 
+statistics 
+• electronic structure 
+attributes 
+• ionic compound attributes 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>table </head><label>table</label><figDesc>Average row on the periodic table  Maximum difference in atomic number  Average atomic number  Maximum difference in atomic radii  Average atomic radius 2 Periodic table of elements: https://github.com/andrejewski/periodic-table  Maximum difference in electronegativity  Average electronegativity  Average number of s, p, d, and f valence</figDesc><table>electrons (4 features) 
+ s, p, d, and f fraction of valence electrons 
+(4 features) 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="true"><head>Table 1 .</head><label>1</label><figDesc>Evaluation metrics of the ML models.</figDesc><table>train set 
+test set 
+10-fold CV 
+
+Model 
+RMSE [GPa] 
+r 
+RMSE [GPa] 
+r 
+RMSE [GPa] 
+r 
+
+RR 
+35 
+0.88 
+42 
+0.84 
+36 ±16 
+0.87 ± 0.03 
+
+MLP 
+28 
+0.92 
+37 
+0.88 
+31 ± 4 
+0.90 ± 0.02 
+
+RFR 
+27 
+0.93 
+38 
+0.88 
+31 ± 4 
+0.90 ± 0.02 </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Ward</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Choudhary</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wolverton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Npj</forename><surname>Comput</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mater</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kirklin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Saal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Meredig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">W</forename><surname>Doak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Aykol</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Rühl</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wolverton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Npj</forename><surname>Comput</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mater</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">P</forename><surname>Ong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hautier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">D</forename><surname>Richards</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Dacek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Ridge Regression (RR) b) Multi-layer Perceptron (MLP)</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Random Forest Regressor (RFR)</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cholia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Gunter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Skinner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">A</forename><surname>Ceder</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mater</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Legrain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Carrete</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Van Roekeghem</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Curtarolo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mingo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Mater</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page">6220</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M. De</forename><surname>Jong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Angsten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Notestine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gamst</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Sluiter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">K</forename><surname>Ande</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Van Der Zwaag</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">J</forename><surname>Plata</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Toher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Curtarolo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Ceder</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">A</forename><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Asta, Sci. Data</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Saal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kirklin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Aykol</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Meredig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wolverton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Jom</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page">1501</biblScope>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Gossett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Toher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Oses</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Isayev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Legrain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Zurek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Carrete</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mingo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tropsha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Curtarolo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Mater. Sci</title>
+		<imprint>
+			<biblScope unit="volume">152</biblScope>
+			<biblScope unit="page">134</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Gossett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Toher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Oses</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Isayev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Legrain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Zurek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mingo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tropsha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Curtarolo</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Meredig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Agrawal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kirklin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Saal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">W</forename><surname>Doak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Choudhary</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wolverton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. B -Condens. Matter Mater. Phys</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Ling</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Comput</forename><surname>Npj</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chatterjee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Murugananth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">K D H</forename><surname>Bhadeshia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mater. Sci. Technol</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page">819</biblScope>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">K D H</forename><surname>Bhadeshia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">C</forename><surname>Dimitriu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Forsik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Pak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Ryu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mater. Sci. Technol</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page">504</biblScope>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Others</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mach. Learn. Res</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M. De</forename><surname>Jong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Notestine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Persson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Ceder</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Jain</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Asta, A. Gamst, Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

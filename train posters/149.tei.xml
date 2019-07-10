@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Large-scale Protein Atlas Compartmentalization Analysis</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zijian</forename><surname>Zhang</surname></persName>
+							<email>zzhang7@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Chemical and Systems Biology</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kuangcong</forename><surname>Liu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Chemical and Systems Biology</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wen</forename><surname>Zhou</surname></persName>
+							<email>zhouwen@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Chemical and Systems Biology</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Large-scale Protein Atlas Compartmentalization Analysis</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Treat the last fully connected layer output from Residual Network [1] as a graph representation of each the image sample.</p><p>• Combine this graph representation with our designed features for each image sample to add more expertise -based protein classification features on locations and morphology.</p><p>• Features are normalized and given individual weights.</p><p>• We use another fully connected layer after the combination to capture more non-linear relations between resnet representations and our image features.</p><p>• In the end a softmax layer to select the class labels with highest probabilities.</p><p>1. We trained both Resnet50 and Resnet34 (without our extracted features) for 20 epochs, but Resnet50 would be badly overfitting as its validation set loss remained high while its train set loss was continuously decreasing. Hence we continued with Resnet34. 2. Compared macro-f1 score for (1) Basic Resnet34 and (2) Resnet34 + Features for 50 epochs.</p><p>3. We did multiple experiments on different parameters of our model:</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Features Results Models Dataset</head><p>The dataset is provided by Kaggle. There are 31072 samples in the train dataset, and we also perform data augmentation technique on it. Images were resized to 512x512 or 224x224.</p><p>In this dataset, each sample is a microscope image of a type of cells that contain a certain type of protein. The image are shown in 4 filters: the protein of interest (green), and three cellular landmarks: nucleus (blue), microtubules (red), and endoplasmic reticulum (yellow):</p><p>The protein organelle localization is represented as integers 0-27. The right distribution shows the unbalanced probability distribution of 28 classes in our training data.</p><p>Due to the overlapping information between the yellow and red channels, we removed the yellow channel from the input, but extracted its critical features during data preprocessing <ref type="bibr" target="#b1">[2]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis</head><p>We aim to establish a model to predict the localization of specific proteins in the cells, which can help biology researchers to gain more insight into the regulation of protein function, interactions as well as their roles in human diseases.</p><p>We focus on analysis of a Kaggle problem, Human Protein Atlas Image Classification. To accomplish our goal, we use Computer Vision approaches to extract images features selected by biological knowledge about proteins, and then use multiple Resnet models combined with our extracted image feature scoring matrix, to tackle this problem.</p><p>The results show that we could achieve decently accurate prediction of protein localization across various cell types. Our feature scoring matrix however, needs more fine tuning in order to boost the effect.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>❖ Problem:</head><p>➢ From the figure in Results section we can see that val f1 is lower than train f1. ➢ Our feature scoring matrix did not significantly boost the prediction accuracy.</p><p>❖ Analysis: ➢ Gaps between train f1 and val f1 shows that our model is overfitting. In the future, we will try to resolve this issue by: (1) leaning rate annealing: use periodic learning rate that first increase and then slowly decrease to drive the model out of steep minima; (2) add more external training image data from other sources. ➢ Besides, small scale of our own features, which is now mostly within range of (0, 1), may prevent the gradient being effective in back-propagation. So in the future, we will try to scale our own features by higher factors to make back propagation capture more information about it.</p><p>❖ More future improvement work includes:</p><p>• assign weights to each of our designed features according to their importance • develop more features • use different classification thresholds for validation set and test set according to their data statistics.</p><p>• more design about the fully connected layers after we combine our own data features with the resnet outputs, which need more explore on this research topic of combining features.</p><p>We have developed 10 data features: </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Total intensity of green / yellow (Intensity) 6. Area size of green above background (Size) Information about individual protein segments: 7. Averaged compactness of protein segments (shape) 8. Averaged eccentricity of protein segments (shape) 9. Average area size of each protein segments / nucleus (distribution) 10. Average distance of each protein blob to the closest nucleus (distribution) 1 Segment blue image for nuclear localization 2 Segment green image for individual analysis Data Preprocessing For Features Extraction</figDesc><table>Overall properties: 
+1. Relative ratio of green in blue (localation) 
+2. Structural similarity between green &amp; red 
+3. Structural similarity between green &amp; yellow 
+4. Structural similarity between green &amp; blue 
+5. </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaiming</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiangyu</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaoqing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">&amp; Smith, K. Deep learning is combined with massive-scale citizen science to improve large-scale image classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">F</forename><surname>Winsnes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Åkesson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hjelmare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wiking</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Schutten</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature biotechnology</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">820</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

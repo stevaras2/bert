@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Introduction Models Analysis Future Work Reference SENTIMENT ANALYSIS FOR AMAZON REVIEWS</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wanliang</forename><surname>Tan</surname></persName>
+							<email>wanliang@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Wang</surname></persName>
+							<email>xwang7@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Xu</surname></persName>
+							<email>xinyu17@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Introduction Models Analysis Future Work Reference SENTIMENT ANALYSIS FOR AMAZON REVIEWS</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Sentiment analysis of product reviews, an application problem, has recently become very popular in text mining and computational linguistics research.</p><p>• Here, we want to study the correlation between the Amazon product reviews and the rating of the products given by the customers.</p><p>• The objective of this paper is to classify the positive and negative reviews of the customers over different products and build a supervised learning model to polarize large amounts of reviews.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>Features Results</p><p>• Our dataset comes from Kaggle[1]. It is Consumer Reviews of Amazon Products. There are 34,660 rows in total. Each row consists of a review followed by a rate, which is an integer from 1 to 5. The distributions of the rates are shown in the figure below. •</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• Naive Bayes</head><p>This algorithm assumes that xi is are conditionally independent given y.</p><p>• SVM Geometrically given two types of points, circles and xi, in a space, it tries to maximize the minimum distance from one of the points to the other. Here, we used both linear kernel and radial kernel.</p><p>• KNN This algorithm looks for the K = n nearest neighbours of the input. Then, it will assign the majority of that n neighbours' class. We tuned the n and compared the results.</p><p>• LSTM A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate.</p><p>• The entire dataset of 34,627 reviews was divided into a training set of size 21000 (60%), a validation set of size 6814 (20%) and a test set of size 6813 (20% • The dataset is unbalanced. Based on the result, the model may not have a good generalization of these data. That's why even the highest accuracy is around 70%.</p><p>• The increase of the dictionary's length did not have too much effect on the accuracy. Because the length of dictionary has only increased by 720 when we decrease the times that the word appears in one sentence, which is small compared to the original length.</p><p>• The result using glove mean is worse than the method of normal word count. The possible reason is that if we use the average, the individual word feature will be weakened, then the distance between different reviews will be inaccurate.</p><p>If we have more time, we want to change to another dataset which has a relatively more balanced dataset. The training at the moment is not that satisfactory. We also want to go deeper in the LSTM neural network in which case we might get better accuracy.</p><p>• The features we extracted include two types.</p><p>• Traditional method: we build a dictionary based on the common words and index each word. We set the threshold for the word dictionary to be 6 occurrence and ended up collecting 4223 words from our entire dataset. As we can see, the distribution of the dataset is super imbalanced, which will be discussed later. There are rows without rate, which we just treat as missing data.</p><p>• Training accuracy and test accuracy of each model are shown in the table to the left. • Models are sorted by test accuracy in the chart below.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>).• For the first way of representing review text, we implemented Multinomial Naive Bayes, SVM with Linear Kernel, SVM with</figDesc><table>RBF Kernel, KNN-4, 5,&amp; 6 and LSTM with 4223-d features. 
+LSTM performs best in term of test accuracy among them. 
+• For the second way using glove dictionary, we run Gaussian 
+Naive Bayes, SVM with Linear Kernel and KNN-4, 5 &amp; 6 with 
+50-d features. It turned out that SVM with Linear Kernel 
+generated best predictions 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Alternatively, we use a 50-d glove dictionary, which takes advantage of the meanings of each word. In this case, we represent each review by the mean vector of 50-d glove vectors of all individual words making up the review.</figDesc><table>Then we 
+transform each review into a vector, where each value 
+represents whether the word shows up. 
+• 75.1% 
+70.6% 
+
+83.4% 
+69.6% 
+
+69.7% 
+69.2% 
+
+61.7% 
+61.7% 
+
+65.5% 
+65.4% 
+
+64.9% 
+64.6% 
+
+73.5% 
+71.5% 
+
+52.2% 
+52.4% 
+
+68.7% 
+68.6% 
+
+58.1% 
+57.6% 
+
+62.6% 
+62.2% 
+
+61.3% 
+61.6% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">A survey of opinion mining and sentiment analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bing</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lei</forename><surname>Zhang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>Springer</publisher>
+			<biblScope unit="page" from="415" to="463" />
+			<pubPlace>Boston, MA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Mining text data</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Sentiment Analysis in Amazon Reviews Using Probabilistic Machine Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Callen</forename><surname>Rain</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+			<pubPlace>Swarthmore College</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Sentiment Analysis of Yelp&apos;s Ratings Based on Text Reviews</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yun</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinhui</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qinxia</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

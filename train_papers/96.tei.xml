@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Airbnb Price Estimation Final Report</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nikolenko</forename><surname>Liubov</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>SUNet ID: hoormazd</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Id</forename><forename type="middle">:</forename><surname>Sunet</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>SUNet ID: hoormazd</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hoormazd</forename><surname>Liubov</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>SUNet ID: hoormazd</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rezaei</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>SUNet ID: hoormazd</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Airbnb Price Estimation Final Report</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Project Category: General Machine Learning</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Final Report 1 Introduction</head><p>Pricing a rental property on Airbnb is a challenging task for the owner as it determines the number of customers for the place. On the other hand, customers have to evaluate an offered price with minimal knowledge of an optimal value for the property. This project aims to develop a price prediction model using a range of methods from linear regression to tree-based models, support-vector regression (SVR), K-means Clustering (KMC), and neural networks (NNs) to tackle this challenge. Features of the rentals, owner characteristics, and the customer reviews will be used to predict the price of the listing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Existing literature shows that some studies focus on non-shared property purchase or rental price predictions. In a CS229 project, Yu and Wu <ref type="bibr" target="#b0">[1]</ref> tried to implement a real estate price prediction using feature importance analysis along with linear regression, SVR, and Random Forest regression. They also attempted to classify the prices into 7 classes using Naive Bayes, Logistic Regression, SVC and Random Forest. They declared a best RMSE of 0.53 for their SVR model and a classification accuracy of 69% for their SVC model with PCA. In another paper, Ma et al. <ref type="bibr" target="#b1">[2]</ref> have applied Linear Regression, Regression Tree, Random Forest Regression and Gradient Boosting Regression Trees to analyzing warehouse rental prices in Beijing. They concluded that the tree regression model was the best-performing model with an RMSE of 1.05 CNY/m 2 -day Another class of studies which are more pertinent to our project, inspect the hotels and sharing economy rental prices. In a recent work, Wang and Nicolau <ref type="bibr" target="#b2">[3]</ref> have studied price determinants of sharing economy by analyzing Airbnb listings using ordinary least squares and quantile regression analysis. In a similar study, Masiero et al. <ref type="bibr" target="#b3">[4]</ref> use quantile regression model to analyze the relation between travel traits and holiday homes as well as hotel prices. In a simpler work, Yang et al. <ref type="bibr" target="#b4">[5]</ref> applied linear regression to study the relationship between market accessibility and hotel prices in Caribbean. They also include the user ratings and hotel classes as contributing factors in their study. Li et al. <ref type="bibr" target="#b5">[6]</ref> also study a clustering method called Multi-Scale Affinity Propagation and apply Linear Regression to the obtained clusters in an effort to create a price prediction model for Airbnb in different cities. They take the distance of the property to the city landmarks as the clustering feature.</p><p>This project has tried to further the experimented methods from the literature by focusing on a variety of feature selection techniques, implementing Neural Networks, and leveraging the customer reviews through sentiment analysis. The authors were unable to find the last two mentioned undertakings in the existing literature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset</head><p>The main data source for this study is the public Airbnb dataset for New York City 1 . The dataset includes 50,221 entries, each with 96 features. See <ref type="figure" target="#fig_0">figure 1</ref> for the geographic distribution of listing prices. For the initial prepossessing, our team has inspected each feature of the dataset to (i) remove features with frequent and irreparable missing fields or set the missing values to zero where appropriate, (ii) convert some features into floats (e.g. by getting rid of the dollar sign in prices), (iii) change boolean features to binaries, (iv) remove irrelevant or uninformative features, e.g. host picture url, constant-valued fields or duplicate features, and (v) convert the 10 categorical features in the final set, e.g. 'neighborhood name' and 'cancellation policy,' into one-hot vectors. In addition, the features were normalized and the labels were converted into log of the price to mitigate the impact of the outliers in the dataset. The team has split the data into train (90%), validation (5%), and test (5%) sets. Since the dataset is relatively large, 10% of the data was deemed sufficient for testing and validation sets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Sentiment Analysis on the Reviews</head><p>The reviews for each listing were analyzed using TextBlob 2 sentiment analysis module. This method assigns a score between -1 and 1 to each review and the scores are averaged across each listing. The final scores for each listing was included as a new feature in the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Feature Selection</head><p>After data preprocessing, the feature vector contained 764 elements which was deemed excessive and, when fed to models, resulted in a high variance of error. Consequently, several feature selection techniques were used to find the features with the most predictive values to both reduce the model variances and reduce the computation time. Based on prior experience with housing price estimation, the first effort was manual selection of features to create a baseline for the selection process.</p><p>The second method was tuning the coefficient of linear regression model with Lasso regularization trained on the train split, from which the model with the best performance over validation split was selected. Second set of features consisted of 78 features with non-zero values based on this method.</p><p>Finally, lowest p-values of regular linear regression model trained on train split were used to choose the third set of features. Selection was bound by the total number of features to remain less than 100. The final set of features were those for which linear regression model performed best on validation split.</p><p>The performance of manually selected features as well as p-value and Lasso feature selection schemes were compared using the R 2 score of the linear regression models trained on the validation set. All models outperformed the baseline model, which used the whole feature set, and the second method, Lasso regularization, yielded the highest R 2 score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>Linear Regression was set as a baseline model on the dataset using all of the features as model inputs. After selecting a set of features using Lasso feature selection, several machine learning models were considered in order to find the optimal one. All of the models except neural networks were implemented using scikit-learn library <ref type="bibr">[7]</ref>. The neural network model was implemented with the help of Keras module <ref type="bibr" target="#b6">[8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Ridge Regression</head><p>Linear Regression with L 2 regularization adds a penalizing term to the squared error cost function in order to help the algorithm converge for linearly separable data and reduce overfitting. Therefore, Ridge Regression minimizes J(θ) = ||y − Xθ|| 2 2 + α||θ|| 2 2 with respect to θ, where X is a design matrix and α is a hyperparameter. Since the baseline models were observed to have high variance Ridge Regression seemed to be an appropriate choice to solve the issue.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">K-means Clustering with Ridge Regression</head><p>In order to capture the non-linearity of the data, the training examples were split into different clusters using k-means clustering on the features and the Ridge Regression was run on each of the individual clusters. The data clusters were identified using the following algorithm:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 1 K-means Clustering</head><p>Initialize cluster centroids µ i , ..., µ k randomly repeat Assgin each point to a cluster:</p><formula xml:id="formula_0">c (i) = arg min j ||x (i) − µ j || 2 2</formula><p>For each centroid:</p><formula xml:id="formula_1">µ j = m i=1 1{c (i) =j}x (i) m i=1 1{c (i) =j}</formula><p>Calculate the loss function for the assignments and check for convergence:</p><formula xml:id="formula_2">J(c, µ) = m i=1 ||x (i) − µ c (i) || 2 2</formula><p>until convergence</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Support Vector Regression</head><p>In order to model the non-linear relationship between the covariates, the team employed support vector regression with RBF kernel to identify a linear boundary in a high-dimensional feature space. Using the implementation based on LIBSVM paper <ref type="bibr" target="#b7">[9]</ref> the algorithm provides a solution for the following optimization problem:</p><formula xml:id="formula_3">min w,b,ξ,ξ * 1 2 ||w|| 2 + C m i=1 ξ i + C m i=1 ξ * i , subject to w T φ(x (i) ) + b − y (i) ≤ + ξ i , y (i) − w T φ(x (i) ) − b ≤ + ξ * i , ξ i , ξ * i ≥ 0, i = 1, .</formula><p>.., m, where C &gt; 0, &gt; 0 are given parameters. This problem can be converted into a dual problem that does not involve φ(x), but involves K(x, z) = φ(x)φ(z) instead. Since we are using RBF kernel, K(x, z) = exp ||x−z|| 2 2σ 2 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Neural Network</head><p>Neural network was used to build a model that combined the input features into high level predictors. The architecture of the optimized network had 3 fully-connected layers: 20 neurons in the first hidden layer with relu activation function, 5 neurons in the second hidden layer with relu activation function, and 1 output neuron with a linear activation function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Gradient Boost Tree Ensemble</head><p>Since the relationship between the feature vector and price is non-linear, regression tree seemed like a proper model for this problem. Regression trees split the data points into regions according to the following formula</p><formula xml:id="formula_4">max j,t L(R p ) − (L(R 1 ) − L(R 2 ))</formula><p>, where j is the feature the dataset is split on, t is the threshold of the split, R p is the parent region and R 1 and R 2 are the child regions. Squared error is used as the loss function.</p><p>Since standalone regression trees have low predictive accuracies individually, gradient boost tree ensemble was used to increase the models' performance. The idea behind a gradient boost is to improve on a previous iteration of the model by correcting its predictions using another model based on the negative gradient of the loss. The algorithm for the gradient boosting is the following <ref type="bibr" target="#b8">[10]</ref>:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 2 Gradient Boosting</head><p>Initialize F 0 to be a constant model for m = 1, ..., number of iterations do for all training examples (</p><formula xml:id="formula_5">x (i) , y (i) ) do For squared error R(y (i) , F m−1 (x (i) )) = − ∂Loss ∂Fm−1(x (i) ) = y (i) − F m−1 (x (i) ) end for Train regression model h m on (x (i) , R(y (i) , F m−1 (x (i) ))), for all training examples F m (x) = F m−1 (x) + αh m (x),</formula><note type="other">where α is the learning rate end for return F m</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Discussion</head><p>Mean absolute error (MAE), mean squared error (MSE) and R 2 score were used to evaluate the trained models. Training (39,980 examples) and validation (4,998 examples) splits were used to choose the best-performing models within each category. The test set, containing 4,998 examples, was used to provide an unbiased estimate of error, with the final models trained on both train and validation splits. Results for the final models 3 are provided below. The outlined models had relatively similar R 2 scores which implicates that Lasso feature importance analysis had made the most impact on improving the performance of the models by reducing the variance. Even after the feature selection, the resulting input vector was relatively large leaving room for model overfitting. This explains why Gradient Boost -a tree-based model prone to high varianceperformed worse than the rest of the models despite it not performing the worst on the training set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>Despite expanding the number of features in the feature vector, SVR with RBF kernel turned out to be the best performing model with the least MAE and MSE and the highest R 2 score on both train and test sets (figure 2). RBF feature mapping was able to better model the prices of the apartments which have a non-linear relationship with the apartment features. Since regularization is taken into account in the SVR optimization problem, parameter tuning ensured that the model was not overfitting. Ridge regression, neural network, K-means + Ridge regression models had similar R 2 scores even though the last two models are more complex than Ridge regression. The architecture complexity of neural network was limited by the insufficient number of training examples for having too many unknown weights. K-means clustering model faced a similar issue: since the frequency of some prices was greatly exceeding the frequency of others, some clusters received too few training examples and drove down the overall model performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusions and Future Work</head><p>This project attempts to come up with the best model for predicting the Airbnb prices based on a set of features including property specifications, owner information, and customer reviews on the listings. Machine learning techniques including Linear Regression, Tree-based models, SVR, and neural networks along with feature importance analyses are employed to achieve the best results in terms of Mean Squared Error, Mean Absolute Error, and R 2 score. The initial experimentation with the baseline model proved that the abundance of features leads to high variance and weak performance of the model on the validation set compared to the training set. Lasso Cross-validation feature importance analysis reduced the variance and using advanced models such as SVR and neural networks resulted in higher R 2 score for both the validation and test sets. Among the models tested, Support Vector Regression (SVR) performed the best and produced an R 2 score of 69% and a MSE of 0.147 (defined on ln(price)) on the test set. This level of accuracy is a promising outcome given the heterogeneity of the dataset and the involved hidden factors, including the personal characteristics of the owners, which were impossible to consider.</p><p>The future works on this project can include (i) studying other feature selection schemes such as Random Forest feature importance, (ii) further experimentation with neural net architectures, and (iii) getting more training examples from other hospitality services such as VRBO to boost the performance of K-means clustering with Ridge Regression model in particular.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>• Liubov Nikolenko: data cleaning, splitting categorical features, implementing sentiment analysis of the reviews, initial neural network implementation, SVR implementation and tuning, K-means + Ridge tuning.</p><p>• Hoormazd Rezaei: implementation of linear regression and tree ensembles, datapreprocessing, implementation of the evaluation metrics, feature selection methods implementation, tuning of the neural network.</p><p>• Pouya Rezazadeh: data cleaning and auxiliary visualization, splitting categorical features, result visualizations, tree ensembles tuning, K-means + Ridge implementation.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Geographic spread of price labels (with filtered outliers)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Comparative histograms of predicted and actual prices for the top 3 models: SVR, KMC, and NN</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">http://insideairbnb.com/get-the-data.html 2 https://textblob.readthedocs.io/en/dev/index.html</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3">Optimized models to be found at gitlab.com/hoorir/cs229-project.git</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Real estate price prediction with regression and classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CS229 (Machine Learning) Final Project Reports</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Estimating warehouse rental price using machine learning techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ihler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computers</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Communications &amp; Control</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Price determinants of sharing economy based accommodation rental: A study of listings from 33 cities on airbnb</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Nicolau</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Hospitality Management</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="120" to="131" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A demand-driven analysis of tourist accommodation price: A quantile regression of room bookings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Masiero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Nicolau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Law</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Hospitality Management</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="1" to="8" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Market accessibility and hotel prices in the caribbean: The moderating effect of quality-signaling factors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">J</forename><surname>Mueller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">R</forename><surname>Croes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Tourism Management</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="40" to="51" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Reasonable price recommendation on airbnb using multiscale clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Pan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Guo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Control Conference (CCC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="7038" to="7041" />
+		</imprint>
+	</monogr>
+	<note>35th Chinese</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Keras: The Python Deep Learning Library</title>
+		<ptr target="https://keras.io/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Libsvm: a library for support vector machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C.-C</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C.-J</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM transactions on intelligent systems and technology (TIST)</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">27</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">An intuitive explanation of gradient boosting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Johansson</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

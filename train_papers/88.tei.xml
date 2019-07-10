@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine Learning Prediction of Companies&apos; Business Success</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chenchen</forename><surname>Pan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">MS&amp;E Stanford University</orgName>
+								<orgName type="institution" key="instit2">ICME Stanford University</orgName>
+								<orgName type="institution" key="instit3">MSE Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yuan</forename><surname>Gao</surname></persName>
+							<email>gaoy@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">MS&amp;E Stanford University</orgName>
+								<orgName type="institution" key="instit2">ICME Stanford University</orgName>
+								<orgName type="institution" key="instit3">MSE Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yuzi</forename><surname>Luo</surname></persName>
+							<email>yuziluo@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">MS&amp;E Stanford University</orgName>
+								<orgName type="institution" key="instit2">ICME Stanford University</orgName>
+								<orgName type="institution" key="instit3">MSE Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Machine Learning Prediction of Companies&apos; Business Success</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>There are thousands of companies coming out worldwide each year. Over the past decades, there has been a rapid growth in the formation of new companies both in the US and China. Thus, it is an important and challenging task to understand what makes companies successful and to predict the success of a company. In this project, we used Crunchbase data to build a predictive model through supervised learning to classify which start-ups are successful and which aren't. We explored K-Nearest Neighbours (KNN) model on this task, and compared it with Logistic Regression (LR) and Random Forests (RF) model in previous work. We used F1 score as the metric and found that KNN model has a better performance on this task, which achieves 44.45% of F1 score and 73.70% of accuracy.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Thousands of companies are emerging around the world each year. Among them, some are merged and acquired (M&amp;A), or go to public (IPO), while others may vanish and disappear. What makes this difference and leads to the different endings for each company? How to predict the success of companies? If the investors can know how likely the company will achieve success given their current information, they can make a better decision on the investments. Therefore, in this project, given some key features of a company, we want to predict the probability of its success. More specifically, the input features are of two types: text features (such as industry category list and location) and numerical features (such as the amount of money a company already raised). We then use Logistic Regression, Random Forests, and K-Nearest Neighbours to output a predicted probability of success. Here we define the company success as the event that gives a large sum of money to the company's founders, investors and early employees, specifically through a process of M&amp;A (Merger and Acquisition) or an IPO (Initial Public Offering) <ref type="bibr" target="#b0">[1]</ref>. Finally, we use F1 score as the metric to compare the performance of these three models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>As Machine Learning becomes a more and more popular tool for researchers to utilize in the field of finance and investment, we have found some related work to predict companies' business success with Machine Learning and Crunchbase.</p><p>Bento, Lisin and Nesterenko <ref type="bibr" target="#b0">[1]</ref> [3] and Xiang,el <ref type="bibr" target="#b5">[6]</ref> have explored CrunchBase data. Bento built a predictive model with Random Forests to classify which start-ups are successful and which aren't, with M&amp;A or metrics from financial reports. The binary classifier they built to classify a company as successful or not-successful had a True Positive Rate (TPR) of 94.1% (the highest reported using data from CrunchBase) and a False Positive Rate of 7.8%. Xiang <ref type="bibr" target="#b5">[6]</ref> and used CrunchBase with profiles and news articles on TechCrunch to predict company acquisitions. Eugene and Daphne <ref type="bibr" target="#b1">[2]</ref> performed descriptive data mining with CrunchBase to find general rules for companies seeking investment involving investors' preference to invest. They used social network features to build a predictive model based on link prediction with Crunchbase <ref type="bibr" target="#b6">[7]</ref>. Some other researchers, like Wei <ref type="bibr" target="#b4">[5]</ref> and Xiang <ref type="bibr" target="#b5">[6]</ref> focus more on predicting M&amp;A events.</p><p>Indeed, these works propose a variety of efficient methods that we can use to predict the success of company. However, we notice that none of them implement K-nearest neighbours model. In this project, we aim to apply KNN model to solving this problem.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>The dataset we used was extracted from Crunchbase Data Export containing 60K+ companies' information updated to December 2015. There were four data files, named "company", "investments", "rounds" and "acquisition". The "company" file contains most comprehensive information of the companies, while other files contains more detailed information regarding the investment operations. Thus, we chose the file "company" as the base and extracted meaningful features from other files to add into it.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Dataset Overview</head><p>The "company" dataset consists the following columns:</p><p>• Name: company's name  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Cleaning and Labeling</head><p>We labeled the company that has M&amp;A with 1, otherwise 0. We plotted the amount of the 0 or 1 labeled data as <ref type="figure" target="#fig_1">Figure 1</ref>. As seen from <ref type="figure">Figure 2</ref>, the number of data labeled 0 to labeled 1 is over 8 to 1, which is quite imbalanced.</p><p>We noticed some skewness regarding the distribution of date of funding events in this dataset as shown in <ref type="figure">Figure 3</ref>. To reduce the bias in the old invest events, we filtered data before 1990. We also</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Feature Selection</head><p>We selected the most essential features to companies' business success and end up with input features as: category, country, funding_rounds, funding_total_usd, and the difference between when first_funding_at and last_funding_at.</p><p>The training set is composed of two parts. The first part of data is the numerical data: number of funding rounds and total funding. The second part of data is the date in string format, such as 'first funding at', 'final funding at' and 'funded at' columns. As there are too many missing data for 'funded at', we finally chose 'first funding at' and "final funding at' columns, converted them from timestamp to numerical UTC format and calculated a 'duration' column with the subtracted data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>The goal of this project is to make a binary prediction on the status of start-ups, whether they have gone through M&amp;A or IPO. In this project, we explored Logistic Regression, Random Forests, and K Nearest Neighbors. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Logistic Regression</head><p>Logistic regression is a simple algorithm that is commonly used in binary classification. Due to its efficiency, it is the first model we selected to do the classification. The hypothesis of Logistic Regression algorithm is as follows <ref type="bibr" target="#b3">[4]</ref>:</p><formula xml:id="formula_0">h θ (x) = g(θ T x) = 1 1 + e −θ T x<label>(1)</label></formula><p>The algorithm optimize θ by maximizing the following log likelihood function:</p><formula xml:id="formula_1">(θ) = m i=1 y (i) log h(x (i) ) + (1 − y (i) ) log(h(1 − x (i) ))<label>(2)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Random Forests</head><p>Random Forests construct a multitude of decision trees at training time and outputting the mode of the classification result of individual trees. At each split point in the decision tree, only a subset of features are selected to take into consideration by the algorithm. The candidate features are generated using bootstrap. Compared to an individual tree, bootstrapping mitigates the variance by averaging the results of a large number of decision trees.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">K Nearest Neighbors</head><p>An instance is classified by a majority vote of its K nearest neighbours. The algorithm assigns class j to x (i) that maximizes:</p><formula xml:id="formula_2">P (y (i) = j|x (i) ) = 1 k i∈N 1{y (i) = j} (3) d(x, x ) = (x 1 − x 1 ) 2 + (x 2 − x 2 ) 2 + ... + (x n − x n ) 2<label>(4)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Selected Metrics</head><p>In a confusion matrix, we describe the performance of a classification model. Each row of the matrix represents the instances in a predicted class while each column represents the instances in an actual class (vice versa). There are four basic terms in a confusion matrix: Here we select three metrics: accuracy, F1 score and AUC score.</p><formula xml:id="formula_3">TP</formula><p>Accuracy: The proportion we have predicted right. </p><formula xml:id="formula_4">Accuracy = T P + T N total (5)</formula><formula xml:id="formula_5">) = T P T P + F N<label>(6)</label></formula><p>False Positive Rate (FPR) = F P F P + T N</p><p>F1 Score:</p><formula xml:id="formula_7">Precision = T P T P + F P (8) Recall = T P T P + F N (9) F1 = 2 * Precision * Recall Precision + Recall<label>(10)</label></formula><p>AUC Score: Area under the ROC Curve.</p><p>AUC Score = Area under ROC Curve Total Area <ref type="formula" target="#formula_0">(11)</ref> 5 Experiments and Results</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Data Processing</head><p>To utilize more data in the training, We split the dataset into three parts: 95% data as training set, 5% as cross validation set and 5% as test set. Since the dataset is quite imbalanced, we up-sample the minority class (label = 1) in the training set to balance the data, but keep the cross validation set and test set untouched (see <ref type="table" target="#tab_0">Table 1</ref>).</p><p>We also normalize all the numerical features, such as 'funding_rounds' and 'funding_duration', and use bag-of-words to encode the text features, such as 'category_list' and 'country_code'.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Hyperparameter Tuning</head><p>After preprocessing the data, we concatenate the two types of features, and feed them to logistic regression model, random forest model and K-nearest neighbours model. For random forest and K-nearest neighbors model, we used random search to tune the hyperparameters. A list of hyperparameters and their associated range is summarized in the table below (see <ref type="table" target="#tab_1">Table 2</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hyperparameters Range Number of trees (in RF)</head><p>5-50 K (number of neighbours) 10-100   We use accuracy, F1 score and AUC score to compare the performance of different models, but the F1 score is our primary metric. The figure below summarize the results of each model on the validation set (see <ref type="table" target="#tab_5">Table 4</ref>). We also plot the ROC curve to compare the three models with different thresholds (see <ref type="figure">Figure 4)</ref>. We can know the K-Nearest Neighbors (KNN) model has better performance on this task. So we use KNN model on the test, and achieve the results with 44.45% of F1 score and 73.70% of accuracy.  We compare these two model using confusion matrix (see <ref type="figure" target="#fig_4">Figure 5</ref> and <ref type="figure">Figure 6</ref>). We can see that Random Forests model tries to predict more negative examples but achieve a higher true positive rate. In practise, if the investor has limit investment budget and wants to maximize the proportion of success among its portfolio, it would be better to choose Random Forests model instead of KNN model. However, if the investor has much investment money and want to maximize the number of successful companies it could invest, it would be better to choose KNN model, since KNN model has a higher recall. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Future Work</head><p>In the future, we should include more features of the companies and examine which features are more significant than others. Also, we will try more complex models, such as Neural Network and pre-trained word embedding. Using kernel method to move the data to higher dimensional space is also a good direction. In addition, more new questions are to explore, such as predicting the total funding size for a company (regression problem).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Github Repository</head><p>Welcome to check our code here: https://github.com/chenchenpan/Predict-Success-of-Startups</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Acknowledgments</head><p>Thank you to the CS 229 teaching staff, including Prof. Andrew Ng and the TAs.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Homepage_url: the website of the company • Category_list: the industry category the company belongs to, including up to four subcategory divisions • Funding_total_usd: the total amount of funding in all rounds of investments • Status: the operation status of the company (0 = closed or operating, 1 = ipo or acquired) • Country_code: the country of company's headquarter • State_code: the state of company's headquarter • Region: the region of company's headquarter • City: the city of company's headquarter • Funding_rounds: total number of funding rounds • Founded_at: the date company founded (in string format '2007-01-01') • First_funding_at: the first time the company raised money (in string format '2008-03-19') • Last_funding_at: the last time the company raised money (in string format '2008-03-19') Figure 1 displays some examples for each selected feature.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Selected Features and Corresponding Examples</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :Figure 3 :</head><label>23</label><figDesc>Imbalanced dataset: 1 = IPO or acquired, 0 = closed or operating Figure 3: Distribution of funding dates.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>(true positive): an outcome where the model correctly predicts the positive class. TN (true negative): an outcome where the model correctly predicts the negative class. FP (false positive): an outcome where the model incorrectly predicts the positive class. FN (false negative): an outcome where the model incorrectly predicts the negative class.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Confusion Matrix of Random Forest Figure 6: Confusion Matrix of KNN</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Dataset split and up-sample True Positive Rate (</figDesc><table>Training Set 
+(90%) 
+
+Validation Set 
+(5%) 
+
+Test Set 
+(5%) 
+Original 
+29428 
+1635 
+1635 
+Up-sample 50040 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table>Setting of hyperparameters tuning 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3</head><label>3</label><figDesc>shows the result of hyperparameter tuning.</figDesc><table>Hyperparameters 
+Value 
+Number of trees (in RF) 
+25 
+K (number of neighbours) 
+92 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 3 :</head><label>3</label><figDesc>Summary of hyperparameters</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5" validated="false"><head>Table 4 :</head><label>4</label><figDesc>Metrics Results Figure 4: ROC Curve6 Conclusion and DiscussionFrom results above, we know in general, KNN model performs better. However, why Random forests has a higher accuracy compared with KNN? And how to choose the model based on the different investor's preference (such as risk tolerance and investment budget)?</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Predicting start-up success with machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francisco Ramadas Da Silva Ribeiro</forename><surname>Bento</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Where&apos;s the money? the social behavior of investors in facebook&apos;s small world</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eugene</forename><surname>Liang Yuxian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soe-Tsyr Daphne</forename><surname>Yuan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2012 International Conference on Advances in Social Networks Analysis and Mining (ASONAM 2012)</title>
+		<meeting>the 2012 International Conference on Advances in Social Networks Analysis and Mining (ASONAM 2012)</meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2012" />
+			<biblScope unit="page" from="158" to="162" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Is it possible to predict merge acquisition events analysing companies&apos; investment history?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrey</forename><surname>Lisin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Artem</forename><surname>Nesterenko</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Cs229 lecture notes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Patent analysis for supporting merger and acquisition (m&amp;a) prediction: A data mining approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chih-Ping</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu-Syun</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chin-Sheng</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Workshop on E-Business</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="187" to="200" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A supervised approach to predict company acquisition with factual and topic features using profiles and news articles on techcrunch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guang</forename><surname>Xiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zeyu</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miaomiao</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><forename type="middle">I</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carolyn</forename><forename type="middle">Penstein</forename><surname>Rosé</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chao</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICWSM</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Investors are social animals: Predicting investor behavior using social network features via supervised learning approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eugene</forename><surname>Liang Yuxian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soe-Tsyr Daphne</forename><surname>Yuan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

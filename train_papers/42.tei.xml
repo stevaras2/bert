@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS 229 Project Final Report A Method for Modifying Facial Features</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Boning</forename><forename type="middle">Zheng</forename><surname>Meixian</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhu</forename><surname>Jing</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bo</forename><surname>Yang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mxzhu</forename><surname>Jingboy</surname></persName>
+						</author>
+						<title level="a" type="main">CS 229 Project Final Report A Method for Modifying Facial Features</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note type="submission">(Dated: December 2018)</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Category: Computer Vision</head><p>Many present day facial recognition systems focus on making verification or identification facial feature invariant. While these systems are highly effective for fully automated tasks, manual facial recognition is still required in numerous real life scenarios that involve comparing against ID photos. Our goal is to build a system that is capable of transforming faces to include or exclude glasses and beard. Such a system should be able to handle a wider range of facial features with small modifications. A few network structures have been tested for this purpose and we have found that CycleGAN[1]  is the most capable compared to other vanilla GAN systems. Generated images from test set are presented and their inception scores [2] are analyzed. Details regarding characteristics of these generated images are also included in our discussion. Potential future improvements could involve making our system more generic or introducing semi-supervised learning to expand usable data sources. Source code for this project is available on Github.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>There have been significant improvement in our capability to identify and verify human faces over the past few years. Device makers are already taking advantage of such development by equipping their latest phones and tablets with AI co-processor and powerful image processing algorithms. However, the recent trend has mostly focused on making facial identification and verification invariant to facial features. These works certainly help machine recognize human faces, however, most humans are interested in seeing people in the natural state, without any facial disguise.</p><p>A system that can recover undisguised faces could be helpful for criminal investigation. In particular, witnesses should be able to make use of these processed images to identify the criminal among a series of ID photos, which typically include no disguise, or in person among a number of held suspects. People utilizing online dating apps could also utilize this system to reveal the real person behind facial disguise, a feature that many find useful.</p><p>We build on current work related to GAN-based style transform methods that are commonly employed for applying facial disguise. Recent works have demonstrated much success in related areas <ref type="bibr" target="#b2">[3]</ref>, <ref type="bibr" target="#b3">[4]</ref>. Our method make use of similar machine learning techniques but aim to swap input and output of those algorithms to achieve our purpose.</p><p>We train our generative neural network using a facial disguise database from Hong Kong Polytechnic University <ref type="bibr" target="#b4">[5]</ref> and CelebA <ref type="bibr" target="#b5">[6]</ref>. We have experimented with increasingly more complex generative adversarial models and obtained images with expected improvement in quality. The best results were achieved using CycleGAN <ref type="bibr" target="#b0">[1]</ref>. Inception scores <ref type="bibr" target="#b1">[2]</ref> are incorporated into this project as a way to numerically evaluate quality of generated images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>The seminal paper on GANs was first published in 2014 <ref type="bibr" target="#b6">[7]</ref>. Since then, GAN's have experienced wide success in rendering novel realistic images and image style transfer. The core of the framework is composed of two models, a generator and a discriminator. The generator (G) is trained to reproduce genuine target images from a specified input, while the discriminator (D) is trained to differentiate from generated images to naturally sampled images. The end goal is for the generator to produce increasingly realistic images of the target distribution, and for the discriminator to pick up on the most subtle differences between real and fake images. The training objective is expressed as a min-max problem through an adversarial loss function:</p><formula xml:id="formula_0">L GAN = E y∼p data (y) [log D y (y)]+ E x∼p data (x) [log(1−D y (G(x)))]</formula><p>where G tries to minimize this function where an adversary tries to maximize it, creating the min-max optimization problem: min G max Dy L GAN .</p><p>Another related work that builds on top of the traditional GAN is called the CycleGAN <ref type="bibr" target="#b0">[1]</ref>. This work is more related to our project as it aligns with our goals of removing specific facial features. The Cycle-GAN presents a method of mapping an image X to an image Y (G: X→Y) without the requirement of paired samples. Furthermore, CycleGAN also learns an inverse mapping (F: Y→X) such that F(G(X)) ≈ X. This is done by adding in an "identity loss" function to the training process to preserve such identity between input and output. This type of architecture will be very useful towards our project since we would like to preserve the identity of the person while removing the facial features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET A. Data Sources</head><p>Finding an appropriate dataset is one of the most important task for this work. Unfortunately, due to privacy concerns and inherent difficulties in obtaining ground truth associated with human faces <ref type="bibr" target="#b7">[8]</ref>, only the dataset obtained by Wang and Kumar <ref type="bibr" target="#b4">[5]</ref>  In addition to the dataset provided by HK Polytechnic, we added the famous CelebA dataset as we became more confident with capability of our network. Like Wang and Kumar's dataset, CelebA also contains celebrity images "in-the-wild". This dataset contains over 200K images with various tags. We selected approximately 10K images that contain suitable tags (beard and glasses) for the project. Tags used for this project are included in TA-BLE II. Select images from both datasets are presented in  Out of the 10K images selected for our project, we divided them into training and testing datasets using a 8 − 2 ratio. Since inception score should only be used as a reference for quality of image, there is little point in designating a validation set. We tuned parameters mostly based on manua inspection of generated images. Given the limited tool-sets in evaluating image quality, manual evaluate is the most appropriate for our purpose.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Pre-processing</head><p>We expect neural networks to produce better results when faces are intelligently selected from the images. Cropping out faces help the neural network select "area of interest" and reduces input size. With a reduced input size, the network can spend resources on applying feature transformations and on identifying features. For this project, we used image sizes of 64 × 64 to decrease demand on GPU memory.</p><p>Our dataset from Hong Kong Polytechnic comes with cropped images. CelebA, in contrast, contains too much background, for the dataset to be generic enough for a variety of tasks. We made use of OpenCV's Haar Cascades <ref type="bibr" target="#b8">[9]</ref> to detect and crop out faces recognized from images. These crops, after rescaling, look almost identical to those provided by HK Polytechnic. We did not manually filter out poor quality crops because it is too time consuming. Low percentage of poorly cropped images should have little effect on training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Vanilla GAN Structure</head><p>Neural network used for our purpose are much more sophisticated than typical generative adversarial networks that deals with MNIST datasets. Multiple network structures have been attempted and their differences will be presented in the Results section. Given the theoretical background of Generative Adversarial Neural Network, as discussed in Section II, a vanila GAN can be roughly represented by    The Project Milestone has demonstrated that vanila GANs have limited capability in terms of both beard removal and facial feature reconstruction. This, as described in Section II, can be tackled by introducing coupling, implemented as a CycleGAN-like structure shown in <ref type="figure" target="#fig_5">Fig 3.</ref> Note that the figure presented is only half of CycleGAN. This half demonstrates how the desired "forward" image is generated. "Reconstruction" is achieved by training the backward generator. Clearly, the other half of this network helps the forward generator maintain image fidelity.</p><note type="other">b. Simple Convolutional Neural Networks Simple multilayer convolutional networks are built for generator and discriminator. For example, one such model that we have built is shown in Table IV. Generator Discriminator Input 128 × 128 Gray Scale Input 128 × 128 Gray Scale 5×CNN with 3 × 3, 128 features CNN with 3 × 3, 256 features CNN with 3 × 3, 64 features CNN with 3 × 3, 256 features CNN with 3 × 3, 1 feature CNN with 3 × 3, 128 features 256 Neuron Leaky ReLu Output 128 × 128 Gray Scale Output [y1, y2] One-hot encoding</note><p>The forward generator G maps disguised faces to original faces, whereas the backward generator F maps original faces back to disguised faces. We apply adversarial loss functions to both GAN's:</p><formula xml:id="formula_1">L GAN (G, D Y , X, Y ) = E y∼p data (y) [log D y (y)] + E x∼p data (x) [log(1 − D y (G(x)))]</formula><p>In addition to the adversarial loss functions, we have an additional cycle-consistency loss to preserve the individual identities through the generation process:</p><formula xml:id="formula_2">L cyc (G, F ) = E y∼p data (x) [||F (G(x)) − x|| 2 ] + E y∼p data (y) [||F (G(y)) − y|| 2 ]</formula><p>Such that our full objective would be:</p><formula xml:id="formula_3">L(G, F, D X , D Y ) = L GAN (G, D Y , X, Y ) + L GAN (F, D X , Y, X) + L cyc (G, F )</formula><p>where λ is a hyperparameter that controls the relative importance of the two objectiv losses.</p><p>We tested CycleGAN using relatively simple network structure. However, the CycleGAN structure has two sets of generator-discriminator pairing, effectively doubling the size of the network. Structure of both pairs are the same, as presented in <ref type="table">Table VI</ref>. As expected, this complex networks takes considerable amount of time to train, but it certainly does excel in preserving irrelevant facial features. As an evaluation metric, we calculate the inception scores based on the inception model derived in <ref type="bibr" target="#b1">[2]</ref> by Salimans. Every generated image has a conditional label distribution p(y|x) based on the inception model. Images that contain meaningful objects should have p(y|x) with low entropy. Moreover, we expect the model to generate varied images, so the marginal p(y|x = G(z))dz should have high entropy. Since these two criteria are related to the same entity, the inception score is defined as the exponential of the KL distance between their respective distributions:</p><formula xml:id="formula_4">exp(E x [KL(p(y|x)||p(y))])</formula><p>Taking the exponential makes it easier for us to compare the values.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. EXPERIMENTS A. Experiment Environment</head><p>Our experiments are conducted on Google Cloud VM instances with NVIDIA K80 GPUs. This setup significantly speeds up the training process compared to running on CPU-only machines, decreasing discriminator training time from over an hour to less than a minute and generator training from 10 to 15 minutes per batch on a simple CNN structure to a few seconds.</p><p>We built the training infrastructure using Keras. In addition, we have developed a generic infrastructure that is capable of handling difference generators and discriminators in a plug-and-go fashion. This modular infrastructure has significantly lowered overhead associated with experimenting with a wide range of network structures. Our custom code referenced vanilla GAN implementation from <ref type="bibr" target="#b11">[12]</ref>, CycleGAN implementation from <ref type="bibr" target="#b11">[12]</ref> and <ref type="bibr" target="#b12">[13]</ref>, and inception score from <ref type="bibr" target="#b13">[14]</ref>. Source files use for this project are available on Github.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Results and Discussion</head><p>We present generated images from different networks that we have experimented with. <ref type="figure">As shown in FIG 4,</ref> generated images have rather poor quality. This is because multilayer perceptrons cannot capture spatial relationships. Nevertheless, this demonstrates that the generator loss function should be correct, as it is producing images that look like human faces.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>a. Multilayer Perceptron</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 4. Generated images from multilayer perceptron</head><p>b. Simple Convolutional Neural Network As shown in FIG 5, generated images are a lot smoother than that from multilayer perceptron. There is also "'traces" of beard/mustache region being modified by the generator network. Also the generator seems to be brightening columns near nose, where mustache typically appears.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 5. Generated images from simple CNN</head><p>c. Residual Convolutional Neural Network Residual networks are supposed to be better in retaining characteristics of the original image. Since this network also contains more convolutional layers, the result, shown in FIG 6, has slightly higher quality than images generated using simple CNNs. These images have far less bright/dark "bars".</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 6. Generated images from residual CNN</head><p>d. CycleGAN A relatively simple CycleGAN structure is implemented for this work. This is because Cycle-GAN consumes more than twice the memory compared to its vanilla counterparts. Expanding our network to support colored images also significantly limits complexity of the network. Nevertheless, CycleGAN produces high quality images, as shown <ref type="figure">in FIG 7.</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 7. Generated test images from CycleGAN</head><p>Clearly, with the introduction of reconstruction and identity loss, the generated images are of much higher quality. Not only that irrelevant features are modified, our reconstructed images look almost identical to the original, verifying that the reconstruction losses are highly effective.</p><p>Plot of losses for CycleGAN running the beard and glasses modification task is presented <ref type="figure">in FIG 8.</ref> It is conceivable that the generator losses plateau after a few hundred iterations, while overall network loss continue to decline. The overall network loss is weighted, accounting for discriminator accuracy and quality of generated images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FIG. 8. Model losses of CycleGAN</head><p>All images presented here are faces of male. This is because training the network with female faces introduces makeup to modified faces. For example, removing beard adds lipstick regardless of gender. Similarly, removing sunglasses frequently adds eyeshadow or eyeline. Another interesting phenomenon we notices is that old celebrities tend to get clear glasses whereas younger celebrities tend to get sunglasses. Though the network handles most images reasonably well, we have noticed that it is still struggling with removing opaque sunglasses. This difficulty is expected because image with opaque sunglasses provides little information about wearers' eyes. The algorithm has nothing to construct the eyes from. Instead, it puts a "generic" eye in place of sunglasses, which often look out of place. This effect is observed among images in which glasses hide significant portion of eye brows. Reconstructed eye brows in those cases are of dubious quality.</p><p>Since this project is generative in nature, there is no accuracy to evaluate. Inception score is perhaps the more appropriate numerical metric to include for the experiment. Inception score of all tested networks are presented in TABLE VII. Since inception score for CIFAR-10 images <ref type="bibr" target="#b14">[15]</ref> are only around 2.15 <ref type="bibr" target="#b1">[2]</ref>, images generated by our CycleGAN are in fact, of decent quality. The other three networks, as expected, have much lower inception score. Score of these three are not exactly the same as how human would rank their image qualities, which in a way verifies that inception score should not be the only method to quantify image quality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION AND FUTURE WORKS</head><p>This project successfully identified a neural network structure to perform the task of modifying facial features. Although results of this work focuses exclusively on beard and glasses, the same infrastructure can certainly be used for other features.</p><p>In the future, we would like to build a generic infrastructure that is capable of handling any facial feature. It would also be helpful to make the training process semisupervised. This will allow us to include other datasets that do not have relevant tags. Mirza's <ref type="bibr" target="#b15">[16]</ref> work on conditional GAN is high relevant if we were to moev toward this direction. We can also experiment with other bi-directioned GANs or certain autoencoder models like those created by Makhzani <ref type="bibr" target="#b16">[17]</ref>. These models have been shown to perform reasonably well for similar tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. DISTRIBUTION OF WORK</head><p>Our team has divided work evenly based on each team member's technical background and course load. To be more specific, Jingbo worked on pre-processing and testing neural network models, Boning worked on building various neural network models, and Meixian focused on plotting and writing reports/poster.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Fig 1.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>. Useful tags for CelebA dataset FIG. 1. Sample images from the two datasets</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>Fig 2.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>FIG. 2 .</head><label>2</label><figDesc>Vanila GAN Model for beard removal a. Perceptron-Based A multi-layer perceptrons net- work (shown in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>Discriminator Input 64 × 64 Gray/Colored Input 64 × 64 Gray/Colored CNN with 3 × 3, 128 features CNN with 3 × 3, 256 features CNN with 3 × 3, 64 features CNN with 3 × 3, 256 features Flattening Output 128 × 128 Gray/Color Output [y1, y2] One-hot encoding TABLE VI. Structure of CycleGAN with "simple" CNN lay- ers C. Inception Score</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>FIG. 3 .</head><label>3</label><figDesc>Cycle GAN Model for beard removal</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>and the popular CelebA<ref type="bibr" target="#b5">[6]</ref> dataset created by Liu, Wang and Tang are suitable for the task of detailed facial feature manipulation.This project initially used Wang and Kumar's dataset because it contains nicely aligned and cropped facial im- ages pre-processed into gray scale along with multiple annotations. This dataset consists of 2460 images of 410 different celebrities. All facial images are collected directly from the publicly available websites which are clearly cited in the database.This dataset provides the following ground truth attributes corresponding to hu- man inspection of each of the images in the database:</figDesc><table>File Name File Size Gender 
+Skin Color 
+Hat 
+Ethnicity 
+Hair Style Glasses 
+Beard 
+
+TABLE I. Tags for HK Polytechnic dataset 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table III )</head><label>III</label><figDesc>is built to test whether the infrastructure is reliable.3 Generator Discriminator Input 128 × 128 Gray Scale Input 128 × 128 Gray Scale 3×1024 Neuron Leaky ReLu 3× 512 Neuron Leaky ReLu 512 Neuron Leaky ReLu Output 128 × 128 Gray Scale Output [y1, y2] One-hot encoding TABLE III. Structure of multilayer perceptron</figDesc><table>Generator 
+Discriminator 
+Input 128 × 128 Gray Scale 
+Input 128 × 128 Gray Scale 
+3×1024 Neuron Leaky ReLu 
+3× 512 Neuron Leaky ReLu 
+512 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE IV .</head><label>IV</label><figDesc>Structure of simple CNNc. Residual Convolutional Neural Networks Resid- ual networks<ref type="bibr" target="#b9">[10]</ref> was first introduced by Szegedy. Neu- ral networks with residual structure do much better in retaining original images. Wang<ref type="bibr" target="#b10">[11]</ref> has implemented a similar structure for generating high resolution images. Our ResNet structure is presented in TABEL V.</figDesc><table>Generator 
+Input 128 × 128 Gray Scale 
+CNN with 3 × 3, 128 features 
+CNN with 3 × 3, 128 features 
+Residual 2-Layer CNN with 3 × 3, 128 features 
+Residual 2-Layer CNN with 3 × 3, 128 features 
+Residual 2-Layer CNN with 3 × 3, 128 features 
+CNN with 1 × 1, 1 feature 
+Output 128 × 128 Gray Scale 
+Discriminator 
+Input 128 × 128 Gray Scale 
+CNN with 3 × 3, 256 features 
+CNN with 3 × 3, 256 features 
+CNN with 3 × 3, 128 features 
+256 Neuron Leaky ReLu 
+Output [y1, y2] One-hot encoding 
+
+TABLE V. Structure of Residual-CNN 
+
+B. CycleGAN 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head></head><label></label><figDesc>TABLE VII. Inception score of various models</figDesc><table>CycleGAN ResCNN CNN Perceptron 
+Mean 
+2.25 
+1.38 
+1.02 1.21 
+Variance 0.20 
+0.23 
+0.025 0.29 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Unpaired image-to-image translation using cycle-consistent adversarial networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J.-Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Isola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename><surname>Efros</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Improved techniques for training gans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Zaremba</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="2234" to="2242" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Pairedcyclegan: Asymmetric style transfer for applying and removing makeup</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Finkelstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Unsupervised image-to-image translation with generative adversarial networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Neekhara</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1701.02676</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Recognizing human faces under disguise and makeup</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Identity, Security and Behavior Analysis (ISBA), 2016 IEEE International Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="1" to="7" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Deep learning face attributes in the wild</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of International Conference on Computer Vision (ICCV)</title>
+		<meeting>International Conference on Computer Vision (ICCV)</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Generative adversarial nets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Warde-Farley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ozair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="2672" to="2680" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Cmu face images data set</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mitchell</surname></persName>
+		</author>
+		<ptr target="https://archive.ics.uci.edu/ml/datasets/cmu+face+images" />
+		<imprint>
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed December-2018</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Haar cascades</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Reimondo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OpenCV Swiki</title>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Inception-v4, inception-resnet and the impact of residual connections on learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Generative adversarial network based on resnet for conditional image restoration</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1707.04881</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Keras implementations of generative adversarial networks</title>
+		<ptr target="https://github.com/eriklindernoren/Keras-GAN" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">wgan, wgan2(improved, gp), infogan, and dcgan implementation in lasagne, keras, pytorch</title>
+		<ptr target="https://github.com/tjwei/GANotebooks/" />
+		<imprint/>
+	</monogr>
+	<note>Online; accessed December-2018</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Inception-score</title>
+		<ptr target="https://github.com/nnUyi/Inception-Score" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed December-2018</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">The cifar-10 dataset</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Nair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<ptr target="http://www.cs.toronto.edu/kriz/cifar.html" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Conditional generative adversarial nets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Osindero</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1411.1784</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Adversarial autoencoders</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Makhzani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jaitly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Frey</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1511.05644</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

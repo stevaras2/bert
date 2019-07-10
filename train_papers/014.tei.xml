@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Campus Location Recognition using Audio Signals</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Sun</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Reid</forename><surname>Westwood</surname></persName>
+							<email>rwestwoo@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Campus Location Recognition using Audio Signals</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>People use sound both consciously and unconsciously to understand their surroundings. As we spend more time in a setting, whether in our car or our favorite cafe, we gain a sense of the soundscape -the aggregate acoustic characteristics in the environment. Our project aims to test whether the acoustic environment in different areas of Stanford campus are distinct enough for a machine learning algorithm to localize a user based on the audio alone.</p><p>We limit our localization efforts to seven distinct regions on Stanford campus as enumerated in Section III-C. We characterize the locations as "regions" because we hope to capture qualitative rather than quantitative descriptions. For example, the "Huang" region includes the outdoor patio area as well as the lawn beside the building. Furthermore, we restrict our efforts to daytime hours due to the significant soundscape differences between daytime and nighttime.</p><p>A significant advantage of audio localization is the qualitative characterization on which we focus. Specifically, an acoustic environment does not generally linearly vary with position. For example, any point within a large room will likely have common acoustic characteristics. However, we expect a drastic soundscape change just outside the door or in another room, and that difference can be of significant value. However, GPS may not capture this change for two reasons:</p><p>1) This change may be below current GPS accuracy thresholds, typically 10-50 feet. 2) GPS only produces lat-long data. An additional layer of information is needed to provide information about the precise boundaries of the building. Furthermore, GPS fails to distinguish accurate vertical position (e.g. floors), which may be of special interest in buildings such as malls or department stores.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>A previous CS229 course project identified landmarks based on visual features <ref type="bibr" target="#b0">[1]</ref>. <ref type="bibr" target="#b1">[2]</ref> gives a classifier that can distinguish between multiple types of audio such as speech and nature. <ref type="bibr" target="#b2">[3]</ref> investigates the use of audio features to perform robotic scene recognition. <ref type="bibr" target="#b3">[4]</ref> integrated Mel-frequency cepstral coefficients (MFCCs) with Matching Pursuit (MP) signal representation coefficients to recognize environmental sound. <ref type="bibr" target="#b4">[5]</ref> uses Support Vector Machines (SVMs) with audio features to classify different types of audio.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. SYSTEM DESIGN</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Hardware and Software</head><p>The system hardware consists of an Android phone and a PC. The Android phone runs the Android 6.0 Operating system and uses the HI-Q MP3 REC (FREE) application to record audio. The PC uses Python with the following open-source libraries:</p><formula xml:id="formula_0">• Scipy • Numpy • statsmodels • scikits.talkbox • sklearn</formula><p>The system also makes use of a few custom libraries developed specifically for this project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Signal Flow</head><p>An audio input goes through our system in the manner below:</p><p>1) The audio signal is recorded by the Android phone 2) The Android phone encodes the signal as a Wav file 3) The Wav file enters the Python pipeline as a Sample instance 4) A trained Classifier instance receives the Sample a) The Sample is broken down into subsamples of 1 second in length b) A prediction is made on each subsample c) The most frequent subsample prediction is output as the overall prediction. A graphical illustration of this is shown in <ref type="figure" target="#fig_0">Figure 1</ref>: We have designed the system with this subsample structure so that any audio signal with length greater than 1 second can be an input.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Locations</head><p>The system is trained to recognize the following 7 locations:</p><p>1. Rains Graduate Housing 2. Circle of Death Intersection of Escondido and Lasuen </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. DATA COLLECTION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Audio Format</head><p>We collected data using a freely available Android Application as noted in Section III-A. Monophonic Audio was recorded without preprocessing and postprocessing at a sample rate of 44.1 kHz.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Data Collection</head><p>Data was collected on 7 different days over the course of 2 weeks. Each data collection event followed the following procedure:</p><p>1) Hold the Android recording device away from body with no obstructions of the microphone 2) Stand in a single location throughout the recording 3) Record for 1 minute 4) Restart if recording interferes with the environment in some way (e.g., causing a bicycle crash) 5) Split recording into 10-second-long samples</p><p>In total, we gathered 252 recordings of 1 minute in length, for a total of 1507 data samples of 10 seconds in length. Even though our system is designed to handle any inputs of length greater than 1 second, we standardized our inputs to be 10 seconds for convenience.</p><p>We also attempted to maintain sample balance amongst the 7 locations while also diversifying sample collection temporally. The distribution of samples by location is in <ref type="table" target="#tab_0">Table I</ref>. The distribution by day and time is given in <ref type="figure">Figure 2</ref>. • SPD (60 bins)</p><p>• 13 Mel-frequency cepstral coefficients (MFCCs) We observed best performance using MFCC and SPD features for a total of 73 features. These 2 feature types are described in the subsequent subsections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. MFCC</head><p>MFCCs are commonly used to characterize structured audio such as speech and music in the frequency domain, often as an alternative to the Fourier Transform <ref type="bibr" target="#b2">[3]</ref>- <ref type="bibr" target="#b5">[6]</ref>. Calculating the MFCCs proceeds in the following manner <ref type="bibr" target="#b6">[7]</ref>: 1) Divide the signal into overlapping windows 2) For each windowed signal: a) Take the Fast Fourier Transform (FFT) b) Map powers of the FFT onto the Mel scale (which emphasizes lower frequencies) c) Take the logarithm of the resultant mapping d) Take the discrete cosine transform (DCT) e) Output a subset of the resulting DCT amplitudes as the MFCCs We used 23.2 ms windows and kept the first 13 MFCCs as is standard <ref type="bibr" target="#b3">[4]</ref>. This creates multiple sets of MFCCs per signal (one per window). To summarize all of these coefficients, we take the mean over all windows of a signal. <ref type="figure" target="#fig_1">Figure 3</ref> shows two example sets of MFCCs that obtained from different locations. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Spectrogram Peak Detection (SPD)</head><p>SPD is a method we developed for finding consistent sources of spectral energy over time. First, SPD generates a spectrogram using short-period FFTs, obtaining the energy of the signal as a function of both time and frequency. The method then finds the local maxima in frequency as defined by a window size.</p><p>A local maximum is marked '1', and all other elements are zero. Finally, this matrix is summed across time to give a histogram of local maxima as a function of frequency. Finally the method bins the results according to a log scale.</p><p>SPD finds low Signal to Noise Ratio (SNR) energy sources that produce a coherent signal, e.g., a motor or fan producing a quiet but consistent sum of tones. Since all maxima are weighted equally, SPD attempts to expose all consistent frequencies regardless of their power. We show a comparison of SPD outputs between the Circle and Bytes in <ref type="figure" target="#fig_2">Figure 4</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Principal Component Analysis (PCA)</head><p>We investigated the redundancy in our features by doing a PCA on our data set using the above features. <ref type="figure" target="#fig_3">Figure 5</ref> plots the fraction of variance explained vs the number of principal components used. We saw that the curve is not steep, and 50 of our 73 features probably do in fact encode significant information.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Using the MFCC and SPD features, we investigated the following classifiers:</head><p>• SVM using Gaussian and Linear Kernels</p><formula xml:id="formula_1">• Logistic Regression • Random Forest • Gaussian Kernel SVM with Logistic Ensemble</formula><p>Described in more detail in the next section When picking the hyperparameters to use for each classifier, we did a 70%-30% split of our training dataset and then searched over a grid of parameters, evaluating based on accuracy of classification.</p><p>For Logistic Regression and SVM, we also compared the use of one-vs-one (OVO) and one-vs-rest (OVR) multiclassification schemes. We found no significant difference in performance for Logistic Regression and Linear SVM. However, OVR Gaussian SVM exhibited much worse performance than OVO Gaussian SVM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Voting</head><p>As described in Section III-B, our prediction method offers the following advantage: a test sample (with single label) is made up of multiple subsamples, each of which is processed and classified. The final prediction for the sample is made on a basis of majority vote from each subsample, which significantly reduces our test error. Our original implementation broke voting ties randomly. When analyzing the predictions of the Gaussian Kernel SVM, we noticed that 27% of misclassifications resulted from incorrect tiebreaks, and 42.5% of misclassifications occurred with voting margins of at most 1. We investigated 2 approaches to improving performance in these scenarios.</p><p>Our first attempt used the total likelihood produced by the SVM predictions across 10 subsamples. While this approach seemed sound in theory, the small training sample size make the likelihood estimates highly inaccurate, and this approach did not change overall performance.</p><p>Our second approach was to use the Gaussian SVM+Logistic ensemble method mentioned in Section VI. Previous testing indicated that our Gaussian kernel SVM was prone to overfitting, while the linear logistic classifier tended to have a better balance between training and test error. The final method we chose was to employ the ensemble only when the voting margin for the SVM is no more than 1. For these close call scenarios, the logistic classifier calculates its predictions for all subsamples. The SVM votes are given 1.45x weight to prevent any potential future ties, and the highest total is chosen. This method provided a 2.5% generalization error reduction.</p><p>It is also interesting to note how test error varied as we changed the duration of our test sample, effectively changing the number of votes per test sample. Using our ensemble, we achieved just under 17% error with 30 second test samples <ref type="figure" target="#fig_5">(Figure 8</ref>). This audio length is likely too long for most applications, but it is noteworthy nonetheless. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Generalization</head><p>We distinguished between 2 types of testing errors: 1) Cross-Validation Error -Error on the testing set when we split the data set completely randomly 2) Generalization Error -Error on the testing set when we split based on random days. Our data has a significant temporal correlation. We discovered that the typical Cross-Validation error was too optimistic because audio samples recorded on the same day can be significantly more correlated to each other than to audio recorded on different days. We were able to decrease our Cross-Validation error to around 8% using a Gaussian SVM. However, when we attempt to use this seemingly general classifier on a completely new day's data, we discovered it was actually very overfitted.</p><p>With this in mind, we were able to reduce our Generalization error to a bit less than 20% using a Gaussian SVM with Logistic Classifier ensemble as described in VI-A. To calculate generalization error, we did a form of 7-fold crossvalidation. We held out all samples from a single day for testing while using all other days for training, and then we repeat for all 7 days during which we had gathered data. We finally do a weighted combination to calculate the Generalization Error, weighting based on the number of samples in each held out day. <ref type="table" target="#tab_0">Table II</ref> gives a summary of our results. Using the SVM+Logistic classifier, we generated the confusion matrix in <ref type="figure">Figure 9</ref> averaging over all hold-out trials.</p><p>Our classifier did relatively well in terms of accuracy To eliminate any effects due to our data collection's minor class imabalance <ref type="table" target="#tab_0">(Table I)</ref>, we also trained on a completely balanced data set to obtain <ref type="figure" target="#fig_0">Figure 10</ref>. There are no major changes when balancing the dataset. This suggests that the Oval and Circle are very similar in terms of soundscape and temporal variability, a conclusion that is also supported by PCA in <ref type="figure">Figure 7</ref>. However, the Circle is likely very similar to Rains on certain days, but Rains has a more constant soundscape that is easy to identify.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Classifier Evaluation</head><p>As the final step in evaluating our system, we compared the performance of our classifier to people's ability to localize based on audio clips. We created a small game that would present the user with a random 10 second audio clip from our dataset. The user would then choose from which of the 7 locations the audio was taken. The pool of participants comprised of Stanford CS229 students and other attendees of our poster presentation. The results are shown in <ref type="table">Table 11</ref>. The sample size only consisted of 41 sample points. Furthermore, we acknowledge that they did not explicitly undergo any 'training' and relied only on recall. However, it seems apparent that even Stanford students, who frequent the chosen locations, are ill-adept at identifying them by sound alone. As a baseline, random prediction would give 86% error on average with 7 labels. Of the 41 audio samples, students accurately located only 11 of them for an error rate of 73.2%. This is much higher than our classifier's generalization error of 19.68%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. FUTURE WORK AND CONCLUSION</head><p>A major challenge in this project was data collection. Due to the limited number of audio samples collected, our efforts to develop additional relevant features generally Significantly increasing our training set may allow exploring additional features. In particular, we believe hour-of-day and day-of-week could be significant additions, especially to mitigate the temporal challenge of classification. As discussed in Section VI-B, we observed a gap between cross validation error and generalization error. As we utilized more data, we observed this gap lessening even with just the current set of features. We expect that our algorithm's ability to predict new data would continue to improve with additional training data. Finally, increasing our training set would make the likelihood estimates of our classifiers more accurate. Thus, it may be worthwhile to revisit the use of likelihood estimates in our voting scheme as described in Section VI-A.</p><p>The student testing we performed, as described in Section VI-C, demonstrate the challenges of audio-based localization. Users frequently noted that their 10-second clip did not seem to match the 'typical' soundscape of the area they imagine. Given the variability of soundscape at each region between different times and days, we are encouraged by our algorithm's performance. However, significant work remains to be done before conclusions can be reached about the feasibility of this method for broader applications. In particular, it is unknown how scaling the number of regions affects prediction accuracy. It would also be interesting to see our chosen features and techniques applied to very different environments with the same number of regions.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>System Block Diagram 3. Tressider Memorial Union 4. Huang Lawn 5. Bytes Café 6. The Oval 7. Arrillaga Gym These locations were chosen for their geographical diversity, as well as the variety of environments. Locations 3,5, and 7 are indoors whereas Locations 1,2,4, and 6 are outdoors.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3 :</head><label>3</label><figDesc>Sample MFCCs at Bytes and the Circle</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Sample SPDs at Bytes and the Circle</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Variance Explained Vs # of Principal ComponentsWe also projected our samples onto the basis defined by the first 3 principal components for visualization. Certain regions were clearly separablein this basis, such as inFig- ure 6. Other regions were not quite so obviously separable, as shown inFigure 7</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 6 :</head><label>6</label><figDesc>Rains vs Tressider using the first 3 PCsFig. 7: Oval vs Circle using the first</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 8 :</head><label>8</label><figDesc>Error vs. Number of Subsamples</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 9 :Fig. 10 :</head><label>910</label><figDesc>Overall Confusion Matrix Fig. 10: Confusion Matrix with Balanced Classes for most regions. However, the Oval and Circle are often confused for each other in a relatively balanced manner, but the Circle is frequently missclassified as Rains whereas Rains is not often mistaken for the Circle.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 11 :</head><label>11</label><figDesc>Human Confusion Matrix resulted in overfitting.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc># Samples Gathered at each Location</figDesc><table>Rains 
+Circle 
+Tressider 
+Huang 
+Bytes 
+Oval 
+Arrillaga 
+234 
+210 
+211 
+222 
+222 
+192 
+216 
+
+Fig. 2: Sample Distribution by Day 
+
+V. AUDIO FEATURES 
+
+We investigated the use of the following features: 
+
+• Mean Amplitude in Time Domain 
+• Variance of Amplitude in Time Domain 
+• Fourier Transform (40 bins) 
+• Autocorrelation Function (40 bins) 
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Classifier Comparison</figDesc><table>Classifier 
+X-Validation 
+Generalization 
+
+Gaussian Kernel SVM 
+13.65% 
+21.72% 
+
+Linear Kernel SVM 
+27.84% 
+32.74% 
+
+Logistic 
+15.45% 
+21.22% 
+
+Random Forest 
+14.09% 
+28.26% 
+Gaussian SVM + Logistic 
+Ensemble 
+13.89% 
+19.68% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Landmark recognition using machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Crudge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Zhu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS229 Project</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Mixed type audio classification with support vector machine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gunduz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">T</forename><surname>Ozsu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2006 IEEE International Conference on Multimedia and Expo</title>
+		<imprint>
+			<date type="published" when="2006-07" />
+			<biblScope unit="page" from="781" to="784" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Where am i? scene recognition for mobile robots using audio features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Narayanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">C J</forename><surname>Kuo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Mataric</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2006 IEEE International Conference on Multimedia and Expo</title>
+		<imprint>
+			<date type="published" when="2006-07" />
+			<biblScope unit="page" from="885" to="888" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Environmental sound recognition with time and frequency audio features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Narayanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">C J</forename><surname>Kuo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Audio, Speech, and Language Processing</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1142" to="1158" />
+			<date type="published" when="2009-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Content-based audio classification and retrieval by support vector machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">Z</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="209" to="215" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+	<note>Neural Networks</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The bag-of-frames approach to audio pattern recognition: A sufficient model for urban soundscapes but not for polyphonic music</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J.-J</forename><surname>Aucouturier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Defreville</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pachet</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of the Acoustical Society of America</title>
+		<imprint>
+			<biblScope unit="volume">122</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="881" to="891" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Fundamentals of speech recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Rabiner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B.-H</forename><surname>Juang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1993" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

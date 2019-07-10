@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Household Energy Disaggregation based on Difference Hidden Markov Model</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>ahemmati@stanford.edu</roleName><forename type="first">Ali</forename><surname>Hemmatifar</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manohar</forename><surname>Mogadali</surname></persName>
+							<email>manoharm@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Household Energy Disaggregation based on Difference Hidden Markov Model</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Energy disaggregation</term>
+					<term>Markov Chain</term>
+					<term>HMM</term>
+					<term>Difference HMM</term>
+					<term>Viterbi algorithm</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-We aim to address the problem of energy disaggregation into individual appliance contribution for a given household. We do this based on a Machine Learning approach that involves modeling each appliance's load contribution to be a Markov chain. Once the Hidden Markov Model (HMM) is trained, we can get the parameters such as the number of states and their prior probabilities, transition matrix and the emission characteristics for each appliance (each state is modeled as a Gaussian distribution). The disaggregation of the total load is modeled as a difference Hidden Markov Model (difference HMM), based on HMMs for each of the appliance learned previously. Finally, the most probable set of states for all the appliances is obtained using a custom Viterbi algorithm. This approach to energy disaggregation works well for fixed state appliances, as can be seen in the results.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>I. INTRODUCTION Exponential increase in energy demands makes the energy conservation one of the biggest challenges of our time. Any effort in minimizing the energy wastage will then have direct impact on our life, both economically and environmentally. It is estimated that, on average, residential and commercial buildings consume as high as a third of total energy generation <ref type="bibr" target="#b6">[7]</ref>. Recent studies <ref type="bibr" target="#b0">[1]</ref>, <ref type="bibr" target="#b6">[7]</ref> suggest that household-specific energy monitoring and providing direct feedback (as opposed to indirect feedbacks such as monthly bills, etc.) can help reducing the energy consumption of residential buildings by about 10%. This could also be used to provide important information to utilities and lawmakers who shape energy policy. Energy disaggregation has been an active area of research in the recent past. <ref type="bibr" target="#b2">[3]</ref>use sparse coding for even disaggregated load from monthly demands. Non-Intrusive Appliance Load Monitoring (NIALM) techniques are among the promising monitor-feedback systems. NIALM is a method of evaluating total current/voltage (or power) readings in order to deduce appliance-level energy consumption patterns. To this end, NIALM monitors the total load and identifies the certain appliance "signatures". These signatures correspond to certain (hidden) states of the appliances and can be used to disaggregate the total load to its individual components. Energy disaggregation, powered by various machine learning algorithms, has been an active area of research <ref type="bibr" target="#b1">[2]</ref>, <ref type="bibr" target="#b2">[3]</ref>, <ref type="bibr" target="#b3">[4]</ref>, <ref type="bibr" target="#b6">[7]</ref>. Among all, supervised algorithms show better performance compared to unsupervised <ref type="bibr" target="#b2">[3]</ref> algorithms, due to a prior knowledge on individual appliance energy states and signatures. In this project, we use a mixture of supervised learning algorithms for energy disaggregation. We first extract individual appliance energy states by approximating the states as a mixture of Gaussians. We then use Hidden Markov Model (HMM) with Gaussian outputs (or emissions) to learn energy signatures and transitions between states for each individual appliance. We then use Difference HMM (DHMM) algorithm developed by <ref type="bibr" target="#b5">[6]</ref>along with a custom Viterbi algorithm to approximate the most probable sequence of hidden states for each appliance from total power consumption data. Using our model, we are equipped with a method to provide energy saving recommendations to consumers. Energy consumption segmentation into 'classes' of appliances has been studied. These methods though being both stochastically advanced and accurate, do not help in providing valuable recommendations to a customer. We believe that by comparing with other households having similar energy patterns, one can provide more relevant recommendations and have a greater chance of behavioral change. This is a novel feature that has not been researched much on, according to our knowledge and is central to our recommendation scheme.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. APPLIANCE MODELING</head><p>In this section, we describe the procedure of extracting features of energy consumption of appliances. We use publicly-available REDD dataset which contains both aggregate and individual appliance power data of 6 households. We used the data from first home (measured at every 2 to 5 sec) for our appliance-level supervised learning. We identified the major energy consuming appliances (total of 7) and extracted their power curves. To this end, for each appliance, we "chopped" the power usage for period of times in which the appliance was on. This will provide a multi-observation sequence which can potentially result in more accurate training. We then used a histogram analysis to identify number of states of each appliance and provide reasonable initial guesses to the training algorithm. <ref type="figure">Figure 1</ref>(a) shows the actual power reading of dishwasher as well as its corresponding energy histogram. This analysis and all the following algorithms are implemented in MATLAB. As shown in <ref type="figure">Figure  1</ref>(a), we created an energy histogram of each appliance (normalized frequency of energy vs. energy level) to identify the most frequent energy levels and the standard deviation corresponding to those states. This is a crude yet essential step for us in appliance modeling, as it provides reasonable initial values for the next step in appliance modeling. These results are then fed into a HMM as initial values. Since the power readings are continuous, we approximate the output of HMM as multivariate Gaussian (with each state corresponding to a single Gaussian). For this version of HMM, we used the algorithm formulated by <ref type="bibr" target="#b5">[6]</ref>. We briefly introduce this model here. For emission matrix φ, we have φ i ∼ N (µ i , σ 2 i ). The estimation formulae for the parameters of this model can be shown to be of the form <ref type="bibr" target="#b5">[6]</ref> </p><formula xml:id="formula_0">µ i = T t=1 γt(i)xt T t=1 γt(i) and σ 2 i = T t=1 γt(i)(xt−µ i ) 2 T t=1 γt(i)</formula><p>where x is the observation and µ i and σ 2 i are respectively mean and variance of i-th state. γ t (i) is the probability of being in state i at time t and is defined as</p><formula xml:id="formula_1">γ t (i) = α t (i)β t (i) n i=1 α t (i)β t (i)</formula><p>where α t (i) and β t (i) are backward and forward variables. The other parameters, such as prior probabilities and transmission matrix, are similar to the case of standard HMM. The result of Gaussian emission HMM in the case of dishwasher is shown in <ref type="figure">Figure 1(b)</ref>. This appliance has four states and so the graph representation has four nodes. In <ref type="figure">Figure 1(c)</ref>, we show the most probable state sequence (output of Viterbi algorithm) for the data shown in <ref type="figure">Fig. 1(a)</ref>. Result show a reasonable agreement between predicted and measured power curve. We similarly train the rest of appliances use a difference Markov chain to disaggregation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DISAGGREGATION</head><p>Once all the appliances are modeled, the task of disaggregation is addressed. We use a difference Hidden Markov Model for this. For the disaggregation of total load, we have two input vectors-x (time series of the total load curve) and y(time series of difference in x for consecutive time states), i.e., such that y t = x t −x t−1 (hence this model is referred to as a difference HMM). This is done because y is a more important feature than the total load itself since any change of state is an appliance results in non-zero y t values, and zero y t values for steady operation. <ref type="figure">Figure 2</ref> shows the schematic of a difference HMM where x and y are defined For each appliance n, the model parameters can be defined as θ (n) = Π (n) , A (n) ,φ (n) , respectively corresponding to the probability of an appliance's initial state, the transition probabilities between states and the probability that an observation was generated by an appliance state. <ref type="bibr" target="#b4">[5]</ref> The probability of an appliance's starting state at t = 1 is represented by the prior distribution, hence:</p><formula xml:id="formula_2">p(z 1 = k) = Π k<label>(1)</label></formula><p>The transition probabilities from state i at t− 1 to state j at t are represented by the transition matrix A such that:</p><formula xml:id="formula_3">p(z t = j|z t−1 = i) = A i,j<label>(2)</label></formula><p>We assume that each appliance has a Gaussian distributed power demand:</p><formula xml:id="formula_4">p(w zt |z t , φ) = N (µ zt , σ 2 zt )<label>(3)</label></formula><p>where w zt is the actual power draw for the appliance. Then, y t can be modeled as a Gaussian distribution which is a difference of 2 Gaussian distributions:</p><formula xml:id="formula_5">y t |z t , z t−1 , φ ∼ N (µ zt − µ z t−1 , σ 2 zt + σ 2 z t−1 ) (4) where φ k = {µ k , σ 2</formula><p>k } , and µ k and σ 2 k are the mean and variance of the Gaussian distribution describing this appliance's power draw in state k. So far, change in state of an appliance does not ensure that the appliance was capable of being in the initial state (or even if the appliance was ON). We can do this by imposing a constraint on the total power demand x t , as a higher limit for the appliance power draw z t :</p><formula xml:id="formula_6">P (w zt ≤ x t |z t , φ) = xt −∞ N (µ zt , σ 2 zt )dw = 1 2 1 + erf x t − µ zt σ zt √ 2<label>(5)</label></formula><p>We further need another constraint which ensures a change of state is not predicted based on noise in the observed total load x. In order to achieve this, we filter out the change of states when the joint probability is below a certain threshold(C) specific to each appliance: t ∈ S if</p><formula xml:id="formula_7">max z t−1 ,zt (p(x t , z t−1 , z t |θ)) ≥ C<label>(6)</label></formula><p>Combining equations 1 through 6 mentioned above, we end with a joint probability:</p><formula xml:id="formula_8">p(x, y, z|Θ) = p(z 1 |π) T t=2 p(z t |z t−1 , A) T t=1 P (w zt ≤ x t |z t , φ) t∈S p(y t |z t , z t−1 , φ) (7)</formula><p>Using equation 7, we can figure out the most probable state for any appliance at a given time t, if we know its state at t − 1. We still do not have a unique state change (a non zero y t could predict change of state for more than one appliance). In order to overcome this, we employ the Viterbi algorithm, which is a dynamic programming algorithm that returns the most probable change of state across all appliances. For running the custom Viterbi algorithm, we make the assumption that there can be only one state change across all appliances. This is a fair assumption owing to high sample rates for the data used (2 -5 seconds). Only the most likely change of state (as predicted by the Viterbi algorithm) is accepted and all others are discarded at each time step. The results of this algorithm are discussed in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">RESULTS AND DISCUSSION</head><p>In <ref type="figure" target="#fig_1">Figure 3</ref>, we show the total load curve of a household disaggregated into 4 appliance loads -an oven, a dryer, a microwve and a refrigerator. The total power demand curve is taken from one of the households in the REDD dataset. <ref type="table">Table 1</ref> shows the energy usage (which is the area under the Power-time curve) for each appliance. We observe that the L1 norm  of the error for this example is 2.58% of the total load curve. The results show that we have successfully disaggregated the total load for the building into its appliance components.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">APPLICATIONS AND SCOPE</head><p>One application of the disaggregated data is to provide energy saving recommendations to individual households. This could be from identifying inefficient appliances, better usage recommendations such as using the washerdryer during afternoon, when the electricity price is low, etc. One major feature required in a recommendation system is that it should be relevant to the consumer. In order to address this, we cluster the users into 5 different clusters based on their energy habits using kmeans++ algorithm. We observe that k = 5 gives the best results. Individual household data is obtained from PecanStreet data, which provides 600 homes' load curves. The results are presented in <ref type="figure" target="#fig_2">Figure 4</ref>. The clustering of users makes comparison within the same energy cluster far more meaningful than when done in a general setting. Any inaccuracies that occur in the disaggregation algorithm can be treated as an online learning problem within each cluster to increase the accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">CONCLUSION AND FUTURE WORK</head><p>We notice that the difference HMM modeling approach to energy disaggregation based on HMM appliance models has a good prediction rate in the case of fixed state appliances. In our example, we have an L1 error norm of 2.58% of the total load. It should be noted the power surge that typically occurs when appliances start from the OFF state is not explained using the current model. Further, infinite state devices (such as dimmer lamps) cannot be modeled accurately using a finite state HMM model and hence, their contribution is not disaggregated accurately. Further, we state a feasible application for the work carried out, in the form of a novel energy saving recommendation provider by comparing households with similar energy patterns.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .Figure 2 .</head><label>12</label><figDesc>(a) Measured power draw and histogram of states for dishwasher, (b)State transition model, (c) Predicted state sequence via Viterbi algorithm Figure 2. Schematic of difference HMM above and z is the vector of appliance states at each time step.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Energy disaggregation into four different appliances (oven, dryer, microwave and refrigerator)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Clustered households via k-means ++ clustering(k = 5), Least Square error for various k values</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Is disaggregation the holy grail of energy efficiency? the case of electricity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abhay</forename><surname>K Carrie Armel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gireesh</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrian</forename><surname>Shrimali</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Albert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Energy Policy</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="213" to="234" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Disaggregating smart meter readings using device signatures. Imperial Computing Science MSc Individual Project</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Knottenbelt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Energy disaggregation via discriminative sparse coding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siddharth</forename><surname>J Zico Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew Y</forename><surname>Batra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="1153" to="1161" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Approximate inference in additive factorial hmms with application to energy disaggregation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zico</forename><surname>Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tommi</forename><surname>Jaakkola</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on artificial intelligence and statistics</title>
+		<imprint>
+			<date type="published" when="2012" />
+			<biblScope unit="page" from="1472" to="1482" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Non-intrusive load monitoring using prior models of general appliance types</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oliver</forename><surname>Parson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siddhartha</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mark</forename><surname>Weal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Rogers</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">A tutorial on hidden markov models and selected applications in speech recognition. Proceedings of the IEEE</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lawrence R Rabiner</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989" />
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="257" to="286" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Non-intrusive load monitoring approaches for disaggregated energy sensing: A survey</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ahmed</forename><surname>Zoha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Gluhak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Muhammad</forename><forename type="middle">Ali</forename><surname>Imran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sutharshan</forename><surname>Rajasegarar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="16838" to="16866" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

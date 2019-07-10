@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reinforcement Learning for Traffic Optimization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matt</forename><surname>Stevens</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Yeh</surname></persName>
+						</author>
+						<title level="a" type="main">Reinforcement Learning for Traffic Optimization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this paper we apply reinforcement learning techniques to traffic light policies with the aim of increasing traffic flow through intersections. We model intersections with states, actions, and rewards, then use an industry-standard software platform to simulate and evaluate different policies against them. We compare various policies including fixed cycles, longest queue first (LQF), and the reinforcement learning technique Q-learning. We evaluate these policies on a varying types of intersections as well as networks of traffic lights. We find that Q-learning does better than the fixed cycle policies and is able to perform on par with LQF. We also note reductions in CO 2 emissions in both LQF and Q-learning relative to a fixed cycle baseline.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Motivation</head><p>According to a study by Texas A&amp;M, Americans waste about 7 billion hours and 3 billion gallons of fuel in traffic each year <ref type="bibr" target="#b2">(David Schrank &amp; Bak, 2014)</ref>. This makes up roughly 2% of all gasoline consumed in the United States <ref type="bibr">(EIA, 2016)</ref>. This means that reducing traffic can have a significant impact on people's lives, as well as their carbon footprint.</p><p>For this project, we aimed to reduce traffic by finding better traffic light policies at intersections. An ideal intelligent traffic light systems can reduce traffic through several techniques. It can turn lights green for longer in directions with more traffic, use sensors to dynamically respond to arriving cars and changing traffic conditions, and coordinate between lights to create runs of traffic that flow through many lights.</p><p>Reinforcement learning is a promising solution to this problem because it can represent all of these techniques. By using a general notion of actions, we can decide when to turn lights on and for how long. It excels at dynamic control and is designed to adapt to new conditions. Lastly, we can define our states to incorporate as much information about the system as we want and share it across many traffic lights to allow them to coordinate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Algorithm 2.1. Q-Learning</head><p>We use Q-learning with function approximation to learn the best traffic signal actions. Before we detail our specific problem formulation, we first describe the Q-learning algorithm for a general Markov Decision Process (MDP). Under a MDP with fixed transition probabilities and rewards, the Bellman equation (Equation 1) gives the optimal policy.</p><formula xml:id="formula_0">Q(s, a) = R(s ) + γ max a Q(s , a )<label>(1)</label></formula><p>If the Q function can be correctly estimated, then a greedy policy becomes the optimal policy, and we can choose actions according to Equation 2.</p><formula xml:id="formula_1">π(s) = arg max a Q(s, a)<label>(2)</label></formula><p>We use the function approximation abstraction from <ref type="bibr" target="#b6">(Mnih et al., 2015)</ref>. From our simulator we extract values for the state features, action, reward, and next state features: (s, a, r, s ). Note that the s variables are not states, but features of states. Thus, Q(s, a) represents the approximate Q value for that state and action. Each (s, a, r, s ) tuple is a training example for our Q function. In order to satisfy the Bellman equation <ref type="formula" target="#formula_0">(Equation 1</ref>), we minimize the loss between our current Q value and our target Q value over parameters θ subject to regularization λ (Equation 3).</p><formula xml:id="formula_2">min θ ||r + γ max a Q(s , a ; θ) − Q(s, a; θ)|| + λ||θ|| (3)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Q functions</head><p>The heart of Q-learning is the Q function used for estimation. In the naive case, the Q function can simply be a lookup table that maps states and actions to Q values, in which case Q-learning is essentially the same as value iteration. However, Q-learning lets us generalize this framework to function approximations where the table of states and actions cannot be computed.</p><p>Every part of Equation 3 is differentiable, so if our Q function is differentiable with respect to its parameters, we can run stochastic gradient descent to minimize our loss.</p><p>For our implementation, we use stochastic gradient descent on a linear regression function. We also performed SGD with a simple one-layer neural network.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Problem Formulation</head><p>We approach this problem as a MDP with states, actions, and rewards.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Simulator</head><p>To model an intersection as it would exist in the real world, and to evaluate our policies, we followed other researchers <ref type="bibr" target="#b1">(Covell et al., 2015)</ref> in using SUMO (Simulation of Urban MObility), an open-source industry-standard software package for modeling road networks and traffic flow <ref type="bibr" target="#b5">(Krajzewicz et al., 2012)</ref>. In particular, we used SUMO version 0.26. SUMO allowed us to build different types of road networks, add cars to our simulation and determine their routes, and add sensors for the traffic lights.</p><p>The SUMO package also comes with TraCI, a Python API that allows a user to get information from a traffic simulation and modify the simulation as it runs in response to this information. We built an architecture that made use of the TraCI interface to get information about queue sizes, carbon emissions, sensor data, and traffic light states, in order to successfully deploy our algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Setup</head><p>Our road network featured 4 connected traffic lights in a 2x2 square grid, spaced 150m apart. Each traffic light was also connected to a 425m-long road, which we used to mimic a highway on/off ramp. Thus, we had a total of 8 source nodes and 8 destination nodes. Each road contained 3 lanes with a speed limit of 45 mph, and we used SUMO's default configuration for left-turn and right-turn lanes. Each traffic light was set to allow right-turns on red. Yellow lights were set to be 5 seconds long. On the roads in between the traffic lights, induction loop sensors were placed in each lane about 50m before each traffic light; on the roads leading into the network, the induction loops were placed about 100m before each traffic light. We used SUMO's default car configurations. Every second, for each possible (source, destination) combination, we generated a car at with probability 0.01. <ref type="figure" target="#fig_0">Figure 1</ref> shows the road network that we built. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Objective and Reward Function</head><p>There are many ways to formulate an objective function for traffic optimization. Ideally, we would try to model the lost utility of drivers' time spent waiting in traffic, and the cost and environmental effects of wasted gasoline. These effects are all difficult to estimate. Fortunately, however, all of these effects are positively correlated with increasing traffic, so any metric the captures the general trend of the amount of traffic will capture the general trend of these effects.</p><p>We specifically chose the throughput of cars through intersections as our reward function, where throughput is defined as the number of cars that pass through the intersection per unit time. While there are many other reasonable measures of the amount of traffic (e.g. wait time, CO 2 emissions, and total distance traveled in a given time interval), we chose throughput as our reward function for two reasons. First, this reward is more directly tied to the action taken, meaning that the learning algorithm has to do less work separating the signal from the noise in the rewards. Second, the reward varies more linearly with traffic flow than other metrics, which makes it easier to fit.</p><p>SUMO does not provide a direct way to calculate throughput, so instead, we calculated the sum of the speed of cars through the intersection per time step. This sum approximates a discrete integral of speed over time, giving the total distance traveled by the cars through passing through the intersection. Then, the total distance traveled divided by the width of the intersection is equal to the number of cars that pass through the intersection. Thus, our reward function is proportional to throughput, and off by a constant factor of the length of the time step and the width of the intersection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Actions</head><p>We formalize each traffic light as an agent that can perform a set of actions. After each 15-second interval, the traffic light chooses which direction to turn green. For example, a traffic light with no left turns may choose from the actions (North/South green, East/West green). We designed the traffic lights in our network to allow left turns, so they had two additional actions. While some approaches use signal durations as actions <ref type="bibr" target="#b7">(Salkham et al., 2008)</ref>, we chose this parameterization because it offers more flexibility. <ref type="bibr" target="#b0">(Arel et al., 2010)</ref> We abstract these actions away so that the agent only knows that there are several distinct actions it can perform, and not which directions they correspond to.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.">Features</head><p>Our goal is to have each agent (i.e. traffic light) learn the optimal policy (i.e. which direction to turn green) based on inputs that would be available in the real world. To this end, we give our model three types of features:</p><p>1. Sensor Data: SUMO has the capacity to simulate induction loop sensors. In the real world, these loops are generally installed under streets to provide nearby traffic lights with information about cars passing above them. In our simulation, we placed induction loops in each lane before every traffic lights, for a total of 12 induction loops per traffic light. These induction loops inform their respective traffic lights with the number of cars that have passed over them in the last time step, along with the average speed of these cars. We also provide each stoplight with the previous five time steps worth of sensor information.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Stoplight History:</head><p>We provide each stop light with the previous five time steps worth of its phases. A phase in this context refers to the specific permutation of lights colors for each lane in the intersection. Each phase is represented by a number in the feature array.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Features from Adjacent Traffic Lights:</head><p>In order for each traffic light agent to learn to coordinate with the other agents, we provide each agent with the features given to the adjacent stoplights, as in <ref type="bibr" target="#b7">(Salkham et al., 2008)</ref>.</p><p>In total, we represent each state with 420 features.</p><p>Due to our backpropagation algorithm, it was important to normalize features to the same range. The gradient value is multiplied by the feature value during backpropagation, so features with high values get high weights during training. And since they had high values to begin with, their influence is increased quadratically in the final regression value.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Parameters</head><p>To figure out the optimal hyperparameters for the Qlearning algorithm, we used a combination of random and manual search. We ran a smaller number of training and testing iterations to achieve acceptable models and then extracted the average number of cars waiting as our metric for comparison.</p><p>The discount factor γ parameter in Q-learning had no significant effect on results. Our learning rate α and regularization λ were fairly standard. For linear regression we used α = 10 −2 and λ = 10 −2 . For our neural network we used α = 10 −4 and λ = 0.1. If we decreased regularization or increased learning rate by too much, our function values exploded due to the recursive nature of the Q function.</p><p>In Q-learning, it is important to balance the need to explore the state space with the need to choose good actions. For this reason, we used an -greedy algorithm which chose the highest-Q action most of the time, but occasionally chose a random action. We found that too many random actions could cause disastrous results across the grid, including gridlock, making it very difficult for our algorithm to learn well. To address this, we used the LQF algorithm described below to choose a heuristically good action some fraction of the time instead of the random action. This gave our algorithm a warm-start, and helped prevent gridlock. We found that choosing the heuristic action instead of a random action ≈ 50% of the time worked best.</p><p>We also realized that we might get better results if decreased over time, reflecting the fact that the algorithm needs to learn as it converges. To this end, we incorporated a parameter denoting the half-life of the epsilon parameter, so that it would decay exponentially over time. We found that setting the half-life to 200 time steps worked best.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Baseline</head><p>We implemented three other algorithms for comparison against our Q-learning approach to traffic optimization.</p><p>1. Short Cycle: Changes the phase every 15 seconds in a round-robin fashion.</p><p>2. Long Cycle: Change the phase every 45 seconds in a round-robin fashion.</p><p>3. Longest Queue First (LQF): LQF chooses to let the direction with the highest number of cars be green. Previous research <ref type="bibr" target="#b8">(Wunderlich et al., 2008)</ref> has shown that LQF is robust algorithm even under high load. In the real world, it is not possible to directly find queue lengths, and we extracted this information directly from the simulator. Although LQF is a greedy algorithm, it is given more information than Q-learning, which makes it a reasonable target for comparison.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Results</head><p>We trained Q-learning on an episode of 1000 time steps using the -greedy approach as described above, and then used the parameters to test on a new episode, choosing the action with the highest Q value every time.</p><p>Figure 2. Average number of cars waiting at stoplights during the simulation. All differences are highly significant.</p><p>As shown in <ref type="figure">Figure 2</ref>, Q-learning with linear regression performs as well as our LQF baseline. Our neural network implementation performs slightly worse than linear regression. When we look at the CO 2 emissions data provided by SUMO, though, the performance is not directly correlated. we see that the two Q-learning algorithms are now tied, as well as the two cycle algorithms <ref type="figure" target="#fig_1">(Figure 3)</ref>. We believe that this is a result of how Q-learning coordinates cars between the four intersections, reducing the amount of start-stop motion that creates the most amount of CO 2 emissions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusion</head><p>We believe that our linear regression algorithm performed so well because the hypothesis class of our features and ac- tions is expressive, and tends to represent many common control paradigms for traffic lights. Cycles can be represented with the previous action features. For example, if we want to switch from action 1 to action 2 after four time steps, then action 2 can have a high weight for "performed action 1 four time steps ago." Actuated systems that respond to arriving cars can be represented by high weights on the sensor features. Lastly, networks that coordinate to let runs of cars through can be represented by our network as well by incorporating previous action features from neighboring lights. Looking at our feature weights and our simulation results, we saw all of these kinds of learning taking place together.</p><p>Our linear hypothesis class was incapable of fully representing LQF, however. Estimating the number of incoming cars between the sensor and the light is simple. Estimating the number of cars beyond the sensor can only be done in expectation using features for neighboring lights and sensors. The fact that Q-learning can learn the number of cars arriving on average explains why Q-learning and LQF had comparable performance for average waiting time. And the fact that this estimation is noisy explains why we see more emissions in the Q-learning scenario, meaning that the cars stop and start more frequently as the light makes small errors. However, LQF should be representable as a general function of our features, if not a linear one. For this reason, we implemented a neural network model. Our neural network model performed worse despite having a more expressive hypothesis class. In fact, because our neural network used a ReLU activation function, the hypothesis class of linear regression was a subset of that of our neural network. This means that under perfect training, our neural network can never do worse than a linear regression. Clearly, we were not training our neural net-work perfectly. Since our hypothesis class was larger, the neural network had lower bias but higher variance. Since we are using a simulator, we have access to infinite training data, so in theory more iterations and a lower learning rate would solve these issues. However, these techniques had only modest gains for us, suggesting that the changes needed to match the performance of linear regression are drastic.</p><p>Overall, our results show that reinforcement learning is effective at learning good traffic light policies. Our algorithm was able to perform as well as LQF, which had more information about the system than any real-world algorithm would have available. Though not the optimal policy, it is a high bar to meet, and suggests that Q-learning can be a powerful technique.</p><p>One of the key takeaways of this work was that domain knowledge can be used to confine the hypothesis class to a set of more reasonable policies. We are not the first to come to this realization. Algorithms that are now standard for traffic control choose over a library of possible light timings <ref type="bibr" target="#b4">(Jayakrishnan et al., 2001</ref>). This limits the hypothesis class to a set of actions that are all reasonable, but some are better than others. We did something similar in our model, in that our formulation of actions did not allow the controller to control yellow lights, so all of our actions were guaranteed to not cause a car crash. Clearly there is a tradeoff between expressiveness of actions and the potential for bad results. Future collaboration with traffic engineers to bound the problem and use domain knowledge to eliminate the worst actions may yield an algorithm with real-world applicability. Skeptical users of the system could be guaranteed that the algorithm would give reasonable results even in the worst case, which is something that our system cannot guarantee.</p><p>Q-learning shows promising results, and model-free systems like Q-learning can use the power of machine learning to discover trends that are overlooked by the heuristics and approximations of explicit optimization algorithms. A reinforcement learning system has the potential to provide adaptive control and coordination, theoretically matching the current state of the art. On top of this, multi-agent reinforcement learning is a distributed technique, which gives it fault tolerance as well as the potential to scale up to a larger network. For all of these reasons, we believe that reinforcement learning is a promising paradigm for traffic control.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Acknowledgments</head><p>We thank our CS 325 classmate Alex Tamkin (atamkin@stanford.edu) for his contributions to this project. We also thank the SUMO team for their well-documented traffic simulation software suite.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>A zoomed-out view of the road network that we trained and tested our Q-learning algorithm on. The small yellow dots are cars traveling through the network, while the larger yellow rectangles represent induction loop sensors</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Average amount of CO2 emissions per distance traveled by cars in the simulation.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning-based multi-agent system for network traffic signal control. Intelligent Transport Systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Arel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Itamar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Urbanik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">G</forename><surname>Kohls</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IET</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="128" to="135" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Micro-auction-based traffic-light control: Responsive, local decision making</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michele</forename><surname>Covell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shumeet</forename><surname>Baluja</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rahul</forename><surname>Sukthankar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Intelligent Transportation Systems (ITSC)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="558" to="565" />
+		</imprint>
+	</monogr>
+	<note>IEEE 18th International Conference on</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Urban mobility report</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Schrank</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bill</forename><surname>Eisele</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tim</forename><surname>Lomax</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jim</forename><surname>Bak</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+			<pubPlace>Texas A&amp;M, College Station, TX</pubPlace>
+		</imprint>
+	</monogr>
+<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<ptr target="https://www.eia.gov/tools/faqs/faq.cfm?id=23" />
+	</analytic>
+	<monogr>
+		<title level="j">EIA</title>
+		<imprint>
+			<date type="published" when="2016-03" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Performance study of scoot traffic control system with non-ideal detectorization: field operational test in the city of anaheim</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Jayakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mattingly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Stephen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mcnally</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Michael</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">80th Annual Meeting of the Transportation Research Board</title>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Recent development and applications of SUMO -Simulation of Urban MObility</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Krajzewicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jakob</forename><surname>Erdmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Behrisch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laura</forename><surname>Bieker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal On Advances in Systems and Measurements</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">3&amp;4</biblScope>
+			<biblScope unit="page" from="128" to="138" />
+			<date type="published" when="2012-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Human-level control through deep reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Volodymyr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Koray</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrei</forename><forename type="middle">A</forename><surname>Rusu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joel</forename><surname>Veness</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><forename type="middle">G</forename><surname>Bellemare</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Riedmiller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreas</forename><forename type="middle">K</forename><surname>Fidjeland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georg</forename><surname>Ostrovski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">518</biblScope>
+			<biblScope unit="issue">7540</biblScope>
+			<biblScope unit="page" from="529" to="533" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A collaborative reinforcement learning approach to urban traffic control optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Salkham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cunningham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Raymond</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anurag</forename><surname>Garg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vinny</forename><surname>Cahill</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2008 IEEE/WIC/ACM International Conference on Web Intelligence and Intelligent Agent Technology</title>
+		<meeting>the 2008 IEEE/WIC/ACM International Conference on Web Intelligence and Intelligent Agent Technology</meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="volume">02</biblScope>
+			<biblScope unit="page" from="560" to="566" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A novel signal-scheduling algorithm with quality-of-service provisioning for an isolated intersection. Intelligent Transportation Systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Wunderlich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cuibi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Itamar</forename><surname>Elhanany</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tom</forename><surname>Urbanik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="536" to="547" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

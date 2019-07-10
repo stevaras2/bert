@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learn To Rate Fine Food</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yixin</forename><surname>Tang</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bian</forename><surname>Lu</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiacheng</forename><surname>Mo</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Learn To Rate Fine Food</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>! Use pre-trained GloVe as our initializer of word vectors and then use skip-gram to train the word vectors for our own dataset. Then build a GRU to classify food reviews and use LSTM to generate reviews of different sentiment. ! Build a recommendation system using latent factor model. ! Use the traditional frequency method as word representation and logistic regression to get the corresponding results, and visualize the words leading to different scores by wordcloud.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation:</head><p>! For classification, use accuracy and F1 score to judge our result on test data. All neural network models are trained using cross entropy loss. ! For text generation, use intuition to see if the generated text make sense. ! For recommendation system, change learning rate in SGD and find the one that makes the smallest error after 40 iterations.</p><p>! Each x node represents a pretrained GloVe review (text) vector on our dataset. ! After a three layers Bi-directional GRU, it outputs the predicted probability of each class. ! Finally, use cross entropy to update both weights and word embedding matrix.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Recommendation System</head><p>• The data represents a set of food reviews on Amazon • Number of instances: 568454</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>In recent years, food reviews have become increasingly popular on social media. People are posting their reviews or comments on Facebook, Yelp, Twitter, etc. When selecting local restaurants or food, people also tend to make their decisions based on these reviews. Hence, it is important for both restaurants and individuals to quickly get the information and score of a food item or restaurant from thousands of reviews. It is also beneficial for some platform to provide different customers with their personal recommendations.</p><p>• Use Latent Factor Model to recommend food items to an user.</p><p>• Method: ○ Sparse user-item utility matrix is decomposed to an user-factor matrix and an item-factor matrix. ○ Use SGD to decrease the loss, and find the final user-factor matrix P and a item-factor matrix Q with relatively low error. ○ Predict what scores a user will rate an unrated item, and recommend the most highest 10 items to him/her. • Evaluation: We tried 4 different learning rate in SGD, and finally use the 0.02 for SGD, with the smallest convergence error.</p><p>• Future improvement: adding the user/item bias, implicit feedback, temporal dynamics, user-associated attributes, and confidence level to be more accurate.</p><p>• Use logistic regression to find the most relevant words for a score.</p><p>• Method: Feature selection -&gt; Logistic Regression -&gt; Find greatest coefficient User%ID% Product%Highly%rated% Product%Recommended%</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A15ZCT30 QMRCXY%</head><p>Gerber cereal, single grain ... Gerber cereal, whole wheat ...</p><p>Gerber baby cereal with apple, Trident suger free gum, ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Find Important Words &amp; "Spam" Reviews</head><p>• Use QDA and decision tree to model the "helpfulness" of a given review • Vary regularization parameter to obtain optimum training and testing accuracy. ! Use Long Short Term Memory for text generation. ! Randomly initialize the first word x0, and pick the word with the highest probability in h0 to be x1, and then pick the word with the highest probability in h1 to be x2, etc. ! Consequently, with the change of training data, it will automatically generate best reviews, good reviews, or bad reviews. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>LSTM Network for Review Generation</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Example: Best Review (y=5) "Customer Great Service Here !" Customer Great Service &lt;end&gt; h = (0,0,0,0,...) h1 = (0.03,0.016...) h2 = (0.07,0.003,...) h3 =(0.004,0.02,...) … ... … ...</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

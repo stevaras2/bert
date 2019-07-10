@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229: Apply Reinforcement Learning on Ads Pacing Optimization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>SCPD</roleName><forename type="first">Ying</forename><surname>Chen</surname></persName>
+						</author>
+						<title level="a" type="main">CS229: Apply Reinforcement Learning on Ads Pacing Optimization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Online display advertising is a marketing paradigm utilizing the internet to show advertisements to the targeted audience and drive user engagement. Billions of display ad impressions are purchased on a daily basis through public auctions hosted by real-time bidding (RTB) exchanges. While the digital Ads business plays an increasingly important role in the market, how to spend the budget from the advertiser in an effective way becomes one of the essential challenges. Pacing is a strategy to ensure that the budget spends evenly over the schedule of advertiser's ad set. Here, we present two reinforcement learning approaches, DQN and DDPG to smooth the daily budget spending.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Since 2009, Real-time bidding(RTB) has become popular in online display advertising <ref type="bibr" target="#b0">[1]</ref>. RTB allows the advertiser to use computer algorithms to bid in real-time for each individual ads placement to show ads. With its fine-grained user targeting and auction mechanism, RTB has significantly improved the ad's return-on-investment (ROI). Advertisers usually manage their advertising campaigns through Demand Side Platforms (DSP). The interaction between users, DSPs, and the ad exchange is summarized as follows:</p><p>(1) When a user visits an ad-supported site, each ad placement triggers an ad request to the ad exchange. <ref type="bibr">(</ref>2) The ad exchange sends the bid requests for this ad opportunity to several DSPs, along with other available information such as the user cookie. (3) Given the bid request and attached information, a DSP finds the best matching ad and calculates a bid price. It sends the price back to ad exchange to join the auction. (4) After receiving the bid responses from DSPs, the ad exchange hosts an auction and picks the ad with the highest bid as the winner. Then ad exchange notifies the winner DSP, and the price will be charged on the winning advertiser. (5) Finally, the winner's ad content will be shown to the specific user. It considers as one impression counted on the ad. And the user's feedback (e.g., click and conversion) would be tracked by the DSP. <ref type="figure">Figure 1</ref>. Real-time Bidding in Advertising This whole procedure above takes within milliseconds. That's why we call it Real-time bidding (RTB). In RTB, an advertiser prefers the ads to be viewed by users evenly throughout a day to increase the chances of reaching the possible potential customers, but budgeting alone does not account for this concept. Therefore, we need the pacing in ads, which is very similar in concept to pacing in running. Say an advertise set up a budget for one day, and let the DSP run the ad. It happens to start spending at a time when opportunities are more expensive due to increased auction competition. If DSP didn't use pacing, it could spend the entire budget in a few hours on expensive opportunities. Instead, DSP "pace" spending so that the ad has the budget available later at the end of a day when there are likely to be lower-cost opportunities available. Most of the IT companies employ probabilistic filtering to control pacing, which is called pacing rate. Pacing rate is a bidding probability from 0 to 1. If an ad's pacing rate is set to 0.34, it means the probability for this ad to join the next auction is 34%. We consider a pacing strategy is good if it satisfies: (1) It can spend most of the daily budget but not overspending. <ref type="bibr">(</ref>2) It has smooth delivery throughout the day. (3) The pacing rate does not oscillate too much.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Reinforcement learning as a framework for sequential decision making has attracted the attention of researchers since many years ago <ref type="bibr" target="#b8">[9]</ref>. In recent years after deep neural networks were introduced to solve reinforcement learning problems, a series of new algorithms were proposed, and progress was made on different applications <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b12">13]</ref>. Some researchers reported success stories applying deep reinforcement learning to online advertising problem, but they focus on bidding optimization <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b13">14</ref>] not pacing. Despite its importance in ads-serving systems, budget pacing for ads campaigns is relatively less discussed in the literature. In <ref type="bibr" target="#b5">[6]</ref> the authors described budget pacing problem in online advertising and then addressed it by proposing an algorithm that dynamically changes the bid price. A later work <ref type="bibr" target="#b6">[7]</ref> used throttle rate instead of bid adjustment to control the speed at which a campaign delivers. In a more recent work <ref type="bibr" target="#b7">[8]</ref> the authors tried to solve both smooth delivery and campaign performance optimization problems with a multiplicative feedback pacing algorithm. To the best of our knowledge, there was no reinforcement learning based approach for budget pacing in existing literature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>Since the company data is confidential and there is no public dataset available for ads auction simulation (the link of our previous choice iPinyou dataset <ref type="bibr" target="#b2">[3]</ref> has expired), we generated data through simulation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Simulator</head><p>We implemented a simulator that simulates the ads auction environment. To be more similar to the real world, we use time-of-day pattern to simulate the traffic. With traffic ups and downs, it makes the environment varies in different time steps. It also brings difficulty in algorithm training, which is good. The simulator is implemented approximately following the convention in Gym package <ref type="bibr" target="#b1">[2]</ref>, with a step() function and reset() function interface that can be called by the pacing algorithm. The function step() is called with pacing signal as input. The pacing algorithm plays the role of an agent, at each time step it issues a pacing signal to the simulator, which runs the auction with provided pacing signal, computes and returns the results. When initialization and reset, we generate simulated data for the length of one day. We partition the time of one day into time slots of 1 minute each, and for each time slot, we generate a random amount of impressions according to some predefined traffic density. Each impression has a cost associated with it, a certain percentage of these impressions will have clicks, these are also generated by sampling a pre-defined distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Problem Formulation</head><p>It is well known that optimal bidding can be formulated as an MDP problem <ref type="bibr" target="#b3">[4]</ref>. If we assume the bid for a campaign is fixed, then the bidding behavior relies totally on the pacing rate. We largely follow the setup in these works and describe the model structure for campaign pacing problem as follows: State space The state of the campaign is characterized by its remaining budget and remaining delivery time. To simplify the discussion, we only consider budget delivery for a single day here. We divide the time of one day into finite time steps of length . it's composed of two parts, the first term penalizes the deviation from idea state trajectory and the second term meant to encourage smoothness of action sequence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Proposed Solution</head><p>Deep Q-learning Q-learning is a straightforward off-policy learning algorithm, it basically builds a Q-table which gives the reward function for (state, action) pairs, and update it while exploring the environment. The optimal policy, on the other hand, can be generated by taking greedy actions at each state according to Q-table. Deep Q-learning uses neural-network to approximate the Q-function. The algorithm of DQN with experience replay can be found in [1] so it's omitted here in the interest of space.</p><p>DDPG Deep deterministic policy gradient is a model-free off-policy actor-critic algorithm. It can be regarded as a combination of DPG <ref type="bibr" target="#b11">[12]</ref> and DQN. The algorithm of DDPG with experience replay can be found in <ref type="bibr" target="#b12">[13]</ref> so it's omitted here in the interest of space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiment Results</head><p>Since we generate a random amount of impressions in each time slot to mimic the actual traffic, the environment input is entirely different every time. For pacing, it's hard to qualitatively compare the performance between two different algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation metric:</head><p>We look at two quantitative criterions: a) the overspending or underspending should be small at the end of a day, b) the pacing signal should be as smooth as possible. We could alternatively use the cost function in Section 4.1 to compare RL based algorithm and baseline, which is defined to quantify the above heuristic.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baseline</head><p>We use a multiplicative feedback control algorithm as our baseline. It's a closed-loop control system, similar to that of <ref type="bibr" target="#b6">[7]</ref> with simplification. The idea is to adjust the pacing signal by multiplying it with the ratio of the desired speed of spending and the actual speed of spending in the last time interval, i. .0 1 In our simulation, the baseline algorithm gives a reasonable result regarding budget delivery(c.f <ref type="figure" target="#fig_0">. Fig 2)</ref>, however its pacing signal changes drastically throughout the simulation. It is because the environment is highly noisy so that the multiplicative factor can be vast and jumpy. Adding further smoothing to the pacing signal gives another baseline, as shown in <ref type="figure" target="#fig_0">Fig 2.</ref> The smoothness of the pacing signal is improved but still jumpy towards the end of the day.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DQN</head><p>The action space is discretized into a finite number of bins (we experimented with 10,12, 15 and 20 then found 10 performs best). As to state space, we tried both discretized and continuous and found their results are comparable, so we used continuous version for simplicity. The DQN is implemented with experience replay, for the discounted cost we set discount factor to 0.99, and we used TD(0) to compute the loss, for optimization we used Adam. In the beginning, we attempted to use a series of neural network layers and its result turned out very unstable. To avoid overfitting, we simplified the architecture of the neural network in code, using only one hidden layer with 16 neurons. Results shown in <ref type="figure">Fig 4 and Fig 5</ref> are generated from two trained DQN models. We observe that the pacing signal has been smoothened in <ref type="figure">Fig 5 but occasionally oscillates as Fig 4.</ref> It shows the training is not sufficient, and we could improve it by training with more data and more iterations. Remark: For all these algorithms in the morning of a day the speed we spend the budget is usually not high. This is because when generating the simulated data, we considered time-of-day pattern and intentionally reduce the amount of traffic in morning hours.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DDPG</head><p>For DDPG the action space is continuous so that we won't see the stairs-like pacing signal curve as in DQN. However our algorithm still needs improvement because the training is not stable: sometimes the network can generate results like in <ref type="figure" target="#fig_3">Fig 6,</ref> sometimes it cannot learn anything, generating constant pacing rate for test cases. Even in <ref type="figure" target="#fig_3">Fig 6</ref>, the algorithm is not doing very well: the pacing rate at the end of day ramps up when it should go down, leading to overspending. We suspect the instability in training is related to insufficient exploration of state-action space. Simply increasing the number of training iterations does not seem to be effective, we'll examine the O-U process and the way we inject noise into action to see if improvements can be made.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion &amp; Future Work</head><p>Overall, we explored the possibility of applying reinforcement learning to ads budget pacing problem. On simulated ads auction data, our DQN algorithm shows promising results comparing with the baseline algorithm. It not only achieves the goal of budget delivery, but also maintains the pacing rate relatively smooth. We also implemented DDPG, but it needs further performance tuning to improve its stability. In the future, we'll also consider the following directions for performance improvement: (1) Adding more features (e.g., features extracted from time series) (2) Explore other network structures. (3) Try alternative cost function and regularization. Regarding the project, we can also have the training on some company data if the data-security team grants permission. And intra-day budget spending could be another interesting topic for us to explore.</p><p>Code path: https://github.com/YingChen/cs229</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>Baseline algorithm generates Pacing Rate and Remaining Budget</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>Smoothed Baseline algorithm generates Pacing Rate and Remaining Budget</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .Figure 5 .</head><label>45</label><figDesc>DQN algorithm generates Pacing Rate and Remaining Budget Figure 5. DQN algorithm generates Pacing Rate and Remaining Budget</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 .</head><label>6</label><figDesc>DDPG algorithm generates Pacing Rate and Remaining Budget</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>We assume the traffic available to a campaign has a relatively stable distribution. Note that the state transition is affected also by other external factorsCost functionWe define an ideal state trajectory = as our objective (e.g. if we want to spend the B t * (t) f budget evenly throughout the day, then this curve will be a straight line). The cost at each time step is</figDesc><table>At each time step, we define state 
+= ( , ), where 
+t 
+d 
+S t 
+b t t 
+is the budget consumption ratio at time , 
+is the remaining budget at time and 
+is 
+/B 
+b t = B t daily 
+t B t 
+t 
+B daily 
+the daily budget. Note that 
+is not an absolute value but normalized to 
+range. 
+b t 
+0, ] 
+[ 1 
+
+Action space The action signal is the pacing rate 
+, which represents the probability of joining 
+0, ] 
+p t ∈ [ 1 
+an auction. 
+
+State transition Let's say at time a campaign receives 
+bid request. It will ignore 
+of them 
+t 
+n t 
+(1 
+)n 
+− p t t 
+and join the remaining auctions. Assuming it bids with a fixed price 
+, the campaign will win all 
+bid t 
+auctions with a cost less than 
+Therefore the budget spent at time is decided by the pacing rate 
+. 
+bid t 
+t 
+p t 
+along with the cost distribution in the auctions (for further details about online ads auction see [4,6,8]). 
+At each time our pacing agent issues a , the campaign adopts 
+and join auctions. Suppose it spent 
+t 
+p t 
+p t 
+dollars, the state can be updated as: 
+c t 
+= ( 
+, 
+) 
+S t+1 
+/B 
+b t − c t daily 
+t 
+t + d 
+Cost function We define an ideal state trajectory 
+= 
+as our objective (e.g. if we want to spend the 
+B t 
+
+* 
+
+(t) 
+f 
+t 
+= 
+Cost t 
+(B 
+) 
+(p 
+) 
+a t − B t 
+* 2 + b t − p t−1 
+
+2 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The online advertising industry: Economics, evolution, and privacy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Evans</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Economic Perspectives</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="37" to="60" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Bid optimizing and inventory scoring in targeted online advertising</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Claudia</forename><surname>Perlich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Dalessandro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rod</forename><surname>Hook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ori</forename><surname>Stitelman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Troy</forename><surname>Raeder</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Foster</forename><surname>Provost</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">18th SIGKDD</title>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2012" />
+			<biblScope unit="page" from="804" to="812" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Weinan</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shuai</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuehua</forename><surname>Shen</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1407.7073" />
+		<title level="m">Real-Time Bidding Benchmarking with iPinYou Dataset</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Real-Time Bidding by Reinforcement Learning in Display Advertising</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Han</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Weinan</forename><surname>Kan Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kleanthis</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun</forename><surname>Malialis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yong</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Defeng</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Guo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">10th WSDM. ACM</title>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="661" to="670" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiayi</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yuxiang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yang</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jinghe</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Weipeng</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mantian</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1708.05565</idno>
+		<title level="m">LADDER: A Human-Level Bidding Agent for Large-Scale Real-Time Online Auctions</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Real Time Bid Optimization with Smooth Budget Delivery in Online Advertising</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kuang-Chih</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ali</forename><surname>Jalali</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ali</forename><surname>Dasdan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+			<publisher>ADKDD</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Budget pacing for targeted online advertisements at LinkedIn</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Deepak</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Souvik</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siyu</forename><surname>You</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">KDD</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Smart Pacing for Effective Online Ad Campaign Optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kuang-Chih</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wentong</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hang</forename><surname>Qi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Quan</forename><surname>Lu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Reinforcement Learning: A Survey</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Leslie</forename><surname>Pack Kaelbling</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><forename type="middle">L</forename><surname>Littman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">W</forename><surname>Moore</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Arti cial Intelligence Research</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<date type="published" when="1996" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Playing Atari with Deep Reinforcement Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Volodymyr</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Koray</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ioannis</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daan</forename><surname>Wierstra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><surname>Riedmiller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NIPS Deep Learning Workshop</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Asynchronous Methods for Deep Reinforcement Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Volodymyr</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrià</forename><forename type="middle">Puigdomènech</forename><surname>Badia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mehdi</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timothy</forename><forename type="middle">P</forename><surname>Lillicrap</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tim</forename><surname>Harley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Koray</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Deterministic Policy Gradient Algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guy</forename><surname>Lever</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Continuous control with Deep Reinforcement Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lillicrap</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1509.02971" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Real-Time Bidding with Multi-Agent Reinforcement Learning in Display Advertising</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junqi</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chengru</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Han</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kun</forename><surname>Gai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CIKM</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Brockman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vicki</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ludwig</forename><surname>Pettersson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonas</forename><surname>Schneider</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jie</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wojciech</forename><surname>Zaremba</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1606.01540" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

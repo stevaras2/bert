@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classifying Spam using URLs Computer Science</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Di</forename><surname>Ai</surname></persName>
+							<email>diai@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Classifying Spam using URLs Computer Science</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Spam is a large and growing problem that is becoming increasingly difficult to tackle at scale. Search engines have limited resources and cannot crawl every page on the web. An algorithm that is able to identify a spam web page prior to crawl time would not only save precious crawl resources by allowing the crawler to bypass spam urls, but it would also remove the possibility of that spam url from later being served to user queries, thereby improving the quality of search results.</p><p>40,000 manually rated urls were collected with 50% labeled as spam and 50% as not spam over the course of two months. Additional information that would have been available at crawl time was also included, such as first seen dates, whois contact data, and site traffic. Data is representative of the types of spam that appeared in Google Search in September and October 2018. All numerical features were scaled and standardized to have mean 0 and variance 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Naïve Bayes Feature Extraction</head><p>Each url was broken down into domain, top-level tld, and deep url sections. Each deep url was split into words by using various characters as delimiters, such as _, ., :, =, ;, and /. The full regex is shown below:</p><p>Words were kept if they were more than 2 characters long, otherwise they were ignored. A multinomial event model was fitted on these words with Laplace smoothing and a dictionary limited to words that appeared with a frequency of at least 0.1% times the size of the dataset. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion and Future Work</head><p>Random Forest with Gini loss performed the best. To get a better idea of which variables are the most important, I also ran an ablation study on the RBF SVM, which found that the deep url naïve bayes probabilities output was the most important predictor. Looking at feature importances from random forest confirmed this as well. Since there is likely significant headroom to improve this feature, future work would involve more sophisticated feature extraction methods on the deep url portion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>Accuracy Precision Recall AUC </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>10% of the data was set aside as the test dataset (2000 examples with roughly 50% spam/not spam). Rows in red indicate model with the best hyperparameters found via tuning.</figDesc><table>SVM RBF 
+
+91.2% 
+91.1% 91.4% 91.1% 
+
+Remove Naive Bayes Prob Feature 
+
+87.5% 
+84.6% 91.2% 87.5% 
+
+Remove Url Length Feature 
+91.0% 
+91.5% 
+90.6% 
+91.0% 
+
+Remove diff between url and site first seen date 
+90.5% 
+91.0% 
+90.0% 
+90.5% 
+
+Remove ratio of url traffic to site traffic 
+91.2% 
+91.3% 
+91.2% 
+91.2% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ablation Study</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Web Spam Taxonomy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zoltan</forename><surname>Gyongyi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hector</forename><surname>Garcia-Molina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">First International Workshop on Adversarial Information Retrieval on the Web</title>
+		<meeting><address><addrLine>Chiba, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005-05-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Egele</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Kolbitsch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Platzer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Comput</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Virol</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s11416-009-0132-6</idno>
+		<ptr target="https://doi.org/10.1007/s11416-009-0132-6" />
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Detecting spam web pages through content analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandros</forename><surname>Ntoulas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><surname>Najork</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mark</forename><surname>Manasse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dennis</forename><surname>Fetterly</surname></persName>
+		</author>
+		<idno type="doi">10.1145/1135777.1135794</idno>
+		<ptr target="https://doi.org/10.1145/1135777.1135794" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 15th international conference on World Wide Web (WWW &apos;06</title>
+		<meeting>the 15th international conference on World Wide Web (WWW &apos;06<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2006" />
+			<biblScope unit="page" from="83" to="92" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

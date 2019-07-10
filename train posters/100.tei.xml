@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Strongest indicators of low skill level</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Strongest indicators of low skill level</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Competitive programming provides an opportunity to gain insights into coding techniques.</p><p>• In a typical contest, participants solve 5-10 well defined algorithmic problems. Interpretation of GDA model</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Codeforces Rank</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem</head><p>• Predict the rank (±1) and country of a competitive programmer given only a single C++ code sample.</p><p>• Focus on coding style: Only consider working solutions, and not consider comments or formatting.</p><p>• 10 Codeforces contests, Aug-Nov 2018.</p><p>• Selected contests are open to all ranks.</p><p>• Scraped with custom scraper.</p><p>• Only consider last passing submission.</p><p>• Only consider C++ (~70% of total).</p><p>•~6k submissions per contest, total ~60k.</p><p>• For country analysis, only participants in the top 10 countries (~70% of total).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Preprocessing</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural network</head><p>• Output layer and weighted loss functions are the same as logistic regression.</p><p>• 50% dropout for hidden nodes in training.</p><p>Source code int n; // my var int main() { scanf("%d", &amp;n); ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract syntax tree</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TranslationUnit</head><p>VarDecl n FunctionDecl main CompoundStmt CallExpr scanf ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Raw tokens</head><p>"int", "n", ";", "int", "main", "(",")", "{", "scanf", "(", "\"%d\"", ",", "&amp;", "n", ")", ";", ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Processed tokens</head><p>"int", "!!VAR", ";", "int", "main", "(",")", "{", "scanf", "(", "!!STR", ",", "&amp;", "!!VAR", ")", ";", ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>AST traversal</head><p>"TranslationUnit", "VarDecl", "endblock", "FunctionDecl", "CompoundStmt", "CallExpr", ...</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>libclang C++ parser</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Concatenated sequence</head><p>"int", "!!VAR", ";", ..., "TranslationUnit", "VarDecl", "endblock", ... • Neural network achieves the best test accuracy of 77.2% for rank (±1) and 72.5% for country.</p><p>• The neural network is probably able to learn more complex relationships between the features compared to the other models.</p><p>• Predicting the rank using classification worked better than predicting the rating using regression. This may be because classification optimizes what we actually care about, which is predicting the correct rank.</p><p>• GDA works surprisingly well, almost as well as logistic regression. The normalized/scaled feature space seems Gaussian to some degree.</p><p>• There may be some overfitting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>• More data will likely help. Going from 5 to 10 contests increased the accuracy significantly.</p><p>• Try a recurrent neural network, e.g. LSTM.</p><p>• Improve token processing, e.g. also replace class and macro names with placeholders.</p><p>• Interpretation of the neural network model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models Discussion</head><p>For International Grandmaster vs. Pupil, here are the features where the class means differ the most.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Strongest indicators of high skill level</head><p>• Use of #ifdef, assert, and function templates. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Linear regression (for rating)</head><p>• Loss for single example: -w (i) (θ T x (i) -y (i) ) <ref type="bibr" target="#b1">2</ref> • Weights are inverse of class size.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gaussian discriminant analysis (GDA)</head><p>• p(y = k) = 1 / (# classes) (Forced uniform)</p><formula xml:id="formula_0">• p(x | y = k) ~ N(μ k , Σ)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Logistic regression</head><p>• For country prediction, standard weighted softmax.</p><p>• For rank prediction, train 10 independent logistic models. Each example is part of ranks r-1, r, r+1.</p><p>• Weights are inverse of class size. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Neural network94.4% 77.2% 97.0% 72.5%• Training on 9 contests (~54k examples) and testing on 1 contest (~6k examples) to test generalization to unseen problems.• Accuracy is the weighted accuracy where the weight of each example is the inverse of the class size. This shows how well the model can predict all classes.(Unweighted accuracies are generally higher.)</figDesc><table>Model 
+Accuracy 
+(Rank±1) 
+
+Accuracy 
+(Country) 
+
+Train Test 
+Train Test 
+
+Random/constant 
+30.0% 30.0% 10.0% 10.0% 
+
+Linear regression 
+69.6% 60.1% N/A 
+N/A 
+
+GDA 
+75.7% 67.2% 75.0% 65.0% 
+
+Logistic regression 
+86.1% 71.6% 92.2% 68.4% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Source Code Authorship Attribution Using Long Short-Term Memory Based Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Alsulami</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bander</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Symposium on Research in Computer Security</title>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Source code authorship attribution using n-grams</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><surname>Burrows</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Seyed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tahaghoghi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twelth Australasian Document Computing Symposium</title>
+		<meeting>the Twelth Australasian Document Computing Symposium<address><addrLine>Melbourne, Australia, RMIT University</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">What&apos;s the code?: automatic classification of source code archives</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Secil</forename><surname>Ugurel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Krovetz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C. Lee</forename><surname>Giles</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the eighth ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the eighth ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Scikit-learn and TensorFlow were used to implement this project. The model is not heavily biased towards larger classes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julia</forename><surname>Clang</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Accelerating battery development by early prediction of cell lifetime Motivation &amp; objective</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Attia</surname></persName>
+							<email>pattia@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><surname>Deetjen</surname></persName>
+							<email>mdeetjen@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeremy</forename><surname>Witmer</surname></persName>
+							<email>jwitmer@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Accelerating battery development by early prediction of cell lifetime Motivation &amp; objective</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Battery testing typically takes months to years • Electrochemical models fail to capture dynamics during fast charging • Early prediction of cycle life would accelerate R&amp;D, manufacturing, and optimization • Goal: Predict final cycle life (~1000s of cycles) using &lt;100 cycles</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Techniques</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussion</head><p>(a) Capacity vs cycle number (red = higher cycle life) (b) Capacity vs cycle number for first 100 cycles Initial capacity has weak correlation with cycle life (c) Capacities initially rise (challenging prediction?) Dataset: n=124; Cycle lives range from 150 to 2300 Line cuts, change in capacity (primarily degradation features)</p><p>We developed models for 20 -100 cycles, in increments of 10 cycles:</p><p>At cycle 100:</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Future</head><label></label><figDesc>work:• Incorporate features from other components of dataset (rest periods, charging)• Apply CNNs to X-ray images taken before cycling (manufacturing defects?) • Classify cells into high/low lifetimes (preliminary screening applications) • Using reinforcement learning to find optimal fast charging policiesContributions: All authors contributed to data exploration, feature generation, model development, and poster/report creation. References: S. J. Harris, D. J. Harris, C. Li. J. Power Sources 342, 589-597 (2017). K. Severson*, P. Attia*, W. Chueh, R. Braatz et al. In review. 1. Elastic net Regularized linear regression = argmin ( − + (1 − )|| || 2 + || || 1 Simultaneously performs feature selection (via || || 1 ) and regularized coefficient fitting 2. Random forest regression Bagging of decision trees, with subset of features selected ( ) to decorrelate trees Optimize over number of trees ( ) &amp; max depth ( ) 3. Adaboost regression Sequential tree growing; learns slowly using information from previously grown trees Optimize over number of trees ( ) &amp; learning rate ( ) We use 5-fold cross validation given small dataset Training set = 84 cells, test set = 40 cells Future work, contributions, references Most information-rich data source: voltage curves Develop voltage visualizations for feature extraction Slices show linear trend → good for prediction! Other features: capacity, temperature, resistance Cycle life • We can reduce # cycles required! • As expected, error generally increases with decreasing cycle number; some overfitting • Random forest performs best • Elastic net feature selection • Low cycle numbers (20-40): Charge time, surface fits, capacity, internal resistance (primarily time- independent features) • High cycle numbers (60-100):</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

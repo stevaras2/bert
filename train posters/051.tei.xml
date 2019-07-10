@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Visualization Modeling HLA ligands for binding prediction of new peptides Acknowledgments I&apos;d like to thank Curtis McMurtrey and William Hildebrand for the data, and the Parham Lab and the Bustamante Lab for advice, in particular Prediction with H1N1 (swine flu)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Han</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hugo</forename><surname>Hilton</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Elena</forename><surname>Sorokin</surname></persName>
+						</author>
+						<title level="a" type="main">Visualization Modeling HLA ligands for binding prediction of new peptides Acknowledgments I&apos;d like to thank Curtis McMurtrey and William Hildebrand for the data, and the Parham Lab and the Bustamante Lab for advice, in particular Prediction with H1N1 (swine flu)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Sensitivity: # binders assigned as binders / # binders Fallout: # nonbinders assigned as nonbinders / # nonbinders</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A small fraction of viral sequences were obtained from an assay involving a cell with HLA B*05:01 infected by a strain of Influenza Virus A subtype H1N1. All four models were recreated using all of the data and optimal parameters for total accuracy before using them to predict whether the sequences would be obtained or not.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Human leukocyte antigens (HLA) are a family of proteins that are an integral part of the human immune system. They serve as "windows" for cells in the human body. HLA bind short pieces of proteins, or peptides, from the cell interior and present them at the cell exterior. Host human peptides presented at the HLA show that a cell is healthy; bacterial or viral peptides presented by an infected cell show that a cell is unhealthy.</p><p>My goal in this project was to • Model how different HLA have different binding affinities for different types of peptides.</p><p>• Use these models to predict whether new pathogenic peptides may bind to an HLA.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>• 9 amino acid length peptides, or nonamers, which were shown to bind to 5 different HLA (positive class) • Randomly generated nonamers (negative class) • Proteome of the H1N1 Influenza A virus, cut into all possible nonamers (for prediction) All nonamer sequence strings were transformed into 4 physiochemical properties at each amino acid to make 36 features per peptide. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Kernel Density Estimation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>One-&amp; Two-Class ν-SVM</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>ROC curves for B*15:01</figDesc><table>Training 
+
+Testing 
+
+PCA 
+
+Hidden Encoding 
+
+5D PCA 
+KDE 
+
+90% positives 
+
+10% positives 
+random sequences 
+
+Auto KDE 
+likelihoods 
+
+Loading Matrix 
+
+Autoencoder 
+5D Auto 
+KDE 
+
+PCA KDE 
+likelihoods 
+
+Positives 
+
+Random 
+
+One-Class SVM 
+
+Two-Class SVM 
+
+5D PCA 
+KDE 
+
+5D Auto 
+KDE 
+One-Class SVM 
+Two-Class SVM 
+
+KL distances 
+
+AUC: 0.80859 
+
+10-fold CV results 
+
+AUC: 0.69492 
+
+Auto KDE 
+
+PCA KDE 
+
+90% positives 
+
+90% randoms 
+
+PCA B*05 B*15 B*46 B*73 C*01 
+
+B*05 0 
+0.51 
+0.24 
+0.40 
+0.83 
+
+B*15 0.37 
+0 
+0.05 
+0.24 
+0.53 
+
+B*46 0.47 
+0.18 
+0 
+0.29 
+0.58 
+
+B*73 0.19 
+0.18 
+0.09 
+0 
+0.30 
+
+C*01 0.25 
+0.15 
+0.07 
+0.17 
+0 
+
+auto B*05 B*15 B*46 B*73 C*01 
+
+B*05 0 
+13.8 
+12.3 
+10.8 
+12.2 
+
+B*15 9.69 
+0 
+2.62 
+4.68 
+1.80 
+
+B*46 29.7 
+14.2 
+0 
+13.9 
+10.3 
+
+B*73 540 
+401 
+402 
+0 
+335 
+
+C*01 80.9 
+39.9 
+31.5 
+22.9 
+0 
+
+Sensitivity 
+
+1 
+1 
+
+Specficity 
+
+0.1002 
+0.1536 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

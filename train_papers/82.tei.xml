@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Kaggle Competition 2sigma Using News to Predict Stock Movements</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Barthold</forename><surname>Albrecht</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yanzhou</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaofang</forename><surname>Zhu</surname></persName>
+						</author>
+						<title level="a" type="main">Kaggle Competition 2sigma Using News to Predict Stock Movements</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The 2sigma competition at Kaggle aims at advancing our understanding of how the content of news analytics might influence the performance of stock prices. For this purpose a large set of daily market and news data is provided for a subset of US-listed financial instruments. This data shall be used to train any kind of learning algorithm deemed useful in order to predict future stock market returns.</p><p>The competition comprises two stages with two different evaluation periods. In the first stage the predictions are tested against historical data of the period 1/1/2017 to 7/31/2018. This stage will be terminated early next year at which time the final submissions of the participating teams must be handed in. The latter will then be evaluated against future data for about six months to identify the best performing submission which will be disclosed 7/15/2019.</p><p>The objective function for this machine learning task is set the same for all participants in the competition and constructed as follows: for each day t within the evaluation period the value x t is calculated as</p><formula xml:id="formula_0">x t = iŷ ti r ti u ti<label>(1)</label></formula><p>where for any financial asset i ∈ {1, ..., m} the termŷ ti ∈ [−1, 1] stands for the predicted confidence value that it's ten-day market-adjusted leading return r ti ∈ R is either positive or negative. The universe variable u ti ∈ {0, 1} controls whether the asset i is included in the evaluation at the particular evaluation day t. Finally, the score which determines the position in the competition is composed of the mean and the standard deviation of the daily value x t :</p><formula xml:id="formula_1">score =x t σ(x t )<label>(2)</label></formula><p>with score ≡ 0 for σ(x t ) = 0.</p><p>We apply three different algorithms to this problem: logistic regression, neural network and gradient boosting tree.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>There have been multiple attempts looking into the popular topic of forecasting stock price with techniques of Machine Learning. Based on the works we find, the focus of these research projects vary mainly in three ways.</p><p>(1) The text information used in prediction ranges from public news, economy trend to exclusive information about the characteristics of the company. <ref type="bibr" target="#b1">[2]</ref>[3]</p><p>(2) The targeting price change can be near-term (high-frequency, less than a minute), short-term (tomorrow to a few days later), and long-term (months later). <ref type="bibr" target="#b3">[4]</ref>[5] (3) The set of stocks can be limited to particular stocks, to stocks in a particular sector or to generally all stocks. <ref type="bibr" target="#b5">[6]</ref> The competition we are managing is the kind of topic that predicts long-term price on generally selected stocks, using time series data of stock price and public data (news data). This kind of problem currently doesn't produce satisfactory prediction accuracy: Most researches in this domain have only found models with around 50 to 60 percent accuracy <ref type="bibr" target="#b4">[5]</ref>[7], comparing to the over-70-percent accuracy when only considering limited number of stocks or sticks in a particular industry and has the access to exclusive information of the company <ref type="bibr" target="#b5">[6]</ref>.</p><p>3 Datasets and features</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Description</head><p>All the data used in the project is provided by Kaggle. Two sources of data are provided, one for market data and one for news data, both spanning from 2007 to the end of 2016. The market data contains various financial market information for 3511 US-listed instruments. It is comprised of more than 4 million samples and 16 features.</p><p>The "returnsOpenNextMktres10" Column indicates the market normalized return for the next 10 days and, thus, serves as the ground truth value for the prediction task. The news data contains information at both article level and asset level. There are more 9 million samples and 35 features. Most of the news features are either numerical or type indicators except the "headline" feature, which contains text. The news data provided is intentionally not normalized.</p><p>Both data sets can be joined by using either the time stamp, asset code or asset name.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Processing</head><p>As shown in <ref type="figure" target="#fig_0">Figure 1</ref>, the stock crashed in late 2008 due to the financial crisis. Thus the stock behaves differently before 2009. Since in the coming 1 year the stock is unlikely to crash, only data after 2009 is considered. A large number of samples have null values for features related to normalized market returns, they are filled with the corresponding raw market returns. All features from the market dataset is selected as input. The news dataset, however, are filtered based on feature correlations; highly correlated news features are removed from the training set. For example, sentenceCount and wordCount are highly correlated, so wordCount is removed and sentenceCount is kept. Moreover, outliers with extreme values are removed from market dataset. For example, if the open to close ratio for a single stock is greater than 2, the sample is discarded as an outlier. For the news dataset, most numerical features are clipped between 98 and 2 percentile. The dataset is split into 95% training data and 5% validation data because of the large sample size. To make it a classification problem, the prediction labels (market residual return in next 10 days) are converted to binary values with 0 representing negative return and 1 representing positive return.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Logistic regression</head><p>We chose logistic regression as a starting point for establishing a baseline score. The logistic regression takes in all the features as is, such that it does not include higher degree terms. Because of the large size of the training data, small regularization is used. The log likely-hood is</p><formula xml:id="formula_2">l(θ) = m i y (i) log h(x (i) ) + (1 − y (i) ) log(1 − h(x (i) ))</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Neural network</head><p>We implement a fully connected neural network with two inputs. Into the first input branch we feed all numerical values of the preprocessed dataset, while the second input branch encodes the categorical data "asset code" for each sample in a trainable embedding layer. After batch normalisation and two fully connected layers for the numerical part and one fully connected layer for the categorical part, both branches of the network are concatenated. The concatenated data is finally fed into one more fully connected layer followed by the output layer. All fully connected layers use relu activation except the output layer which has a sigmoid activation function. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Gradient boosting</head><p>Gradient boosting is a technique that combines weak predicting models into an ensemble to produce a much stronger one. It is typically implemented on decision trees. Like other boosting algorithms, Gradient boosting is an iterative operation. At each iteration, the algorithm creates a new estimator that minimizes the loss with respect to the current model. This minimization can be approximated by fitting the new estimator to the gradient of loss such that :</p><formula xml:id="formula_3">f k (x) = f k−1 (x) + h k (x) r ik = − ∂L(y i , f k−1 (x)) ∂f k−1 (x) for i ∈ 1, ..., m</formula><p>where f k is the ensemble model at kth iteration r ik is the gradient(residual) of the loss function with respect to f k−1 for ith data h k is the new model that fits r ik for i ∈ 1, ..., m L is the loss function (binary log loss function for this project)</p><p>It is similar to the normal gradient descent except that the gradient descent is performed on the output of the model instead of the parameters of each weak model. The regularization is achieved through several ways: by slowly decreasing the learning rate, setting the number of minimum samples in a tree leaf, limiting number of leaves, or penalizing the complexity of the tree model such as L2 regularization. LightGBM library is used to implement this algorithm in this project. It converts continuous features into bins which reduces memory and boosts speed and grows each tree with the priority given to the leaf with maximum delta loss, leading to lower overall loss.  <ref type="table" target="#tab_0">Table 1</ref> lists the result of the 3 models for the validation dataset and test dataset. The Fully-Connected Neural Network performs the best. And the Light-BGM performs almost as good as the FullyConnected Neural Network. The poor result of the logistic regression is expected because the algorithm assumes linear relationships. Adding news data does not have noticeable effect on the performance. This can be explained by that the news data is more subjective and there are many noises and non-related features. The validation accuracy is similar for all three algorithms. The competition scores, however, are quite different. One explanation could be that the score calculation considers not only the binary prediction, but also market return and standard deviation of the prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results and discussion</head><p>a. AUC curves The AUC score for the Logistic Regression, the Fully Connected Neural Network Model and the Light-GBM Model is 0.5, 0.5799 and 0.5753 respectively, as shown by <ref type="figure">Figure 3</ref>, <ref type="figure">Figure 4</ref> and <ref type="figure">Figure 5</ref>. The logistic regression behaves similar to a random guess, while the other 2 algorithms show slightly higher ability to predict the market returns.    we see that the accuracies on training set and validation set are close to each other, which means the models perform similarly on the training set and the validation set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion and Future work</head><p>Out of the three attempted algorithms, the neural network performs the best followed closely by the gradient boosting tree, while the logistic regression behaves almost like a random guess. As the logistic regression is fairly a simple algorithm with linear mappings to each feature dimension, its incapability to capture the complex relationship is expected. On the other hand, both the neural network and gradient boosting tree are powerful non-linear algorithms with a large degree of flexibility and control, making them competent to model complex situations.</p><p>For future work, deeper dive into the feature engineering is needed. It is also worth exploring to combine neural network and gradient boosting tree in an ensemble fashion to produce a stronger model. One of the news features is text based, thus natural language processing can be implemented to extract useful information from it. Given the large parameter sets for the neural network and the gradient boosting tree, achieve the optimum parameters is both difficult and time consuming. However, there is still possible room to make improvement by further tuning the parameters. Lastly, choosing a more powerful baseline such as the support vector machine instead of the simple logistic regression should be considered.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>As a group working on this collaborated project, we contributed equally overall. Barthold Albrecht has additional contribution on establishment of the Logistic Regression model and the fully-connected Neural Network model. Yanzhuo Wang has additional contribution on establishment of the Logistic Regression model and the LGBM model. Xiaofang Zhu has additional contribution on establishing the fully-connected Neural Network model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Source Code</head><p>https://drive.google.com/open?id=1MnF5oPuzbDvotKXL6sJKgLPQaBCN8v9x</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Closing prices by quantiles</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Architecture of the FCNNThe loss function we use is binary cross entropy with the Adam optimizer with default learning rate of 0.001 and batch size of 32. The model has 54.000 trainable parameter.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :Figure 5 :</head><label>35</label><figDesc>ROC curve for Logistic Regression Figure 4: ROC curve for the FC Neural NetworkFigure 5: ROC curve for the LGBM b. Confusion matrics</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Validation accuracy, score and test score of the 3 models</figDesc><table>Metric 
+LR 
+FC Neural Network Light-GBM 
+Train-accuracy 
+0.503 
+0.561 
+0.554 
+Val-accuracy 
+0.485 
+0.557 
+0.538 
+Val-score 
+0.247 
+0.781 
+0.731 
+Competition score 0.259 
+0.645 
+0.644 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc>Confusion matrix for LR</figDesc><table>Pred Class 0 Pred Class 1 
+Class 0 
+0 
+1 
+Class 1 
+0 
+1 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3 :</head><label>3</label><figDesc>Confusion matrix for FCNN</figDesc><table>Pred Class 0 Pred Class 1 
+Class 0 
+0.458 
+0.542 
+Class 1 
+0.347 
+0.653 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="true"><head>Table 4 :</head><label>4</label><figDesc>Confusion matrix for LGBM</figDesc><table>Pred Class 0 Pred Class 1 
+Class 0 
+0.495 
+0.504 
+Class 1 
+0.389 
+0.611 
+
+c. Output analysis 
+The first model, the Logistic Regression model fails because the model assumes the features and 
+the result are linearly correlated, which is obviously too much simplify the situation. And as 
+expected, the model gets not so good performance. 
+To analyse on the output performance on the three models, as the table 1 showing the training 
+accuracy and the validation accuracy of the three models, they are not overfitting. From the table, 
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xingyu</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jinhong</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yifeng</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mingwen</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.1743</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning Framework for Stock Selection</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Stock price prediction based on stock-specific and subindustry-specific news articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yauheniya</forename><surname>Shynkevich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sonya</forename><surname>Mcginnity</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ammar</forename><surname>Coleman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Belatreche</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 International Joint Conference on Neural Networks (IJCNN)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Textual analysis of stock market prediction using breaking financial news: The azfin text system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Robert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hsinchun</forename><surname>Schumaker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM Transactions on Information Systems (TOIS)</title>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Wavelet low-and high-frequency components as features for predicting stock prices with backpropagation neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Salim</forename><surname>Lahmiri</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+		<respStmt>
+			<orgName>Journal of King Saud University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Equity forecast: Predicting long term stock price movement using machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nikola</forename><surname>Milosevic</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1603.00751</idno>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Stock Market Prediction Using Artificial Neural Network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mudasirahma</forename><surname>Nazish Nazir1</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Dmutto2</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Advanced Engineering</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>IJAEMS) Infogain Publication</publisher>
+		</imprint>
+	</monogr>
+	<note>Management and Science</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Automated news reading: Stock price prediction based on financial news using context-capturing features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Hagenau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Liebmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dirk</forename><surname>Neumann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Decision Support Systems</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="685" to="697" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

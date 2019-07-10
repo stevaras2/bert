@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Question Answering with Neural Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ye</forename><surname>Tian</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicholas</forename><surname>Huang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianlun</forename><surname>Li</surname></persName>
+						</author>
+						<title level="a" type="main">Question Answering with Neural Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We tackle the Question Answering problem in this project with Neural Network models.</p><p>Most if not all Natural Language Understanding questions can be cast as Question Answering problem. It is also a fundamental question in building towards artificial intelligence, combining Natural Language Understanding, Information Retrieval, and even higher-order reasoning.</p><p>The attention mechanism originally was applied on Machine Translation problem, but it has been shown to work on Questions Answering problems as well. Traditional LSTM networks have problem with long sentences, and even worse for question based on contexts with multiple sentences, given a fixed monolithic representation length. The attention mechanism can solve this problem by "attend to" some portion of the contexts while paying less attention to others. Intuitively this puts a lighter burden on the vector to represent all the semantic information.</p><p>End-to-End Memory Network with Attention (MemN2N) has received academic interest in recent years, including a NIPS workshop in 2015. End-to-End Neural Networks have the advantage over traditional machine learning methods that they don't require feature engineering or supervision. Memory Network is unique in the sense that in additional to the hidden states, it relies on an external memory representation that we can analyze during the learning process.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>1. Tune hyperparameters to match the paper performance. Also we should train on en-10k dataset, and with more iterations 2. Error Analysis. What errors do our models make systematically? 3. Visualize Attention in the sentences over iterations. This will provide a lot of insight to the working of attention mechanism. 4. Generalize to the Children's Book Test dataset, which is also developed by Facebook Research, and Deepmind Daily Mail dataset. Both dataset follow similar pattern, which is asking a single fact-based question after a short (usually 15-sentences-long paragraph). The answer will also be a single word so it is easy to adapt to for neural networks. The difference between them and bAbI is in the v Vocabulary size • bAbI ~100</p><p>• CBT ~53,628</p><p>• Daily Mail ~ 208,045 5. Theoretically we understand, that the number of hops in a neural network should be at least greater than the steps of logical deduction in a reasoning problem. We could examine the hypothesis, that given enough hops, the neural networks can eventually overcome reasoning problems of any complexity. 6. Memory Network which learns to control its own number of hops 7. Maybe we can formulate and implement LSTM with explicit Memory Representation.</p><p>We used bAbI dataset designed by Facebook researchers. The dataset consists of 3-tuples of Context-Question-Answer (Supporting evidence index). Contexts are typically 2~10 short sentences. Each answer is a single word, and the supporting evidence indices refer to context sentences that contribute to the answer.</p><p>The Questions and Answers are carefully constructed to remove real world bias. For example, in the "Basic deduction" task set, there was this question Which apparently makes no sense if World Knowledge is involved, but also means the system cannot rely on world knowledge embedded in some representation to answer this kind of problem.</p><p>The overall vocabulary size of the dataset is trivial, measured at around 100, which can be a weak point of the dataset.   As shown below is the result of running five models on the 20 tasks in the bAbI dataset.</p><p>Among the results we see MemN2N is outperforming LSTMs on most tasks except task 18 (size reasoning), but after Position Encoding is implemented it is performing as well, or outperforming LSTMs. Among the tasks, Task 2, 3 (Two facts, Three facts), Task 19 (spatial reasoning) are particularly hard for all models.</p><p>We suspect Task 19 is due to different representation of direction words ("South") in the context and in the answer ("S"). As is shown in the architecture graph, Memory Network layers rely on a common external memory "Sentences".</p><p>End-to-End Memory Network is a smooth version of the Memory Network designed by Weston et al. <ref type="bibr">(2015)</ref>. The main improvement is to make the max selection of u a softmax function, thus the whole system can be differentiated and optimized end-to-end with Stochastic Gradient Descent or RmsProp.</p><p>Long Short-Term Memory has long been regarded as useful tool for sequence-based learning. In this project we implement modifications to the classical LSTM structure.</p><p>LSTM was introduced to solve problem of RNN with long term dependency. But even with LSTM structure long term dependency is still problematic. Attention mechanism can let us visualize the whole model. For example, in language translation machine we can understand the process of translation by visualize the weight matrix.</p><p>Pyramid LSTM: instead of combining word representation by simple addition, a Pyramid LSTM feeds context sentences into a second LSTM, and so on, to get the context representation r. This has the potential benefit that the representation will shift less, as shown below.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>The tasks in the bAbI dataset</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>From Top to Bottom: MemN2N, LSTM, LSTM with Attention, Pyramid LSTM with Attention,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 "</head><label>3</label><figDesc>End-To-End Memory Networks", Sukhbaatar el al., 2015. arXiv:1503.08895.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>1 Wolves are afraid of mice. 2 Sheep are afraid of mice. … 8 Gertrude is a wolf. … 11 What is gertrude afraid of? mouse 8 1</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<idno type="arXiv">arXiv:1409.0473</idno>
+		<title level="m">Neural Machine Translation by Jointly Learning to Align and Translate Bahdanau</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Attend and Tell: Neural Image Caption Generation with Visual Attention Xu et al</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>Show</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1502.03044</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Memory</forename><surname>Networks</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wetson</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1410.3916</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">End-To-End Memory</forename><surname>Networks</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1503.08895</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Towards AI Complete Question Answering: A Set of Prerequisite Toy Tasks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wetson</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1502.05698</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">The Goldilocks Principle: Reading Children&apos;s Books with Explicit Memory Representations</title>
+		<idno type="arXiv">arXiv:1511.02301</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<pubPlace>Felix Hill, Antoine Bordes, Sumit Chopra, JasonWeston</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Teaching</forename><surname>Machines To Read</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hermann</forename><surname>Comprehend</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1506.03340</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Ask Me Anything { Dynamic Memory Networks for Natural Language Processing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kumar</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1506.07285</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Wayne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ivo</forename><surname>Danihelka</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1410.5401</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">We attempted the End-to-End Memory Network and compare it with three variants of LSTMs: LSTM with attention mechanism, Pyramid LSTM, and Pyramid LSTM with attention mechanism</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

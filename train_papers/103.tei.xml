@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine learning to deliver blood more reliably: The Iron Man(drone) of Rwanda</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Parikshit</surname></persName>
+						</author>
+						<title level="a" type="main">Machine learning to deliver blood more reliably: The Iron Man(drone) of Rwanda</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"> Deshpande (parikshd)   [SU ID: 06122663]  <p>and Abhishek Akkur (abhakk01) [SU ID: 06325002]  (CS 229 Project, Autumn 2018)    This project is to predict if a flight will fail based on the historical dat a generat ed by the parts that will be used in the flight. Zipline drone consists of a bat t ery , body and wings. Once the flight is completed it generates a lot of signals which are captured, analyzed and stored on Amazon AWS as S3 buckets.</p><p>This work deals with extracting the data from Amazon S3 which is stored as y aml files, converting data to csv with merging the same features, finding the correlation between the features and also between the feature and the output label, performing feature reduction and running supervised machine learning algorithms on the data to predict the flight failure based on previous telemetry signals reported by t he part s t o be used for that flight.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p>Our CS229 Machine Learning project is collaborated with a company (Zipline -http://www.flyzipline.com) Some introduction about Zipline: Zipline delivers blood and supplies to remote, hard to reach hospitals and health centers via drone. Zip (drone) is a small fixed wing aircraft launching from a distribution center, flying low over a hospital and dropping a cake box with a small paper parachute. Inside the box is blood or medical supplies the hospital has ordered. Zipline currently does about 30 flights a day in Rwanda, delivering &gt; 20% of the national blood supply.</p><p>Our project aims to help Zipline with predictive maintenance of the parts used in the flight before the flight takes off. With this effort they the attempt is to prevent failures that can be detected to achieve more delivery accuracy. Since the data includes previous flight records and analysis along with the labels this would be treated as a supervised learning problem.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RELATED WORK</head><p>Problem of predictive maintenance has been one of the major concerns for most industries using moving parts. As discussed in <ref type="bibr" target="#b1">[1]</ref> the ability to for see malfunctions is critical to reduce unanticipated outcomes. They also have adopted a ridge regres s ion classifier to touch base on adopting machine learning for predictive maintenance.</p><p>[2] has a good description on the performance of SVM classification for Machine condition diagnosis. They have also provided promising result for the ability of SVM for future fault diagnosis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DATASET AND FEATURES</head><p>Once a flight has completed its delivery, the bat tery is plugged in to a board which generates and c ollec t s information related to the flight. Such information can include things like power usage, weather conditions, total trip details, and other telemetry signals which are the input features for our machine learning algorithm. This data is analyzed by a set of scripts maintained by zipline developers which post the analysis as a yaml file describing its features. Below is a small snippet of a yaml file that is stored as Amazon S3 buckets.</p><p>(figa: Snippet of raw data)</p><formula xml:id="formula_0">ffull = f:Rn!f0;1g i=1</formula><p>The image shows a very small subset of how the flight.yaml file looks for a file. This file is generated after running analysis script on the telemetry signals generated by the battery after a flight. Each flight has an associated with flight.yaml file with 1400+ such features stored as nested objects in the yaml file.</p><p>As of today, we have data for 3199 flights , out of which 430 flights are labelled as failed flights. So, our value of m=3199. n (number of features is variable based on the flight label but is generally of the range 1200~1500.) Out of 430 flights 29 flights were flight crashes. So we had 3 labels namely: Success, Mission Failed (where flight returns back to origin) and flight fail (where flight deploys parachute).</p><p>As previously mentioned this data is stored into amazon s3 buckets along with all the raw telemetry data and other log files. On amazon s3 the data is stored as: flight_logs/DD/MM/YYY/nest_1_&lt;flight_id&gt;/ Our work included using the amazon s3 boto c lient t o parse through these files and download the relevant data for our purpose. This required us to write a s3 ut il script to only query the data relevant to run machine learning algorithms. This data is stored in ap-south region servers in amazon, and it took substantial amount of time to query only the relevant data that we need.</p><p>One more challenge in getting the data was to fet c h good enough number of failure flights. This was achieved by querying through a document storage database. We used the fields inside the yaml file to query for failure and passed cases, and then invoked our s3 util to fetch the relevant yaml files.</p><p>We started with ~3000 flight yaml files (so m= 3000) with average of 1200 features for each flight (n=1200). We used python pandas to load the yaml file and t hen concatenate based on the columns. We generat ed a csv file mxn fields. This gave us a first real pars e able input structure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FEATURE REDUCTION &amp; CORRELATION:</head><p>Our first work on this input included, normalizing the data. We used the standard scaler from sklearn which essentially subtracts the mean and divides by standard deviation. After doing this we spent some time in removing features that had None, or Nan values for most of the flights Lot of the earlier flights recorded did not capture all the features. We used zero values for those missing features, in order to preserve the flight information.</p><p>Features also consisted of fields like flight_id, commit_id, description and some other string fields which we needed to clean. We wrote several utility functions to do this part. Small snippet of how data looks after the above steps After cleansing the data, we were left with ~700 features. Looking at the number of features and the values in most of them we decided to go ahead with feature reduction before starting with any classification algorithms. For feature reduction we generated a correlation matrix between all the features and the input features.</p><p>We used this matrix to remove the features bas ed on the following rules. If the correlation between the features was too high, i.e. if two features were too closely correlated then we removed one of them. We also removed the features which were very highly uncorrelated with the output label. Below is the plot of the correlation matrix which we got after feature reduction.</p><p>Figc: Correlation plot for 18 features After feature reduction using the above methods, we were left with 18 features so our initial (m, n) of (3000,1400) was reduced to (m, n) of (3000,18).</p><p>Evaluation metric that we used was to compare the predicted label (success, mission fail, flight fail) with the actual value of highest_failure_level captured by the flight analysis. The error reported is in perc ent age of prediction accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MODELS AND RESULTS</head><p>We chose the complete 3000 examples as our t rain set. Our test data were real time flight logs collected in recent time. We started with a test on 250 flight s and kept adding daily flights.</p><p>Normal Equations: First set of Machine learning we applied was logistic regression using Normal equations. As per normal equations we got the parameters using:</p><p>The output was calculated using sigmoid function:</p><p>After several rounds of trial and error we selec t ed a threshold of 0.65 to classify the flight as failure (i.e. if p(x=1) &gt; 0.65. This gave us the following results on train and validation sets:</p><formula xml:id="formula_1">Data Set Accuracy Train 81.89% Test 89.55%</formula><p>The next algorithm we implemented was the used was the gradient descent algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gradient Descent Algorithm:</head><p>As per the gradient descent algorithm we chose to update parameters by minimizing the cost function:</p><p>We chose the following parameters for our gradient descent algorithm. We tried this algorithm with/without L1/L2 regularization </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Locally Weighted Linear Regression:</head><p>A s per t he locally weighted linear regression algorithm we fit our parameters to minimize:</p><p>And then used sigmoid function as mentioned above. Locally weighted linear regression gave us poor results as compared to the other two methods mentioned above. Even with varying the values of t au we used the maximum accuracy we reached with t his method was 71.69%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Trees and Forests:</head><p>Decision trees employs a top-down, greedy search through the space of possible branches with no backtracking. We have used Classification tree as the target is to classify the flight as one of the three classes, mission-success, mission-fail or flight fail.</p><p>Maximum depth of the Decision tree controls the tradeoff between error due to bias and variance, in our model we have optimized it to give the best bias/variance combination with a max_depth=5.</p><p>Ensemble method which combines several Independent Base classifiers to construct one classifier class is Random forest. Each base classifier is trained on a set sampled (sample_size) with replacement from the original training set, guaranteeing independence (Bagging or Bootstrap aggregation). Additional randomness is introduced by detecting the best split feature from a random subset of available features (feature size = sqrt(n)) In order to visualize the data in 2-dimensions we decided to run PCA on it.</p><p>Principal component analysis: PCA is used to reduce the dimensions of data to two major components, before applying more sophisticated dat a analysis methods such as non-linear classification algorithms and decision trees.</p><p>Analysis on test and train set with two principal components was performed on Logistic Regression, LWR, Decision trees, Random Forests and S V M wit h Linear Kernel and Radial Basis Kernel (RBF). Logistic regression classifiers accuracy was not very good. This probably means that the decision boundary is nonlinear, hence SVM with RBF kernel was the best choice out of the above.</p><p>We trained and tested an SVM with RBF and Linear Kernels and optimize the hyperparameters (gamma). Apply PCA and see how the number of principal components influence the accuracy. Below contour shows the accuracy of SVM with RBF kernel, with t wo principal components as 82%. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Support Vector Machines (SVM) Linear/RBF Kernel for classification:</head><p>The hyperparameter (gamma) obtained by running SVM on 2 principal components are used as starting point on the complete feature set SVM. If t he value of gamma is too large, then the model can overfit and be prone to low bias/high variance.</p><p>As, gamma of Linear/RBF kernel controls the tradeoff between error due to bias and variance, in our model we have optimized it to give the best bias/variance combination. As you can see in both the learning curves, the distance between the training and cross validation scores narrows down with the number of examples.</p><p>We achieved good results with SVM on RBF Kernel. Below is the confusion matrix for the same: Our model got 100% accuracy in predicting flight failures, 97% accuracy in predicting success, and 63% accuracy in predicting mission failure cases. Missing features in the earlier flight, makes some of the mission failure cases to be categorized as success. W hat t his model tells us is that if the flight is categorized as mission failure or flight failure, with the previous run being successful, then it might need maintenance. Our model will be serialized and used in the analysis scripts of Zipline. The predicted probabilities of each label will be added along with the flight data and us ed for predictive maintenance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONCLUSION &amp; FUTURE WORK</head><p>This sums up the work we have carried out t ill now. To summarize, first we spent quite a lot of effort to extract the data from Amazon, clean it, perform feature reduction. After doing that we ran the above three algorithms that we have listed and got some results. From the results the method of applying SVM with RBF Kernel is getting us good results.</p><p>As a future work we can implement RULRemaining Useful life to predict the number of flights left in all the parts. This will help plan the maintenanc e cycles in a better way and increase the confidence with which a flight takes off. Another approach can be to have an unsupervised model to detect anomalies in the telemetry numbers reported. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TEAM CONTRIBUTION BREAKDOWN</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>(</head><label></label><figDesc>Figb: Snippet of extracted data)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>FigF:</head><label></label><figDesc>Contour of SVM RBF after running PCA.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>FigI:</head><label></label><figDesc>Confusion matrix for results of SVM with RBF Kernel</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>Both the team members contributed equally for t he project till now. Below are the distributions of tasks: Parikshit Deshpande: Work on Data gathering, cleaning, feature reduction initial models &amp; report compilation Abhishek Akkur: Work on feature reduction, PCA, Trees and Forests, SVM linear and RBF, Plot generation &amp; report compilation. Pair programming: To debug and solve issues and poster preparation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>FigE; Loss function against iterations for Gradient descent with L2 regularization.</figDesc><table>Parameter 
+Value 
+α (learning rate) 
+4.85e-5 
+λ (regularization values) 
+100,1 
+
+With gradient descent we achieved the following results: 
+
+Method &amp; Dataset 
+Accuracy 
+Gradient descent with L1 reg. 
+on train set 
+
+79.42% 
+
+Gradient descent with L1 reg. 
+on test set 
+
+87.39% 
+
+Gradient descent with L2 reg. 
+on train set 
+
+81.73% 
+
+Gradient descent with L2 reg. 
+on test set 
+
+88.82% 
+
+FigD: Loss function against iterations for Gradient desce n t wi t h 
+L1 regularization. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Results with Decision trees and forests:</figDesc><table>Trees &amp; Forests 
+Accuracy 
+Decision tree on Train 
+91.68% 
+Decision tree on Test 
+90.12% 
+Random Forest on Train 
+86.09% 
+Random Forest on Test 
+86.45% 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>FigH: Learning curve on train and test with SVM RBF Kernel</figDesc><table>Linear Kernel: 
+
+RBF Kernel: 
+
+Below are the results with Linear kernel SVM 
+SVM Linear Kernel 
+Accuracy 
+Train 
+86.09% 
+Test 
+86.45% 
+
+We got the following Learning curve with Linear SVM 
+Kernel: 
+
+FigG: Learning curve on train and test with SVM Linear 
+Kernel 
+
+Below are the results with RBF Kernel SVM 
+SVM RBF Kernel 
+Accuracy 
+Train 
+93.04% 
+Test 
+92.18% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>References</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Link</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Machine learning for predictive maintenance: A multiple classifier approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">:</forename><surname>Susto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gian</forename><surname>Antonio</surname></persName>
+		</author>
+		<ptr target="https://github.com/parikshd/cs229-ziplineContactinfoZipline" />
+		<imprint>
+			<publisher>Emma Schott</publisher>
+		</imprint>
+	</monogr>
+	<note>Support vector machine in machine condition monitoring and fault diagnosis. emma@flyzipline.com) Matt Fay (matt@flyzipline.com</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

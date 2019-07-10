@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Sentiment Analysis for Amazon Reviews</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wanliang</forename><surname>Tan</surname></persName>
+							<email>wanliang@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Wang</surname></persName>
+							<email>xwang7@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Xu</surname></persName>
+							<email>xinyu17@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Sentiment Analysis for Amazon Reviews</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Sentiment analysis of product reviews, an application problem, has recently become very popular in text mining and computational linguistics research. Here, we want to study the correlation between the Amazon product reviews and the rating of the products given by the customers. We use both traditional machine learning algorithms including Naive Bayes analysis, Support Vector Machines, Knearest neighbor method and deep neural networks such as Recurrent Neural Network(RNN), Recurrent Neural Network(RNN). By comparing these results, we could get a better understanding of the these algorithms. They could also act as a supplement to other fraud scoring detection methods.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Recent years have seen an increasing amount of research efforts expanded in understanding sentiment in textual resources. As we can see the statistics from web of knowledge in <ref type="figure">Figure one</ref>, the papers published on sentiment analysis have been increasing for the past years. One of the subtopics of this research is called sentiment analysis or opinion mining, which is, given a bunch of text, we can computationally study peoples opinions, appraisals, attitudes, and emotions toward entities, individuals, issues, events, topics and their attributes. Applications of this technique are diverse. For example, businesses always want to find public or consumer opinions and emotions about their products and services. Potential customers also want to know the opinions and emotions of existing users before they use a service or purchase a product. Last but not least, researchers <ref type="bibr" target="#b1">[2]</ref> uses these information to do an in-depth analysis of market trends and consumer opinions, which could potentially lead to a better prediction of the stock market.</p><p>However, saying this, to find and monitor opinion sites on the Web and distill the information contained in them remains a formidable task because of the proliferation of diverse sites. Each site typically contains a huge volume of opinionated text that is not always easily deciphered in long forum postings and blogs. The average human reader will have difficulty identifying relevant sites and accurately summarizing the information and opinions contained in them <ref type="bibr" target="#b4">[5]</ref>. Besides, to instruct a computer to recognize sarcasm is indeed a complex and challenging task given that at the moment, computer still cannot think like human beings.</p><p>The objective of this paper is to classify the positive and negative reviews of the customers over different products and build a supervised learning model to polarize large amounts of reviews. Our dataset consists of customers' reviews and ratings, which we got from Consumer Reviews of Amazon products. We extracted the features of our dataset and built several supervised model based on that. These models not only include traditional algorithms such as naive bayes, linear supporting vector machines, K-nearest neighbor, but also deep learning metrics such as Recurrent Neural Networks and convolutional neural networks. We compared the accuracy of these models and got a better understanding of the polarized attitudes towards the products.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>So far, there are a lot of research papers related to product reviews, sentiment analysis or opinion mining. For example, Xu Yun <ref type="bibr" target="#b7">[8]</ref> el al from Stanford University applied existing supervised learning algorithms such as perceptron algorithm, naive bayes and supporting vector machine to predict a review's rating on Yelp's rating dataset. They used hold out cross validation using 70% data as the training data and 30% data as the testing data. The author used different classifiers to determine the precision and recall values. In paper <ref type="bibr" target="#b2">[3]</ref>, Maria Soledad Elli and Yi-Fan extracted sentiment from the reviews and analyze the result to build up a business model. They claimed that this tool gave them pretty high accuracy. They mainly used Multinomial Naive Bayesian(MNB) and support vector machine as the main classifiers. Callen Rain <ref type="bibr" target="#b5">[6]</ref> proposed extending the current work in the field of natural language processing. Naive Bayesian and decision list classifiers were used to classify a given review as positive or negative.</p><p>Deep-learning neural networks is also popular in the area of sentiment analysis. Ronan Collobert <ref type="bibr" target="#b0">[1]</ref> et al used a convolutional network for the semantic role labeling task with the goal avoiding excessive task-specific feature engineering. On the other hand, in paper <ref type="bibr" target="#b6">[7]</ref>, the authors proposed proposed using recursive neural networks to achieve a better understanding compositionality in tasks such as sentiment detection.</p><p>In this paper, we want to apply both traditional algorithms including Naive Bayesian, K-nearest neighbor, Supporting Vector Machine and deep-learning tricks. By comparing the accuracy of these models, we would like to get a better understanding how these algorithms work in tasks such as sentiment analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Data Preprocessing</head><p>Our dataset comes from Consumer Reviews of Amazon Products <ref type="bibr" target="#b0">1</ref> . This dataset has 34660 data points in total. Each example includes the type, name of the product as well as the text review and the rating of the product. To better utilize the data, first we extract the rating and review column since these two are the essential part of this project. Then, we found that there are some data points which has no ratings when we went through the data. After eliminating those examples, we have 34627 data points in total.</p><p>Besides, to have a brief overview of the dataset, we have plot the distribution of the ratings. In <ref type="figure">Figure 2</ref>, it shows that we have 5 classes -rating 1 to 5 as well as the distribution among them. Also, these five classes are actually imbalanced as class 1 and class 2 have small amount of data while class 5 has more than 20000 reviews. Here is one sample from our dataset: Review text: 'This product so far has not disappointed. My children love to use it and I like the ability to monitor control what content they see with ease.' Rate: <ref type="bibr">'5'</ref> In the subsection '3.3 Features', we will illustrate how we convert a review text into an input vector, and we simply take the rate of a review as its label.</p><p>1 https://www.kaggle.com/datafiniti/consumer-reviews-of-amazonproducts <ref type="figure">Figure 2</ref>. Rating Distribution of Amazon Reviews</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Data Resampling</head><p>Due to the imbalance of our dataset, we have tried data resampling in some of our experiments. Data resampling is a popular way of dealing with imbalanced data. In this project, we tried to oversample the data of class 1,2 and 3 by repeatedly sampling those reviews because these three classes have far less samples than the other two. Therefore, the original reviews of label 1,2 and 3 has been repeated 15 times in our training set. However, since there are many repeated samples in the training set, it is easy for the model to overfit.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Features</head><p>We have tried two types of features in the project. The first type is a traditional method. Basically, we build a dictionary based on the common words and index each word. We set the threshold for the word dictionary to be 6 occurrence and ended up collecting 4223 words from our entire dataset. Then we transform each review into a vector, where each value represents how many times the word shows up. For this, we actually tried changing the threshold and the length of the dictionary. What we found is that the increase of the dictionary's length did not have too much effect on the accuracy.</p><p>Another type of feature we used is the 50-d glove 2 dictionary which was pretrained on Wikipedia. For this part, we basically want to take advantage of the the meanings of each word. In this case, we represent each review by the mean vector of 50-d glove vectors of all individual words making up the review. As we will see in our result, because of the way we represent each review, the features got weakened and the distance between different reviews actually is not that accurate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Naive Bayes</head><p>Naive Bayes is one of the most common generative learning algorithms for classification problems. This algorithm assumes that x i s are conditionally independent given y, which is called Naive Bayes assumption.</p><formula xml:id="formula_0">p(x 1 , ..., x k |y) = k i=1 p(x i |y)</formula><p>We also incorporated Laplace Smoothing in our model to make it work better. The prediction of an example is given by the formula below:</p><formula xml:id="formula_1">y (i) = arg max j k i=1 p(x i |y = j)φ(j)</formula><p>With the first way of representing review texts, it takes an array of non-negative integers, and models p(x i |y) with multinomial distribution. With the second way of representing review texts using glove dictionary, the inputs are no longer non-negative integers, so we chose to model p(x i |y) with Gaussian distribution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">K-nearest Neighbor</head><p>K-nearest Neighbor(KNN) is a nonparametric classification method. It has been widely used recently. When making a prediction, this method fist look for the K = n nearest neighbours of the input. Then, it will assign the majority of that n neighbours' class. The distance between each neighbour is euclidean distance, which is able to measure the similarity between each data point. <ref type="bibr" target="#b3">[4]</ref> f (x) = 1 K</p><formula xml:id="formula_2">x∈N K (x) y i</formula><p>The equation above shows the mathematical representation of KNN algorithm. The general idea of KNN is that if the inputs are similar to each other, then the output would be the same. In this project, we have tuned the number of nearest neighbours K among 4,5 and 6.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Linear Support Vector Machine</head><p>Linear SVM is a mthod that creates a classifier(a vector) that separates the labeled datasets. Geometrically given two types of points, circles and x's, in a space, it tries to maximize the minimum distance from one of the points to the other. In other words, it maximizes the margin. The optimization problem that SVM tried to solve is below:</p><formula xml:id="formula_3">arg max γ,w,b 1 2 ||w|| 2 s.t.y i (w T x + b) ≥ 1, i = 1, 2, ...m</formula><p>It tried to find the w to satisfy the maximum margin problem and satisfy the separability constraint.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Long Short Term Memory</head><p>Long Short Term Memory(LSTM) is unit of Recurrent Neural Network(RNN). A common LSTM unit is composed of a cell, an input gate, an output gate and a forget gate. The cell remembers values over arbitrary time intervals and the three gates regulate the flow of information into and out of the cell. LSTM networks are well-suited to classifying, processing and making predictions based on time series data, since there can be lags of unknown duration between important events in a time series. The configuration is shown as the <ref type="figure">Figure 2</ref> below. For this method, we have also tried to input the original text with glove embedding. We found that there are 33629 reviews' length less than 100 words, which is about 97.1 percent of the whole dataset. Therefore, the max text length has been set to 100. Then, all the review text data has been padding to 100 word length and the words which are after 100 have been removed. Because when implementing this method, the input shape of the data should be the same. After that, each word is represented by glove word vector as the input of the neural network.</p><p>In this project, we used the LSTM with 128 hidden units and then used a dense net with softmax as the activation function to predict these 5 classes. The data has been trained for 20 epochs in experiments using LSTM. Adam optimizer has been used to optimize the parameters , the learning rate is 0.01 and the batch size is 32. To prevent overfitting, a dropout rate of 0.2 was set in the LSTM layer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Results</head><p>The entire dataset of 34,627 reviews was divided into a training set of size 21000 (60%), a validation set of size 6814 (20%) and a test set of size 6813 (20%).</p><p>With In general, all models perform better with traditional input features than with glove input features. Specifically, LSTM generates the most accurate predictions over all other models. The <ref type="figure" target="#fig_2">Figure 4</ref> shows the ranking of different models according to their test accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Discussion</head><p>We observed that KNN required much higher computation complexity than Naive Bayes and SVM during train time. As in KNN algorithm, it needs to calculate the dis- tance of all the evaluation data points and all the training data points, which is more time consuming.</p><p>In addition, the increase of the dictionary's length did not have too much effect on the accuracy. One explanation is that when we decrease the threshold of the dictionary, the length of dictionary will increase. But the problem is that we only have less than 40,000 reviews. If we think about it, the number of data points is not that significantly larger than the dimension of feature space. So the curse of dimensionality could the issue here.</p><p>The result using glove mean is worse than the method of normal word count. The possible reason is that if we use the average, the individual word feature will be weakened, then the distance between different reviews will be inaccurate.</p><p>When it comes to LSTM, the result is a little bit better than other conventional machine method due to the bigger amount of the parameters. We can also see from table 1, after resampling, the training accuracy of LSTM with Glove has reached 85.6 %. However, the test accuracy is only 65.6 %, which means this model has overfitted on the resampled data, since there are many repeated examples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion and Future Work</head><p>In summary, we have tried two types of features. For this two type of features, we tried all the algorithms we mentioned in the model part including Naive Bayes, SVM, KNN, LSTM. From the results, we can see that our accuracy on the test set is the best when we use LSTM on the first type of feature. One of the main reason our accuracy is not high enough is because of the data imbalance. We tried resampling and different weighting techniques that we got from the feedbacks of the audience during the poster session. But that didn't help too much. Another possible solution we haven't tried is to find more data points from other resources. We think that might help us solve the problem of data imbalance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Contribution</head><p>Wanliang Tan: Responsible for Support Vector Machine algorithm and converting review texts to input features.</p><p>Xinyu Wang: Responsible for Naive Bayes algorithm. Xinyu Xu: Responsible for the KNN and LSTM algorithm, data preprocessing and resampling.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Published Papers on Sentiment Analysis</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 .</head><label>3</label><figDesc>LSTM configuration</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 .</head><label>4</label><figDesc>Ranking of different models by test accuracy</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Besides, we tried data resampling on LSTM model but unfortunately it did not improve the test accuracy due to overfitting problem. It turns out that LSTM generates best predictions among all models again.Detailed results of training and test accuracy of all mod- els are listed inTable 1.</figDesc><table>4223-d input features representing review text, we 
+implemented Multinomial Naive Bayes, SVM with Linear 
+Kernel, SVM with RBF Kernel, KNN-4, 5, 6 and LSTM. 
+KNN-5 outperforms the other 2 KNN models and SVM 
+with Linear Kernel slightly outperforms SVM with RBF 
+Kernel. The SVM with Linear Kernel seems to have overfit-
+ting problem indicated by the significant gap between train-
+ing accuracy and test accuracy. LSTM performs best in term 
+of test accuracy among all of them. 
+With 50-d input features from glove dictionary, we run 
+Gaussian Naive Bayes, SVM with Linear Kernel and KNN-
+4, 5 6 and LSTM. KNN-5 outperforms the other 2 KNN 
+models again. Models 
+Training Acc. Test Acc. 
+Multinomial NB 
+75.1% 
+70.6% 
+Linear SVM 
+83.4% 
+69.6% 
+RBF SVM 
+69.7% 
+69.2% 
+KNN-4 
+61.7% 
+61.7% 
+KNN-5 
+65.5% 
+65.4% 
+KNN-6 
+64.9% 
+64.6% 
+LSTM 
+73.5% 
+71.5% 
+Gaussian NB w/ Glove 
+52.2% 
+52.4% 
+Linear SVM w/ Glove 
+68.7% 
+68.6% 
+KNN-4 w/ Glove 
+58.1% 
+57.6% 
+KNN-5 w/ Glove 
+62.6% 
+62.2% 
+KNN-6 w/ Glove 
+61.3% 
+61.6% 
+LSTM w/ Glove 
+70.1% 
+70.2% 
+LSTM w/ Glove(Resample) 85.6% 
+65.6% 
+
+Table 1. Performance of different models 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">https://nlp.stanford.edu/projects/glove/</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Natural language processing (almost) from scratch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Collobert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Bottou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Karlen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Kuksa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2493" to="2537" />
+			<date type="published" when="2011-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Mining the peanut gallery: Opinion extraction and semantic classification of product reviews</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Dave</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Lawrence</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Pennock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th international conference on World Wide Web</title>
+		<meeting>the 12th international conference on World Wide Web</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2003" />
+			<biblScope unit="page" from="519" to="528" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Amazon reviews, business analytics with sentiment analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">S</forename><surname>Elli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y.-F</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Knn classifier based approach for multi-class sentiment analysis of twitter data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hota</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Pathak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">In International Journal of Engineering Technology</title>
+		<imprint>
+			<biblScope unit="page" from="1372" to="1375" />
+			<date type="published" when="2018" />
+			<publisher>SPC</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">A Survey of Opinion Mining and Sentiment Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>Springer US</publisher>
+			<biblScope unit="page" from="415" to="463" />
+			<pubPlace>Boston, MA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis in amazon reviews using probabilistic machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Rain</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+			<pubPlace>Swarthmore College</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Recursive deep models for semantic compositionality over a sentiment treebank</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Perelygin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Chuang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Potts</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2013 conference on empirical methods in natural language processing</title>
+		<meeting>the 2013 conference on empirical methods in natural language processing</meeting>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="1631" to="1642" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Sentiment analysis of yelps ratings based on text reviews</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

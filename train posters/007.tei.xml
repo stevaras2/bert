@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Introduction Data Processing Have You Met The 1 ? A Machine&apos;s Approach to Human Relationships</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Rosenfield</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiayu</forename><surname>Lou</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hang</forename><surname>Yang</surname></persName>
+						</author>
+						<title level="a" type="main">Introduction Data Processing Have You Met The 1 ? A Machine&apos;s Approach to Human Relationships</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>For this exact reason, while increasing data size from additional surveys will theoretically improve our prediction, we believe that it may not be necessary.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Initial Data</head><p>The initial dataset consists of two parts: the respondents' answers to the original questions and features generated from the raw data. The dataset includes 4002 respondents with 370 features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Elimination and Reconstruction</head><p>Since this project aims at predicting the future relationship status based on current info, only data collected in the first wave is relevant to our purpose. In addition we kept only results on relationship status at each supplemental wave. For the sake of precision, we only kept data of respondents with partners in the beginning of the timespan who continuously responded to the surveys in following periods until wave 5 or breakup. We generated a boolean feature "final_relationship_status" to indicate the final status of couples after 6 years. After deleting all the redundant features and observations, we are left with 1569 respondents with 269 features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Prepossessing Non-Standard Data</head><p>The initial data contains many features with a substantial amount of missing values. Firstly, for those question whose answers have already been processed, we only kept their corresponding feature. Secondly, some of the missing values are results of branching questions. For these features, we integrated them into the main branch question by generating more categorical classes within features. Thirdly, we dropped clearly unrelated features with high level of missing values or non-numerical and non-categorical values. These operations leave us with 148 features to work with.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Feature Selection</head><p>We used forward-based sequential feature selection based on Logistic Regression model with cross-validation of 10-folds. Features were selected based on misclassification rate using Logistic Regression model and feature selection terminates after the misclassification error no longer improves. The top ten most significant features are:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Logistic Regression</head><p>We applied logistic regression model trying to minimize the loss function with L1-regularization:</p><p>Any output of logistic regression is in the range {0,1}, where output smaller than 0.5 will be categorized as 0 and the rest categorized as 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Support Vector Machine</head><p>We first implemented the the SVM without kernel:</p><p>Then we integrated Gaussian Kernel into SVM, which yields results shown in the following graph:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Decision Tree</head><p>We generated the top-down binary decision tree by examining the optimal statistical improvement brought about by each feature at each split. To capture the optimal improvement, we ordered both the categorical and the continuous attributes from the smallest to the largest and measured the improvement in misclassification error by dividing at each consecutive pairs.</p><p>We pre-pruned the tree by limiting maximum number of splits, for which 13 splits generates the lowest test error and achieves a relative good balance between the test set and the train set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. Naive Bayes</head><p>Because the assumption of the Naive Bayes is that all the conditional probability are independent of each other, we also calculated the covariance matrix between all the features and dropped features with a covariance over 0.5. We then applied the Naive Bayes model trying to maximize</p><p>Because some of the survey questions have relatively small amount of responses or unbalanced results, we also added Laplace smoothing to ensure at least one data point per feature per class.</p><p>The Following graph demonstrates the train and test errors of our methods:</p><p>While our models express &gt;10% test errors, it is rather reasonable given that relationships are still indeed based on one of the most complex systems in the known universe: human mind. Our results provide insights of what otherwise remains mysterious and unquantified, and will potentially help sociologists and everyday individuals alike.</p><p>In process of fitting samples through the models, we have also discovered that adding more samples don't always result in higher accuracy. This is likely rooted in the nature of relationships and romance: it's the surprise and unexpected turn of events that highlight their beauty. When consensus deems long-distance relationships hard to maintain, there are always outliers who prove it wrong, and same goes for other difficulties in love.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Processing</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Initial Data</head><p>The initial dataset consists of two parts: the respondents' answers to the original questions and features generated from the raw data. The dataset includes 4002 respondents with 370 features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Elimination and Reconstruction</head><p>Since this project aims at predicting the future relationship status based on current info, only data collected in the first wave is relevant to our purpose. In addition we kept only results on relationship status at each supplemental wave. For the sake of precision, we only kept data of respondents with partners in the beginning of the timespan who continuously responded to the surveys in following periods until wave 5 or breakup. We generated a boolean feature "final_relationship_status" to indicate the final status of couples after 6 years. After deleting all the redundant features and observations, we are left with 1569 respondents with 269 features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Prepossessing Non-Standard Data</head><p>The initial data contains many features with a substantial amount of missing values. Firstly, for those question whose answers have already been processed, we only kept their corresponding feature. Secondly, some of the missing values are results of branching questions. For these features, we integrated them into the main branch question by generating more categorical classes within features. Thirdly, we dropped clearly unrelated features with high level of missing values or non-numerical and non-categorical values. These operations leave us with 148 features to work with.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Feature Selection</head><p>We used forward-based sequential feature selection based on Logistic Regression model with cross-validation of 10-folds. Features were selected based on misclassification rate using Logistic Regression model and feature selection terminates after the misclassification error no longer improves. The top ten most significant features are:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Logistic Regression</head><p>We applied logistic regression model trying to minimize the loss function with L1-regularization:</p><p>Any output of logistic regression is in the range {0,1}, where output smaller than 0.5 will be categorized as 0 and the rest categorized as 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Support Vector Machine</head><p>We first implemented the the SVM without kernel:</p><p>Then we integrated Gaussian Kernel into SVM, which yields results shown in the following graph:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Decision Tree</head><p>We generated the top-down binary decision tree by examining the optimal statistical improvement brought about by each feature at each split. To capture the optimal improvement, we ordered both the categorical and the continuous attributes from the smallest to the largest and measured the improvement in misclassification error by dividing at each consecutive pairs.</p><p>We pre-pruned the tree by limiting maximum number of splits, for which 13 splits generates the lowest test error and achieves a relative good balance between the test set and the train set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. Naive Bayes</head><p>Because the assumption of the Naive Bayes is that all the conditional probability are independent of each other, we also calculated the covariance matrix between all the features and dropped features with a covariance over 0.5. We then applied the Naive Bayes model trying to maximize</p><p>Because some of the survey questions have relatively small amount of responses or unbalanced results, we also added Laplace smoothing to ensure at least one data point per feature per class.</p><p>The Following graph demonstrates the train and test errors of our methods:</p><p>While our models express &gt;10% test errors, it is rather reasonable given that relationships are still indeed based on one of the most complex systems in the known universe: human mind. Our results provide insights of what otherwise remains mysterious and unquantified, and will potentially help sociologists and everyday individuals alike.</p><p>In process of fitting samples through the models, we have also discovered that adding more samples don't always result in higher accuracy. This is likely rooted in the nature of relationships and romance: it's the surprise and unexpected turn of events that highlight their beauty. When consensus deems long-distance relationships hard to maintain, there are always outliers who prove it wrong, and same goes for other difficulties in love. For this exact reason, while increasing data size from additional surveys will theoretically improve our prediction, we believe that it may not be necessary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Have You Met The 1 ? A Machine's Approach to Human Relationships</head><p>Jiayu Lou, Hang Yang</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

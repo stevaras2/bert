@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Perfume Rate and Popularity</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yao</forename><surname>Li</surname></persName>
+							<email>yaoliphy@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predicting Perfume Rate and Popularity</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>The fragrance and perfume industry is experiencing a growth of approximately 7% to 8% annually during 2014 and 2020 1 , and the size of the global fragrance and perfume market is as large as $40.1 billion in 2016 2 . The continuous growth and huge size of this market is due to the worldwide popularity of perfume use. For example, 52.54% U.S. households use or buy perfume, cologne, and toilet water in 2016 <ref type="bibr">3</ref> . In this work, we apply different Machine Learning (ML) techniques to analyzing this huge market and explore the possibility of predicting the rate and popularity of a perfume based on its various properties and features.</p><p>The ultimate goal of this work is to provide advice for both perfume buyers and manufactures. For perfume buyers, this work is supposed to help them choose perfumes that will help them smell ontrend (high rate, high popularity) or unique (high rate, low popularity). For perfume manufactures, we would like to provide advice regarding how to produce perfumes that will become next best sellers. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Dataset and Features</head><p>Get raw data and select features. Datasets are obtained through web scraping of www.fragrantica.com using Python library BeautifulSoup 4 . www.fragrantica.com is a perfume encyclopedia website, containing information of over 38,000 perfumes. <ref type="figure" target="#fig_0">Figure 1</ref> shows an example of various information that can be found on this website for each perfume. The rate score and the number of ratings and user reviews represent the rate and popularity of the perfume. The website also displays user votes for longevity, sillage (the degree to which a perfume's scent lingers in the air), day/night, and seasons. Besides, we can also find main accords and main notes of a perfume. Notes are descriptors of scents that can be sensed upon the application of a perfume, and are very important and fundamental features of a perfume. In <ref type="table" target="#tab_0">Table 1</ref>, we list all input and target features selected in this work. The target features are rate and popularity. The input features include season, day/night, longevity, sillage, notes, and accords. Filter data and preprocess non-standard data. There is no meaning including extremely unpopular perfumes in our dataset. Therefore, we have removed these extremely unpopular perfumes from our dataset by applying filtering criteria. The filtering criteria include that the rate score cannot be none, user votes for season, day/night, longevity, and sillage cannot be zero, and main accords and notes cannot be none. After filtering, 22,857 perfumes are left. To apply ML techniques, we have also preprocessed non-standard data, as shown in the last column of <ref type="table" target="#tab_0">Table 1</ref>. First, the user votes for season, day/night, longevity, and sillage have been converted to percentage of the total votes. Second, the notes and accords have been converted to indictor vectors. In the dataset, a complete list of all perfume notes includes approximately 700 notes, and only the 100 most common notes are selected to form a set of note tokens. The indicator vector of a perfume's notes describes whether each token note appears in this perfume. This is similar to the spam classification problem, in which we first choose a set of tokens and then find the indicator vector for each message or email. The indicator vector of accords is computed similarly after choosing the 30 most common accords among all 67 accords to form a token list. Third, before applying classification models, we have discretized the continuous-valued target features. For example, the perfumes with the 33% most ratings and user reviews are labeled as "popular" ("2"); the perfumes with the 33% least ratings and user reviews are labeled as "unpopular" ("0"); the rest perfumes are labeled as "median" ("1").</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Method</head><p>We first apply six different classification models to predicting both rate and popularity of a perfume. Because classifications models do not work very well for the rate prediction, we then apply three different regression models to the prediction of rate. We have used the implementation of these models in scikit-learn <ref type="bibr" target="#b0">5</ref> in Python.</p><p>Classification models. The first classifier we have tried is Support Vector Machines (SVM). We choose the kernel to be Gaussian radial basis function with parameter :</p><formula xml:id="formula_0">! , ! = exp − ! − ! ! ! , &gt; 0</formula><p>A small means two vectors far away from each other will still influence each other, leading to under-fitting. A large means that the support vector does not have widespread influence, leading to high bias and low variance, namely over-fitting. The second classifier we have applied is boosting. Gradient tree boosting has been chosen with decision stumps as weak learner. Using boosting, we have also compute the relative importance of different input features. The relative importance of input features is computed based on the number of times a feature is selected for splitting, weighted by squared improvement to the model. The third classifier we have tried is K nearest neighbors (K-NN). K-NN works by finding k training samples closest in distance to the new data point and then predicting the output from its k nearest neighbors. A very large value of k would lead to slow simulation, and we stop at using k equivalent 12. We have also applied Decision tree (DTs) classifier. A large value of maximum depth of the tree leads to high bias and low variance, and vice-versa. In addition to these four classifiers, we have also tried logistic regression and Naïve Bayes (NB) classification.</p><p>Regression models. Decision tree (DTs) regression, linear regression, and boosting regression have been applied to predicting rate. Similar to DTs classifier, the performance of DTs regression also depends on the maximum depth of the tree. For boosting regression, we use least squares loss function and 200 boosting stages to perform. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results and Analysis</head><p>In <ref type="figure" target="#fig_1">Figure 2</ref>, we plot the performance of different classifiers for both popularity (blue curves) and rate (red curves). The solid curves are test errors and dashed curves are training errors. In <ref type="figure" target="#fig_1">Figure  2a</ref>, we plot the error by SVM as a function of the parameter . As shown in <ref type="figure" target="#fig_1">Figure 2a</ref>, a small value of leads to under-fitting and a large value leads to over-fitting. After choosing an optimized value of , SVM predicts popularity with a test error of 15.1% and rate with an error of 34.2%. <ref type="figure" target="#fig_1">Figure 2b</ref> shows that boosting model leads to a smaller test error for popularity prediction (9.12%) and a test error of 32.8% for rate prediction. As shown in <ref type="figure" target="#fig_1">Figure 2c</ref>, when the number of nearest neighbors is chosen to be 12, the test error is 17.1% for popularity prediction and 34.8% for rate prediction. <ref type="figure" target="#fig_1">Figure 2d</ref> shows that DTs classifier is easy to be over-fitted if the maximum depth of the tree is large, and it predicts popularity with a test error of 14.2% and rate with an error of 34.4%. Comparison of these different classifiers has been plotted in <ref type="figure">Figure 3</ref>. <ref type="figure">Figure 3</ref> also includes the test errors of logistic regression and Naïve Bayes. As shown in <ref type="figure">Figure 3</ref>, the error of popularity prediction is the smallest using boosting model. SVM, KNN, and DTs can also predict popularity with a small error of approximately 15%. However, the error generated by logistic regression and Naïve Bayes is much larger, approximately 40%. The error of Naïve Bayes is large because our features are not independent of each other given the class; therefore they do not satisfy the Naïve Bayes assumption. As shown in <ref type="figure">Figure 3</ref>, for the prediction of rate, all these classifiers generate an error of approximately 35%. To achieve a smaller error, we have applied different regression models to rate prediction. <ref type="figure">Figure 4</ref> shows the performance of DTs regression. Similar to DTs classifier, a large value of maximum depth of the tree will result in over-fitting. As shown in <ref type="figure">Figure 4</ref>, for rate prediction, DTs regression generates an error of approximately 12.0%. We have also tried linear regression and boosting regression. After parameter optimization, linear regression gives a test error of 12.0% and boosting regression gives an error of 11.9%.</p><p>Through the comparison of different classification and regression models, we have shown that classification models such as boosting work the best for the prediction of perfume popularity and can give a test error as small as 9%, and regression models work better for the prediction of perfume rate and can lead to a test error of 12%.  <ref type="figure" target="#fig_3">Figure 5</ref> shows the relative importance of different input features we have selected in our models. The relative importance is computed using boosting algorithm. As shown in <ref type="figure" target="#fig_3">Figure 5</ref>, season is the most important input feature for both popularity and rate prediction. Longevity and sillage are also important for both. Day/night is less important. Perfume notes are very important for the prediction of rate, and less important when predicting popularity. Main accords are the least important feature for both.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusions and Future Work</head><p>In summary, we have applied different ML techniques to predicting the rate and popularity of a perfume using its various features. We have shown that some classification models such as boosting can predict perfume popularity with a test error as small as 9% and regression models can be applied to predicting perfume rate with a test error of 12%. Furthermore, we show that some features such as season are more important than other features such as accords.</p><p>To continue this work, we would like to include the perfume ingredients as another input feature. This will help our work provide guidance for perfume manufactures regarding how to produce a popular perfume. Finally, we want to interpreter our ML results and try to provide customized advice. For example, we would like to predict the most popular perfumes for different seasons. Also, we would like to show what combination of perfume notes would have the highest rate.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>An example of input data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Performance of different classifiers</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :Figure 4 :</head><label>34</label><figDesc>Comparison of performance Figure 4: Performance of DTs regression of different classifiers for rate prediction</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Relative importance of different input featuers</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Selected input and target features</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Scikit-Learn ;</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning in Python, Pedregosa</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

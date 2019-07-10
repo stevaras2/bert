@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Real-time Detailed Video Analysis of Fruit Flies CS229 Fall 2018 Final Project</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><surname>Herbst</surname></persName>
+							<email>sherbst@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Real-time Detailed Video Analysis of Fruit Flies CS229 Fall 2018 Final Project</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ABSTRACT</head><p>In this paper, I describe a real-time image processing pipeline for fruit fly videos that can detect the position, oriention, sex, and (for male flies) wing angles. The machine learning algorithms used include a decision tree, linear and logistic regressions, and principal component analysis. The Histogram of Oriented Gradients [2] descriptor is used as well to generate features. Ultimately, I achieved a processing throughput of 84 frames per second on 1530x1530 grayscale frames without GPU acceleration, and demonstrated high accuracy across several metrics.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Fruit flies are often used in neurobiology experiments because they can be genetically modified using well-established tools and because it is feasible to do in vivo whole-brain imaging of them (in addition to other reasons). In these experiments, it is often desirable to measure the behavior of each fly by recording its position and orientation over time, along with its leg and wing positions.</p><p>Automated tools for doing this kind of video analysis exist, but are usually too slow to run in real time. This is problematic for two reasons: First, real-time operation is a prerequisite for running closed-loop behavior experiments. Second, in an experiment where flies are recorded continuously over a long period (e.g., a circadian rhythm study), video processing will become the bottleneck for experimental throughput unless it runs in real-time (or faster).</p><p>To address these issues, I sought to develop a tool for the realtime video analysis of fruit flies. In this project, I chose to focus on a specific experiment being developed in Prof. Tom Clandinin's lab at Stanford to study the courtship interaction between one male and one female fly. As a result, the input to my algorithm is a grayscale video of the two flies <ref type="figure" target="#fig_0">(Figure 1</ref>), and the outputs are the position, orientation, and sex of each fly. In addition, the wing angles of the male fly are reported, which are needed to measure the rapid wing movement it uses to produce characteristic courtship songs.</p><p>In this paper, I'll start off by describing some existing tools for fly video analysis (Section 2), and will then move on to describe the dataset I worked with (Section 3). Next, I'll describe the algorithm I developed, which consists of four distinct processing steps using machine learning (Section 4). Finally I'll wrap up the experimental results (Section 6) and conclusion (Section 7). The source code and dataset for this project are available on GitHub at https://github. com/sgherbst/cs229-project.git.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORK</head><p>The tool considered a "gold standard" of sorts for automated fruit fly video analysis is called FlyTracker <ref type="bibr" target="#b3">[4]</ref>. Developed in the Computational Vision Lab at Caltech, it is a MATLAB-based workflow for recording the the body position, leg position, body angle, and wing angle of many flies interacting with each other. The image processing technique is based on operations such as thresholding and morphological image transforms. In informal experiments, I found it to be about 10x slower than real time.</p><p>In another project <ref type="bibr" target="#b5">[6]</ref>, researchers sought to apply an unsupervised learning approach to study interactions between pairs of flies. The inputs to their unsupervised algorithm were two "egocentricallyaligned" videos; each of these videos was centered and cropped to one of the flies, and it was rotated so that the fly faced in a nominal direction. Their approach to segmenting the two flies includes (1) using a Gaussian mixture model applied to a histogram of pixel intensities to set various thresholds, and (2) using the pixel distance from the fly body as a criterion for assigning fly appendages to one fly or the other. In rare cases where the fly bodies themselves could not be segmented, a watershed algorithm was used to separate the two flies, which sometimes resulted in fly wings or legs being masked out. The processing speed of this approach was not reported.</p><p>Finally, in the past year, two different approaches to fly video analysis using deep neural networks were published: DeepLabCut <ref type="bibr" target="#b8">[9]</ref> and LEAP <ref type="bibr" target="#b11">[12]</ref>. In DeepLabCut, researchers leveraged transfer learning to reduce the number of labeled video frames required; the starting point was a neural network for feature extraction pretrained on the massive ImageNet dataset <ref type="bibr" target="#b2">[3]</ref>. The speed of DeepLabCut was 30 Hz for 682x540 images using GPU acceleration. For LEAP, the developers created a custom neural network using a simpler architecture than DeepLabCut, targeting higher throughput. The end result was a 185 Hz processing rate (albeit on smaller images) and a one-hour training time (both using GPU acceleration).</p><p>In this project, I sought to combine various aspects of these previous studies. On one hand, I wanted to develop an algorithm that could run in real-time on large frames (1530x1530) without GPU acceleration, and I wanted training to be fast to allow for more experimentation. Hence, I needed to further simplify the machine learning models as compared to DeepLabCut and LEAP. But I still wanted to apply supervised learning to take advantage of labeled data, departing from the hand-crafted image processing rules of FlyTracker.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DATASET</head><p>The source data for this project was a 15 minute grayscale video of the interaction between one male fly and one female fly. The video was furnished by Dr. Ryan York of Prof. Clandinin's lab as an example of the kind of footage that will be produced by the experimental rig they are developing. I did a bit of initial preprocessing to crop the video to a 1530x1530 frame that exactly contained the circular well in which the flies were placed.</p><p>Working from the cropped video, I then hand-annotated 326 frames using LabelMe <ref type="bibr" target="#b13">[14]</ref> to indicate the positions of heads, abdomens, and a point within the fly body. For male flies, I also annotated wing angles via additional points ( <ref type="figure" target="#fig_1">Figure 2</ref>). To select frames for labeling, I first used a script to randomly choose about one hundred frames from the video. Since flies tend to move around in bursts, this didn't produce a particularly varied dataset, so I hand-selected the remaining two hundred or so frames to focus on "interesting" cases, such as points in time where the flies were crawling along the wall, were in contact, or were moving their wings extensively <ref type="bibr" target="#b0">1</ref> .</p><p>Additional preprocessing and data augmentation was used throughout the image processing pipeline, and these steps will be covered in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">METHODS</head><p>As shown in <ref type="figure">Figure 3</ref>, the image processing pipeline has four distinct stages that use machine learning. First, contours are extracted from the frame and filtered to those containing an individual fly. When there are two fly contours (the most common case), the second pipeline stage identifies which contour is the male fly and which is the female fly. Next, the 0−360 • orientation of each fly is determined. Finally, for the male fly, the angles of the right and left wing are determined.</p><p>The pipeline described below was implemented in Python using the packages scikit_learn <ref type="bibr" target="#b10">[11]</ref>, opencv-python <ref type="bibr" target="#b0">[1]</ref>, numpy <ref type="bibr" target="#b9">[10]</ref>, matplotlib <ref type="bibr" target="#b4">[5]</ref>, imutils, joblib, and tqdm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Pipeline Stage: ♂♀ vs ♀♂</head><p>If there are two contours with one fly each, the next stage of the image processing pipeline determines which is the male fly and which is the female fly. This classification is done jointly; that is, the classifier is a given a list of the two contours and asked whether that list is ordered male-female or female-male. In general, this is fairly straightforward, since female fruit flies are larger than male fruit flies. But in some cases, such as when the flies are climbing along the walls, making the distinction can be a bit trickier.</p><p>There are four input features for this pipeline stage: namely, the area and aspect ratio of both contours (the latter determined via image moment analysis <ref type="bibr" target="#b12">[13]</ref>). As shown in <ref type="figure">Figure 5</ref>, these features are rescaled to zero mean and unit variance, then run through a logistic regression. Briefly, the goal of logistic regression is to determine a maximum-likelihood estimate of θ for a hypothesis h θ (x) = 1/ 1 + exp −θ T x . This leads to the following singleexample update rule:</p><formula xml:id="formula_0">θ := θ + α (y − h θ (x)) x</formula><p>In this case, a rescaling step is needed before training the logistic regression because contour areas and aspects ratios are of vastly different scales, so the above update rule would otherwise perform quite poorly. To further improve the quality of training, data augmentation was applied by swapping the order of the two contours and their labels for each example.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">PIPELINE STAGE: ORIENTATION</head><p>In the third pipeline stage, the 0 − 360 • orientation of both flies is determined, and this is done in a way that reduces the machine learning task to a binary classification. As pre-processing, the image is first masked to everything expect the body of one fly, after which point the orientation of the fly is determined using image</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I/O</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FlyCount</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>♂♀ vs ♀♂ Orientation WingAngle</head><p>Read frame from video. Threshold image and extract contours. Classify each contour as containing 0, 1, or 2 flies.</p><p>If there are two one-fly contours, identify which is the male fly and which is the female fly.</p><p>For both flies, determine the 0-360˚ orientation of the fly body.</p><p>For the male fly, determine the 0-90˚ angle of each wing with respect to the major axis of its body. moments <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b15">16]</ref>:</p><formula xml:id="formula_1">θ ≈ 1 2 tan −1 2µ 11 µ 20 − µ 02</formula><p>where µ pq is central image moment of the masked image, defined by the summation:</p><formula xml:id="formula_2">µ pq = x y (x −x) p (y −ȳ) q f (x, y)</formula><p>where (x,ȳ) is the center of mass of the image and f (x, y) is the intensity at pixel (x, y). Unfortunately, the orientation angle produced using this approach has a sign ambiguity; it cannot discern whether an object is facing forwards or backwards. As a result, I needed to develop a machine learning algorithm to decide if the orientation computed via image moments should be corrected by adding 180 • . As shown in <ref type="figure" target="#fig_3">Figure 6</ref>, I did this by computing a HOG descriptor for the fly image after rotating it by the calculated value of θ , then reduced then dimensionality of this descriptor using principal component analysis (PCA), and finally used logistic regression to decide whether the 180 • correction was required.</p><p>Briefly, the HOG descriptor <ref type="bibr" target="#b1">[2]</ref> captures information about silhouettes in an image by computing a histogram of gradient directions over 8x8 patches throughout the image. In each of these patches, there are 64 pixels; the magnitude and direction of the image gradient is computed at each one. A histogram is then built by binning the pixels into 9 angular ranges, using the gradient magnitude to weight the contribution of each pixel. The histograms of all 8x8 patches are then flattened into vector.</p><p>After computing the HOG descriptor for a fly image, the descriptor is projected onto a basis of 15 principal components, or in other words, the eigenvectors corresponding to the 15 largest eigenvectors of i x (i) x (i) T , where x (i) is the HOG descriptor of the ith training example.</p><p>As the final step of this pipeline stage, the dimensionally-reduced HOG descriptor is fed into a logistic regression 2 . Somewhat surprisingly, as shown in <ref type="figure">Figure 8</ref>, even using just two principal components yields a clear distinct between forward-facing and backwardfacing flies, although I ended up using a larger number of components to improve test error (in this case, 15 components explained about 60% of the feature variance).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Pipeline Stage: Wing Angle</head><p>In the final pipeline stage, the angles of the right and left wings of the male fly are determined. Similarly to the previous stage, preprocessing is used to construct a region of interest (ROI) containing just the male fly and its wings. That ROI can then be orientated in an upright direction using the results of the preceding pipeline stage. The preprocessing uses median blurring, adaptive thresholding, and erosion to preserve fly wings while removing fly legs.</p><p>In my approach, the wing angles are determined separately by dividing the image of the male fly into two halves, one for each wing. As shown in <ref type="figure">Figure 7</ref>, a HOG descriptor is computed for each halfimage, which is then projected onto a basis of principal components. Interestingly, a linear relation is quite apparent between the wing angle and just the first principal component ( <ref type="figure">Figure 9</ref>). (Ultimately, I used 40 principal components to reduce test error.)</p><p>The final step in this pipeline stage is a linear regression on the reduced-dimensionality HOG descriptors. Briefly, linear regression seeks to minimize the mean-squared error between predicted and given labels. The optimal parameters θ can be computed directly by the equation θ = X T X −1 X T y, where X contains the features of all training examples and y is a vector of their labels. After computing θ , the predicted label given features x is simply θ T x.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">RESULTS</head><p>For all four pipeline stages, error was evaluated by retaining one third of the dataset for testing; this test set was not used at any point during training. The first three stages of the pipeline were classifiers, so their test error is reported simply as misclassification error. As seen in <ref type="table">Table 1</ref>, the performance of the classifiers is generally very good. The "FlyCount" classifier does not make any errors since its classification is quite straightforward, while the "♂♀ vs. ♀♂" and "Orientation" classifiers 3 make only occasional errors, which tend to occur when one or both of the flies is climbing along a wall. Since the depth of focus of the camera setup is small, the flies can get quite blurry as they start to climb, and this can make classification difficult even for a human. "WingAngle" is a regression stage; its performance is given as a standard deviation of error since the mean error is small (0.592 • ). As shown in <ref type="table">Table 1</ref>, the standard deviation of test error was 2.92 • , which can be interpreted as a 95% confidence interval of about ±6 • . Given that fly wings only move about 90 • , this error is not insignificant, but in practice wing angle tracking qualitatively looks good when superimposed on a video of the flies (e.g., https://bit.ly/ 2 Data augmentation for this regression was performed by rotating all images 180 • and inverting their labels 3 "Orientation" is treated as a classifier because the role of its logistic regression is to determine whether an image, after being oriented vertically by image moment analysis, needs to be rotated 180 •  <ref type="table">Table 2</ref>: Timing breakdown for the image processing pipeline.</p><p>2SGMXTQ). The wing angles over time are also plotted in <ref type="figure" target="#fig_0">Figure 10</ref>, which reveals there is sufficient resolution to see that wings tend to move in opposite directions <ref type="bibr" target="#b3">4</ref> . In addition, large oscillations can be seen in the wings at various points; these represent "courtship songs" created by the rapid motion of the male fly's wings. Since one of the key goals of this project was to achieve realtime operation, the timing breakdown of the different stages in the image processing pipeline is shown in <ref type="table">Table 2</ref>. Overall, the average processing throughput was 84.0 frames per second (FPS) on a 2.8 GHz Intel Core i7 CPU with 16 GB RAM (no GPU acceleration). This was 2.4x faster than the source video rate, indicating that real-time operation was achieved. As it turns out, the most time-consuming step was reading in the video frame itself (3.9 ms), although this was followed closely by the "WingAngle" stage (3.3 ms), which had the most involved preprocessing of any stage.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION</head><p>In this report, I described a real-time image processing pipeline intended for neurobiology experiments that takes as input a grayscale video of a pair of fruit flies and produces as output an estimate of the position, orientation, and sex of each fly, in addition to the wing angles for the male fly. The pipeline had four distinct stages employing machine learning techniques, including a decision tree, logistic regresion, linear regression, and PCA. For both classification and regression tasks, I demonstrated good accuracy on 1530x1530 frames at a throughput of 84 FPS (without GPU acceleration).</p><p>In the "Orientation" and "WingAngle" stages, HOG was used in conjunction with PCA to produce input features for a trained model. In both cases, I was surprised how well this worked even when just one or two principal components were used. I think one reason this approach was successful was that I designed the preprocessing stages in a way that increased HOG variance due to the variable of interest (orientation or wing angle) while decreasing  HOG variance due to other variables (fly legs, the other wing, the other fly, background roughness, etc.). This in turn was a useful lesson about the role of preprocessing and feature selection in machine learning.</p><p>In the future, there are a number of possible directions to explore. First, I could try measuring leg positions from the video; preliminary experiments suggest that legs tips are selected fairly reliably with a keypoint detector such as SIFT <ref type="bibr" target="#b6">[7]</ref>, so this could be cast as a keypoint classification problem. It would also be interesting to get access to a computer with CUDA support to see what processing throughput could be achieved using GPU-accelerated OpenCV routines. Finally, I plan to work with Dr. York to explore the application of unsupervised learning methods such as TSNE <ref type="bibr" target="#b7">[8]</ref> to the feature vectors generated by the image processing pipeline I developed for this project. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Grayscale video of the interaction between a male and female fly that served as the input for this project.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>The dataset consisted of individual video frames labeled with various key points on both flies.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :Figure 4 :Figure 5 :</head><label>345</label><figDesc>The image processing pipeline developed in this project.area ⁄ 1413.5 gini = 0.532 samples = 759 value = [309, 416, 34] class = one gini = 0.0 samples = 309 value = [309, 0, 0] class = neither True area ⁄ 10442.5 gini = 0.14 samples = 450 value = [0, 416, 34] class = one False gini = 0.0 samples = 416 value = [0, 416, 0] class = one gini = 0.0 samples = 34 value = [0, 0, 34] class = both Threshold image, keeping only the central part of the fly body Extract contours in the thresholded image. Apply a decision tree to determine if the contour contains one fly, both, or neither. For each contour, compute its area. contourArea Figure 4: The "FlyCount" pipeline stage. when there two are contours with one fly each… area1 aspectRatio1 area2 aspectRatio2 StandardScalar LogisticRegression … compute the area and aspect ratio of both contours apply feature rescaling apply logistic regression to determine… … which contour is the male fly and which is the female fly ♀ ♂ Figure 5: The "♂♀ vs ♀♂" pipeline stage.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>The "Orientation" pipeline stage.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7 :Figure 8 :</head><label>78</label><figDesc>The "WingAngle" pipeline stage.−3 −2 −1 0 1 2 3 PCA 1 −2 −1 0 1 2 PCA 2 normal flipped Figure 8: The first two principal components of the HOG de- scriptor used in the "Orientation" pipeline stage (for female flies).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 9 :Figure 10 :</head><label>910</label><figDesc>The wing angle can be predicted fairly well with even just the first principal component of the HOG descrip- tor.0 2 4 6 8 10 12 14 16 Time (s) 20 0 20 40 60 80 Wing Angle (degrees) Right Wing Left Wing Figure 10: Male fly wing angle, as determined by the "WingAngle" stage of the processing pipeline.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">LEAP<ref type="bibr" target="#b11">[12]</ref> has an interesting approach to solving this problem by first using PCA to represent frames on a reduced basis and then using clustering to identify frames with distinct types of fly poses. But it does assume that the frames have already been egocentrically-aligned.4.1 Pipeline Stage: FlyCountAs shown inFigure 4, the first pipeline stage identifies the contours of individual flies. This is done by first thresholding the image, eliminating the background and fly appendages, and leaving only the fly body. Contours are then extracted from the thresholded image, and each contour is classified as containing zero, one, or two flies. A contour might contain zero flies on account of image noise or a background object, and could contain two flies if the flies are in contact.For each contour, its area is computed and used as the input of a decision tree that identifies the number of flies in the contour. In general, each node of a decision tree splits the incoming data into two groups based on one of the input features. In this case, the cost function for evaluating the quality of splits was the Gini impurity<ref type="bibr" target="#b14">[15]</ref> J k =1 p k (1 − p k ),where p k is the proportion of the examples in the split of class k, and J is the total number of classes (in this case 3).During training, the decision tree was constructed so as to minimize the Gini impurity in a greedy fashion, seeking to incrementally improve the homogeneity of the subsets produced by each split. As can be seen in 4, the resulting logic is simple and can be easily interpreted: small contours contain zero flies, medium contours contain one fly, and big contours contain two flies.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4">In fact, the cross-correlation coefficient of the two wing angle waveforms is -0.64.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Bradski</surname></persName>
+		</author>
+		<title level="m">The OpenCV Library. Dr. Dobb&apos;s Journal of Software Tools</title>
+		<imprint>
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Histograms of Oriented Gradients for Human Detection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Navneet</forename><surname>Dalal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bill</forename><surname>Triggs</surname></persName>
+		</author>
+		<idno type="doi">10.1109/CVPR.2005.177</idno>
+		<ptr target="https://doi.org/10.1109/CVPR.2005.177" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2005 IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR&apos;05</title>
+		<meeting>the 2005 IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR&apos;05<address><addrLine>Washington, DC, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2005" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="886" to="893" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">ImageNet: A Large-Scale Hierarchical Image Database</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L.-J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR09</title>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Detecting Social Actions of Fruit Flies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eyrun</forename><surname>Eyjolfsdottir</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steve</forename><surname>Branson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xavier</forename><forename type="middle">P</forename><surname>Burgos-Artizzu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">D</forename><surname>Hoopfer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Schor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">J</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pietro</forename><surname>Perona</surname></persName>
+		</author>
+		<idno type="doi">10.1007/978-3-319-10605-2_50</idno>
+		<ptr target="https://doi.org/10.1007/978-3-319-10605-2_50" />
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision -ECCV</title>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="772" to="787" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Matplotlib: A 2D Graphics Environment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Hunter</surname></persName>
+		</author>
+		<idno type="doi">10.1109/mcse.2007.55</idno>
+		<ptr target="https://doi.org/10.1109/mcse.2007.55" />
+	</analytic>
+	<monogr>
+		<title level="j">Computing in Science &amp; Engineering</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="90" to="95" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An unsupervised method for quantifying the behavior of paired animals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ugne</forename><surname>Klibaite</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jessica</forename><surname>Berman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Cande</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joshua</forename><forename type="middle">W</forename><surname>Stern</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Shaevitz</surname></persName>
+		</author>
+		<idno type="doi">10.1088/1478-3975/aa5c50</idno>
+		<ptr target="https://doi.org/10.1088/1478-3975/aa5c50" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Biology</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">15006</biblScope>
+			<date type="published" when="2017-02" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Distinctive Image Features from Scale-Invariant Keypoints</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">G</forename><surname>Lowe</surname></persName>
+		</author>
+		<idno type="doi">10.1023/B:VISI.0000029664.99615.94</idno>
+		<ptr target="https://doi.org/10.1023/B:VISI.0000029664.99615.94" />
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vision</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page" from="91" to="110" />
+			<date type="published" when="2004-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Visualizing data using t-SNE</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Laurens</forename><surname>Van Der Maaten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="2579" to="2605" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">DeepLabCut: markerless pose estimation of user-defined body parts with deep learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Mathis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pranav</forename><surname>Mamidanna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><forename type="middle">M</forename><surname>Cury</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Taiga</forename><surname>Abe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Venkatesh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mackenzie</forename><forename type="middle">Weygandt</forename><surname>Murthy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthias</forename><surname>Mathis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bethge</surname></persName>
+		</author>
+		<idno type="doi">10.1038/s41593-018-0209-y</idno>
+		<ptr target="https://doi.org/10.1038/s41593-018-0209-y" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="1281" to="1289" />
+			<date type="published" when="2018-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">NumPy: A guide to NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Travis</forename><surname>Oliphant</surname></persName>
+		</author>
+		<ptr target="http://www.numpy.org" />
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Trelgol Publishing</publisher>
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Online; accessed &lt;today&gt;</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Fast animal pose estimation using deep neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Talmo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Diego</forename><forename type="middle">E</forename><surname>Pereira</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lindsay</forename><surname>Aldarondo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mikhail</forename><surname>Willmore</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kislin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S.-H</forename><surname>Samuel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mala</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joshua</forename><forename type="middle">W</forename><surname>Murthy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Shaevitz</surname></persName>
+		</author>
+		<idno type="doi">10.1101/331181</idno>
+		<ptr target="https://doi.org/10.1101/331181" />
+		<imprint>
+			<date type="published" when="2018-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Tracking object orientation with image moments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Raphael</forename><surname>Candelier</surname></persName>
+		</author>
+		<ptr target="http://raphael.candelier.fr/?blog=Image%20Moments" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed 13-December-2018</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">LabelMe: A Database and Web-Based Tool for Image Annotation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Bryan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Antonio</forename><surname>Russell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><forename type="middle">P</forename><surname>Torralba</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><forename type="middle">T</forename><surname>Murphy</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s11263-007-0090-8</idno>
+		<ptr target="https://doi.org/10.1007/s11263-007-0090-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vision</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="157" to="173" />
+			<date type="published" when="2008-05" />
+		</imprint>
+	</monogr>
+	<note>Freeman</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Decision tree learning -Wikipedia, The Free Encyclopedia</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wikipedia Contributors</surname></persName>
+		</author>
+		<ptr target="https://en.wikipedia.org/w/index.php?title=Decision_tree_learning&amp;oldid=871969828" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed 13-December-2018</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Image moment -Wikipedia, The Free Encyclopedia</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wikipedia Contributors</surname></persName>
+		</author>
+		<ptr target="https://en.wikipedia.org/w/index.php?title=Image_moment&amp;oldid=859704100" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed 13-December-2018</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

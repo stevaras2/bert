@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">PCA (2D) PCA (4D) PCA (6D) no PCA k-means unsup EM Isolating single cell types from co-culture flow cytometry experiments using n-dimensional gating for CAR T-based cancer immunotherapy</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Victor</forename><surname>Tieu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<settlement>Stanford, Background</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">PCA (2D) PCA (4D) PCA (6D) no PCA k-means unsup EM Isolating single cell types from co-culture flow cytometry experiments using n-dimensional gating for CAR T-based cancer immunotherapy</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1016/0022-1759(85)90045-6</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Flow cytometry is a method of single cell analysis where cells are encased in individual microfluidic droplets and run through a series of lasers. The light that is emitted by each cell is collected and processed as a cell signature-these features can be represented on a 2D dot plot, and "gates" can be drawn manually (and somewhat arbitrarily) to partition off different populations of interest.</p><p>Gating flow data with mixed cells is challenging, since unique cell "markers" must be present in order to differentiate cell types. In co-culture experiments such as CAR T cell + tumor cell functional assays, the levels of these markers often change due to cell-cell interactions (i.e. cells no longer "look" like the unmixed populations). Therefore, an unsupervised learning algorithm is appropriate to identify clusters within flow data that represent a single cell type. In this project, I evaluated the ability of k-means clustering and Gaussian mixture models, in combination with PCA, to isolate single cell types, and trained a semi-supervised EM algorithm to do so. I collected flow data from an experiment with mixed primary human CAR T cells and K562 leukemia cells. FCS files were converted to CSV using an open-source script provided by GenePattern and the Broad Institute at MIT. Each row in the design matrix represents a single cell, and each column represents one of seven "channel" features (FSC-A/H, SSC-A, APC, mCherry, EGFP, AF405) from the raw input data. Derived features include PCA projections of the input for visualization and clustering due to correlation between channels. Unmixed cells were used as the ground truth-labeled dataset. Simple data pre-processing included shifting all values by the min, taking the log10 of color channels (since the distribution of fluorescence intensity is log10-normal), and setting mean and variance to 0 and 1.</p><p>After projecting to a lower-dimensional subspace using PCA: clusters were assigned by finding centroids (k-means):</p><p>or by fitting data to a mixture of Gaussians and maximizing the log-likelihood through the EM algorithm:</p><p>A. Raw 7-dimensional data for the mixture of T cells and target cells (left, plotted in two-dimensions as forward-v. side-scatter) is projected onto a two-dimensional subspace by PCA (right). Each dot represents a single cell (feature vector). The manual gating strategy is shown on the original dot plot for qualitative comparison with clustering results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.</head><p>Clustering of the PCA projections is shown for k-means (top left) and unsupervised EM (bottom left) with k=4 clusters. The resulting cluster labels are reassigned to the non-projected raw data for both algorithms (top and bottom right, respectively).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PCA</head><p>k -m e a n s u n s u p E M assign PCA cluster labels to original 7D data C. Both models were run using PCA projections with 2, 4, and 6 principal components for k=4 or k=5 clusters. Number of iterations until convergence is shown for all conditions run (left). Clustering results are shown for all k=4 conditions (right).</p><p>D. Semi-supervised EM was run using unmixed cells as labeled controls. The labeled dataset was projected into the 2D PCA subspace with the same eigenvectors generated from the unlabeled set (left). The number of iterations until convergence is plotted against varying alpha coefficients for the labeled set (middle). Clustering results are shown on the right for different alpha values (cluster number k=4).</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Flow cytometry is a method of single cell analysis where cells are encased in individual microfluidic droplets and run through a series of lasers. The light that is emitted by each cell is collected and processed as a cell signature-these features can be represented on a 2D dot plot, and "gates" can be drawn manually (and somewhat arbitrarily) to partition off different populations of interest.</p><p>Gating flow data with mixed cells is challenging, since unique cell "markers" must be present in order to differentiate cell types. In co-culture experiments such as CAR T cell + tumor cell functional assays, the levels of these markers often change due to cell-cell interactions (i.e. cells no longer "look" like the unmixed populations). Therefore, an unsupervised learning algorithm is appropriate to identify clusters within flow data that represent a single cell type. In this project, I evaluated the ability of k-means clustering and Gaussian mixture models, in combination with PCA, to isolate single cell types, and trained a semi-supervised EM algorithm to do so. I collected flow data from an experiment with mixed primary human CAR T cells and K562 leukemia cells. FCS files were converted to CSV using an open-source script provided by GenePattern and the Broad Institute at MIT. Each row in the design matrix represents a single cell, and each column represents one of seven "channel" features (FSC-A/H, SSC-A, APC, mCherry, EGFP, AF405) from the raw input data. Derived features include PCA projections of the input for visualization and clustering due to correlation between channels. Unmixed cells were used as the ground truth-labeled dataset. Simple data pre-processing included shifting all values by the min, taking the log10 of color channels (since the distribution of fluorescence intensity is log10-normal), and setting mean and variance to 0 and 1.</p><p>After projecting to a lower-dimensional subspace using PCA:</p><p>clusters were assigned by finding centroids (k-means):</p><p>or by fitting data to a mixture of Gaussians and maximizing the log-likelihood through the EM algorithm:</p><p>A. Raw 7-dimensional data for the mixture of T cells and target cells (left, plotted in two-dimensions as forward-v. side-scatter) is projected onto a two-dimensional subspace by PCA (right). Each dot represents a single cell (feature vector). The manual gating strategy is shown on the original dot plot for qualitative comparison with clustering results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B.</head><p>Clustering of the PCA projections is shown for k-means (top left) and unsupervised EM (bottom left) with k=4 clusters. The resulting cluster labels are reassigned to the non-projected raw data for both algorithms (top and bottom right, respectively).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PCA</head><p>k -m e a n s u n s u p E M assign PCA cluster labels to original 7D data C. Both models were run using PCA projections with 2, 4, and 6 principal components for k=4 or k=5 clusters. Number of iterations until convergence is shown for all conditions run (left).</p><p>Clustering results are shown for all k=4 conditions (right).</p><p>D. Semi-supervised EM was run using unmixed cells as labeled controls. The labeled dataset was projected into the 2D PCA subspace with the same eigenvectors generated from the unlabeled set (left). The number of iterations until convergence is plotted against varying alpha coefficients for the labeled set (middle). Clustering results are shown on the right for different alpha values (cluster number k=4).</p><p>Isolating single cell types from co-culture flow cytometry experiments using n-dimensional gating for CAR T-based cancer immunotherapy To improve convergence rate and stability, I tried to introduce a supervised term into the EM algorithm using unmixed positive cells. However, semi-supervision doesn't really work well in this case, since interactions between mixed cell populations changes how they compare to the ground truth in the PCA subspace (note the cluster difference between plots in A and D). Trying out a range of alpha values results in varied clustering quality and convergence rate (plot E). Interestingly, alpha = 0.0004 resulted in the same clustering as the unsupervised case, which leads me to believe that giving the algorithm a very small weighting toward the unmixed PCA clustering helps stability/convergence rate, but also that clustering can be successful (though unstable to noise) when completely unsupervised.</p><p>Since the feature vectors change with time in co-culture, an immediate next step would be to improve clustering of the same cell populations as the various features of each cluster deviate from the ground truth label. To do this, it would be interesting to explore the inclusion of a skewing factor or exponential factor within the GMM, since many of these distributions are actually skew-normal distributions 1 . Furthermore, it might be interesting to try kernelizing the GMM model to allow for infinite-dimensional Gaussian fits to the data. Tuning various hyperparameters such as cluster number k, alpha value in the semi-supervised EM, and PCA subspace dimension might also result in better clustering in the current models. Finally, it would be useful to test the current model with a dataset containing flow data of different cell types from the ones that the algorithm was trained on to see whether or not the fit is generalizable to other cell types (e.g. T cells against melanoma).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future work</head><p>Acknowledgments and references</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A B C D</head><p>This project is a class assignment for CS229: Machine Learning at Stanford University. Funding and materials for flow cytometry and co-culture experiments were provided by the National Science Foundation (NSF-GRFP) and the Stanley Qi Lab at Stanford. Equations for each model were sourced from the lecture notes posted online at cs229.stanford.edu.</p></div>			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">https://doi.org/10.1016/0022-1759(85)90045-6</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Using Spatio-Temporal Data To Create A Shot Probability Model</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016-06-02">June 2, 2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eli</forename><surname>Shayer</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ankit</forename><surname>Goyal</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Younes</forename><forename type="middle">Bensouda</forename><surname>Mourri</surname></persName>
+						</author>
+						<title level="a" type="main">Using Spatio-Temporal Data To Create A Shot Probability Model</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2016-06-02">June 2, 2016</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Basketball is an invasion sport, which means that players move freely during every second of the game. In order for us to evaluate a player, it is highly beneficial to consider the movements of all the players on the basketball court. A more complete understanding of a player's performance can be achieved by taking into account the spatio-temporal considerations of movement and player interactions.</p><p>With basketball a lucrative and competitive sport in the US, teams have incentives to accurately project player quality. The NBA competition has become so fierce that minor details about players could have a dramatic impact on game results. For example, taking shots under pressure, from different angles, and at different times of the game are very hard to accurately assess qualitatively. Using statistical methods to assess these shots would help us identify the quality of players and would provide us with the ideal situations of taking shots. To do so, one would need to analyze every player at different points in time, and luckily we could do so by using the spatio-temporal data acquired by special techniques recently developed.</p><p>We sought to create a probability shot model in a basketball game. We started by getting a single NBA data set which breaks down every second into 25 moments in which every moment consists of the player's and the ball's locations. Based on this data, we created criteria such as the distance between the player with the ball and the closest defender, the ball's velocity, acceleration, maximal height, along with many others features to determine whether a shot was taken or not. Once we knew whether a shot was taken or not, we trained our model on 70% of the shots attempted in 632 basketball games and created a probability shot model that we tested on the remaining 30% of attempted shots. To focus on our analysis, we only considered jump shots, and excluded other shots such as alley oops and lay-ups.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>A few papers have been published on this field mainly dealing with analyzing specific players or the team as a whole. A common technique called Network Analyses turns teammates into nodes and passes into paths (or archs) thus creating a flow chart. Using these flow charts one could analyze the most frequent paths that the ball went through. Based on this model one could mathematically justify why the triangle offense works and why the winning team tends to have more entropy. Topological depth, entropy, price of anarchy, and power law distributions are assigned to each player to assess outcome classification. Other techniques used are known as Intensity Matrices and Maps which transform the playing area into polar space and induce subdivisions in the space. This common technique uses Matrix factorization on the intensity matrices to produce a compact low-rank representation. It thus models shooting behaviors with the insight that similar types of players shoot from similar locations and then maps each type to an area within the court. Other papers were written on tactical group movement and how they affect the play. Special techniques were used to identify formations such as clustering coefficients and different forms of centrality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Data and Processing</head><p>The data were obtained from public GitHub account that had scraped the publicly available SportVU player tracking data in basketball. This data contains the xy coordinate of the 10 players, 5 for each team, that are on the court, as well as the xyz coordinates of the ball 25 times per second. We transformed this raw data into a csv file with each row containing the location of the ball, and the location and identities of the 10 players on the court.</p><p>We then worked on processing this data into our response variable, the shots that were taken and whether they were successful. In order to identify when a shot was taken, we relied on the physics of the ball's flight through the air. We computed the position, velocity, and acceleration of the ball. We identified shots as moments in which the ball traveled through the air with no x acceleration or y accerleration, and z acceleration only due to gravity, with the ball's flight ending at the rim.</p><p>To determine whether a shot was successful or not, we check whether, in the fifth of a second immediately following the ball being in the area of the rim, the ball passes through the area immediately below the basketball hoop. If so, we mark the shot as a make.</p><p>Through manual checking of this procedure against the actual play-by-play of several games, we know that the process successfully captures a large majority of shots, and successfully classifies a large majority of the shots. There are nonetheless some errors, however, with about 10% error in each of the steps. This is because we attempt to identify shots on the basis of a definition approach. It would perhaps be more effective to manually label a certain number of games, and extrapolate from these labels with a machine learning approach.</p><p>Over the 632 games for which we had data, this approach identified 42,034 shots, of which 29.6% were classified as successful.</p><p>Next, we extracted a feature set from the data. These features are the distance of the shooter to the hoop, the angle of the shot, whether the shooter played for the home or away team, the distance to the nearest defender, the length of time the shooter had the ball, and whether the shooter had dribbled since receiving the ball.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Technical Approach</head><p>Model Selection: We randomly selected 70 percent of the shots to train logistic regression and SVM. We then tested the models on the remaining 30 percent. When we implemented support vector machine, we got 20 percent accuracy. On the other hand, when we used logistic regression, we got 50 percent accuracy.</p><p>Finally we used boosting and got 64 percent accuracy. To implement boosting, we evaluated, using resampling, the effect of model tuning parameters on performance. We then chose the optimal model across these parameters and then estimated the model performance. We used repeated training/test splits (4), with a 60 percent partition on the data. This algorithm predicted whether the shot would be successful with 64 percent accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Current Results and Analysis</head><p>After training our data on logistic regression we found that logistic regression performed at a mediocre rate. The following figure gives the distribution of projected shot probabilities on our test set. The following figure indicates the relative influence of our various features on the boosting algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>From the results we conclude that Adaptive boosting works best with such a data set. Since knowing the location of the player, his nearest defender, angle to the basket, along with the many other features only provides us with a slightly better guess than random, it makes total sense why boosting might out perform logistic regression and SVM. From boosting's relative influence, or "weights" assigned per feature, we could see that the major components to predicting a shot are the angle to the basket, closest distance to the defender, and the ball's distance to the basket. Determining whether the player dribbled before or not was not of much importance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Where To Go From Here</head><p>This project could be improved and extended in several ways. First, it would be highly beneficial to apply machine learning to the identification of shots and the classification of their success. This would require labeling a certain number of shots, and then using those labels to identify other shots.</p><p>We could also improve our model by adding additional features. These other features include defender angle, as well as defender distance and angle for the second nearest defender. A new feature that we think would be valuable is the velocity (speed and angle) of the shooter at the moment at which they take their shot. These are features that we learned are used by Second Spectrum, a sports analytics company focused on analysis of SportVU data.</p><p>Another area of expansion is into other elements of the game of basketball, such as rebounding and passing. Predicting the outcome of increasingly many elements of the game of basketball would build into a more comprehensive model of the game, that could be used to thoroughly evaluate basketball performance.</p><p>Finally, this type of analysis can be applied to more sports. The NFL has tracking chips in players' shoulder pads; many European soccer leagues have optical player tracking; the NHL has experimented with player and puck tracking technology. The methods used in analyzing basket ball player tracking data could also be applied to other sports to more thoroughly understand player performance.</p><p>8 References</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Here are the classification results:</figDesc><table>Shot Made Shot Missed 
+Predicted Made 
+0.189 
+0.394 
+Predicted Missed 
+0.106 
+0.310 
+
+The following table gives the coefficients and p-values associated with each 
+of the features included in the model: 
+
+Variable 
+Coefficient p-value 
+Distance 
+−0.012 
+0.000 
+Home 
+−0.008 
+0.786 
+Defender Distance 
+−0.020 
+0.013 
+Time With Ball 
+−0.000 
+0.153 
+Dribbled 
+−0.000 
+0.994 
+Angle 0 to 15 
+−0.675 
+0.633 
+Angle 15 to 30 
+−0.692 
+0.625 
+Angle 30 to 45 
+−0.822 
+0.562 
+Angle 45 to 60 
+−0.978 
+0.490 
+Angle 60 to 75 
+−1.161 
+0.412 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tavish</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Analytics</forename><surname>Vidhya</surname></persName>
+		</author>
+		<idno>09</idno>
+		<ptr target="http://www.analyticsvidhya.com/blog/2015/09/complete-guide-boosting-methods/" />
+	</analytic>
+	<monogr>
+		<title level="j">Business Analytics R</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Centrality and network flow</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Stephen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Borgatti</surname></persName>
+		</author>
+		<idno type="doi">10.1016/j.socnet.2004.11.008</idno>
+		<ptr target="http://www.sciencedirect.com/science/article/pii/S0378873304000693" />
+	</analytic>
+	<monogr>
+		<title level="j">Social Networks</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="55" to="71" />
+			<date type="published" when="2005-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Temporal pattern analysis and its applicability in sport: an explanation and exemplar data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Borrie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Gudberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Magnus</forename><forename type="middle">S</forename><surname>Jonsson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Magnusson</surname></persName>
+		</author>
+		<idno type="doi">10.1080/026404102320675675</idno>
+		<ptr target="http://www.ncbi.nlm.nih.gov/pub-med/12363299" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Sports Sciences</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="845" to="52" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

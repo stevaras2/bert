@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Clustering Reduced Order Models for Computational Fluid Dynamics</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gabriele</forename><surname>Boncoraglio</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Forest</forename><surname>James</surname></persName>
+							<email>forestf@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charles</forename><surname>Fraser</surname></persName>
+						</author>
+						<title level="a" type="main">Clustering Reduced Order Models for Computational Fluid Dynamics</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Objective: Accelerate the optimization process by using clustering/classification techniques to generate and use multiple reduced order models (ROMs) for less expensive, yet still accurate simulations.</p><p>Using our validation set we tested which clustering and classification algorithms performed best using 4 clusters, {", #$%&amp; '()* } as clustering features and " as the classification feature.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overview</head><p>Improving the design of aircrafts requires solving PDE-constrained optimization problems such as maximizing the lift/drag with respect to some parameters, ". To find the optimal ", we must update it iteratively, running an expensive computational fluid dynamics (CFD) simulation at each optimization step. Running a CFD simulation involves solving for the state of the fluid, w. To speed up CFD simulations ROMs are used to approximate the results of a full simulation.</p><p>Usually one global ROM is constructed, however we propose building multiple, smaller, more localized ROMs, since they • have fewer unknowns, hence simulations are faster • may more accurately approximate the full simulation within a sub-region of the design space, + </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Key Issues Experiments &amp; Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sampling</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head><p>Our proposed methodology solves a PDE-constrained optimization problem in two phases, an offline phase and an online phase.</p><p>In the online phase, we query multiple ", during the optimization process. For each queried " 8 , we need select which ROM (= $ ) to use. Then we run the simulation to compute &gt; $ (" 8 ) and #$%&amp; '()* (" 8 ).</p><p>In the offline phase, we cluster precomputed training solutions, from which we build our ROMs that are used in the online phase.</p><p>• We sample a set of {" A , " B , … " CD } for which we calculate the states {&gt; A , &gt; B , … &gt; CD } using full simulations.</p><p>• From our set of " and &gt; we randomly split our data into training/validation/test sets of size 50, 30 and 10 respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>…</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input features</head><p>Clustering</p><formula xml:id="formula_0">{" A ,w 1 }, {" B ,w 2 } … = E = 2</formula><p>Offline Phase {" F ,w 8 }, {" F ,w 9 }</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions and Future Work</head><p>Then using K-Means and logistic regression we tested the performance of different clustering features and cluster sizes.</p><p>• Using our methodology allows us to either accelerate the optimization process or achieve a higher simulation accuracy when compared with a global ROM.</p><p>• In the future, we would like develop an accurate predictor for determining the optimal parameters for clustering/classification.</p><p>Finally we tested the performance of the clustered ROMs on the test set using the optimal parameters found from validation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cluster vs Global ROM Comparison</head><p>The ROM approximates the fluid state as: where the reduced order basis (ROB), V gl , is built using precomputed solution {w 1 ,w 2 … , w k } computed at {" 1 , " 2 … , " k }.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training Gradients Training Clusters Testing Classification</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>How do we cluster our precomputed fluid states?For a query " 8 how do we select which ROM to use?</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

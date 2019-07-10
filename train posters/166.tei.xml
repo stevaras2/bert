@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Painless Prognosis of Myasthenia Gravis using Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abhishek</forename><surname>Tapadar</surname></persName>
+							<email>atapadar@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">[</forename></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">]</forename><surname>Rajkomar</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Oren</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Chen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Dai</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Hajaj</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Hardt</roleName><forename type="first">N</forename></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">J</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcus</forename></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sun</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Sundberg</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename></persName>
+						</author>
+						<title level="a" type="main">Painless Prognosis of Myasthenia Gravis using Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1002/mus.24745</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Implement and compare machine learning algorithms to predict with high confidence, the presence of a chronic condition, Myasthenia Gravis which affect about 200,000 people in the US alone.</p><p>• We have trained our algorithms on 22 co-factors/features commonly found with Myasthenia Gravis, and could also predict the probability of being afflicted with Myasthenia Gravis given a patient history and a questionnaire.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">What Are We Predicting? Myasthenia Gravis Diagnosis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4.</head><p>Step a: Baseline Model, Logistic Regression</p><p>• The CNN model provided us with the highest F1 score, implying a good classifier model • We see that, Random Forests perform well too as a classifier • As CNN is a a good fit, this implies that some of the co-factors are better predictors than others</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.">Discussion</head><p>• The model can be extended to predict the existence of other side effects of myasthenia gravis • To achieve better calibration, multiple algorithms can be used simultaneously</p><p>• Improving the quality of life would be the final goal to any life-sciences project</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="12.">Future</head><p>• We have obtained the NIH patient dataset with 22 cofactors.</p><p>• Made possible by the contribution of Dr. Muppiddi at Stanford Neurosciences.</p><p>• We have 22 cofactors in the dataset to predict we trained our Algorithms on</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">What Training Data Do We Have? 12056 patient data</head><p>To ease the problem set above, we divided the problem into the following steps. In addition, we have divided the problem into sub problems: a) Transform the NIH dataset into metrics for the algorithms <ref type="figure">(Fig 2a)</ref>. b) Prediction Diagnosis on a test-set with Logistic regression as baseline c) Use GDA, CNN's, Naïve Baye's and Random Forests and calculate F1 scores. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">How Are We Going</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">What Are We Predicting? Myasthenia Gravis Diagnosis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Step a: Baseline Model, Logistic Regression</head><p>• The CNN model provided us with the highest F1 score, implying a good classifier model • We see that, Random Forests perform well too as a classifier • As CNN is a a good fit, this implies that some of the co-factors are better predictors than others</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11.">Discussion</head><p>• The model can be extended to predict the existence of other side effects of myasthenia gravis • To achieve better calibration, multiple algorithms can be used simultaneously • Improving the quality of life would be the final goal to any life-sciences project</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="12.">Future</head><p>• We have obtained the NIH patient dataset with 22 cofactors.</p><p>• Made possible by the contribution of Dr. Muppiddi at Stanford Neurosciences.</p><p>• We have 22 cofactors in the dataset to predict we trained our Algorithms on</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">What Training Data Do We Have? 12056 patient data</head><p>To ease the problem set above, we divided the problem into the following steps. In addition, we have divided the problem into sub problems: a) Transform the NIH dataset into metrics for the algorithms <ref type="figure" target="#fig_0">(Fig 2a)</ref>. b) Prediction Diagnosis on a test-set with Logistic regression as baseline c) Use GDA, CNN's, Naïve Baye's and Random Forests and calculate F1 scores. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">How Are We Going</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NIH dataset with parameters</head><p>Step a. Convert</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>De-noised Data</head><p>Step b. Baseline</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.</head><p>Step b: GDA, Naïve Bayes, CNN • The obtained data-set contained scores and data which were not readily useable for training algorithms.</p><p>• We converted the raw data into trainable metrics for comparison. • We implemented GDA, Naïve Bayes, CNN using Keras, and Random Forests to obtain the recall and the F1 Scores Baseline F1 Score: 0.836</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.">Summary Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison of Algorithms</head><p>We have used Logistic Regression as the baseline model as used in several other Medical Literature. This is convenient and gives us a baseline to compare the other algorithms. The data set was shuffled and split into 10000 data points for training and 2056 data points for the devset. We then compute the recalls, and the F-! Scores on the dev-set. The following is a summary of the results</p><p>Step c. Predictions F1 Scores </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 .</head><label>2</label><figDesc>To Do It? Workflow: [1] Chiou-Tan, F. Y. and Gilchrist, J. M. (2015), Repetitive nerve stimulation and single-fiber electromyography in the evaluation of patients with suspected myasthenia gravis or Lambert-Eaton myasthenic syndrome: Review of recent literature. Muscle Nerve, 52: 455-462. doi:10.1002/mus.24745 [2] Rajkomar, A., Oren, E., Chen, K., Dai, A.M., Hajaj, N., Hardt, M., Liu, P.J., Liu, X.,Marcus, J., Sun, M. and Sundberg, P., 2018. Scalable and accurate deep learning with electronic health records. npj Digital Medicine, 1(1), p.18 13. References CS229 AUT 18 Figure 2. Workflow.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Traditional Myasthenia Gravis diagnosis: (a) Repeated Nerve Simulations, (b) RNS data showing positive Myasthenia Gravis, and (c) AcHR and MuSK tests. a b c 3b. Transform the data to metrics for the algorithm Real Data Obtained:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>•</head><label></label><figDesc>Age • Gender • BMI • Years diagnosed with MG • AcHR Antibodies • MuSK Antibodies • MuSK and AcHR present • Seronegative • Thymectomy • FSS is greater than 36 • Sleep Apnea • Non-Invasive Ventilation Support • NIV number • MG-QoL 15 • ESS • PSQI • FSS • MG-ADL • MG</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

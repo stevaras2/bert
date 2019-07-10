@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Defending the First-Order: Using Reluplex to Verify the Adversarial Robustness of Neural Networks Trained against Gradient White Box Attacks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Pahlavan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Lee</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Justin</forename><surname>Rose</surname></persName>
+							<email>justrose@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Defending the First-Order: Using Reluplex to Verify the Adversarial Robustness of Neural Networks Trained against Gradient White Box Attacks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Deep Neural Networks (DNNs) have shown tremendous progress in accurately performing regression, classification, and control tasks that traditional programming paradigms have not been able to achieve. However, their lack of interpretability and performance guarantees presents challenges when considering deployment to sensitive tasks with limited margin of error, such as control of autonomous vehicles, military equipment, or robotics. One pressing problem with modern neural networks is the existence of adversarial examples, where small perturbations in inputs can result in dramatically different output classifications. To combat this problem, developing adversariallyrobust networks is an active area of research. Currently, model robustness is evaluated against first-order adversaries, i.e. adversaries generated via gradient methods.</p><p>It is an open research question whether these first-order methods are good metrics for testing the overall robustness of neural networks to all adversaries. To tackle this problem, we use a neural network constraint solver developed by Stanford's Reluplex team. By using a novel algorithm that optimizes the number of linear constraints that must be checked, certain properties about general robustness can be guaranteed for all attacks, rather than only first-order ones. We examine the robustness of two simple models, one trained only on MNIST data and one adversarially trained using a modern first-order adversarial defense strategy called logit pairing. In both networks, we found that the first-order gradient well-approximates the guaranteed closest adversary and that adversarially training against first-order attacks generalizes to all attacks. Future directions involve scaling Reluplex to handler deeper networks to verify this trend.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Following the success of applying convolutional layers to image recognition <ref type="bibr" target="#b6">[7]</ref>, neural networks have gained wide use in advanced machine learning systems. Current networks can outperform humans at many tasks, including image recognition <ref type="bibr" target="#b2">[3]</ref>, arcade games <ref type="bibr" target="#b9">[10]</ref>, and board games like Go <ref type="bibr" target="#b11">[12]</ref>, and they have become the de facto approach to achieve top performance on tasks traditional algorithms have been unable perform consistently on.</p><p>Although they outperform humans at many things, there are downsides to the use of modern neural networks. Firstly, deep neural networks lack interpretibility: although they get the correct answer, we are often not sure why. Unlike traditional coding pipelines where modularity enables manual proofs of correctness and isolated failures, deep end-to-end models are notoriously hard to interpret, and when they fail it's difficult to understand why. Although some advances have been made in determining what each filter might represent in a convolutional model <ref type="bibr" target="#b12">[13]</ref>, for more complex games like Go or Atari, understanding their reasoning is less clear.</p><p>Adversarial examples <ref type="bibr" target="#b1">[2]</ref> represent an even larger problem for modern DNNs. By perturbing input images even slightly in the direction of the gradient of a loss function weighing an incorrect network output, new examples can be generated that are visually identical to existing examples but that networks consistently misclassify with high confidence. Such errors on visually imperceptible differences create a major challenge for networks to have consistency guarantees in the real world, especially when such examples can be generated without access to the network at hand <ref type="bibr" target="#b10">[11]</ref>.</p><p>An interesting question is what guarantees can even be made about networks being robust against adversarial examples, especially ones trained to defend against these adversarial attacks. Although this problem is NP-hard, recent work by the Reluplex <ref type="bibr" target="#b4">[5]</ref> team has created a system for verifying properties and constraints of networks with the nonconvex Rectified Linear Unit (ReLU) activation function. With this method, we can find the minimum perturbation an input must undergo in order to be misclassified, thus finding the closest adversarial example for a certain input.</p><p>Prior to complete solvers like Reluplex, first-order attacks that use the gradient of a network to compute adversarial images have been the standard to both train and test for adversarial robustness. However, it is an open research question whether these gradient-based defenses actually improve robustness against all attacks or just first-order attacks. In our project, we evaluate the robustness properties of two simple MNIST classifiers <ref type="bibr" target="#b7">[8]</ref>; one trained purely on clean data, and one adversarially trained with the state of the art defense logit pairing <ref type="bibr" target="#b3">[4]</ref>. For both networks, we compare closest adversaries found via Reluplex and first-order methods to determine if there exist closer adversaries that first-order methods cannot find. We aimed to shed light on the following questions:</p><p>1. Are first-order attacks good universal indicators of robustness?</p><p>2. Do first-order defenses generalize to non-firstorder attacks?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>Much work has been devoted to protecting models from adversarial examples. Generally, adversarial examples can be generated in two ways: white box attacks, where the attacker has access to the network and its weights, and black box attacks, which don't have access to network specifics <ref type="bibr" target="#b10">[11]</ref>. The focus of our study is on white box attacks. A common method for generating white box attacks is projected gradient descent <ref type="bibr" target="#b8">[9]</ref>, considered the closest "first-order adversary", where a random point in a C ∞ ball around a data example starts as a seed and iteratively follows that gradient of the network's loss with respect to the input to generate an adversarial example.</p><p>Adversarial training against first-order adversaries is the main method of making models adversarially robust, where models are trained on both the train data distribution and an adversarial distribution generated from that data distribution <ref type="bibr" target="#b1">[2]</ref>. In most recent papers, these adversarial examples were generated using projected gradient descent <ref type="bibr" target="#b8">[9]</ref>. A recent development in adversarial training has been adversarial logit pairing <ref type="bibr" target="#b3">[4]</ref>, where the logits of the outputs of an example and it's adversary are encouraged, through a separate loss term, to be similar, resulting in state of the art performance on first-order attacks.</p><p>One recently discovered problem with determining the robustness of models against adversarial examples is the issue of gradient masking, where the defense techniques make the gradients of a network less useful in generating adversarial examples, but don't make them less susceptible to examples generated through another mechanism <ref type="bibr" target="#b0">[1]</ref>.</p><p>These obfuscated gradients, which hinder iteration-based first-order attacks, have been shown to give networks a false sense of security, where first-order robustness is a result of bad gradients rather than a sound defense. One of the main advantages of using a complete solver like Reluplex is that robustness is guaranteed, because it solves for examples within nearby L ∞ -δ balls.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Marabou/Reluplex</head><p>Reluplex is a decision procedure to solve linear equations that have non-linear constraints, such as neural networks with ReLU activation functions. As mentioned earlier, this task is typically NP-hard, making it intractable to compute in the worst case. However, the novelty of Reluplex <ref type="bibr" target="#b4">[5]</ref> is that, instead of searching the 2 n potential states of ReLU nodes as being active or inactive, it lazily solves an initial configuration and is able to infer from it that certain constraints must be fixed in an active or inactive state, allowing it to scale to larger networks, such as the ones we examine. Through using this linear solver, we are able to explicitly find whether adversarial examples exist near our data and test distribution. One subtlety to note is that Reluplex can't deal with softmax activation functions. However, since the classified category of our network is simply the maximum index in our logits layer, we don't need softmax to see when we have a misclassification error.</p><p>When translating what robustness of a network means, we use the definition by the Reluplex team <ref type="bibr" target="#b5">[6]</ref>:</p><formula xml:id="formula_0">A network N is δ-locally robust at a point x 0 iff ∀ x, x − x 0 ≤ δ − → N ( x) = N ( x 0 )</formula><p>In English, the above definition is basically saying a point is δ-locally robust if the δ-L ∞ ball around x 0 contains no misclassification errors. In Reluplex, we encode the negation of this robustness property to solve for a δ-norm perturbation which results in a misclassified image. Running Reluplex was the clear bottleneck of our project, as it could sometimes take up to 10 minutes to verify whether a value of δ was robust or not. As expected, adversarial guarentees require a fair amount of compute, and Reluplex has yet to be optimized for parallel computing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Baseline Vanilla MNIST Network</head><p>We trained a simple multilayer perceptron (MLP) network (i.e. a model we learned in class that is NOT a deep model) to classify 28x28 pixel images from MNIST, a database with 60,000 training and 10,000 testing images of handwritten digits. We divide the pixel values by 255 to normalize the pixels between 0 and 1. The MLP consisted of a single hidden layer with 50 nodes with ReLU activations and an output layer with 10 nodes and a softmax activation, corresponding to class probabilities. We train with respect to a categorical cross entropy loss using an Adam optimizer with learning rate 1.0 * 10 −4 . We trained for a total of 60,000 batches of batch size 64, or 64 epochs, by which time our network had converged. <ref type="bibr" target="#b0">(1)</ref> , . . . , x (m) }, a set of adversarial images is generated {x <ref type="bibr" target="#b0">(1)</ref> , . . . ,x (m) } with respect to the current network weights. Typically these adversarial images are generated using some kind of firstorder method (i.e. involving some gradient). The first-order method we chose to use was the iterated Fast Gradient Sign Method (FGSM), which iterated over an input image with the update rule:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Adversarially Trained Network</head><note type="other">3.3.1 Adversarial Training Additionally, we created an adversarial multilayer perceptron, which started pretrained with weights from our initial vanilla model. Basic adversarial training involves the following: for each batch of examples {x</note><formula xml:id="formula_1">x t+1 = x t − α * sgn(∇ x L(θ, x, y ))</formula><p>where x 0 is the original image, t is the number of time steps, α is the step size, and L(θ, x, y ) is loss of the network output with respect to some adversarial label y (the class we are trying to misclassify as). We initialize the adversarial search process with a random noise perturbation within our δ-L ∞ ball, and we clip to make sure pixels stay within this δ sized ball. While training, we ran 40 iterations when generating a batch of adversarial examples, which were targeted towards random class labels. The step size for iterated FGSM was simply a fraction of the δ ball and the step size. When adversarially training our network, we ran 250k batches of size 64 (about 265 epochs) where each adversarial batch was generated within a 0.3 normalized L ∞ ball, or a 76.5 pixel ball. Since our accuracy on clean examples began to drop by a notable amount, we trained an additional 250k batches on examples only within a 0.1 normalized L ∞ ball, or a 25.5 pixel ball, so that the aggressive adversaries wouldn't have as large of an impact on the loss. We stopped after these iterations because our network performance had converged.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.2">Adversarial Loss with Logit Training</head><p>Since we are typically interested in having a loss that rewards classifying adversaries and clean images correctly, the loss function is typically</p><formula xml:id="formula_2">L adv (X,X, Y ) = L orig (X, Y ) + L orig (X, Y )</formula><p>where L orig is our typical loss function with respect to an input batch (in this case the cross entropy loss). In addition to this traditional adversarial loss, the modern defense Adversarial Logit Pairing defines the new loss:</p><formula xml:id="formula_3">L advlog (X,X, Y ) = L adv (X,X, Y ) +λ 1 m m i=1 L(f (x (i) ; θ), f (x (i) ; θ))</formula><p>where f (x (i) ; θ) is a function mapping inputs to the logit layer of a model and L is any loss that promotes closeness of its two inputs (in their paper and ours we simply use L 2 loss). Similar to other regularization methods discussed in class, this added loss is equivalent to the probabilitic assumption that the error in the logit layer between original and adversarial images is best represented by Gaussian noise. While training, we use a value of λ = 1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Finding Closest Adversaries</head><p>Finding the closest adversaries was relatively straightforward. First we found the closest adversarial example for iterated FGSM by repeatedly binary searching over our δ balls for FGSM and seeing if the network misclassified it, starting with δ min = 0 and δ max = 1 and attempting for every class as opposed to a random class. We only found these adversaries for examples that a network initially classified as correct. We performed a similar binary search with Reluplex to find the guaranteed closest adversary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Test Accuracy on Vanilla and Adversarial Trained Network</head><p>After training, we evaluated both the Vanilla and adversarially trained models on the 10,000 clean test examples in MNIST and 10,000 adversaries generated from those examples with 0.2 normalized δ-balls generated by FGSM. We found that the Vanilla model got 97% accuracy on the clean examples but only 14% accuracy on adversaries. On the other hand, the adversarially trained network got 96.5% accuracy on the clean examples and 89% accuracy on the adversaries. A concern we had was whether the small capacity architecture we used could learn an adequate MNIST classifier and an adversarially robust model with logit pairing. The significant increase in accuracy on adversaries and comparable accuracy on clean examples in the adversarially trained model when compared to the Vanilla one indicates that adversarial training indeed did increase robustness towards first-order attacks, even under the low-capacity constraint.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Similarity between FGSM and Marabou adversaries</head><p>The next thing we tested was the cosine similarity between the closest adversaries generated via FGSM and Reluplex on both the Vanilla network <ref type="figure">(Fig. 1)</ref> and the adversarially trained network <ref type="figure" target="#fig_2">(Fig. 3)</ref>. Overall, we observed high levels of similarity in the direction of perturbations of the two attacks in both networks. In particular, among all the images tested, neither network found two perturbations with a negative cosine similarity, providing preliminary evidence to support that the first-order attack is a good approximation of the direction of the closest attack.</p><p>Notably, the cosine similarity of the perturbations in the adversarially trained network were notably lower than in the Vanilla one. We hypothesize a few possible explanations for this behavior.</p><p>First, we can think of our MLP as a piece-wise linear model with 2 50 different configurations depending on the activation state of the ReLUs. Since we are searching a larger δ ball in the adversarially trained network, there are a greater number of possible linear modes that the network could be in, as there is a wider input space over which the activation state of a ReLU could flip. Therefore, it is possible that the greater variation in linear modes creates potential adversaries in different linear modes that gradients will not find, which posits an explanation for the lower cosine similarity. Alternatively, in the Vanilla network, the model behaves "more linearly" in the sense that there are a restricted number of linear modes. This provides an explanation for why the perturbations were more aligned, as the only way to minimize a loss in a linear model is through the first-order gradient.</p><p>A second explanation is Athalye et al.'s hypothesis of obfuscated gradients <ref type="bibr" target="#b0">[1]</ref>, which hypothesizes that first order defense techniques cause the gradient to become less effective at generating adversarial images after training. Although in his paper, such forms of "gradient masking" typically occurred in deeper networks, this could potentially also be the beginning of such a phenomenon, which could be further supported by testing deeper networks.</p><p>Examples of perturbation alignment and nonalignment (in the case of the adversarially trained) for each network and each adversary method can be seen in <ref type="figure" target="#fig_1">Figures 2 and 4</ref>. Notably, we can notice for high levels of cosine similarity, both perturbations look nearly identical, which supports that the first-order attack is a good approximation of the closest adversary in many cases.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Similarities in δ values for FGSM and Marabou</head><p>We compare the δ-robustness (defined as the distance of the closest adversary) in both the Vanilla network (   and the adversarially trained network <ref type="figure" target="#fig_5">(Fig. 6)</ref>.</p><p>In the Vanilla network <ref type="figure" target="#fig_4">(Fig. 5)</ref>, we see that the distance of closest adversary is only marginally smaller than the one found by FGSM, which supports that in our MLP architecture, the first-order approximation of an adversary is a good approximation of the closest adversary. <ref type="figure" target="#fig_5">Figure 6</ref> displays the same phenomenon in the adversarially trained network. That is, the distance of the closest  adversary is similar among both the FGSM and Reluplex attack. This result is significant as it provides evidence to support that adversarial training against adversaries generated via first-order attacks generalizes to all possible attacks. <ref type="figure" target="#fig_6">Figure 7</ref> documents the significant increase in robustness we observed using adversarial training across both types of attacks. In particular, we can see that the average δ-robustness for the adversarially-trained network increased drastically, from about 6 pixels for the Vanilla network to about 20 pixels for the adversarial network. Taken together, these results are positive news for the machine learning community, as they seem to suggest that training a network to be robust to first-order attacks can increase robustness to not only first-order attacks (as shown in literature) but all attacks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusion and Future Work</head><p>In conclusion, we were able to provide some preliminary answers to open research questions surrounding non-firstorder adversarial attacks. We were able to, for the first time, provide answers to some of these questions through access to Reluplex, a complete and sound linear constraint solver  that could be be used to find the guaranteed closest adversary around a point.</p><p>Our main results were two-fold. First, first-order attacks provide good approximations of the closest adversary in both adversarially untrained and adversarially trained networks, suggesting that benchmarking against first-order attacks is a good measure of overall robustness. Furthermore, adversarial defense strategies targeted towards first-order attacks do a very good job of generalizing to non-first order attacks.</p><p>A clear direction of future work is improving the Reluplex solver to support larger architectures so we can expand the current study to larger and deep networks. It'd be interesting to see if the more complicated loss surfaces and greater variation in linear modes present in deeper models could lead to more pathological non-first-order attacks. This direction would also provide us with the means to better test Athalye et al.'s hypothesis of obfuscated gradients on similar networks to those studied in the paper.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Contributions</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 5 )Figure 1 :</head><label>51</label><figDesc>The frequency of cosine similarity ranges between adversaries generated by FGSM and Reluplex on the Vanilla Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Heatmap of perturbation in pixels to input images by FGSM and Reluplex on the Vanilla Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>The frequency of cosine similarity ranges between adversaries generated by FGSM and Reluplex on the Adver- sarilly Trained Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Heatmap of perturbation in pixels to input images by FGSM and Reluplex on the Vanilla Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>The frequency of examples that were robust in the FGSM and Reluplex sense for δ pixel ranges on the Vanilla Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>The frequency of examples that were robust in the FGSM and Reluplex sense for δ pixel ranges on the Adver- sarially Trained Network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 :</head><label>7</label><figDesc>Average minimal δ value for Vanilla and Robust network in the FGSM and Repluplex sense.</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Adam Pahlavan: Trained initial Tensorflow model on MNIST. Generated baseline adversarial examples. Daniel Lee: Worked with Reluplex/Marabou to encode constraints; tested δ robustness; Generated figures Justin Rose: Helped with installation and debugging of TensorFlow model; Wrote TensorFlow code for adversarially trained model and code to find closest FGSM adversaries. Also, thanks to Clark Barrett (AI Safety) and Shantanu Thakoor for providing access to the Reluplex solver.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Obfuscated gradients give a false sense of security: Circumventing defenses to adversarial examples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Athalye</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Carlini</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wagner</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1802.00420</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Explaining and harnessing adversarial examples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.6572</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Delving deep into rectifiers: Surpassing human-level performance on imagenet classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Vision</title>
+		<meeting>the IEEE International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Kannan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kurakin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1803.06373</idno>
+		<title level="m">Adversarial logit pairing</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Reluplex: An efficient smt solver for verifying deep neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Katz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">L</forename><surname>Dill</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Julian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Kochenderfer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Computer Aided Verification</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="97" to="117" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Katz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">L</forename><surname>Dill</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Julian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Kochenderfer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1709.02802</idno>
+		<title level="m">Towards proving the adversarial robustness of deep neural networks</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">1 ImageNet Classification with Deep Convolutional Neural Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances In Neural Information Processing Systems</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Mnist handwritten digit database. AT&amp;T Labs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Cortes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Burges</surname></persName>
+		</author>
+		<ptr target="http://yann.le-cun.com/exdb/mnist" />
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Towards deep learning models resistant to adversarial attacks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Madry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Makelov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Tsipras</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vladu</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1706.06083</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wierstra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Riedmiller</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.5602</idno>
+		<title level="m">Playing atari with deep reinforcement learning</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Practical black-box attacks against deep learning systems using adversarial examples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Papernot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">D</forename><surname>Mcdaniel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Jha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><forename type="middle">B</forename><surname>Celik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Swami</surname></persName>
+		</author>
+		<idno>abs/1602.02697</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Mastering the game of go without human knowledge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schrittwieser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Antonoglou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Guez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Hubert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Baker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bolton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">550</biblScope>
+			<biblScope unit="issue">7676</biblScope>
+			<biblScope unit="page">354</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Deep inside convolutional networks: Visualising image classification models and saliency maps</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno>abs/1312.6034</idno>
+		<imprint>
+			<date type="published" when="2013" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

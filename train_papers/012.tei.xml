@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Online Active Trajectory Classification for Motion-based Communication of Robots *</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016-06-06">June 6, 2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haruki</forename><surname>Nishimura</surname></persName>
+							<email>hnishimura@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Online Active Trajectory Classification for Motion-based Communication of Robots *</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2016-06-06">June 6, 2016</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Designing cooperative multi-robot systems has gained much attention of researchers in the robotics community. Such multi-robot systems need a communication scheme to appropriately share the information among the team. While wireless electric communication is commonly used, it is not robust to adversarial jamming. One emerging alternative is motion-based communication: the idea that a message from the sender is encoded into its own trajectory and the receiver decodes the message by observing it. Some previous work <ref type="bibr" target="#b0">[1]</ref>[2] employed control theoretic approach to design a set of distinguishable and energy-optimal trajectories. However, it is also possible to think of a counter problem from the receiver's perspective; given a codebook of trajectories and the observations of the sender, how can we tune the receiver so that it can correctly distinguish the trajectories and decode the messages?</p><p>This problem is highly non-trivial especially when the receiver's observation model is monocular vision without depth perception because the relative attitude between two robots cannot be directly estimated from one observation. Although recent work <ref type="bibr" target="#b0">[1]</ref>[2][3] <ref type="bibr" target="#b3">[4]</ref> has explored the emerging field of motion-based communication, the use of monocular vision has yet to be addressed to the best of author's knowledge.</p><p>Thus, the present paper addresses a trajectory classification problem for motion-based communication between two robots using monocular vision only. The main controbutions of this study are two fold. First, we formulate the online classification problem in which both of the sender's message encoded in its trajectory and the receiver's relative position to it are sequentially estimated as the receiver moves around the sender. We provide a recursive Bayesian estimation algorithm to handle the multimodal distribution over the joint belief state. Gaussian approximation to the belief and model linearization lead to a Multi-hypothesis Extended Kalman Filter approach. Similar algorithms to ours can be found in <ref type="bibr" target="#b4">[5]</ref>[6] <ref type="bibr" target="#b6">[7]</ref>. Second, we employ an entropy minimization method to actively control the receiver's camera pose so that it can optimally move to minimize the expected uncertainty about the message over a one-step horizon. This type of information theoretic control for monocular vision is also studied in <ref type="bibr" target="#b7">[8]</ref>[9] <ref type="bibr" target="#b9">[10]</ref>.</p><p>The rest of the paper is organized as follows. In the next section we formally state the problem and define the robot models. In Section 3 we derive the recursive Bayesian update formula and provide the Multi-hypothesis Extended Kalman Filter algorithm. We also formulate the active control policy of the receiver in Section 4. Simulation results are presented for 3-class classification in Section 5 with a comparison of the random and the active control policies. Conclusion with future direction is discussed in Section 6.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Preliminaries</head><p>The sender encodes a message into its pre-specified trajectory. The correnspondence between the true trajectory and the message is known a priori as the trajectory codebook to both of the sender and the receiver; if the sender intends to send the message z = i ∈ {1, . . . , N }, the corresponding trajectoryζ i is chosen from the trajectory codebook Z = {ζ 1 , . . . ,ζ n } and performed. However, the sender's trajectory is not necessarily directed to the receiver while the sender is engaed in its own task. This can bring ambiguity to the message decoding depending on the design of the trajectory codebook because the receiver's monocular vision is unable to determine the relative position between two robots from a single observation.</p><p>Hence, in order to correctly classify the trajectory and decode the message, the receiver is allowed to sequentially move around the sender and observe it repeating one particular class of the trajectories. This leads to a sequential state estimation and decision making problem. The Bayesian network structure of this problem is depicted in <ref type="figure" target="#fig_0">Figure 1</ref>. The receiver's position and attitude r is assumed to have the Markov property. η and u represents the observed trajectory and the control input to the receiver, respectively. In what follows, we will formulate the trajectory generation process, receiver's state transition model and the observation model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Trajectory generation</head><p>In this work, we assume that the smooth trajectory of the sender can be represented by a set of m points {ζ <ref type="bibr" target="#b0">(1)</ref> , . . . , ζ (m) } ⊂ R 3 , which are labeled by time. Therefore, the complete trajectory is given by a vector ζ = (ζ (1)T , . . . , ζ (m) T ) T ∈ R 3m . This is expressed in the sender's reference frame that is fixed in the inertial space. The value of m depends on the duration of the trajectory and the frame rate of the receiver's vision sensor, but here we restrict all the trajectories in the codebook to have the same duration so that the receiver cannot classify them based on it.</p><p>The sender chooses a message z and the corresponding trajectoryζ from the codebook. When it is executed, however, the sender's motion is subject to disturbance. We assume the resulting complete trajectory has a Gaussian distribution.</p><formula xml:id="formula_0">p(ζ | z = i) = N (ζ;ζ i , Q)<label>(1)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">State transition model of the receiver</head><p>The receiver's state r specifies its position and attitude with respect to the sender's reference frame, which is expressed in the receiver's camera frame.</p><formula xml:id="formula_1">r = (ω T , t T ) T ∈ R 6 (2) ω = (ω x , ω y , ω z ) T ∈ R 3</formula><p>gives the exponential coordinates on SO <ref type="formula" target="#formula_2">(3)</ref>, which specifies the axis of rotation around which the camera frame is rotated with respect to the reference frame. The norm of ω gives the magnitude of the rotation angle. Similarly, t = (t x , t y , t z ) T ∈ R 3 represents the translation of the camera frame with respect to the reference frame. The state transition is based on the current state and the control input u with Gaussian noise.</p><formula xml:id="formula_2">r k+1 = r k + u k + w, w ∼ N (r; 0, R) ∈ R 6<label>(3)</label></formula><p>Note that the receiver will move only after it observes one complete trajectory performed by the sender.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Observation model</head><p>The details of the pinhole camera model is omitted here for saving space and the reader is referred to <ref type="bibr" target="#b10">[11]</ref> <ref type="bibr" target="#b11">[12]</ref>. The pinhole camera model projects the trajectory onto the image plane of the camera. The resulting observation η = (η (1)T , . . . , η (m)T ) T ∈ R 2m is given by a nonlinear projection function f (·, ·) : R 6 × R 3m → R 2m that takes r and ζ as its arguments. The correspondence between ζ (i) ∈ R 3 and η (i) ∈ R 2 is assumed to be known to the receiver. Analogous to (3), the actual observation is subject to Gaussian noise.</p><formula xml:id="formula_3">η = f (r, ζ) + v, v ∼ N (η; 0, S) ∈ R 2m<label>(4)</label></formula><p>3 Bayesian Online Learning for State Estimation</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Recursive Bayesian estimation formula</head><p>We are interested in estimating the joint distribution over r and z given the history of observations and control inputs: p(r k+1 , z | η 1:k+1 , u 1:k ). Leveraging the Bayes's rule and the structure of the Bayesian network, it can be decoupled and simplified as follows.</p><formula xml:id="formula_4">p(r k+1 , z | η 1:k+1 , u 1:k ) ∝ p(η k+1 | r k+1 , ζ k+1 )p(ζ k+1 | z)dζ k × p(r k+1 | r k , u k )p(r k | η 1:k , u 1:k−1 , z)dr k × p(η k+1 | r k+1 , z)p(r k+1 | η 1:k , u 1:k , z)dr k+1 × P (z | η 1:k , u 1:k−1 ).<label>(5)</label></formula><p>(5) implies that we can separately update our belief of r conditional on z and the belief of z itself, given the state transition model and the observation model. This allows us to derive the closed-form update formula discussed in the next section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Multi-hypothesis Extended Kalman Filter algorithm</head><p>The problem of estimating the joint distribution over r and z given past observations and control inputs can be viewed as multihypotheses filtering. Thus we will adapt the Multi-hypothesis Extended Kalman Filter algorithm, which is a common parametric filter to handle multimodal distributions with linear model approximation. In our problem, note that the observation function takes two arguments r and ζ. Therefore, the first order taylor expansion around the current estimate E[r k+1 | η 1:k , u 1:</p><formula xml:id="formula_5">k , z = i] μ (i) k+1 and E[ζ k+1 | z = i] =ζ i is given by, f (r k+1 , ζ k+1 ) | z = i ≈ f (μ (i) k+1 ,ζ i ) + ∂ ∂r k+1 f (r k+1 ,ζ i ) μ (i) k+1 (r k+1 −μ (i) k+1 ) + ∂ ∂ζ k+1 f (μ (i) k+1 , ζ k+1 ) ζ i (ζ k+1 −ζ i ).<label>(6)</label></formula><p>Denoting</p><formula xml:id="formula_6">∂ ∂r k+1 f (r k+1 ,ζ i )|μ(i) k+1 F (i) k+1 ∈ R 2m×6 and ∂ ∂ζ k+1 f (μ (i) k+1 , ζ k+1 )|ζ i G (i)</formula><p>k+1 ∈ R 2m×3m , we obtain the following linearized observation model.</p><formula xml:id="formula_7">f (r k+1 , ζ k+1 ) | z = i ≈ f (μ (i) k+1 ,ζ i ) + F (i) k+1 (r k+1 −μ (i) k+1 ) + G (i) k+1 (ζ k+1 −ζ i )<label>(7)</label></formula><p>In order to derive the Extended Kalman Filter update formula, we further assume that the prior belief of r conditional on z before taking an action u k and observing η k+1 is a Gaussian distribution.</p><formula xml:id="formula_8">p(r k | η 1:k , u 1:k−1 , z = i) N (r k ; µ (i) k , Σ (i) k )<label>(8)</label></formula><p>Substituting <ref type="formula" target="#formula_0">(1)</ref>, <ref type="formula" target="#formula_2">(3)</ref>, <ref type="formula" target="#formula_3">(4)</ref>, <ref type="formula" target="#formula_7">(7)</ref> and <ref type="formula" target="#formula_8">(8)</ref> into the update formula (5), we derive Algorithm 1. We see that the categorical distribution over z is modified in line 10 based on how well the hypothesis z = i can explain the actual observation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Beleif initialization</head><p>The convergence of the Extended Kalman Filter algorithm is sensitive to the accuracy of the prior p(r 1 , z | η 1 ). Fortunately, estimating the means µ </p><formula xml:id="formula_9">||η 1 − f (µ (i) 1 ,ζ i )|| 2 2 [11]. φ (i)</formula><p>1 can be also found by comparing their residuals, assuming the same initial covariance matrix Σ (i) 1 for all i ∈ {1, . . . , N }.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Active-vision Control for Entropy Minimization</head><p>Given the current esimate of the state, our goal is to control the position and the attitude of the receiver in order to correctly classify the trajectory and decode the message. One information theoretic approach is to select u k from the control space U so that the expected entropy of z taken over the next obervation η k+1 is minimized. Formally, the control objective is given by,</p><formula xml:id="formula_10">E η k+1 [H(z | η 1:k+1 , u 1:k ) | η 1:k , u 1:k ] = p(η k+1 | η 1:k , u 1:k )H(z | η 1:k+1 , u 1:k )dη k+1 . (9) input : µ (i) k ∈ R 6 , Σ (i) k ∈ R 6×6 , φ (i) k P (z = i | η 1:k , u 1:k−1 ) ∈ R ∀i ∈ {1, . . . , N }, u k ∈ R 6 , η k+1 ∈ R 2m , Z = {ζ 1 , . . . ,ζ n } output: µ (i) k+1 ∈ R 6 , Σ (i) k+1 ∈ R 6×6 , φ (i) k+1 ∈ R ∀i ∈ {1, . . . , N } 1 for each i ∈ {1, . . . , N } do 2μ (i) k+1 ← µ (i) k + u k 3Σ (i) k+1 ← Σ (i) k + R 4 F (i) k+1 ← ∂ ∂r k+1 f (r k+1 ,ζ i ) μ (i) k+1 5 G (i) k+1 ← ∂ ∂ζ k+1 f (μ (i) k+1 , ζ k+1 ) ζ i 6 H (i) k+1 ← S + G (i) k+1 QG (i)T k+1 + F (i) k+1Σ (i) k+1 F (i)T k+1 7 K (i) k+1 ←Σ (i) k+1 F (i)T k+1 H (i)−1 k+1 8 µ (i) k+1 ←μ (i) k+1 + K (i) k+1 η k+1 − f (μ (i) k+1 ,ζ i ) 9 Σ (i) k+1 ← (I − K (i) k+1 F (i) k+1 )Σ (i) k+1 10 φ k+1 ← N η k+1 ; f (μ (i) k+1 ,ζ i ), H (i) k+1 φ (i) k end 11 c ← N i=1 φ (i) k+1 for each i ∈ {1, . . . , N } do 12 φ (i) k+1 ← φ (i) k+1 /c end Algorithm 1:</formula><p>Multi-hypothesis Extended Kalman Filter algorithm for the trajectory classification problem.</p><p>By substituting the Kalman update formulas and extracting the terms dependent on u k only, this yields the following formula.</p><formula xml:id="formula_11">N i=1 φ (i) k log |2πH (i) k+1 | + N i=1 φ (i) k N (η k+1 ; f (μ (i) k+1 ,ζ i ), H (i) k+1 ) log N i=1 φ (i) k N (η k+1 ; f (μ (i) k+1 ,ζ i ), H (i) k+1 ) dη k+1<label>(10)</label></formula><p>The first term in (10) follows from the entropy of Gaussian distributions. The second term is the negative entropy of a Gaussian mixture and exact solution is not available. However, Huber et al. <ref type="bibr" target="#b12">[13]</ref> provide an approximation method based on the Taylor expansion and we will employ their first order approximation formula. The resulting control objective is presented below. Note that this function is independent of the actual observation η k+1 , thus it can be evaluated before taking the action u k .</p><formula xml:id="formula_12">J(u k | η 1:k , u 1:k−1 ) = N i=1 φ (i) k   log |2πH (i) k+1 | + log   N j=1 φ (j) k N (η k+1 = f (μ (i) k+1 ,ζ i ); f (μ (j) k+1 ,ζ j ), H (j) k+1 )     (11) u k = arg min u∈U J(u | η 1:k , u 1:k−1 )<label>(12)</label></formula><p>5 Simulation Results <ref type="figure">Figure 2</ref> shows the trajectory codebook with one circular trajectory and two different elliptic trajectories used in the simulation. All the trajectories were assumed to be two dimensional. As can be seen in <ref type="figure">Figure 3</ref>, all of the three trajectory classes fit equally well to the observed image on the image plane of 100x100 pixels. With the initial covariance Σ (i) 1 = 10000I 6×6 ∀i ∈ {1, 2, 3}, the prior parameters were φ (1) 1 = 0.3414, φ (2) 1 = 0.3404 and φ (3) 1 = 0.3183 while the true trajectory class was 1. As the simulation was run, the receiver chose the control inputs according to <ref type="bibr" target="#b11">(12)</ref>   We also compared the performance of the active control policy to the random policy based on 20 simulations. In each simulation, the true position of the receiver was randomly initialized. As <ref type="figure">Figure 5</ref> illustrates, the active control policy always outperformed the random policy after k = 15 for all trajectory classes. In those simulations, we also observed that the receiver converged to the perpendicular configuration to the trajectory when the classification was correct.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>In this paper we have presented an online trajectory classification algorithm for motion-based communication between two robots with monocular vision. Bayesian update formulas were derived in the form of Multi-hypothesis Extended Kalman Filter. We have also derived the active control algorithm and demonstrated in simulations that the proposed framework outperforms the random control policy.</p><p>In future research we intend to concentrate on two main aspects to extend the proposed approach. First, the use of Extended Kalman Filter might not be the best algorithm to implement the Bayesian state estimation. We will also adapt other filtering algorithms such as Unscented Kalman Filter and Particle Filter. Second, we will apply this algorithm not only to 2D trajectories but to 3D trajectories in order to evaluate the general performance of our method in 3D space.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Bayesian network structure of the trajectory classification problem.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>the categorical distribution parameters φ (i) 1 can be evaluated by the maximum likelihood pa- rameter fitting, which is well studied in the computer vision literature. Specifically, µ(i) 1 can be estimated by the Direct Linear Transformation algorithm and the Levenberg-Marquardt algorithm to minimize the nonlinear least squares</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>with U = {(−4.0, −4.0, −4.0, 0, 0, 0), (−2.0, −4.0, −4.0, 0, 0, 0), . . . , (4.0, 4.0, 4.0, 0, 0, 0)}. The translational inputs were all set to 0 so that the camera axis was always pointed to the trajectories. Observed images at k = 2 through k = 5 are presented in Figure 4. In this simulation, the configuration of the receiver was converged to the perpendicular position to the sender's trajectory, as shown in Figure 4d. The posterior parameters at k = 5 were φ (1) 5 = 1.0, φ (2) 5 = 0.0, φ (3) 5 = 0.0, resulting in the correct classification.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :Figure 3 :Figure 4 :Figure 5 :</head><label>2345</label><figDesc>The trajectory codebook used in the sim- ulation.0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v trajectory class 1 trajectory class 2 trajectory class 3 true image Figure 3: The initial observation and the fitted tra- jectories. 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v (a) k = 2 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v (b) k = 3 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v (c) k = 4 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v (d) k = 5 Figure 4: Observed images at different time steps k. (a) Class 1 (b) Class 2 (c) Class 3 Figure 5: Classification accuracy averaged over 20 simulations.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">The Control Theory of Motion-Based Communication: Problems in Teaching Robots to Dance</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Baillieul</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Özcimder</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011-09" />
+			<biblScope unit="page">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A motion-based communication system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Andersson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2013 American Control Conference</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013-06" />
+			<biblScope unit="page" from="365" to="370" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Motion based communication channels between mobile robots -A novel paradigm for low bandwidth information exchange</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Raghunathan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Baillieul</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2009 IEEE/RSJ International Conference on Intelligent Robots and Systems. IEEE</title>
+		<imprint>
+			<date type="published" when="2009-10" />
+			<biblScope unit="page" from="702" to="708" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Exploiting information content in relative motion</title>
+	</analytic>
+	<monogr>
+		<title level="m">2009 American Control Conference</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2009" />
+			<biblScope unit="page" from="2166" to="2171" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Nonlinear bayesian estimation using gaussian sum approximations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">L</forename><surname>Alspach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">W</forename><surname>Sorenson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Automatic Control</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="439" to="448" />
+			<date type="published" when="1972" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Mixture Kalman filters</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">S</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society: Series B (Statistical Methodology)</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="493" to="508" />
+			<date type="published" when="2000-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Efficient multi-hypotheses unscented kalman filtering for robust localization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Jochmann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kerner</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Tasse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Urbann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Robot Soccer World Cup XV</title>
+		<imprint>
+			<publisher>Springer-Verlag</publisher>
+			<date type="published" when="2012-06" />
+			<biblScope unit="page" from="222" to="233" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Optimal selection of camera parameters for state estimation of static systems: an information theoretic approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Denzler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Brown</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000" />
+			<biblScope unit="page">40</biblScope>
+		</imprint>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Entropy based camera control for visual object tracking</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zobel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Denzler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Niemann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings. International Conference on Image Processing</title>
+		<meeting>International Conference on Image Processing</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2002" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="901" to="904" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Entropy-based active vision for a humanoid soccer robot</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Seekircher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Laue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Röfer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Robot Soccer World Cup XIV</title>
+		<imprint>
+			<biblScope unit="volume">6556</biblScope>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Monocular Model-Based 3D Tracking of Rigid Objects: A Survey</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Lepetit</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Fua</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends® in Computer Graphics and Vision</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="89" />
+			<date type="published" when="2005-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Multiple View Geometry in Computer Vision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">I</forename><surname>Hartley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004" />
+			<publisher>Cambridge University Press</publisher>
+			<biblScope unit="page">521540518</biblScope>
+		</imprint>
+	</monogr>
+	<note>2nd ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">On entropy approximation for Gaussian mixture random vectors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">F</forename><surname>Huber</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Bailey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Durrant-Whyte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><forename type="middle">D</forename><surname>Hanebeck</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2008 IEEE International Conference on Multisensor Fusion and Integration for Intelligent Systems</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2008-08" />
+			<biblScope unit="page" from="181" to="188" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">System Identification of Partial Differential Equations</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anthony</forename><surname>Corso</surname></persName>
+							<email>-acorso@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">SISL Lab, Aeronautics and Astronautics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">System Identification of Partial Differential Equations</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><formula xml:id="formula_0">" 7</formula><p>!" 8 !' 7 = − 1 :</p><formula xml:id="formula_1">!; !' 8</formula><p>Adding Noise</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2D Euler Equations:</head><p>To add noise at a level 2, add AGWN at each point Every PDE can be represented as a linear combination of nonlinear features:</p><formula xml:id="formula_2">⁄ !" !# = = 8 &gt; 8 (")</formula><p>The candidate features are constructed using a domain specific grammar. Expressions are sampled with a preference for concise statements</p><formula xml:id="formula_3">Feature Search Algorithm ℝ ↦ ⁄ !ℝ !' 8 ℝ ↦ ℝ×ℝ ℝ ↦ ℝ/ℝ ℝ ↦ |ℝ| ℝ ↦ " 8 | ;</formula><p>Grammar:</p><formula xml:id="formula_4">Sample Expression: " × ⁄ !" !' " × " ⁄ ! !' θ for ' 8 in cols(E): compute F GHI &amp; from [ K E, ' 8 ] and M append best ' 8 to K E M Grammar E Feature Expander F GHI &amp; improves? K E MLR No Yes</formula><p>The system successfully identifies the model processes with sufficient data. The system is robust to noise for the 1D process while the 2D process performed worse. Both processes were identified in the low-data limit with only moderate parameter error.</p><p>• Improve feature search algorithm to include stochasticity through genetic algorithms • Check robustness to different types of noise • Apply to real world data of fluid flows </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]</head><label>1</label><figDesc>Bridewell, W., Langley, P., Todorovski, L., \&amp;DÅŸeroski, S. (2008). Inductive process modeling. Machine learning, 71(1), 1-32.[2] Brunton, S. L., Proctor, J. L., &amp; Kutz, J. N. (2016). Discovering governing equations from data by sparse identification of nonlinear dynamical systems. Proceedings of the National Academy of Sciences, 201517384. [3] Kochenderfer, M. J., &amp; Wheeler, T. A. (2018). Algorithms for Optimization. MIT Press. [4] Rudin, L. I., Osher, S., &amp; Fatemi, E. (1992). Nonlinear total variation based noise removal algorithms. Physica D: nonlinear phenomena, 60(1-4), 259-268. [5] Van Genuchten, M. T., &amp; Alves, W. J. (1982). Analytical solutions of the one-dimensional convective-dispersive solute transport equation (No. 157268). United States Department of Agriculture, Economic Research Service. Points (1D) 100 50 15 5 Adv-Diff % NOO = 0.03%, ) NOO = 0.03% % NOO = 0.08%, ) NOO = 0.05% % NOO = 0.7%, ) NOO = 0.3% % NOO = 7%, ) NOO = 3% Euler : NOO = 0.001%, V NOO = 0.002% : NOO = 0.005%, V NOO = 0.006% : NOO = 0.06%, V NOO = 0.06% : NOO = 0.6%, V NOO = 0.6% Noise 1% 5% 15% 50% Adv-Diff % NOO = 13%, ) NOO = 7% % NOO = 14%, ) NOO = 7% % NOO = 24%, ) NOO = 5% % NOO = 70%, ) NOO = .5% Euler : NOO = 0.3%, V NOO = 2% : NOO = 0.1%, V NOO = 7.4% N/A N/A Correct Identification Correct process didn't have highest F GHI</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">&amp;Not IdentifiedNoise was filtered using total variation denoising</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

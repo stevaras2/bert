@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine learning to deliver blood more reliably The Iron Man(drone) of Rwanda</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Parikshit</forename><surname>Deshpande</surname></persName>
+							<email>parikshd@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Abhishek</forename><surname>Akkur</surname></persName>
+						</author>
+						<title level="a" type="main">Machine learning to deliver blood more reliably The Iron Man(drone) of Rwanda</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Use Machine learning for predictive maintenance of drones for Zipline Inc.</p><p>• Predict the probability of a successful flight based on historical telemetry data.</p><p>• Categorize the failure into mission failure or flight failure.</p><p>• Based on prediction identify the parts which can cause the flight to fail. • Use the model as a prototype to analysis flights in production.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Telemetry Data</head><p>• During the flight, telemetry data like energy analysis (current drawn from battery, etc.), flight tracking information and weather information is collected.</p><p>• After each flight, this data along with true labels is analyzed and stored in AWS S3.</p><p>• We have ~ 3000 real flight data captured, and around ~20 flights are added every day.</p><p>• Each flight captures 1000~1200 features varying on mission status.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>• Locally weighted linear regression:</p><p>• Logistic regression:</p><formula xml:id="formula_0">• Normal Equation • Gradient Descent (L1, L2 Regularization)</formula><p>• Support Vector Machine • Model predicts flight failures with 100% accuracy, and 92.18% overall accuracy.</p><p>• Flights classified as mission failure/ flight failure but reported as success, might require maintenance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>If we had more time</head><p>• We could go with regression approach to predict how much time is left before the next failure. (RUL -Remaining useful time)</p><p>• We can also run unsupervised anomaly detection on the telemetry signals reported.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Reduction</head><p>• After cleansing the data (strings, nan, constant columns) we were left with ~ 700 features.</p><p>• We used the correlation matrix to remove highly correlated features and uncorrelated features with output label.</p><p>• Correlation matrix and final features reduced to 18 features.</p><p>• Principal Component Analysis (PCA):</p><p>• To visualize the data and select appropriate model we performed PCA on the features.</p><p>• First 2 principal components were found using the top 2 eigenvectors.</p><p>• SVM RBF with 2 principal components plotted the contour with labels:</p><p>• Serialized Model: Our final model will be serialized and added to the codebase of Zipline.</p><p>• For a new flight, our model will be run to get the probabilities of success, mission failure and flight failure.</p><p>• Based on our predictions and thresholds set by Zipline, they can anticipate maintenance work on the parts used in the flight.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Train and Test data</head><p>We achieved following results accuracy for the models that we used Discussion: Based on the above results and the PCA plot, for our non-linear data, SVM-RBF Kernel &amp; Decision Trees gave good results SVM-RBF achieved best result.</p><p>• Labels: Label highest_failure_level is categorized as • 1-Success, 2-Mission Failure (flight returned without delivery) and 4-Flight Failure (flight deploys parachute) • Data size: ~3000 flights as train set. ~250 flights as test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Deliverables Acknowledgements</head><p>• Sklearn (https://scikit-learn.org)</p><p>• Hsu, Chih-Wei, Chih-Chung Chang, and Chih-Jen Lin. "A practical guide to support vector classification"</p><p>• Widodo, Achmad, and Bo-Suk Yang. "Support vector machine in machine condition monitoring and fault diagnosis.</p><p>• Susto, Gian Antonio, et al. "Machine learning for predictive maintenance: A multiple classifier approach."</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References &amp; Tools</head><p>We thank Emma Schott and Matt Fay from Zipline for providing the data and meeting with us regularly to answer our questions about the data.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

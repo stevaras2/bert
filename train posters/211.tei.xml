@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning a Low-Level Motor Controller for UAVs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><surname>Lorenzetti</surname></persName>
+						</author>
+						<title level="a" type="main">Learning a Low-Level Motor Controller for UAVs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Many control algorithms for Unmanned Aerial Vehicles (UAVs) have been proven to be effective for standard flight tasks under nominal conditions (i.e. when effects from complex interactions with the environment are small). For UAVs, and quadcopters in particular, these complex dynamics generally originate from aerodynamic effects and internal motor dynamics. Accounting for these effects during controller design and implementation is very difficult, and therefore a modular low-level controller is explored in this paper that corrects the true control inputs to account for unmodeled effects. The proposed low-level controller will map the desired inputs from the primary controller directly to a motor command. Three different models for the low-level motor controller are proposed, and they are compared against the standard model structure used in the open-source PX4 autopilot firmware.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Over the last two decades, the development of powerful, small, and cheap electronics has driven advances in increasingly versatile autonomous systems. For example, UAVs have become increasingly viable platforms for many commercial and military tasks including package delivery, power line inspection, wildlife conservation, building inspection, precision agriculture, and surveillance. However, as the demand for UAV operations moves into more complex and high performance environments, the autonomous control systems must also become more advanced. Beyond UAVs, this is also true for industrial and home robotics, self-driving cars, commerical aerospace applications, and more.</p><p>For UAVs, control systems have been developed using techniques from classical control theory (e.g. PID control), modern control theory (e.g. model predictive control (MPC)), and learning based control. Classical control techniques are widely applied in standard open-source hobby autopilot systems because of their effectiveness and simplicity, but are typically limited to small nominal operating regimes. Modern control techniques, such as MPC, introduce a notion of control optimality and can explicitly handle state and control constraints. This makes these types of techniques attractive for high performance tasks, but can end up being computationally constrained and often rely on dynamics models which are sometimes inaccurate.</p><p>A broad array of learning based control schemes for UAVs have also been proposed. Some approaches use learning methods for high level task control, such as converting image data into high level plans or even low level motor commands using convolutional neural networks <ref type="bibr" target="#b0">[1]</ref>. Others use reinforcement learning techniques, such as a Guided Policy Search to learn how to map sensor readings directly to motor commands <ref type="bibr" target="#b1">[2]</ref>, or to train neural networks to map vehicle state to motor commands <ref type="bibr" target="#b2">[3]</ref>. Beyond learning to control directly, machine learning techniques have also been used to learn models of the dynamics, which can then be used for predictive control <ref type="bibr" target="#b3">[4]</ref>- <ref type="bibr" target="#b5">[6]</ref>. The primary advantage of data driven techniques is that the true system behavior can be inferred without developing extremely complex models. However the disadvantages generally stem from the large amounts of data required, the inability to rigorously guarantee state and control constraints will remain satisfied (and in general verifiability), and in some situations high computational cost.</p><p>While many techniques (i.e. classical, modern, and learning based) have been proposed for designing UAV controllers, additional work has gone into developing algorithms that augment existing controller designs to improve performance. For example, <ref type="bibr" target="#b6">[7]</ref>, <ref type="bibr" target="#b7">[8]</ref> propose a way to generate trajectories that can easily be tracked by the controller via learning by demonstration. Trajectory tracking is also addressed in <ref type="bibr" target="#b8">[9]</ref> with the use of a deep neural network (DNN) for controller input augmentation. A DNN is also used in <ref type="bibr" target="#b9">[10]</ref> to learn a disturbance model that is coupled with a nonlinear controller that helps quadcopter landing performance by correcting for the well known aerodynamic effect called the "ground effect".</p><p>Contributions: Similarly, this work does not focus on controller design, but rather on a modular component that can improve the performance of any given controller. In particular, a low-level motor controller is proposed that takes the output of the primary controller and maps it to motor commands. This low-level controller is modular in the sense that it could be used with any type of primary controller, and by using a data-driven approach it has the potential to a posteriori correct for complex effects that may not be known by the primary controller.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. PROBLEM DESCRIPTION</head><p>As mentioned previously, the proposed low-level motor controller maps the output of the primary controller to motor commands. For this work, which focuses specifically on quadcopter control, the output of the primary controller is assumed to be the desired acceleration along the quadcopter's thrust axis along with the desired angular acceleration about each of the three rotational axes. For better physical intuition these outputs will be referred to as the desired net force, F z , and the desired net moments, M x,y,z . The kinematics and dynamics of the quadcopter system will now be discussed, followed by a discussion on how the low-level controller will be designed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Quadcopter Dynamics</head><p>For a quadcopter, the state of the system can be defined by its position, orientation, and their rates of change. To identify position and orientation of a rigid body two reference frames are defined: an inertial frame W that is fixed, and a bodyfixed frame B that is considered attached to the rigid body. Using the conventions from <ref type="bibr" target="#b5">[6]</ref>, these reference frames are defined as shown in <ref type="figure" target="#fig_0">Figure 1</ref>. The inertial frame W and </p><formula xml:id="formula_0">R B W =   c ψ c θ c θ s ψ −s θ c ψ s θ s φ − c φ s ψ c ψ c φ + s ψ s θ s φ c θ s φ s ψ s φ + c ψ c φ s θ c φ s ψ s θ − c ψ s φ c θ c φ   R W B = R B W T .<label>(1)</label></formula><p>The quadrotor translational dynamics are given by</p><formula xml:id="formula_1">mr = −mgẑ W + F TẑB + F aero ,<label>(2)</label></formula><p>where r is the position vector r = [x, y, z] T , m is the mass of the quadcopter, g is the acceleration due to gravity,ẑ W is an inertially fixed unit vector pointing upward, andẑ B is a unit vector fixed in the body frame pointing along the body z axis. The scalar input F T corresponds to the net thrust produced by the propellers and the vector F aero encompasses the aerodynamic lift and drag that affect the system. The rotational dynamics are given bẏ</p><formula xml:id="formula_2">ω = I −1   −ω × Iω +   M x M y M z     .<label>(3)</label></formula><p>where I is the inertia matrix, defined in the body fixed frame, and M x,y,z are moments that are applied about each body fixed frame axis. The angular velocity ω is defined in the body frame as</p><formula xml:id="formula_3">ω = px B + qŷ B + rẑ B .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Problem Formulation</head><p>As mentioned, it is assumed that the primary controller outputs a desired net force, F z , and the desired net moments, M x,y,z which will produce the desired motion. These values must then be mapped to commands that will be sent to the motors. The challenge is that accurately determining the correct motor commands can be a complex task due to unknown effects from the aerodynamics of the quadcopter and propellers, and the dynamics of the motors themselves. For example, consider the following scenarios:</p><p>1) The controller commands the quadcopter to perform a vertical climb with some fixed acceleration. 2) The controller commands the quadcopter to land.</p><p>3) The controller commands the quadcopter to fly at high speed at a constant altitude to a new location.</p><p>4) The quadcopter battery levels are running low. In the first scenario, as the quadcopter speeds up the drag will increase, and therefore the propellers will have to do more work to maintain a constant acceleration. In the second scenario, the propeller "ground effect" would cause the quadcopter to experience a higher acceleration for the same motor command as it gets closer to the ground. Similarly, in the third scenario propeller effects would have a tendency to produce lift during high speed translational motion. Finally, in the fourth case the thrust produced by a propeller could have decreased for the same motor command.</p><p>It would be desireable to have a low-level motor controller that can account for these effects, in order to make the quadcopter react as closely as possible to the desired motion from the primary controller. To accomplish this, a learning based approach will be used to generate a model g such that</p><formula xml:id="formula_4">ω m = g(F z , M x , M y , M z , ω, r,ṙ, φ, θ, ψ, . . . ).<label>(4)</label></formula><p>Three different models are proposed, with varying structure and inputs. The set of possible inputs includes information about the state of the quadcopter that would be available online, and primarily includes the angular velocity ω, position r, velocityṙ, and orientation (φ, θ, ψ). From a practical perspective the structure of the models are also limited in complexity due to the runtime requirements. At the very low level of the flight stack that this controller would be implemented, operations must be performed on the order of hundreds of times per second.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET</head><p>The dataset is from flight experiments 1 of a Pelican quadcopter manually piloted by an experienced pilot. This dataset includes kinematic data (i.e. position, velocity, orientation) from a motion capture system and motor command data logged on the flight computer. In total there are over 250 minutes of flight data, comprised of more than a million data points from 55 flights. <ref type="figure" target="#fig_1">Figure 2</ref> shows typical flight data. From this core dataset additional information is also computed. First, the translational and angular accelerations are computed using numerical differentiation <ref type="bibr" target="#b1">2</ref> Next the actual net thrust and moments can be computed from the dynamics equations (2, 3) from the kinematic data. Note that computing the net thrust F T is difficult without knowledge of F aero . However the objective is to learn a mapping where the input is the desired net force F z , which could potentially include aerodynamic forces. The desired net force is therefore computed from the kinematic data as</p><formula xml:id="formula_5">F z = (mr + mgẑ W ) ·ẑ B ,<label>(5)</label></formula><p>which is simply the net force projected onto the body z axis (and therefore captures forces from any type of effect). In addition to the net force F z and moments M x,y,z , two additional quantities are computed as possible features for the models. These quantities are the axial velocity, V a , and transverse velocity, V t seen by the propellers. These quantities are computed as follows</p><formula xml:id="formula_6">V a =ṙ ·ẑ B , V t = ||ṙ − V aẑB || 2 .<label>(6)</label></formula><p>Once the data processing is complete the available variables that can be used as features include the position r, velocity,ṙ, accelerationr, orientation (φ, θ, ψ), angular velocity ω, angular accelerationω, and the velocities (V a , V t ). All of the data was also normalized using the emprical mean and standard deviation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. MODELS</head><p>In this work three different models for the low-level motor controller are proposed, and they are compared against the standard model structure used in the open-source PX4 autopilot firmware.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Baseline Model</head><p>In current open-source autopilots, the low-level motor controllers map desired thrust and moment commands to motor commands based on a very simple model of how thrust correlates to motor commands for a given propeller. This relationship is generally determined using static thrust stand testing, which removes many of the extra effects that are seen in real flight scenarios.</p><p>The baseline model first uses a linear mapping to convert the net force and moments into thrust for each individual motor. This linear mapping is given by</p><formula xml:id="formula_7">   o 1 o 2 o 3 o 4    =     1 4k T 0 −1 2k T L −1 4k M 1 4k T 1 2k T L 0 1 4k M 1 4k T 0 1 2k T L −1 4k M 1 4k T −1 2k T L 0 1 4k M        F z M x M y M z   <label>(7)</label></formula><p>or its inverse   </p><formula xml:id="formula_8">F T M x M y M z    =    k T k T k T k T 0 k T L 0 −k T L −k T L 0 k T L 0 −k M k M −k M k M       o 1 o 2 o 3 o 4 ,    (8)</formula><p>where k T is a thrust coefficient, k M is a moment coefficient, L is the distance between the propeller axis and the center of mass, and o i is the output command for propeller i. The output for propeller i is then related quadratically to the motor command ω m,i</p><formula xml:id="formula_9">o i = p 0 + p 1 ω m,i + p 2 ω 2 m,i .<label>(9)</label></formula><p>The models (7) and (9) can then be combined, and the parameters combined, to generate the full model</p><formula xml:id="formula_10">ω m = k 0 + k 1 + Au<label>(10)</label></formula><p>where</p><formula xml:id="formula_11">A =    m 0 0 −m 1 −m 2 m 0 m 1 0 m 2 m 0 0 m 1 −m 2 m 0 −m 1 0 m 2    , u =    F z M x M y M z   </formula><p>and the square root is element-wise. When developing this model it is important to note that the square root is only defined for non-negative arguments, which must be considered in the training process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Proposed Models</head><p>Three new models are now proposed in an attempt to improve upon the performance of the baseline model. The first two models are variants of the baseline that incorporate additional features but keep the same structure, and the third uses a completely different structure (specifically a neural network).</p><p>The advantage of using the same model structure for the first two models lies in the inherent simplicity of the model structure. As mentioned previously, the models need to be evaluated at extremely high rates and so low complexity is desired. Additionally, keeping the same structure and adding features will provide some additional insight into whether the model structure is inherently useful or not. Additionally, in each model the linear mapping <ref type="formula" target="#formula_7">(7)</ref> is used.</p><p>1) Baseline + Feature Subset: The first proposed model keeps the same structure as the baseline, but includes a handpicked subset of the available features. In particular, the features that are included are the altitude z, the velocities (V a , V t ), and the angular velocity ω. These features will be denoted as the vector x 1 = [z, V a , V t , ω] T . Additionally, second order polynomial features of x are included (i.e. x i x j and x 2 i ). The combined set of features are denoted as φ(x). Finally, these features are used to augment the original mapping between o i and ω m,i</p><formula xml:id="formula_12">o i = p 0 + p 1 ω m,i + p 2 ω 2 m,i + w T φ(x 1 ),<label>(11)</label></formula><p>such that the model becomes</p><formula xml:id="formula_13">ω m = k 0 + k 1 + Au + w T φ(x 1 ).<label>(12)</label></formula><p>2) Baseline + Features: The second model is identical to the first model proposed, except that all available features are used. Namely x 2 = [z, r,ṙ,r, φ, θ, ψ,φ,θ,ψ, ω,ω, V a , V t ] T . Once again second order polynomial features of x are also included, with all features denoted by φ(x 2 ). The model is then defined by</p><formula xml:id="formula_14">o i = p 0 + p 1 ω m,i + p 2 ω 2 m,i + w T φ(x 2 ),<label>(13)</label></formula><p>such that the model becomes</p><formula xml:id="formula_15">ω m = k 0 + k 1 + Au + w T φ(x 2 ).<label>(14)</label></formula><p>3) Neural Network: Apart from the initial linear mapping, the neural network model deviates in structure from the previous models and includes more parameters. For this model a bias term is also added to the initial linear mapping,</p><formula xml:id="formula_16">such that o = Au + b (15)</formula><p>where b is a vector of bias terms. Then, the individual motor outputs o are combined with the full set of features x 2 to become the input to the neural network. The same neural network is used for each motor, such that for a neural net f ,</p><formula xml:id="formula_17">ω m,i = f (o i , x 2 ).<label>(16)</label></formula><p>The network used has a single hidden layer with 10 nodes and ReLU activation, and a linear output layer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Training</head><p>The baseline model and the extended baseline models with features were trained using mini-batch stochastic gradient descent. The learning rate and batch sizes were tuned for good training performance, and the learning rate was decayed after each training epoch. A ReLU activation function was also added to the baseline and extended baseline models to ensure the square root argument was non-negative during the training phase. The neural network was trained using the Adam optimization technique, also with tuned hyperparameters and learning rate scheduling.</p><p>The training and validation datasets were the same for each model, and were selected by randomly taking samples from the full dataset in a 60/20/20 split for training, validation, and testing. For each case the mean squared error loss was used for training and for evaluation. This loss is defined as</p><formula xml:id="formula_18">l(Θ) = 1 m m i=1 ||ω m −ω m (Θ)|| 2 2<label>(17)</label></formula><p>where m is the size of the batch, ω m is the data point, and ω m (Θ) is the prediction from the model parameterized by Θ. In each case the optimization algorithm is a first-order method, meaning that they rely on the gradient of the loss function with respect to model parameters. For this work the entire training procedure was peformed using the open source deep learning platform PyTorch <ref type="bibr" target="#b11">[12]</ref>. Unfortunately, the loss function in these cases are nonconvex and therefore the training process is susceptible to local minima. A stochastic optimization method such as SGD or Adam can sometimes help in these situations, but since the models are relatively small and do not take long to train, a batch of models were simultaneously trained. In this particular case instead of using the entire batch of trained models in an aggregate or bagged way, only the model with the lowest validation score is used.</p><p>The results of training each of these models can be seen in <ref type="figure">Figure 3</ref>, which shows the training loss over each optimization iteration. The bands represent the standard deviation and the solid line is the mean.</p><p>V. RESULTS After training and selection, the three proposed models and the baseline model were evaluated on the test dataset. <ref type="table" target="#tab_1">Table I</ref> shows the resulting losses on the training, validation, and test datasets. For the training and validation sets, the presented value represents the mean loss over the batch of models trained. The loss figures for the test dataset are for the best model (i.e. the one with the lowest validation loss). This explains why the losses for the test set are typically lower. The variance that is seen is also likely due to the stochasticity inherent in the training process and the dataset.  From these results it can be seen that the neural network provides the best results, and in particular almost a 40% decrease in the loss value over the baseline. It also can be seen that the baseline model that is extended to include all features also performs slightly better, with about a 5% decrease in the loss. The baseline model that is extended to include the hand-picked features actually performed slightly worse on the test set. In theory the extended models should have strictly greater performance because the baseline model can be recovered by setting the additional feature weights to be zero. However as discussed previously, this does not always happen in practice due to the presence of local minima in the training process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Other Performance Metrics</head><p>In addition to evaluating the performance of the models using the mean squared error loss score, a more qualitative analysis can be done. Inherently the mean squared error loss trains a model to have small error, and in particular penalizes larger errors worse than small errors. But it is also interesting to look at the actual errors and their distributions. The error for motor i is simply defined as</p><formula xml:id="formula_19">e i = ω m,i −ω m,i .<label>(18)</label></formula><p>Over the test dataset the mean error and standard deviation of the error can also be computed</p><formula xml:id="formula_20">µ i = 1 N N i=1 e i , σ 2 i = 1 N N i=1 (e i − µ i ) 2 .<label>(19)</label></formula><p>These quantities are of interest because it is desireable that the mean be as close to zero as possible, along with a small variance. If the mean is not zero it suggests that there is some inherent bias in the model. It is also desireable to have a decreased variance because the hope is that the more complex models are able to better capture the effects causing the largest errors. The mean and standard deviation of the error are computed for each model and the results are shown in <ref type="figure" target="#fig_2">Figure 4</ref>. Interestingly, the means seem to be quite varying. The neural network does seem to consistently perform pretty well, but in other cases the best performer is not clear. Although in each case the mean is still close to zero, which is desireable. It is likely that the varying performance is due to the fact that only one model is developed and applied to each motor individually. Therefore if each of the motors had slightly different performance, it would be difficult for any one model to generalize to all. The standard deviation plot also provides some qualitative information. It can be seen that the neural network consistently outperforms the others, which is expected from the lower MSE loss. Once again, among the other models it is not clear that any one outperforms the other.</p><p>The distributions of the errors can also be plotted to provide a more visual presentation of the information previously discussed. These plots are provided in <ref type="figure" target="#fig_3">Figure 5</ref> to compare the best performing model (neural network) against the baseline model. As can be seen the neural network model has tightened the distribution such that there are fewer data points with extremely high error.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION</head><p>The objective of this work was to create a better performing low-level motor controller using a learning based approach. Where current low-level motor controllers fail is in the ability to capture off nominal effects, which can lead to poor performance in off nominal flight situations. From the results of the proposed models, simply augmenting the current methods to include additional features will not be sufficient to drastically increase performance. However the neural network, while only providing a moderate performance boost, provides some promising results that suggest learning based approaches may still be useful in this domain.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. FUTURE WORK</head><p>As discussed, the results suggest that learning based approaches to this probem may have potential but likely require more complex models. Some future directions will therefore definitely include exploring more expressive models, such as neural networks with more layers or potentially even recurrent neural networks. Recurrent neural networks may be effective because the regression is fundamentally on time series data, which suggests that a feedforward network is not utilizing all available information. Additionally, the dataset that was used was not collected for the specific purpose of this project. Therefore it would be interesting to explore data collection methods that may provide better training performance, especially if recurrent neural networks are used.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Quadrotor Reference Frame the body fixed frame B are then related using a standard Euler angle formulation (Yaw-Pitch-Roll) (ψ, θ, φ) or via the rotation matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Example data: motor commands and position trajectories.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Mean and standard deviation of the errors.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Error distributions for the baseline and neural network models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Training, validation, and test dataset losses for each model.</figDesc><table></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">github.com/wavelab/pelican_dataset 2 After differentiation, a local polynomial regression smoothing algorithm (LOESS<ref type="bibr" target="#b10">[11]</ref>) is also used.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A review of deep learning methods and applications for unmanned aerial vehicles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Carrio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Sampedro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Rodriguez-Ramos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Campoy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Sensors</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Learning deep control policies for autonomous aerial vehicles with MPC-guided policy search</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Kahn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2016 IEEE International Conference on Robotics and Automation (ICRA)</title>
+		<imprint>
+			<date type="published" when="2016-05" />
+			<biblScope unit="page" from="528" to="535" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Control of a quadrotor with reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Hwangbo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Sa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Siegwart</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Robotics and Automation Letters</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="2096" to="2103" />
+			<date type="published" when="2017-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A recurrent neural network based MPC for a hybrid neuroprosthesis system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Sharma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE 56th Annual Conference on Decision and Control (CDC)</title>
+		<imprint>
+			<date type="published" when="2017-12" />
+			<biblScope unit="page" from="4715" to="4720" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Structured neural network dynamics for model-based control</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Broad</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Abraham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Murphey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Argall</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1808.01184</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Deep learning a quadrotor dynamic model for multi-step prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mohajerin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mozifian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Waslander</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE International Conference on Robotics and Automation (ICRA)</title>
+		<imprint>
+			<date type="published" when="2018-05" />
+			<biblScope unit="page" from="2454" to="2459" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Autonomous helicopter aerobatics through apprenticeship learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Coates</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The International Journal of Robotics Research</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="1608" to="1639" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Learning for control from multiple demonstrations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Coates</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Abbeel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 25th International Conference on Machine Learning, ser. ICML &apos;08</title>
+		<meeting>the 25th International Conference on Machine Learning, ser. ICML &apos;08<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="144" to="151" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Deep neural networks for improved, impromptu trajectory tracking of quadrotors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Bao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">K</forename><surname>Helwa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">P</forename><surname>Schoellig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 IEEE International Conference on Robotics and Automation (ICRA)</title>
+		<imprint>
+			<date type="published" when="2017-05" />
+			<biblScope unit="page" from="5183" to="5189" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Neural lander: Stable drone landing control using learned dynamics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>O&amp;apos;connell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Azizzadenesheli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Anandkumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S.-J</forename><surname>Chung</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1811.08027</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Robust locally weighted regression and smoothing scatterplots</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">S</forename><surname>Cleveland</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American statistical association</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="issue">368</biblScope>
+			<biblScope unit="page" from="829" to="836" />
+			<date type="published" when="1979" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Desmaison</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Antiga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lerer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

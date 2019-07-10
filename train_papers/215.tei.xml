@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Final Report: Bismuth Vanadate (111) Facet Detection</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-13">December, 13, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zixi</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wanling</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiyao</forename><surname>Yuan</surname></persName>
+						</author>
+						<title level="a" type="main">CS229 Final Report: Bismuth Vanadate (111) Facet Detection</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-13">December, 13, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Solar energy conversion using Bismuth Vanadata (BiV O 4 ) has been a promising and prevalent method nowadays. To equip efficient energy conversion, existence of (111) facet is crucial. In our project, we utilized three different machine learning models to detect (111) facets in scanning electron microscope (SEM) images. These models include support vector machine (SVM) with histogram of oriented gradient (HOG), Residual Network (ResNet) and Shallow convolutional neural network (Shallow CNN). In this paper, we will talk about architectures, experiments and results of these models. Moreover, data preprocessing such as data augmentation, edge detection and feature extraction will also be included.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Nowadays, solving the energy challenge by harvesting the energy directly from sunlight through photosynthesis has became an attractive way. Many efforts have been made to find materials that can output chemical fuels using solar energy. Recently, BiV O 4 came out as the most promising material for solar energy conversion and environmental protection. The chemical reaction of BiV O 4 can be used as a photoanode that oxidizes solar water to O 2 in the photoelectrochemical cells. Based on that purpose, the surface physicochemical properties of BiV O 4 has been carefully examined in order to improve the performances of BiV O 4 -based photoanodes. According to G.L. Li's study <ref type="bibr" target="#b1">2</ref> , only (110) and (111) surface has band-gap states which act as hole acceptors. When photogenerated holes and electrons migrate to the surfaces, only (110) and (111) could make the photogenerated holes localize at the surface. The localization of holes would reduce the possibility of charge recombination and consequently promote charge separation. Therefore, if the percentage of (111) or (110) can be enhanced by morphology design, the efficiency of charge separation would be further improved for BiV O 4 .</p><p>Subsequently, identification of (111) facet of BiV O 4 becomes important. The traditional method would be using Electron Backscatter Diffraction (EBSD) to determine crystal facets, however, this method is restrictive and not quantifiable. In addition, there exists limited numbers of research on facet detection, especially for BiV O 4 . Therefore, this project is focusing on the identification of (111) facet of BiV O 4 from SEM images. (see <ref type="figure">Fig.1</ref>)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Dataset</head><p>Our dataset contains around 3000 samples, including approximately 60% training data and 40% testing data. Each sample is a 160 × 215-pixel grey-scale SEM image, which was generated from lab experiments.</p><p>These SEM images were labeled into either positive or negative. Positive label means the SEM image contains (111) facet and negative label means no (111) facet is detected. In order to prevent error from data labeling, the labeling process was guided by a PhD student who leads the experimental side of this project. Labeled SEM images were saved into either positive folder or negative folder and the algorithms could read the label of images based on the folder's name.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Data Augmentation</head><p>Due to the high reaction tendency of (111) facet, exposure of this facet requires complicated chemical reaction which makes the SEM images difficult to obtain. Therefore, this project was facing a difficulty caused by this relatively small dataset. To solve this problem, data augmentation, which includes cropping, scaling, and flipping/mirroring, became an essential part of this project. As for cropping, different SEM images have different working distance which is the distance the beam is focused at; this leads to different image scale and resolution. Therefore, high scale images were cropped into 9 pieces and low scale image were cropped into 4 pieces (see <ref type="figure" target="#fig_1">Fig.3</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Edge Detection</head><p>Another challenge came with this project was the shape variation of <ref type="formula">(111)</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4">HOG</head><p>HOG is one of the most common techniques to extract features for object detection, especially for human detection. HOG represents each image by a feature vector by calculating distributions of intensity gradients, which preserves the information of local object appearances and shapes to a large extent. Since we aimed to determine the existence of (111) facet by detecting the shapes of BiV O 4 in our project, we chose HOG as as one of the candidate methods to extract features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">SVM with HOG</head><p>We firstly used HOG to extract features from SEM images. After calculating HOG, a two-dimension image was converted into a one-dimension vector. We then input the vector into SVM and determined whether it was positive or negative. We mainly considered two kinds of kernels of SVM, including linear kernel and Gaussian kernel, whose formula are shown in equations <ref type="formula">(1)</ref> and <ref type="formula" target="#formula_0">(2)</ref> respectively. The structure of this method is shown in <ref type="figure">Fig.5</ref>. The detailed information of model structures and parameters is presented in section 4.</p><formula xml:id="formula_0">k(x, y) = x T y + c (1) k(x, y) = exp( −||x − y|| 2 2σ 2 )<label>(2)</label></formula><p>Figure 5: SVM with HOG</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Shallow CNN</head><p>The most common method for image classification is CNN. Therefore, in this project, we used the architecture as shown in <ref type="figure" target="#fig_3">Fig.6</ref>, which contains two convolutions layers, two max-pooling layers, one flattening process, one fully connected layer, one feature dropout process, and one node output layer. Two activation function were used for the above shallow CNN:</p><formula xml:id="formula_1">ReLu g(z) = max (0, z)<label>(3)</label></formula><p>Sigmoid</p><formula xml:id="formula_2">σ(x) = −1 (1 + e −x )<label>(4)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">ResNet</head><p>Deep neural networks are of great importance for many image recognition tasks, and we also tried using the ResNet to train our data. Kaiming He, et al, proposed the ResNet framework to solve the degradation problem and ease the training process of deeper neural networks 3 . Compared with standard neural network architectures, ResNet has shortcut connections performing identity mapping and recasts the original underlying mapping H(x) into F (x) + x (see <ref type="figure" target="#fig_4">Fig.7</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">SVM with HOG</head><p>In this experiment, we did not explicitly follow the HOG steps. We divided each 160 × 215-pixel onechannel image evenly into 24 40 × 35-pixel blocks and calculated the total magnitude of gradient in each direction in each block, where direction was quantified into 64 × 64 bins. After that, we concatenated the results of 24 blocks. During the training process, we mainly modified the block number and bin number to obtain a higher accuracy.</p><p>After obtaining feature vector, SVM with linear kernel and Gaussian kernel were investigated separately. We judged the performance of each SVM model by accuracy, recall, and precision. It is shown in the results that Gaussian kernel has the highest accuracy but remarkably lower recall due to biased number of positive and negative training data. Thus, we chose linear kernel as the optimum, which has slightly lower accuracy but much higher precision and recall.</p><p>Aside from SVM kernel type, all the other parameters were chosen based on accuracy. The result showed that when block number, bin number, C are tuned to 4 × 6, 80 × 80 and 3 respectively, the accuracy reaches a local maximum.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Shallow CNN</head><p>All parameters of CNN were chosen based on test accuracy. This project tested dropout rates, filter sizes, number of connected units, activation functions, and loss functions. For instance, among dropout rates 0.3, 0.4, 0.5 and 0.6, result showed that 0.5 dropout rate led to the highest test accuracy. Same comparison method was used on the other parameters which led to our final model. The convectional layer contains 32 filters and each filter has a shape of 3 × 3. The max-pooling layer uses a 2 × 2 filter. The fully connected layer contains 512 nodes and has ReLu as its activation function. The dropout process will drop out 50% of the total features. The last step for this network outputs one node through a sigmoid function. During the compiling process, it uses cross-entropy loss function.</p><p>To further understand the performance of our final CNN model, we calculated the precision, recall, and F1-score, which are 0.64, 1.00, 0.78 respectively. This result indicates that the algorithm predicted all negative image correctly, however, some of the positive prediction were wrong.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">ResNet</head><p>In our project, we chose cross entropy loss as our loss function and stochastic gradient descent as our optimization algorithm. We tested our data on models with different numbers of layers (see <ref type="figure">Fig.8</ref>). Due to the relatively small dataset, we tried using transfer learning on pretrained models. As a result, the test accuracy was improved around 10% compared with non-pretrained models (see <ref type="table">Table 1</ref>).</p><p>We found that ResNet with 50 layers yielded the best test accuracy and also was relatively computationally efficient compared with other numbers of layers. We further tuned the learning rate for ResNet50 (see <ref type="figure">Fig.9</ref>) and chose 0.0005. In addition, we used image transformation (resizing and cropping) to reduce overfitting. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results</head><p>As illustrated from the result, Shallow CNN with dropout achieves the highest test accuracy. It could also be observed that both SVM and shallow CNN overfit slightly. As for the performance of ResNet, transfer learning on pretrained ResNet results in better performance. L2 regularization might be helpful for controlling the overfitting of the CNN training process, however, it also leads to a drop of test accuracy. Therefore, using only feature dropout is the better choice for shallow CNN. -ResNet We tried several numbers of layers for ResNet and we found that prediction accuracy for our data did not benefit much from deeper network, might because we only have small dataset or this network structure is not suitable for our data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>-Shallow CNN After tuning parameters, shallow CNN obtained the test accuracy of 87%, which is the best accuracy among all models. Thus, this structure might be more suitable for our data.</p><p>-Comparison SVM method has fewer parameters and simpler structure compared with neural networks. Thus, it computed much faster than neural networks, but the accuracy was much lower. Compared with ResNet, shallow CNN had better control on the entire learning process. Therefore by tuning the parameters, it can get higher accuracy.</p><p>-Data During our labeling process, even though it was guided by experienced people in this area, there are still some error sources, such as low-quality of SEM images, different viewpoints and sizes of particles, and various shapes of particles. These led to ambiguous determination of (111) facet, which might influence the accuracy of the models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Future Work</head><p>In the future, we intend to improve our project mainly in application aspect and algorithm aspect. In terms of application, we will expand (111) facet detection to other kinds of facet detection. And we will transfer classification problem into regression problem, which is to determine the proportion of target facet. In terms of algorithm, principal component analysis (PCA) will be added between HOG and SVM in order to avoid overfitting. Additionally, more feature descriptors, such as SIFT, SURF, and ORB, will be considered. For the two CNN models (shallow CNN and ResNet), we will use heatmap to detect the data concentration of the algorithms and see why shallow CNN performs better than ResNet. Based on the result of heatmap, parameters and architectures of models mentioned above will be further modified to improve the performance.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 : 2 Figure 2 :</head><label>122</label><figDesc>SEM image of BiV O 4 2 Figure 2: Theoretical progress in photoelectro- chemical cell</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Data Augmentation for high (a) and low (b) working distance</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>facet. As the (111) facet grows, it could have triangular, rectangular and trapezoidal shapes. Therefore, to help the algorithms identify the key features of (111) facet, this project also tested the effect of edge detection techniques including canny edge detection, probabilistic Hough transform and adaptive thresholding. (see Fig.4) Figure 4: Edge Detection Methods</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>Shallow CNN architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7 :</head><label>7</label><figDesc>Residual learning: a building block 3</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 8 :Figure 9 :</head><label>89</label><figDesc>Comparison of different numbers of layersFigure 9: Comparison of different learning rates for ResNet50</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>This project is completed with the conscientious and cooperative effort of three group members Wanling Liu, Zixi Liu and Jiyao Yuan evenly in terms of idea generation, model establishment, code deployment as well as report writing. We would like to express deepest appreciation to Thomas Mark Gill for his data and guidance. Code at: https://drive.google.com/drive/folders/1F7LfFuMvE_ tvuWQBP7JAlkabGlUpoK8F?usp=sharing</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Progress in bismuth vanadate photoanodes for use in solar water oxidation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Yiseul</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kenneth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Mcdonald</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">C</forename><surname>Kyoung</surname></persName>
+		</author>
+		<ptr target="https://pubs.rsc.org/en/results?searchtext=Author%3AKenneth%20J.%20McDonald" />
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Society Reviews</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">First-principles investigation of the surface properties of fergusonite-type monoclinic BiVO4 photocatalyst</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">L</forename><surname>Li</surname></persName>
+			<affiliation>
+				<orgName type="collaboration">RSC Advances</orgName>
+			</affiliation>
+		</author>
+		<ptr target="https://pubs.rsc.org/en/Content/ArticleLanding/2017/RA/C6RA28006D#!divAbstract" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">M</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><forename type="middle">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">Q</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

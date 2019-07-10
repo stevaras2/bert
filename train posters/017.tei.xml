@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">The Automated Travel Agent: Machine Learning for Hotel Cluster Recommendation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Arruza-Cruz</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Straka</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Pericich</surname></persName>
+						</author>
+						<title level="a" type="main">The Automated Travel Agent: Machine Learning for Hotel Cluster Recommendation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Expedia users who prefer the same types of hotels presumably share other commonalities (i.e., non-hotel commonalities) with each other. With this in mind, Kaggle challenged developers to recommend hotels to Expedia users. Armed with a training set containing data about 37 million Expedia users, we set out to do just that. Our machine-learning algorithms ranged from direct applications of material learned in class to multi-part algorithms with novel combinations of recommender system techniques. Kaggle's benchmark for randomly guessing a user's hotel cluster is 0.02260, and the mean average precision K = 5 value for naïve recommender systems is 0.05949. Our best combination of machine-learning algorithms achieved a figure just over 0.30. Our results provide insight into performing multi-class classification on data sets that lack linear structure.</p><p>• 37 million data entries corresponding to user data, each with a total of 23 features corresponding to hotel destination, number of rooms, number of children, length of stay, etc.</p><p>• Hotel clusters are anonymized, and only user data is given. This makes typical user-item matrix methods such as Alternating Least Squares impossible to use.</p><p>• The data set is skewed towards certain hotel clusters over others; certain clusters are overrepresented while others appear very rarely.</p><p>• Likewise, some destinations appear very frequently, and others appear only a handful of times.</p><p>• The data is also not linearly separable.</p><p>Baseline methods:</p><p>• Our first attempt involved implementing a basic multinomial Naïve Bayes classifier that returns a list of the top ten most likely clusters for a user. This method served as our baseline moving forward.</p><p>• Our second attempt involved the use of a support vector machine with an RBF kernel. This underperformed compared to Naïve Bayes. We suspect it is diffcult to fit a hyperplane to the data without using parameters that result in overfitting due to the lack of linear separability Gradient Boosting:</p><p>• First real success found by using ensemble of decision trees minimizing softmax loss function • Likely due to intelligent learning of non-linear structure in the data, along with boosting's resistance to overfitting • Converged more slowly than SVM and Naïve Bayes for increased values of K in Mapk, implying its rankings are more nuanced Kernelized User Similarity (Most Effective Method):</p><p>• First, we cluster the data together based on destination; training data sharing the same destination id are grouped together.</p><p>• For each new testing example, we retrieve the training group with a matching destination id and create user similarity matrices. The matrices are made utilizing a kernel function; we tried the following three kernels:</p><p>" ( , ) = ) 1{ , = , } .</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• 37 million data entries corresponding to user data, each with a total of 23 features corresponding to hotel destination, number of rooms, number of children, length of stay, etc.</p><p>• Hotel clusters are anonymized, and only user data is given. This makes typical user-item matrix methods such as Alternating Least Squares impossible to use.</p><p>• The data set is skewed towards certain hotel clusters over others; certain clusters are overrepresented while others appear very rarely.</p><p>• Likewise, some destinations appear very frequently, and others appear only a handful of times.</p><p>• The data is also not linearly separable.</p><p>Baseline methods:</p><p>• Our first attempt involved implementing a basic multinomial Naïve Bayes classifier that returns a list of the top ten most likely clusters for a user. This method served as our baseline moving forward.</p><p>• Our second attempt involved the use of a support vector machine with an RBF kernel. This underperformed compared to Naïve Bayes. We suspect it is diffcult to fit a hyperplane to the data without using parameters that result in overfitting due to the lack of linear separability Gradient Boosting:</p><p>• First real success found by using ensemble of decision trees minimizing softmax loss function • Likely due to intelligent learning of non-linear structure in the data, along with boosting's resistance to overfitting • Converged more slowly than SVM and Naïve Bayes for increased values of K in Mapk, implying its rankings are more nuanced</p><p>Kernelized User Similarity (Most Effective Method):</p><p>• First, we cluster the data together based on destination; training data sharing the same destination id are grouped together.</p><p>• For each new testing example, we retrieve the training group with a matching destination id and create user similarity matrices. The matrices are made utilizing a kernel function; we tried the following three kernels:</p><formula xml:id="formula_0">" ( , ) = ) 1{ , = , } . ,/" exp (− 6 2 6 )</formula><p>Where z is the placement of the user in terms of similarity to the test example (first most similar, second, third, etc.) and tau is 60. ,/" + ) , , .</p><p>,/" where x and y are divided into two vectors of size m' and m'', with different features separated into each.</p><p>• Once the similarity matrix is created, find the top 150 users most similar to the test example, and for each hotel cluster represented in the 150 users sum their similarity score (determined by the chosen kernel method).</p><p>• Then, recommend the top 10 hotel clusters (by similarity score) found in the most similar users.</p><p>• Of the three kernels mentioned above, the second kernel proved most effective, likely due to heavily discretized nature of the user features This project provides an excellent case study for applying machine learning algorithms to large data sets lacking obvious structure. It also embodies the challenge of recommending items about which we have no features. In addressing these challenges, we demonstrated that a creative combination of user similarity matrices and Jaccard similarity outperforms gradient boosting-a technique currently well-known for winning Kaggle competitions. For future work, we recommend using ensemble stacking methods to combine predictions from various algorithms. Further work could also explore tuning hyper-parameters for gradient boosting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology Abstract</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>Discussion and Future Work Figure 2: PCA in three dimensions of data for three most popular hotel clusters. While not linearly separable, there does appear to be some non-linear structure to the hotel clusters. The success of our methods based on user similarity support this.</p><p>Overall, the best methods were the methods that utilized user similarity and kernels to recommend hotel clusters that other similar users booked. Gradient Boosting was also effective, but mean average precision seemed to hit a hard cap at .25 regardless of the parameters used. The SVM performed very poorly, as did other basic machine learning methods attempted on the data initially. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Frequency of hotel clusters in data set.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Early Stage Cancer Detector: Identifying Future Lymphoma Using Epigenomics Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ayush</forename><surname>Agarwal</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anurag</forename><surname>Sai</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><surname>Modalavalasa</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Egler</surname></persName>
+						</author>
+						<title level="a" type="main">Early Stage Cancer Detector: Identifying Future Lymphoma Using Epigenomics Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-DNA Methylation is an epigenetic process affecting gene expression which has been linked to cancer <ref type="bibr" target="#b3">[4]</ref>. A combination of supervised and unsupervised machine learning techniques have been implemented on epigenomics datasets to build a classification model that can predict whether a person will develop lymphoma (a group of cancers beginning in white blood cells of immune system) in the future. An F1 score of 72% and accuracy of 69% have been obtained on test dataset using a combination of PCA (with the projections of dataset on the first 59 principal components) and logistic regression.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Genome-wide methylation was first associated with future lymphoma by Georgiadis et al. in 2017, who found that epigenetic changes are already present in blood samples 2.1 to 15.9 years prior to diagnosis <ref type="bibr" target="#b3">[4]</ref>. As a result, if such epigenetic pattern changes can be observed in blood samples, cancer can be detected years prior to diagnosis, increasing the likelihood that patients will receive better medical aid. This possibility of impacting the lives of those likely to develop lymphoma was a natural motivator in tackling such a big problem. The goal of this study was to build machine learning models to predict future Lymphoma. We used two main biomarkers that have been linked to the pathogenesis of cancer: DNA methylation and fractional components of immune cells.</p><p>DNA methylation is an epigenetic process whereby methyl groups are added to DNA molecules without changing the DNA sequence itself, typically acting to suppress gene expression. Measures of fractional components of immune cells are derived from gene expression. Together, these biomarkers provide insight into the differential expression of genes and the pathogenesis of lymphoma and were used as parallel inputs to our problem <ref type="bibr" target="#b3">[4]</ref>.</p><p>As on date, it is not possible for medical experts to look at the data and predict the likelihood of a person having lymphoma in future. As a result, the Bayes limit is currently unknown for this problem.</p><p>The input to the algorithm includes 1) the DNA methylation levels (floats) across different genomic probes and 2) fractional components of immune cells (floats representing the fraction of each component). We use unsupervised feature reduction along with several supervised learning techniques (logistic regression, SVMs, GDA, neural networks, and random forests) to output binary predictions of future lymphoma.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Georgiadis et al. tried to perform pathway analysis to identify the relevant genes and underlying biology pertaining to lymphoma <ref type="bibr" target="#b3">[4]</ref>. They also perform several supervised and unsupervised learning techniques to assess classification accuracy. As in our case, they implemented multiple classification models in order to find the best, including SVMs with both gaussian and linear kernels as well as random forests. While we use GDA as a generative model, they use the Naive Bayes classifier.</p><p>Feature selection is one of the main objectives in genomic data used for disease classification. In fact, the number of genes needed for discriminant analysis in disease classification is likely much lower than 50 <ref type="bibr" target="#b1">[2]</ref> <ref type="bibr" target="#b6">[7]</ref>. The challenge of feature selection in similar genomics data has given rise to many novel approaches. The MethylMix algorithm is a relatively recent approach which identifies disease-specific hyper-and hypo-methylated genes using a beta mixture model <ref type="bibr" target="#b2">[3]</ref> <ref type="bibr" target="#b4">[5]</ref>. The novelty of MethylMix lies in the metric of differential, as opposed to absolute levels of methylation in cancer. Many approaches to feature selection seem to have in common that they take into consideration biological relevance. For example, Georgiadis et al. implemented PCA as a feature reduction technique in conjunction with the identification of biologically relevant genes found via a separate model. A biologically driven approach may be extremely powerful if the assumptions of the model fit.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. OBJECTIVE</head><p>Since recall is an important parameter to understand the effectiveness of model, based on discussions with our mentor in the Department of Bioinformatics, we selected F1 score as the optimization metric for the classification model. Obtaining an accuracy of 50% is a satisfying baseline metric for the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dataset</head><p>The data used in this study was obtained from Stan- </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Selection Techniques</head><p>The small number of blood samples, large number of features in the DNA methylation dataset, and inherent biological noise present a set of challenges common across genomic applications of machine learning. Moreover, DNA methylation levels are correlated across gene probes. It is therefore desirable to capture the essence of the DNA methylation dataset in a smaller feature space prior to applying supervised learning techniques. Two feature reduction techniques are used in parallel: MethylMix (data provided) and PCA. We then applied the following supervised learning models to the three datasets: logistic regression, GDA, SVMs, neural networks, and random forests.</p><p>Application of the MethylMix algorithm on the DNA methylation dataset reduced the number of features from nearly half a million to 101. The objective of the MethylMix algorithm is identification of disease specific hyper/hypo methylated genes <ref type="bibr" target="#b2">[3]</ref> <ref type="bibr" target="#b4">[5]</ref>. However, it is not certain whether this is the best feature selection technique for lymphoma prediction. Therefore, we also implemented PCA on the original DNA methylation dataset to reduce the number of features and biological noise associated with the data, retaining 70% variance. We experimented with higher variance retention but found 70% satisfactory given that fewer genes are likely necessary in this problem <ref type="bibr" target="#b1">[2]</ref> <ref type="bibr" target="#b6">[7]</ref>. Most of the meaningful information corresponding to the original matrix can be captured using the first several principal components. As shown in <ref type="figure" target="#fig_1">figure 1</ref>, most of the information can be extracted using a few principal components. To visualize <ref type="figure">Fig. 2.</ref> A) The first three principal components with PCA applied to the DNA methylation dataset, B) The first three principal components with PCA applied after MethylMix the data, plots were made by taking projects of the data on first two principal components. It was found that drawing a decision boundary was not possible using the projections of the DNA methylation data on first two principal components. Separability increases when three principal components are used instead <ref type="figure">(Figure 2A</ref>). It is highly likely that separability increases as the number of principal components goes up. However, owing to the limited number of examples, using extremely high number of principal components will force us to operate in null space. This will result in overfitting and variance related problems. Thus, the number of principal components to be used has been treated as a hyperparameter while tuning the models.</p><p>Given the success of PCA as compared to MethylMix, we decided to see if the combination of the two would yield better results, to visualize the data better and understand if the number of parameters can be reduced. We applied PCA to the dataset output from the MethylMix algorithm, retaining 95% variance with 49 principal components. However, drawing a decision boundary is not possible using the first two components of MethylMix data. Further, separability associated with MethylMix data for the first 3 principal components was lower as compared to separability associated with DNA methylation data ( <ref type="figure">Figure 2B</ref>). Because the number of features has already been reduced by the application of MethylMix algorithm, further parameter reduction might result in loss of relevant information. We also had far fewer examples for the MethylMix methylation dataset. Hence, to avoid bias, we decided to use the entire column space corresponding to MethylMix data while applying algorithms. <ref type="figure">Fig. 3</ref>. Overview of methods used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CLASSIFICATION MODELS AND METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Logistic Regression</head><p>Logistic regression model works well as a baseline. It is easy to implement and usually gives good insights. Since we began with limited information about the distribution, we felt the application of a logistic regression model was a good way to get started quickly and iterate upon. This decision was further supported by the performance of logistic regression in conjunction with parameter reduction in cancer detection problems with similar data <ref type="bibr" target="#b1">[2]</ref>[6] <ref type="bibr" target="#b6">[7]</ref>. Given the relatively small size of our dataset, we used Newton's method with the logistic loss function (Equation 1).</p><formula xml:id="formula_0">φ(z) = log(1 + e −z )<label>(1)</label></formula><p>L2 regularization and ensembling techniques were used to address the relatively small size of the dataset and overfitting when training in a high dimensional feature space. Ensembling techniques used include traditional bagging as well as a more novel and linear approach in which we simply average the model weights for k-fold training samples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Gaussian Discriminant Analysis</head><p>Gaussian Discriminant Analysis is a generative learning model that models the probability of the data given the labels, as opposed to modeling the probability of the labels given the data. GDA thus models attributes of the biomarkers for the disease versus healthy state and uses this model to predict future lymphoma given an unlabeled sample. GDA models usually perform better if the distribution is Gaussian in nature and if the number of examples is low. Since the number of examples is low in our case and since we did not know anything about the distribution, we decided to apply GDA. Our mentor has suggested the data likely has a bimodal distribution, and that it is likely that non-gaussian statistical models will perform better on any DNA methylation data <ref type="bibr" target="#b7">[8]</ref>. Hence, we decided to apply power transform techniques to induce normality <ref type="bibr" target="#b0">[1]</ref>. Box-Cox Transforms (Equation 2) have improved the performance of model using the maximum likelihood estimation for lambda.</p><formula xml:id="formula_1">x λ i =    x λ i − 1 λ , if λ = 0 log(x i ) if λ = 0 (2)</formula><p>The model's parameters have been learned using Maximum Likelihood Estimation (MLE). Using the MLE parameters, predictions are made on the test set to test the effectiveness of the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Support Vector Machines</head><p>Visualization of data plots using principal components <ref type="figure">(Figure 2</ref>) gave us an impression that the data can be separated better using kernels to map the first several principal components into higher dimensions. The intuition was further supported by the fact that SVMs were used by Georgiadis et al. when they tried to build classification models for this problem <ref type="bibr" target="#b3">[4]</ref>. Building on the intuition we developed after visualization of data plots using principal components, we implemented SVMs using polynomial, Gaussian RBF, and linear kernels. Hinge loss function was used (shown in equation <ref type="bibr" target="#b2">3)</ref>.</p><formula xml:id="formula_2">φ(z) = max((1 − z), 0)<label>(3)</label></formula><p>Gaussian and high dimensional polynomial kernels faced overfitting problems. We then tried a linear kernel, as in Georgiadis et al., which performed best. The performance was improved after tuning regularization and gamma margin parameters using validation data. After learning the parameters, the model was tested on test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Neural Networks</head><p>Since the logistic regression model gave good results, we felt neural networks might extract deeper information and give even better results. The number of parameters corresponding to neural networks are higher than logistic regression model and the number of samples available was limited, so we decided to compensate by using fewer principal components. Sigmoid activation layer was used for the final layer; ReLU and sigma activation functions were tried for hidden layers. Weighted binary cross entropy loss function, shown in equation 4, was implemented with Adam Optimizer (mini batch gradient descent) using TensorFlow and Keras frameworks <ref type="bibr" target="#b9">[10]</ref> <ref type="bibr" target="#b10">[11]</ref>. A weighted binary cross entropy loss function was used to tackle the slight data imbalance problem. Since recall is a very important parameter for the model, application of weighted binary cross entropy loss is justified; it penalizes the model if an actual true is predicted as false. The threshold was selected empirically based on the performance use the F1 metric on the training set.</p><formula xml:id="formula_3">J(y,ŷ) = −(W ylog(ŷ) + (1 − y)log(1 − (ŷ))) (4)</formula><p>Increasing the number of layers improved the training accuracy but ran into over fitting problems; the model architecture was tuned to reduce variance. Further, to combat the overfitting problem, different regularization techniques such as L2 regularization (for kernels), early stopping, learning rate decay, and drop out were used. The hyperparameters tuned include the weight in weighted cross entropy loss function, threshold, learning rate, learning rate decay, number of epochs, activation function for hidden layers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Random Forests</head><p>Decision trees are another useful model for non-linear decision boundaries. However, decision trees are high variance models prone to overfitting, as can be imagined by a tree where there is a distinct leaf for each training example. Random forests are useful techniques for bagging decision trees by training a bootstrapped sample on each tree and averaging these models. We applied random forest models with Gini Loss function, shown in equation 5, which similar to the cross-entropy loss function for decision trees can help to maximize the information gain from one level of the tree to the next.</p><p>Similar to our neural network model, given the high variance nature of decision trees and the limited number of samples available, we trained the model using fewer principal components as compared to other models.</p><formula xml:id="formula_4">L gini = c (p c ) * (1 −p c )<label>(5)</label></formula><p>The hyper parameters tuned include minimum leaf size and maximum features considered in order to reduce overfitting that was quite apparent. Application of AdaBoost improved the performance of the model by weighting misclassified examples during training in attempts of creating a stronger learner out of a set of weaker learners.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. RESULTS, INFERENCES AND DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Best Predictor Combination</head><p>The best combination of model and dataset for lymphoma detection was logistic regression with L2 regularization on the DNA Methylation + PCA dataset with 59 principal components (55% variance), achieving an F1 score of 72% with 69% accuracy ( <ref type="figure">Figure 5</ref>). With an increasing number of principal components, logistic regression overfits the data even with L2 regularization <ref type="figure" target="#fig_3">(Figure 6</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. PCA outperforms MethylMix algorithm</head><p>All the classification models performed better on the DNA methylation dataset where feature selection has been done using PCA as compared to the dataset where feature selection has been done using MethylMix algorithm ( <ref type="figure" target="#fig_2">Figures 4A  and 4B</ref>). PCA may capture the information better than the MethylMix algorithm in the context of lymphoma detection. Applying PCA to the reduced MethylMix dataset did not improve the best model, falling short with a 61% F1 Score and 50% accuracy in comparison. While MethylMix might not be a good fit, the poor performance could also be a   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Immune Cells Fractions: Transform induces normality</head><p>GDA works better if the input data is gaussian in nature. GDAs performance was improved when the input data corresponding to Immune Cells Fractions database was transformed using Box-Cox transforms <ref type="figure" target="#fig_4">(Figure 7)</ref>. Thus, it can be inferred that Immune Cells Fractions dataset is inherently not Gaussian and that transforms, most likely, induce normality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Bias Variance Analysis</head><p>Overfitting was a common problem that most models faced in the methylation datasets. Ensembling techniques reduced the variance pertaining to the logistic regression model. The variance problem was bigger in models involving Neural networks and Random Forests; several regularization techniques were implemented to reduce this variance (at the cost of reduced accuracy). Regularized Logistic regression, most likely, finds the right balance in bias variance tradeoff and hence performed the best for this data set. A larger number of samples and optimized feature selection technique may help to overcome this variance in the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONCLUSION/FUTURE WORK</head><p>Logistic regression model gave the best results after the number of features has been reduced using PCA techniques. While neural networks could capture the information better and perform better on training datasets, they ran into overfitting problems and several regularization techniques have been implemented to address this problem. Similarly, random forests performed nearly as well as logistic regression models, but faced the overfitting problem. Logistic regression model likely performed better than GDA on the methylation dataset, because of the fact that methylation data does not follow a Gaussian distribution if it is not transformed. However, GDA performed almost as well logistic regression on the immune cells dataset, which is smaller and may have an underlying Gaussian distribution which can be revealed by de-noising and power transformations.</p><p>Future work should explore application of model and dataset ensembling techniques as they might reduce the variance and help in obtaining better results. Application of similar models and ensembling techniques on an available microRNA expression dataset can also, probably, help to attain better results and obtain new insights as this is a related biomarker. When the number of samples in the dataset grows over a period of time, classification of lymphoma subtypes using a softmax algorithm will be an interesting problem to tackle. Ultimately, we would like to map the principal components that were important predictors back to the corresponding genes for biological experts to understand the underpinnings of this disease. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>ford Department of Biomedical Informatics. There are three datasets: 1) DNA methylation, 2) Immune Cell Fractions, 3) MethylMix + DNA Methylation. The DNA methylation data set contains 566 pre-diagnostic blood samples (m) with 444,000 features (n). The features are methylation levels across 444,000 genomic probes given as M-Values, which are logarithmic ratios between methylated and unmethylated signals. The Immune Cell Fractions dataset contains 196 pre-diagnostic blood samples (m) with 23 features (n). The features are fractional values of various components of these immune cells. The MethylMix + DNA Methylation dataset is a subset of blood samples and features from the original DNA methylation dataset. There are 196 blood samples (m) with 101 features. The features have been selected from the original DNA methylation levels using the MethylMix algorithm, which identifies probes with disease related hyper- and hypomethylated states. The selected features represent differential levels of DNA methylation at these probes. The set of 566 examples spans two cohorts with 234 total cases of future lymphoma, while the sets of 196 examples include 76 cases of future lymphoma. Each of the three datasets were split into train/validation/test sets of approximately 70/10/20.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 1 .</head><label>1</label><figDesc>Explained Variance vs Principal Components Index Plot (70% Variance obtained by using 176 Principal Components, out of which 141 had more than 0.1% variance</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>Best performance of each model on A) the DNA Methylation data with PCA, B) The DNA Methylation data with MethylMix, C) The Immune Cell Fractions data Fig. 5. Confusion matrix of logistic regression on the DNA methylation + PCA dataset using the first 59 principal components.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 6 .</head><label>6</label><figDesc>Logistic regression with L2 regularization λ = 0.01 run on the DNA methylation + PCA dataset varying the number of the first principal components used. Overfitting occurs with increasing principal components.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7 .</head><label>7</label><figDesc>Peformance of GDA on the Immune Cell Fractions dataset with Box-Cox Transformations with varied values of λ compared to the baseline GDA on this dataset with no transformation. The MLE estimate of lambda is −9. result of the smaller size of the MethylMix reduced dataset (196 examples) compared to the PCA reduced dataset (566 examples).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>ACKNOWLEDGMENT Thanks to Dr. Almudena Espin Perez in the department of Biomedical Informatics for the data and mentorship. CONTRIBUTIONS CODE Github Link: https://github.com/sarahegler/CS229- LymphomaDetection</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An Analysis of Transformations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">E P</forename><surname>Box</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">R</forename><surname>Cox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society B</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="211" to="252" />
+			<date type="published" when="1964" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Logistic regression for disease classification using microarray data: model selection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-V</forename><surname>Chin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page">19451951</biblScope>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Pancancer analysis of DNA methylation-driven genes using MethylMix</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Gevaert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">K</forename><surname>Plevritis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">17</biblScope>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Evolving DNA methylation and gene expression markers of B-cell chronic lymphocytic leukemia are present in pre-diagnostic blood samples more than 10 years prior to diagnosis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Georgiadis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Liampa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">G</forename><surname>Hebels</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Krauskopf</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Chatziioannou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Valavanis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M D</forename><surname>Kok</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Kleinjans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">A</forename><surname>Bergdahl</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Melin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Spaeth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Palli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vermeulen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vlaanderen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Chadeauhyam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Vineis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">A</forename><surname>Kyrtopoulos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Genomics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">MethylMix 2.0: an R package for identifying DNA methylation genes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P.-L</forename><surname>Cedoz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Prunello</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Brennan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Gevaert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page">30443046</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Cancer classification and prediction using logistic regression with Bayesian gene selection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">T</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Biomedical Informatics</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">249259</biblScope>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">How Many Genes are Needed for a Discriminant Microarray Data Analysis, Methods of Microarray Data Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002" />
+			<biblScope unit="page">137149</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Comparisons of Non-Gaussian Statistical Models in DNA Methylation Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Teschendorff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Taghia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Guo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Molecular Sciences</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">1083510854</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Scikit-Learn ;</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning in Python, Pedregosa</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">TensorFlow: Large-scale machine learning on heterogeneous systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martn</forename><surname>Abadi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashish</forename><surname>Agarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Barham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eugene</forename><surname>Brevdo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhifeng</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Craig</forename><surname>Citro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andy</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthieu</forename><surname>Devin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sanjay</forename><surname>Ghemawat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Harp</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Irving</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Isard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rafal</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yangqing</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lukasz</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manjunath</forename><surname>Kudlur</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Josh</forename><surname>Levenberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Oriol Vinyals</title>
+		<editor>Ilya Sutskever, Kunal Talwar, Paul Tucker, Vincent Vanhoucke, Vijay Vasudevan, Fernanda Vigas</editor>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Software available from tensorflow.org</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">François</forename><surname>Chollet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Keras</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

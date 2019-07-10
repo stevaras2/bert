@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+		<revisionDesc>
+				<date type="submission" when="-1" />
+		</revisionDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>To what extent are motor choice and color percept represented in dorsal premotor cortex? • The difference in neural activity pattern is clearer when we visualize the data in PCA space.</p><p>• We can decode action choice, but not color percept. For longer reaction times, we can accurately decode action choice to the movement onset time.</p><p>• Decoding using only 5 PCs achieves the same or better prediction accuracy as a decoder trained on the full, un-processed neural data.</p><p>• Decoding using only 3-4 neurons achieves the same or better prediction accuracy as the decoder trained on the full population.</p><p>• Neural representations evolve throughout the trial, and our results suggest they are stable for ~200 ms. It appears that different populations of neurons are encoding the motor choice at different times in the trial.</p><p>This experiment was conducted in Dr. Krishna Shenoy's lab, and data were collected by Megan Wang. We thank Dr. Chandramouli Chandrasekaran for thoughtful discussions, and we thank Dr. John Duchi and the CS 229 TAs for their machine learning advice.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>Animal must report the dominant checkerboard color by reaching to the target of that color </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Investigating decoder stability reveals that neural representation of motor choice dynamically evolves prior to movement onsetWe used three decoders (SVM kernelized with a RBF, logistic regression, and naive Bayes) to decode motor choice or dominant checkerboard color from neural data (101 units; 100 reaches/condition) over time. Decoder performance was quantified using 10-fold cross-validation.Forward feature selection reveals that motor choice can be decoded with very few neurons</figDesc><table>Units are recorded during behavior 
+
+Simple averaging does not convey the true 
+dynamics of neural activity during reaching 
+
+We can decode motor choice, but not color percept, on unprocessed 
+neural data 
+
+Decoding motor choice using data projected onto their principal 
+components increases model performance for SVM 
+
+Stimulus Onset 
+
+Movement Onset 
+
+Forward faster reaction time 
+slower reaction time 
+
+Analysis methods 
+
+Summary 
+
+Background and motivation 
+
+Electrophysiology recordings during a 
+perceptual decision making task 
+
+movement onset decoder (time 0) 
+pre-movement decoder (time -200) </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

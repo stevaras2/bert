@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A &quot;generative&quot; model for computing electromagnetic field solutions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ben</forename><surname>Bartlett</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Applied Physics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A &quot;generative&quot; model for computing electromagnetic field solutions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We present an unsupervised machine learning model for computing approximate electromagnetic fields in a cavity containing an arbitrary spatial dielectric permittivity distribution. Our model achieves good predictive performance and is over 10× faster than identically-sized finite-difference frequency-domain simulations, suggesting possible applications for accelerating optical inverse design algorithms.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>"Inverse design" problems -computational design of structures by specifying an objective functionare pervasive throughout physics, especially in photonics, where inverse design methods have been used to design many highly compact optical components <ref type="bibr" target="#b0">[1]</ref>, <ref type="bibr" target="#b1">[2]</ref>. Optical inverse design algorithms involve simulating the electromagnetic fields within the device at each iteration of the design process, typically by using the finite-difference frequency-domain (FDFD) method, and then optimizing the design region using adjoint variable methods <ref type="bibr" target="#b2">[3]</ref>.</p><p>The iterative FDFD simulations, although exact, can be computationally expensive and scale poorly with the design dimensions. For many applications, an approximate field solution is sufficient. A machine learning model which could quickly compute approximate electromagnetic fields for a dielectric structure could reduce this computational bottleneck, allowing for much faster inverse design processes. <ref type="bibr" target="#b3">[4]</ref> In this paper, we present a machine learning model for computing approximate electromagnetic field solutions. The model takes as its input a vector of dielectric permittivities at each point in space and computes an equally-sized vector representing the approximate electric field amplitude at each point. The model is trained using an entirely unsupervised approach which is loosely analogous in structure to a generative adversarial network <ref type="bibr" target="#b4">[5]</ref>. Our model achieves good predictive performance, generalizes well to structures outside of its training distribution, and computes fields over 10× faster than an identically-sized FDFD simulation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>We were able to find a small body of existing work related to this problem. Shan, et al. <ref type="bibr" target="#b5">[6]</ref> demonstrated a neural solver for Poisson's equations using a purely-convolutional neural network. Their model took as inputs a dielectric permittivity matrix and a matrix of pixel-wise distance to the field source and was trained against labeled FDFD solutions. Our initial work followed their approach, except applied to solving Maxwell's equations, but we were unable to reproduce their results.</p><p>Lagaris, et al. <ref type="bibr" target="#b6">[7]</ref> presented a method similar to the one used in this paper to solve initial and boundary value problems of a specific form using artificial neural networks. Two prior CS229 projects <ref type="bibr" target="#b7">[8]</ref>, <ref type="bibr" target="#b8">[9]</ref> applied this method to solve specific parameterizations of Poisson's equations and studied its error properties. McFall and Mahan <ref type="bibr" target="#b9">[10]</ref> expanded Lagaris's method to solve problems over irregular domain boundaries with mixed Dirichlet/Neumann boundary conditions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Problem summary and approach</head><p>Our model computes approximate electromagnetic field solutions for a specific type of scenario, formalized here. Suppose we have a perfectly reflective d-dimensional 2 cavity of length L with an electromagnetic source at the center. The cavity contains material forming an arbitrary spatial distribution of dielectric permittivity (x). Discretizing the cavity into "pixels" of size δL, the permittivity at each point in space can be expressed as a vector of size N = (L/δL) d . Given an input permittivity vector and knowledge of the source location, the model outputs an identicallysized vector E pred representing the electric field amplitude at each point in space. The cavity scenario was chosen to impose Dirichlet boundary conditions of E = 0 at the cavity edges, ensuring the electric fields are standing waves, and thus real up to a global phase. <ref type="bibr" target="#b2">3</ref> The model learns to produce realistic field solutions in an entirely unsupervised manner described in Section 3.2 using a metric for physical realism we call the "Maxwell residual", denoted as L M . When trained to minimize the deviation from physical realism measured by L M , the model outputs predicted fields which are very close to the "true" solutions obtained from an FDFD solver <ref type="bibr" target="#b3">4</ref> , despite never seeing them during training. Because of the entirely unsupervised training approach, we can train our model on arbitrarily large (and even infinitely enumerable) datasets, as no data labeling is required.</p><p>The structure of the model is loosely analogous to a generative adversarial network <ref type="bibr" target="#b4">[5]</ref>. The first part of the model is a "generator" which maps randomly generated input permittivities to field outputs as</p><formula xml:id="formula_0">G : (i) → E (i)</formula><p>pred . The second part is a "discriminator" 5 which computes the Maxwell residual of the predicted field as D :</p><formula xml:id="formula_1">E (i) pred → L (i) M</formula><p>, providing a measure of how physically realistic the generator's outputs are. In both cases, the loss of the total model is</p><formula xml:id="formula_2">L (i) = D(G( (i) )).</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Unsupervised training with Maxwell residuals</head><p>Maxwell's equations govern the dynamics and propagation of electromagnetic fields in materials and form the foundation for classical electromagnetism. <ref type="bibr" target="#b12">[13]</ref> In SI units, they are written as:</p><formula xml:id="formula_3">∇ · E = ρ ∇ · B = 0 (1) ∇ × E = − ∂ B ∂t ∇ × B = µ J + µ ∂ E ∂t ,</formula><p>where E, B are electric and magnetic fields at a given point in space and time, , µ are the permittivity and permeability of the material, t is time, ρ is charge density, and J is current density. In a nonmagnetic, electrically neutral, linear material (such as many cases of interest), ρ = 0, µ = µ 0 , and these equations can be simplified to:</p><formula xml:id="formula_4">∇ × E = −µ 0 ∂ H ∂t (2) ∇ × H = ∂ E ∂t + J,<label>(3)</label></formula><p>where H ≡ B/µ 0 is the magnetizing field. In a steady-state frequency domain solution such as the ones found with FDFD methods, E(t) = Ee iωt , so ∂ t (·) → ω(·), where ω is frequency. We can combine <ref type="bibr" target="#b1">(2)</ref> and <ref type="formula" target="#formula_4">(3)</ref> to obtain an equation which any solution to Maxwell's equations must satisfy:</p><formula xml:id="formula_5">(∇ × ∇×) − ω 2 µ 0 E − J = 0.<label>(4)</label></formula><p>If the electromagnetic field is polarized, say, with E z polarization, then E = Eẑ and J = Jẑ at each point in space. We can then "vectorize" this such that E and J are the electric field and free current amplitudes in theẑ direction and is the dielectric permittivity at each point in space. If we have a model which takes in a permittivity distribution and a source term J and returns a predicted field E pred , then we use Eq. 4 to define the "Maxwell residual" L M as:</p><formula xml:id="formula_6">L M ≡ (∇ × ∇×) − ω 2 µ 0 E pred − J.<label>(5)</label></formula><p>The Maxwell residual provides an element-wise measure of the physical realism of the predicted field E pred (a measure of how far the predicted solution is from satisfying Maxwell's equations at each point). If the model can sufficiently minimize L M , then it can produce solutions which approximately satisfy Maxwell's equations at each point, and thus are approximate global electromagnetic field solutions for the system described by and J. This training does not require the model to ever see the exact FDFD field solution (the outputs it attempts to replicate) and is thus unsupervised.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Model architecture and implementation</head><p>We found that when trained (or more precisely, overfit) to predict the field of a single permittivity distribution , virtually any network architecture would allow the predicted field to converge to the true field given enough training time. (For more on this, see Section 4.1.) The challenge was finding a network architecture with the correct structure to capture the generalized transformation → E when trained on a large number of possible permittivities.</p><p>We tested many different network architectures for this project. Purely convolutional architectures, like the ones used by Ref. <ref type="bibr" target="#b5">[6]</ref>, did not perform well and seemed incapable of capturing nonlocal field dependence due to distant reflections with the cavity walls. Purely dense architectures, like the ones used (for training single structures) by Refs. <ref type="bibr" target="#b6">[7]</ref>- <ref type="bibr" target="#b8">[9]</ref> did not seem to capture the physics of the problem by generalizing well to structures very different from the training distribution.</p><p>Our final network architecture employed a hybrid convolutional / dense / deconvolutional approach and is shown in <ref type="figure" target="#fig_0">Figure 1</ref>. The network starts with three convolutional layers, intended to capture certain features of the permittivity input such as refractive index changes and layer thicknesses. These feed into two dense layers, which allows the model to better account for nonlocal field interactions. Finally, three transposed-convolutional layers expand the signal to the original input size, providing the prediction for E. We found that the performance of the model was relatively insensitive to the choice of kernel size and number of convolutional/deconvolutional layers in excess of 3.</p><p>During training, the network outputs the Maxwell residual L M ( E). Dropout layers with p = 0.1 and ReLU activations are present after every layer except the last one. Our model was implemented using PyTorch <ref type="bibr" target="#b10">[11]</ref>, and the code is available at https://github.com/bencbartlett/ neural-maxwell. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments 4.1 Fitting to single</head><p>As an initial experiment, we trained the model to predict the field of only a single input using the Maxwell residual method described in Section 3.2. The evolution of the predicted field as the network is trained on a sample permittivity is shown in <ref type="figure">Figure 2</ref>. (An animated version of this figure is available online at https://gfycat.com/TestyWanIsopod.) We ran this procedure dozens of times, varying network architectures and permittivity, and found that the model would eventually converge (with loss less than 10 −7 ) to the exact FDFD field solution for virtually all and all network architectures given sufficient training time. This experiment was not terribly useful in terms of obtaining practical speedup for EM simulation problems, as the typical time to train to convergence exceeded the time to run an equivalent FDFD simulation by a factor of about 100. However, from an academic standpoint, it is an interesting method to numerically solve Maxwell's equations, and looking at the time to convergence for a single provided some insight into prototyping optimal network architectures for the main experiment detailed in Section 4.2. <ref type="figure">Figure 2</ref>: Evolution of the predicted field as the network is trained on a single permittivity input. The top panel of each image depicts the permittivity at each point (grey), the "true" electric field from an FDFD simulation (blue) and the predicted field at the given iteration (orange). The bottom panel depicts L M at each iteration. An animated version of this figure (which is more informative and which we encourage readers to view) is available online at https://gfycat.com/TestyWanIsopod.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Training on permittivity datasets</head><p>For the main experiment in this paper, we trained a model with the architecture described in <ref type="figure" target="#fig_0">Figure 1</ref> on a large dataset of 10 6 randomly-generated permittivities. Each sample represented the permittivity formed by a random number of material layers, each of random thickness, of alternating silicon and vacuum. The model was trained using an Adam optimizer <ref type="bibr" target="#b13">[14]</ref> with batch size 200 and learning rate 5 × 10 −6 on an NVIDIA Tesla K80 until convergence (after about 8 hours and 400 epochs, with a final average loss of 8 × 10 −4 ).</p><p>To evaluate the results of the trained model, a test set of 10 4 new permittivity samples was generated using the same generation procedure. The model was run on each of these inputs, the loss for each sample was calculated (average loss of 8.8 × 10 −4 ), and the results were sorted from best to worst. Example good (best 10/10000), typical (middle 10/10000), and bad (worst 10/10000) field predictions from the test set are shown in the first three panels of <ref type="figure">Figure 3</ref>. For each sample, the forward-pass time was recorded and compared to the FDFD simulation time; the trained model takes an average of 1.2ms to compute predicted fields -over 10× faster 6 than the 14ms equivalent FDFD simulation time.</p><p>Finally, we tested the model's capability to generalize to inputs outside of the training distributionthat is, permittivities representing a different set of structures than the ones generated for the training and test sets. As an example, the predicted field amplitudes for a sample where each point in space has a permittivity value randomly chosen between vacuum and silicon is shown in the last panel of <ref type="figure">Figure 3</ref>. (This is pathological and would not represent any type of device which could be easily fabricable, but illustrates the generalization capabilities of the model.) <ref type="figure">Figure 3</ref>: Permittivities and predicted fields for samples in the test set with good, typical, and poor performance. The lower right panel shows the predicted fields for a uniform-random permittivity input from a distribution the model was not trained on.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head><p>In this paper, we presented a machine learning model capable of computing approximate solutions to Maxwell's equations over an arbitrary dielectric permittivity in a cavity. The model was trained using an unsupervised approach where it learned to minimize the "Maxwell residual" of its predicted fields, thereby maximizing the physical realism of the solutions. Our model demonstrates good predictive performance and is over 10× faster than comparable FDFD simulations, suggesting applications for accelerating optical inverse design algorithms.</p><p>For future work, we would like to implement a complex-valued model to solve the more general problem of predicting fields outside of a cavity environment. Our choice of the cavity problem was driven primarily by PyTorch's lack of support for complex tensors. (In the project repository, we have an initial implementation of this which explicitly parameterizes ( E) and ( E), although this approach was only mildly successful.) We would also like to explore using our model for dimensionality reduction, especially for 2D and 3D problems. We were able to achieve a 1:16 dimensionality reduction with our model applied to a 32 × 32 2D input of permittivities by adjusting the network parameters to force a 64-value chokepoint in the middle dense layers of the network. (This figure is present in the poster but omitted here due to length constraints.) This could force the model to learn more efficient representations of the relationships between permittivities and fields.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Final architecture for the neural Maxwell solver. The model takes as inputs a vector of permittivities . Three successive convolutional layers (kernel sizes: 5, 7, 9, channels: 32, 64, 128) output into two appropriately-sized dense layers. This outputs into three successive transposed- convolutional layers (kernel sizes: 9, 7, 5, channels: 128, 64, 32), expanding the signal to the original dimensions of . Dropout layers with p = 0.1 and ReLU activations follow all but the last layer.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">In our research for this project, we explored d = 1, 2, although we only have space to present d = 1 results; 2D simulations can be found in the project repository and in the poster.<ref type="bibr" target="#b2">3</ref> This was important as PyTorch<ref type="bibr" target="#b10">[11]</ref> currently lacks complex number support.<ref type="bibr" target="#b3">4</ref> All FDFD simulations in this paper were computed using the angler FDFD package.<ref type="bibr" target="#b11">[12]</ref> 5 The biggest difference between the structure of our model and a GAN is that our "discriminator" is not a trainable model: rather, it computes LM from a predicted field using a static transformation. Our model is arguably generative, but not truly adversarial.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="6">The model performs even faster per sample if it evaluates batched inputs.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>We would like to thank Shanhui Fan, Sunil Pai, and Tyler Hughes for several illuminating discussions relating to this work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Source code</head><p>All source code used for this paper is available at https://github.com/bencbartlett/ neural-maxwell. Trained model parameters were too large to include in the repository but are are available upon request.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Inverse design and implementation of a wavelength demultiplexing grating coupler</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Piggott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M</forename><surname>Babinec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">G</forename><surname>Lagoudakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Petykiewicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vučković</surname></persName>
+		</author>
+		<idno type="doi">10.1038/srep07210</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Inverse Design and Demonstration of a Compact on-Chip Narrowband Three-Channel Wavelength Demultiplexer</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Piggott</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">V</forename><surname>Sapra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Petykiewicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vučković</surname></persName>
+		</author>
+		<idno type="doi">10.1021/acsphotonics.7b00987</idno>
+	</analytic>
+	<monogr>
+		<title level="j">ACS Photonics</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Method for computationally efficient design of dielectric laser accelerator structures</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Hughes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Veronis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">P</forename><surname>Wootton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>England</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Fan</surname></persName>
+		</author>
+		<idno type="doi">10.1364/OE.25.015414</idno>
+		<ptr target="https://www.osapublishing.org/abstract.cfm?URI=oe-25-13-15414" />
+	</analytic>
+	<monogr>
+		<title level="j">Optics Express</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="15" to="414" />
+			<date type="published" when="2017-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Nanophotonic particle simulation and inverse design using artificial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Peurifoy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Cano-Renteria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">G</forename><surname>Delacy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Joannopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tegmark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Soljačić</surname></persName>
+		</author>
+		<idno type="doi">10.1126/sciadv.aar4206</idno>
+		<ptr target="DOI:10.1126/sciadv.aar4206" />
+	</analytic>
+	<monogr>
+		<title level="j">Science Advances</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">23752548</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Generative Adversarial Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">J</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pouget-Abadie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Warde-Farley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ozair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Courville</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1406.2661" />
+		<imprint>
+			<date type="published" when="2014-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Study on a Poisson&apos;s Equation Solver Based On Deep Learning Technique</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Shan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Dang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1712.05559" />
+		<imprint>
+			<date type="published" when="2017-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Artificial neural networks for solving ordinary and partial differential equations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">E</forename><surname>Lagaris</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Likas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">I</forename><surname>Fotiadis</surname></persName>
+		</author>
+		<idno type="doi">10.1109/72.712178</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Neural Networks</title>
+		<imprint>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Solving differential equations using neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Chiaramonte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kiener</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+		<respStmt>
+			<orgName>Stanford University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">A Neural Network Based ElectroMagnetic Solver</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">H</forename><surname>Kolluru</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Stanford University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Artificial neural network method for solution of boundary value problems with exact satisfaction of arbitrary boundary conditions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">S</forename><surname>Mcfall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">R</forename><surname>Mahan</surname></persName>
+		</author>
+		<idno type="doi">10.1109/TNN.2009.2020735</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Neural Networks</title>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">PyTorch: tensors and dynamic neural networks in Python with strong GPU acceleration</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">I</forename><surname>Facebook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Research</surname></persName>
+		</author>
+		<ptr target="https://pytorch.org/" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Adjoint method and inverse design for nonlinear nanophotonic devices</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">W</forename><surname>Hughes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Minkov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">A D</forename><surname>Williamson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Fan</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1811.01255" />
+		<imprint>
+			<date type="published" when="2018-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Jackson</surname></persName>
+		</author>
+		<idno>ISBN: 047130932X. DOI: 10. 1119/1.19136</idno>
+		<title level="m">Classical Electrodynamics</title>
+		<imprint>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+	<note>3rd Edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Adam: A Method for Stochastic Optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1412.6980" />
+		<imprint>
+			<date type="published" when="2014-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

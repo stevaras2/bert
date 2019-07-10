@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Using Census Data to Predict Solar Panel Deployment</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eddie</forename><surname>Sun</surname></persName>
+							<email>:eddiesun@stanford.edu|jeremychen:czm@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brett</forename><surname>Szalapski</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brettski@stanford</forename><surname>Edu</surname></persName>
+						</author>
+						<author>
+							<affiliation>
+								<orgName>1 Introduction</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Using Census Data to Predict Solar Panel Deployment</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>New renewable energy sources require improvements to the current electric grid. The recent surge in the number of intermittent energy generation facilities, such as solar and wind farms, has resulted in a need for improved monitoring and control methods for the electric grid due to increased supply-side uncertainty. Mitigating the uncertainty in the amount of electricity privately produced would greatly increase power generation efficiency, resulting in less waste of fossil-fuel generated electricity.</p><p>One major component of supply-side uncertainty comes from residential solar panel installations. Today, installing solar panels on residential homes is easy and affordable, and will only become easier and more affordable as time progresses. As a result, it is difficult to know how many solar panels exist and supply power to the grid. If energy companies had more insight into this piece of the supply-side puzzle, they could better model an area's energy production and balance power plant production accordingly, resulting in lower energy costs and less environmental impact.</p><p>For this project, we implemented and optimized an artificial neural network (NN) and a support vector regression (SVR) algorithm to predict the number of solar installations in a given tract from census data. The input to the model consists of geographical and demographical characteristics, such as land area, average household income, climate data, number of residents of age 30-39, etc. The model takes these census data and then outputs the number of solar systems in a given tract. The model is trained using supervised learning on a labeled dataset. We also used the models and principal-component-analysis (PCA) to determine which features have the most influence on modeling the number of solar systems (i.e. which features are most strongly correlated with solar deployment density).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Previous Work</head><p>There are surprisingly few previously published studies that use census data to make demographic predictions considering the availability of census data; the few that were found are described here. The University of California, Irvine's (UCI) 1996 census income dataset has been used to predict whether income levels are below or above $50,000 per year with logistic regression and random forests, achieving classification accuracy of around 92% <ref type="bibr" target="#b2">[3]</ref>. A previous CS229 project accomplished the same task with the same dataset, also using random forests and logistic regression <ref type="bibr" target="#b3">[4]</ref>. These studies suggest that logistic regression and random forests may be suitable algorithms for our work, but these examples differ in that they are classification tasks rather than regression predictions.</p><p>Neural networks have also been used in conjunction with census data. Wang et al. predicted population counts using a standard feed-forward neural network with 4-6 hidden layers <ref type="bibr" target="#b4">[5]</ref>, however the main focus of this work was to compare the neural network performance with that of linear regression. Census and weather data have also been used to augment crime data to forecast crime in Chicago and Portland as a multi-classification problem <ref type="bibr" target="#b5">[6]</ref>. The authors accomplished this with several neural network architectures: feed-forward, convolutional, recurrent, and recurrent convolutional, with the best result being about 75% accuracy. A third, deep-learning study predicted age and gender from cell-phone metadata using a convolutional network <ref type="bibr" target="#b6">[7]</ref>. Although these works utilized NN's for a different task than ours, these studies demonstrate the power of neural networks in conjunction with census data.</p><p>To our knowledge, the soon-to-be-published paper <ref type="bibr" target="#b1">[2]</ref> from which the dataset is obtained is the first to utilize machine learning for large-scale surveying of solar systems. Near-term solar power forecasting using machine learning is more commonplace <ref type="bibr" target="#b7">[8]</ref>, but this project and the aforementioned paper are among the first to study system installation counts, which are more correlated with long-term solar power forecasting and market sizing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset</head><p>The dataset used for this project contains 155 different demographic statistics of each respective census tract, along with the number of solar systems in each tract <ref type="bibr" target="#b0">[1]</ref>. The dataset contains just under 36,000 valid examples. The labels were determined from a previous project originating from ES's research group, which used a semi-supervised convolutional neural network to count solar panel systems from satellite images (not yet published) <ref type="bibr" target="#b1">[2]</ref>. The data is split into 80 percent train, 10 percent dev, and 10 percent test sets. Pre-processing was done to remove invalid data from the dataset, such as null, infinite, or NaN entries. Furthermore, string and categorical columns were excluded. All features were normalized to zero mean and unit variance before being used in PCA, SVM, or NN.</p><p>The label "number of solar systems" refers to the count of solar installations, not individual panels. This means that a rooftop solar panel array, such as on SEQ buildings, and a large solar farm, such as the Ivanpah Solar Power Facility in western California, are each counted as a single solar system. This labeling system is used to avoid skewing the data with large solar farms. In addition, this labeling system is more useful for mitigating the uncertainty in the number of solar panels, the majority of which is due to rooftop solar arrays rather than large solar farms. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>Based on the limited amount of previous work on census data-related predictions, we decided to implement two different machine-learning algorithms: support vector regression (SVR), and a fully connected neural network (NN) to predict solar system deployment density. The NN was chosen because of the aforementioned preceding work for census-prediction tasks, while the SVR was chosen as an candidate for improvement on the logistic regression used in previous works. These two algorithms were also chosen because both can learn highly-nonlinear trend-lines, and after carrying out PCA, it was immediately clear that the data is nonlinear. The following sections detail the PCA, SVR, and NN algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Principal Component Analysis</head><p>In order to visualize the data, as well as gain insight into which features are the most influential in modeling, two-component principal component analysis (PCA) was implemented. The first k principal components of a dataset correspond to the first k eigenvectors of the matrix 1 <ref type="figure" target="#fig_1">Figure 2</ref> shows that a model capable of representing radial contours may be the most effective. As such, it is unsurprising the support vector regression using an RBF kernel is reasonably successful. <ref type="table" target="#tab_0">Table 1</ref> shows a breakdown of some of the features with highest variance maintained in the first two components. </p><formula xml:id="formula_0">m m i=1 x (i) x (i)T . This is equivalent to maximizing u T 1 m m i=1 x (i) x (i)T u subject to ||u|| 2 = 1.</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Neural Network</head><p>The standard feed-forward neural network takes in 155 demographic/geographic features (x 1 , x 2 , . . . , x 155 ) and then predicts the number of solar panel systems for the given input features (ŷ). A NN consists of layers of neurons which first linearly combines all inputs x i into the neuron as</p><formula xml:id="formula_1">z [l] j = 155 i w [l] i x i + b [l] where z [l]</formula><p>j is the j th neuron in layer l; w i is the weight for the i th feature; and b <ref type="bibr">[l]</ref> is the bias in layer l. The weights w i and biases b for each layer are fitted by the NN to the data. Note that all of the w i 's of a layer are represented as a single matrix W <ref type="bibr">[l]</ref> , where the individual w T i 's make up the rows of W . The logit z [l] j is then passed through a rectified linear unit (ReLU) activation function a</p><formula xml:id="formula_2">[l] j = max{0, z [l]</formula><p>j } which allows the model to learn non-linear trends. This result is then passed to the next layer of neurons, and similarly to the next, until the final layer outputs a prediction for the number of solar systemsŷ.</p><p>In the backpropagation step, the NN optimizes the weights W and biases b of each layer by minimizing them against the loss function L(y,ŷ), where y is the ground truth label, using gradient descent</p><formula xml:id="formula_3">W [l] := W [l] − α ∂L ∂W [l] b [l] := b [l] − α ∂L ∂b [l] .<label>(1)</label></formula><p>where α is the learning rate. The derivatives are calculated by using the chain rule of calculus starting from the loss function, working backwards through the layers. Further details can be found in <ref type="bibr" target="#b10">[11]</ref>.</p><p>The neural network designed for this project was coded using Keras <ref type="bibr" target="#b11">[12]</ref> and TensorFlow <ref type="bibr" target="#b12">[13]</ref>. The final model consists of 2 hidden layers with 512 and 128 neurons respectively, ReLU activation functions for each hidden layer, a linear activation function for the output node, Adam as the optimizer with default hyper-parameters <ref type="bibr" target="#b8">[9]</ref>, a learning rate of 0.0003, batch size of 512, and 200 training epochs. The mean-squared-error M SE = L(ŷ, y) = 1 m m i=1 (y i −ŷ i ) 2 is used as the loss function, where m is the number of examples in the dataset.We use dropout <ref type="bibr" target="#b9">[10]</ref> to regularize and reduce over fitting the model with keep probabilities of 75% for both hidden layers. We use the coefficient of determination R 2 and mean absolute error (MAE) of the validation set as metrics to evaluate the model,</p><formula xml:id="formula_4">R 2 = 1 − m i=1 (y i −ŷ i ) 2 m i=1 (y i − µ y ) 2 M AE = 1 m m i=1 |y i −ŷ i |<label>(2)</label></formula><p>where µ y is the mean of the labels y.</p><p>The hyper-parameters of the final NN were chosen after two rounds of hyper-parameter searches. In the first search, we ran 25 models with randomly selected hyper-parameters and then compared the R 2 and MAE of each model. A summary of the varied hyper-parameters are shown in the table below. Tuning based on the hyper-parameter ranges in table 2, the best performing model achieved an R 2 of 0.77 and a MAE of 10.6 with a learning rate of 0.003, a batch size of 512, 2 hidden layers, 493 and 216 neurons in the hidden layers, and a dropout probability of 0.22 and 0.24 for the hidden layers.</p><p>To arrive at the chosen hyper-parameters for our final model, we performed a second optimization by varying individual hyper-parameters and comparing the metrics one model at a time. The performance of the final model is shown in <ref type="figure" target="#fig_2">Figure 3</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Support Vector Regression</head><p>In classification tasks, Support Vector Machines (SVM) work by maximizing the margin between the classes. Support Vector Regression (SVR) works similarly, but instead attempts to find a best-fit curve. SVR's can also utilize kernels to fit non-linear curves by mapping features to a high-dimensional space. Below are the kernel functions used in the SVR models, where x i , x j are generic feature vectors:</p><formula xml:id="formula_5">Linear kernel :K(x i , x j ) = x T i x j (3) Polynomial kernel :K(x i , x j ) = (1 + x T i x j ) d (4) Gaussian (RBF) kernel :K(x i , x j ) = exp(− ||x i − x j || 2 2σ 2 )<label>(5)</label></formula><p>The kernelized-SVR model was explored using these three kernels. The penalty parameter was first set at 300, kernel cache size at 200, and the kernel coefficient set at 1/(n * σ x ). Model selection and parameter tuning was performed with SciKitLearn's GridSearchCV module <ref type="bibr" target="#b13">[14]</ref>. Like the NN, MSE was used as the loss function and MAE and R 2 coefficient were used as metrics. After running all three kernels with the full dataset and GridSearchCV parameter tuning, LinearSVR results in poor model performance, and the polynomial kernel did not converge after many hours of running. Among all three kernels, the RBF kernel resulted in the best accuracy and a reasonable model fitting time, which, as previously mentioned, is was expected based on the PCA results. The results of the final LinearSVR and SVR-RBF models are shown in <ref type="figure" target="#fig_3">Figure 4</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Model Performance</head><p>The SVM performed best with a radial basis function kernel, while the NN achieved similar performance after two rounds of hyper-parameter searching. These results are summarized in <ref type="table" target="#tab_2">Table 3</ref>. Both the SVR with an RBF kernel and the NN achieve similar MAE results. We attribute this to the variance in the data. Our dataset is inherently noisy, since there are many census tracts with very few solar panel installations and a select few with extremely high numbers of solar panel systems, such as northern California. Further work may include analyzing the distribution of the data down to the census-tract level and modifying the models based on any findings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Feature Influence</head><p>For this application, we computed numeric gradients using the NN to determine the influence of each feature on solar system deployment, identifying which features correlate most directly with the number of solar systems. To do this, numeric gradients of the label with respect to each input feature were calculated by changing a single feature by a small and completing a forward pass to make a prediction. Features that have a large positive numerical gradient have a strong positive correlation with the number of solar systems, while features with a large negative gradient have a strong negative correlation. <ref type="table" target="#tab_3">Table 4</ref> contains a few selected features of interest. In <ref type="table" target="#tab_3">Table 4</ref>, the relative positive/negative correlation is the fraction of the numerical gradient of each respective feature normalized to the absolute value of the maximum numerical gradient of any feature, which was population density.</p><p>The results both validate the model and offer some interesting insights into the data. For example, a strong positive correlation with yearly solar irradiance is expected. A strong negative correlation with number of frost days is also expected, since cold areas do not get as much sunlight as warmer areas, thus these census tracts are less likely to have high concentrations of solar panels. The strongest negative correlation is with respect to population density, which is also justifiable because areas with a lot of large houses, or low population density, are bound to have more solar panels than dense urban areas where residents do not have the same control over their own roofs.</p><p>The most striking, but not surprising, results are the strong positive correlation with % Democratic voters and the strong negative correlation with respect to % Republican voters. In both 2012, and 2016, the results rank near the top of each respective category. This distinction between the two political parties is stark, though not surprising given each party's respective stance on climate change.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion and Future Work</head><p>Both an SVM and a standard feed-forward NN can predict the number of solar systems reasonably well from US census data. Both models have similar performance, achieving an mean-absolute-error of around 11 solar panels systems and an R 2 value of the best fit line between the predictions and the true labels of around 0.79. Principle component analysis determined which features contributed the most variance to the labels, and NN numeric gradients of the prediction with respect to each feature quantified each feature's influence on the model. Strongly correlated features include voting tendencies, solar irradiance, median housing values, and population density.</p><p>Opportunities for future work include separating residential and commercial installations, which could even more accurately help model un-tracked energy contributions to the grid. Furthermore, it would be worth exploring how much power is generated in a given census tract, which would be a function of not only number of solar systems, but solar panel area and weather conditions. Similarly, it could be useful for companies selling solar systems to be able to more accurately predict the monetary gains from energy generated over time in a given neighborhood as a selling point or revenue predictor.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 (Figure 1 :</head><label>11</label><figDesc>a) shows the density (examples per state) of examples across the United states, while Figure 1(b) shows the density of solar systems (number of systems per state divided by the number of census tracts in the state). (a) Example Density (b) Solar System Density Figure 1: Where the Data Comes From</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2</head><label>2</label><figDesc>Figure 2: 2-Component PCA</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Neural Network Performance: a) Test predictions vs test labels. b) Histogram of the error (difference) between the model predictions and the true test labels.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Left: SVR-RBF ResultsRight: LinearSVR Results</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Features Contributing Top Variance to Each Principal Component</figDesc><table>Feature Name 
+Var. retained: PC-1 
+Feature Name 
+Var. retained: PC-2 
+High School Graduation Rate 
+-0.1618 
+% 2016 Rep. Vote 
+-0.1399 
+Rate of Families Below Poverty 
+-0.1586 
+Frost Days 
+-0.1389 
+Public Health Insurance Rate 
+-0.1496 
+Relative Humidity 
+-0.1356 
+Master's Education 
+0.1887 
+Overall Electricity Price 
+0.1698 
+Per-Capita Income 
+0.1887 
+Rebate 
+0.1717 
+Median Household Income 
+0.1905 
+Residential Incentive 
+0.1773 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table>1st Hyper-Parameter Search 
+Hyper-Parameter 
+Range 
+Learning rate (α) 
+10 −4 to 10 −2 (log scale) 
+Batch size 
+16, 32, 64, 128, 256, 512 
+# Hidden layers 
+2 to 5 
+# Neurons per layer 
+8 to 512 
+Dropout prob. 
+0.0 to 0.6 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3 :</head><label>3</label><figDesc></figDesc><table>Model Performance Summary 
+Model 
+Train MAE Dev MAE Test MAE Train R 2 Dev R 2 Test R 2 
+SVR w/ Linear Kernel 
+29.1 
+29.9 
+29.3 
+0.26 
+0.16 
+0.22 
+SVR w/ RBF Kernel 
+4.2 
+17.4 
+18.1 
+0.93 
+0.79 
+0.78 
+Neural Network 
+7.3 
+10.5 
+18.5 
+0.95 
+0.79 
+0.71 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>Table 4 :</head><label>4</label><figDesc></figDesc><table>Feature Influence 
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>Github Repo: https://github.com/brettski15/cs229_solar Branch: master See included README.md for running instructions</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">ACS 1-year estimates [data file</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">American Community</forename><surname>Survey</surname></persName>
+		</author>
+		<ptr target="http://factfinder.census.gov" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">DeepSolar: A Machine Learning Framework to Efficiently Construct Solar Deployment Database in the United States</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiafan</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Joule</title>
+		<imprint>
+			<date type="published" when="2019" />
+		</imprint>
+	</monogr>
+	<note>accepted</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Machine Learning Income Prediction Using Census Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeff</forename><surname>Sheremata</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medium.com, Medium</title>
+		<imprint>
+			<date type="published" when="2017-01-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Prediction of Earnings Based on Demographic and Employment Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Voisin</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+<note type="report_type">CS 229 Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Advances in Neural Networks -ISNN 2006</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="doi">10.1007/11759966</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Lecture Notes in Computer Science</title>
+		<imprint>
+			<date type="published" when="2006-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Forecasting Crime with Deep Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><surname>Stec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Diego</forename><surname>Klabjan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ArXiv</title>
+		<imprint>
+			<date type="published" when="2018-06" />
+		</imprint>
+	</monogr>
+	<note>Stat.ML</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Using Deep Learning to Predict Demographics from Mobile Phone Metadata</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bjarke</forename><surname>Felbo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ICLR Workshop Track</title>
+		<imprint>
+			<date type="published" when="2016-02-13" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Solar Power Forecasting with Machine Learning Techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Emil</forename><surname>Isaksson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mikael</forename><forename type="middle">Karpe</forename><surname>Conde</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Royal Institute of Technology, Royal Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Diederik</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jimmy</forename><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Dropout: a simple way to prevent neural networks from overfitting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nitish</forename><surname>Srivastava</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="1929" to="1958" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Deep Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kian</forename><surname>Katanforoosh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS229: Machine Learning</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Keras</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">François</forename><surname>Chollet</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Tensorflow: a system for large-scale machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OSDI</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Matplotlib: A 2D graphics environment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">D</forename><surname>Hunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing in science &amp; engineering</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="90" to="95" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The NumPy array: a structure for efficient numerical computation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stéfan</forename><surname>Walt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">Chris</forename><surname>Van Der</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gael</forename><surname>Colbert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Varoquaux</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing in Science &amp; Engineering</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="22" to="30" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">pandas: a foundational Python library for data analysis and statistics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wes</forename><surname>Mckinney</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+	<note>Python for High Performance and Scientific Computing</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">plotly: Create Interactive Web Graphics via &apos;plotly. js</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carson</forename><surname>Sievert</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+	<note>R package version 3.0</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Solar Panel Deployment Using US Census Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeremy</forename><surname>Chen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eddie</forename><surname>Sun</surname></persName>
+							<email>eddiesun@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brett</forename><surname>Szalapski</surname></persName>
+							<email>brettski@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predicting Solar Panel Deployment Using US Census Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>∑ : Principal Component Analysis (PCA) of the dataset demonstrates that a weak radial trend is present, which explains the SVR + RBF performance. Top components: average income, education level, cost of housing, fuel cost, race, electricity prices, incentives, democratic voting percentage, frost, humidity. Equation:</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The recent surge in the number of intermittent energy generation facilities requires improved monitoring and control methods for the electric grid due to increased supply-side uncertainty.</p><p>One major component of supply-side uncertainty comes from residential solar panel installations. Today, installing solar panels on residential homes is easy and affordable. As a result, it is difficult to know how many solar panels exist and supply power to the grid.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>The features of the dataset contains US census data from the 2015 American Community Survey <ref type="bibr">[1]</ref>. The labels of the data (# of solar panel systems) comes from a previous project [2] in ES's research lab which used conv-nets to count solar panels from satellite images (not yet published).</p><p>The dataset contains labeled data from 35,698 census tracts and is split 80/10/10 between train/dev/test sets. The data was preprocessed by removing categorical columns and rows with invalid numeric values before feeding the data into the SVR and NN. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>• Separating residential vs. commercial installations • Transfer learning to other similar tasks (e.g. predicting electric car ownership) • Error analysis, further hyperparameter tuning</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>The neural network (NN) is a standard feed-forward NN coded in Keras with a Tensorflow backend. The final model architecture and hyperparameters were tuned using random search. For this project, we developed an SVR and a neural network (NN) to predict solar panel deployment from US census data. We also used PCA and the NN to gain some insight on the data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Network</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]</head><label>1</label><figDesc>American Community Survey. 2015. 2015 ACS 1-year estimates [data file]. Retrieved from http://factfinder.census.gov [2] Yu, Jiafan, Wang, Zhecheng et al. "DeepSolar: A Machine Learning Framework to Efficiently Construct Solar Deployment Database in the United States." Joule (2019), accepted [3] Srivastava, Nitish, et al. "Dropout: a simple way to prevent neural networks from overfitting." The Journal of Machine Learning Research 15.1 (2014): 1929-1958.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

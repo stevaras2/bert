@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HYBRID DISTRIBUTIONAL AND DEFINITIONAL WORD VECTORS</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haiyuan</forename><surname>Mei</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ranjani</forename><surname>Iyer</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">HYBRID DISTRIBUTIONAL AND DEFINITIONAL WORD VECTORS</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>OVERVIEW</head><p>• Motivation: Out Of Vocabulary (OOV) problem -exploration of word definitions in downstream NLP tasks.</p><p>• Prior methods: Def2Vec, on-the-fly embeddings capable of capturing OOV words, and limited usage exploration.</p><p>[1]</p><p>• Approach: HybridVec Generate word embedding from word definitions, combine it with distributed representations, and explore the possibility or improving downstream NLP tasks.</p><p>• Evaluation: Intrinsic word embedding benchmarks and Extrinsic NMT evaluation, shown to improve translation perplexities and capture complementary aspect of word regarding distributed representation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head><p>• Word embeddings benchmarks for GloVe, LSTM Baseline and Seq2Seq model. LSTM baseline model is roughly at the level of distributional method; Seq2Seq model shows very limited evidence of such capability[2]:</p><p>• GloVe: WEB benchmark for GloVe vectors • Baseline glove: WEB benchmark for LSTM baseline model initialized from GloVe • Baseline rand: WEB benchmark for LSTM baseline model initialized randomly • s2s enc mean: WEB benchmark for Seq2seq model with encoder output mean as the def vec.</p><p>• OpenNMT compare performance improvements using LSTM baseline vector and GloVe:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ANALYSIS</head><p>• LSTM baseline vectors tend to cluster in feature space. Need to train from a broader source.</p><p>• Glove makes use of feature space more efficiently, grasp more sutle meaning of words.</p><p>3D tSNE: LSTM Baseline vectors is likely to cluster GloVe uses feature space more efficiently</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUTURE WORK</head><p>• Additional plans for model: greater regularization, inputting multiple definitions, inputting sentence structure, try other embeddings.</p><p>• Continue the exploration of combining different word vectors for downstream NLP tasks.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Evaluation: Intrinsic word embedding benchmarks and Extrinsic NMT evaluation, shown to improve translation perplexities and capture complementary aspect of word regarding distributed representation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head><p>• Word embeddings benchmarks for GloVe, LSTM Baseline and Seq2Seq model. LSTM baseline model is roughly at the level of distributional method; Seq2Seq model shows very limited evidence of such capability <ref type="bibr" target="#b1">[2]</ref>:</p><p>• GloVe: WEB benchmark for GloVe vectors • Baseline glove: WEB benchmark for LSTM baseline model initialized from GloVe • Baseline rand: WEB benchmark for LSTM baseline model initialized randomly • s2s enc mean: WEB benchmark for Seq2seq model with encoder output mean as the def vec.</p><p>• OpenNMT compare performance improvements using LSTM baseline vector and GloVe:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ANALYSIS</head><p>• LSTM baseline vectors tend to cluster in feature space. Need to train from a broader source.</p><p>• Glove makes use of feature space more efficiently, grasp more sutle meaning of words.</p><p>3D tSNE: LSTM Baseline vectors is likely to cluster GloVe uses feature space more efficiently</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUTURE WORK</head><p>• Additional plans for model: greater regularization, inputting multiple definitions, inputting sentence structure, try other embeddings.</p><p>• Continue the exploration of combining different word vectors for downstream NLP tasks.</p></div>		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MODEL</head><p>• Baseline LSTM: A two-layer LSTM encoder, Simple linear decoder and NLL loss, where the encoder layer hidden output denotes the final definitional word vector.</p><p>• Seq2Seq: A two-layer LSTM encoder with dropouts plus a two layer LSTM decoder without attention.</p><p>• Variational AutoEncoder: Adapted VAE with single-layer LSTM encoder and decoder with Gaussian prior regularizer <ref type="bibr" target="#b2">[3]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TRAINING</head><p>• Dataset: GloVe <ref type="bibr" target="#b3">[4]</ref>. All models are trained on pretrained 300d GloVe vectors based on a crawl of 2014 Wikipedia. Definitions retrieved from WordNet <ref type="bibr" target="#b4">[5]</ref>.</p><p>• HybridVec Implementation: Pytorch, Adam optimizer, Xavier initialization, hidden size 150, learning rate of 1e-4, batch size 64, 15/20 epochs.</p><p>• Intrinsic evaluation: Word embedding benchmarks <ref type="bibr" target="#b1">[2]</ref> • NMT Dataset: OpenNMT-py demo(10k) dataset. Only for comparasion between GloVe and HybridVec.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Def2vec: Learningword vectors from definitions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrey</forename><surname>Kurenkov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Duan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<pubPlace>Stanford, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stanislaw</forename><surname>Jastrzebski</surname></persName>
+		</author>
+		<ptr target="https://github.com/kudkudak/word-embeddings-benchmarks" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Generating sentences from a continuous space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Samuel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luke</forename><surname>Bowman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oriol</forename><surname>Vilnis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><forename type="middle">M</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rafal</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Samy</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">SIGNLL Conference on Computational Natural Language Learning</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Wordnet: A lexical database for english</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="39" to="41" />
+			<date type="published" when="1995-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

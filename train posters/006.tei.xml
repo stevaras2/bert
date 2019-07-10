@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning Program Structure and Assigning Style Grade by k-means clustering and Softmax Regression</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Homero</forename><surname>Roman</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Final Project</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>CS229 2016</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roman</forename></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Final Project</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>CS229 2016</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Learning Program Structure and Assigning Style Grade by k-means clustering and Softmax Regression</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract:</head><p>The goal of this research is to figure out how to automatically assign a style grade to a program and provide style feedback. More specifically, the procedure employs Karel Programs from the first assignment of the CS106A class.</p><p>Motivation:</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation:</head><p>While identifying a functionality mistake can be straightforward, identifying style mistakes is subject to subtle conventions and an infinite number of possible programs. This poses a problem for students trying to get feedback on their program style while they are still working on the assignment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Approach:</head><p> Cluster the training data of working programs into k means  Explore three clustering strategies and choose one  Create a Logistic Regression or Naive Bayes model of the functions of the programs in each cluster including non-working programs and decide for each function of a test program whether the function is well decomposed and whether is well formatted. Use this to provide feedback to the student.  Then average these two parameters for all functions in a program and use them to describe the program. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Clustering results:</head><p> Clustering by counts of primitives is very susceptible to unnecessary command calls. Also it does not distinguish between call times.  Clustering by pouring all coordinates may be susceptible to outlying programs that tend to spend too much time at a certain place.  Double k-means overall seems to address the issues above and can even be implemented for variable times. However, it breaks down with infinite loops.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Softmax results:</head><p> Softmax with clustering performed with 87% accuracy while Softmax without clustering performed at about 75%. Therefore, clustering before hand seems to perform better.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work:</head><p> Apply these results into a purely Java setting  Account for variable naming and comment content.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc> Finally add whether the program works to the program vector and use this vectors to run Softmax Regression on the test program and decide its style grade. Implementation: . [#move(); #putBeeper(); #pickBeeper(); #turnLeft();#turnRight();#turnAround()] Strategy 1 Parse into primitives And create a vector with counts of each primitive Keep track of Karel's Coordinates over time Strategy 2 Cluster into k-means [time,x,y; time2,x2,y2; …] Run preliminary k- means to find cluster of a single programStrategy 3Logistic Regression or Naïve Bayes to decide whether a program's function is well decomposed and well formatted.</figDesc><table>Implementation: 
+
+. 
+
+[#move(); #putBeeper(); #pickBeeper(); 
+#turnLeft();#turnRight();#turnAround()] 
+
+Strategy 1 
+
+Parse into primitives 
+And create a vector with 
+counts of each primitive 
+
+Keep track of Karel's 
+Coordinates over time 
+
+Strategy 2 
+
+Cluster into k-means 
+
+[time,x,y; 
+time2,x2,y2; …] 
+
+Run 
+preliminary k-
+means to find 
+cluster of a 
+single program 
+
+Strategy 3 
+
+Fit the functions in the programs in each cluster 
+using collected properties of each function 
+
+[between 2-10 lines?; 
+Appropriate line length; 
+No repeating code; 
+label] 
+
+[Right indentation; 
+No blank lines; 
+Commented] 
+
+Is the function well 
+decomposed? 
+
+Is the function well formatted? 
+
+Then, take average over a program. 
+[Program decomposed; program well formatted; Program Works] 
+
+Fit Softmax Model 
+
+Report Style grades for the 
+program overall and each 
+function. Provide feedback 
+on how to improve the 
+style of each function. 
+
+100 programs from 
+the same assignment 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

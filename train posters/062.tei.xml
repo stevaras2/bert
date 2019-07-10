@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Dataset and Preprocessing The Global Foodie: Predicting International Restaurant Success with Yelp</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Ngela</forename><surname>Kong</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>229</postCode>
+									<region>CS</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vivian</forename><surname>Nguyen</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>229</postCode>
+									<region>CS</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Catherina</forename><surname>Xu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>229</postCode>
+									<region>CS</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Dataset and Preprocessing The Global Foodie: Predicting International Restaurant Success with Yelp</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We selected Yelp, one of the largest and most popular platforms for crowd-sourced reviews about restaurants, to be the primary source of our data. The main dataset comes from the Yelp Dataset Challenge, and contains a total of 77K businesses, 2.2 million reviews by 552K users, and 566K business attributes. Restaurants come from one of four countries: the United Kingdom, Germany, Canada, and the United States. We ran a Python script to convert the raw JSON data into CSV files. We converted categorical feature values, such as casual, dressy, or formal for restaurant attire, into numerical values, such as 0, 1, and 2, respectively. For feature values that are true and false, we converted the Boolean into an integer so that 1 represents true and 0 represents false. To account for missing data attributes, we used a method similar to sci-kit's Imputer -we replaced empty feature values with the average of existing values in that feature column.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Global Foodie: Predicting International Restaurant Success with Yelp</head><p>A ngela Kong, Vivian Nguyen, Catherina Xu Stanford University, CS 229</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Selection</head><p>Step 1: Out of the 98 total business attributes per restaurant, we handselected 28 of the ones that we believed would have the greatest impact on business rating. Some of the features we selected include attire, ambience, delivery, noise level, parking, outdoor seating, price range, review count, has take-out, and Wi-Fi.</p><p>Step 2: Next, we conducted univariate feature selection on each country's restaurant data. We used Chi-squared and Anova F-value as the scoring functions for selecting the top 20 most important features from our previously hand-selected 28.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bonus</head><p>Step: We conducted Binary Naïve Bayes (unigram, tokenized, stemmed) using NLTK's built-in classifier to determine the word features in restaurant reviews that were most indicative of restaurant success.</p><p>One of the neat aspects that our project focuses on is identifying any differences in the success of a restaurant across multiple countries. One of the challenges that we faced in doing so was performing sentiment analysis on German restaurant reviews, since the majority of the reviews were written in German. While this proved difficult to process, we were still able to train our models on the features given in the dataset; in the future, however, we would like to improve our accuracy through leveraging human-annotated multilingual sentiment datasets online and explore language-independent sentiment analysis.</p><p>In addition, one of the challenges we faced earlier on was preprocessing the Yelp dataset, which was highly unbalanced and contained many unpopulated cells. Although there were a lot of possible features to consider, most of the restaurants did not contain data for these features.</p><p>As a result, we decide to impute empty values in a column with the mean value -however, more data should be collected to improve and confirm our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>We found that in both the Chi-squared and Anova test results, there are 6 features that are highly weighted in all four countries: parking street, takes reservations, review count, casual ambience, noise levels, and attire. Other features that were generally correlated (which we quantified as appearing on three of the four countries' feature selected lists) include: hipster ambience, garage parking lot, Wi-Fi, intimate ambience, good for kids, good for groups, allows smoking, and has TV.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Step 2: Next, we conducted univariate feature selection on each country's restaurant data. We used Chi-squared and Anova F-value as the scoring functions for selecting the top 20 most important features from our previously hand-selected 28.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bonus</head><p>Step: We conducted Binary Naïve Bayes (unigram, tokenized, stemmed) using NLTK's built-in classifier to determine the word features in restaurant reviews that were most indicative of restaurant success.</p><p>One of the neat aspects that our project focuses on is identifying any differences in the success of a restaurant across multiple countries. One of the challenges that we faced in doing so was performing sentiment analysis on German restaurant reviews, since the majority of the reviews were written in German. While this proved difficult to process, we were still able to train our models on the features given in the dataset; in the future, however, we would like to improve our accuracy through leveraging human-annotated multilingual sentiment datasets online and explore language-independent sentiment analysis.</p><p>In addition, one of the challenges we faced earlier on was preprocessing the Yelp dataset, which was highly unbalanced and contained many unpopulated cells. Although there were a lot of possible features to consider, most of the restaurants did not contain data for these features. As a result, we decide to impute empty values in a column with the mean value -however, more data should be collected to improve and confirm our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>We found that in both the Chi-squared and Anova test results, there are 6 features that are highly weighted in all four countries: parking street, takes reservations, review count, casual ambience, noise levels, and attire. Other features that were generally correlated (which we quantified as appearing on three of the four countries' feature selected lists) include: hipster ambience, garage parking lot, Wi-Fi, intimate ambience, good for kids, good for groups, allows smoking, and has TV.</p><p>Next, we examined features, if any, which correlated to success for restaurants situated in a specific country. We found that the divey ambience was a feature that was solely important for restaurants in the United States, whereas a touristy ambience was highly valued only in the United Kingdom. In addition, in the North America region, customer satisfaction correlated with the existence of a parking lot and parking valet services.</p><p>After running a variety of binomial and multinomial classification models after selecting 20 features, we discovered that Anova F-value is a more consistent scoring function. The results of modeling using features selected by Anova F-value show that Naive Bayes is generically the best model for restaurants in all four countries. The Multinomial Decision Tree is the worst. This suggests that features have low dependency upon each other. Also, Naive Bayes could also be a robust model in this case because there are fewer data samples for most countries. Finally, it appears that test accuracy is generally higher for binomial models than for multinomial ones, which makes sense since multi-class classification usually yields lower accuracy.</p><p>From the most significant word features retrieved from sentiment analysis, we note that Americans reviewers tend to be more negative in their reviews, with rampant capitalization and emphasis on lack of personal attention (acknowledge, acknowledgement).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work and Acknowledgements</head><p>Bon appétit! In this project, we aim to identify the key features people in different countries look for in their dining experience. Are Americans more inclined toward a late-night snack than their German counterparts? Do Canadians value a take-out option more than those who live in the United Kingdom? These findings will help businesses make informed decisions when expanding globally. To achieve this goal, we tackled the problem in three phases:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Classification Methods</head><p>We considered two different methods of restaurant classification based on their star ratings: binomial and multinomial. In the binomial case, restaurants with a star rating below 4.0 are classified as 0, and restaurants with a star rating of 4.0 and above are classified as 1. The machine learning models we used to train and predict the data are Naive Bayes, Logistic Regression, Support Vector Machine, Decision Tree, Random Forest, and Gaussian Discriminant Analysis. In the multinomial case, restaurants are classified from 0 to 5 based on the nearest integer value to their star rating.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :Figure 2 :Figure 3 :</head><label>123</label><figDesc>Test accuracies for various classifications performed on 20 features Figure 2: Best, mediocre, worst models respectively for all countries Figure 3: Word features most indicative of restaurant review sentiment</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>The machine learning models used are Multinomial Logistic Regression, Decision Tree, and Random Forest. O</figDesc><table>btain and pre-
+process 
+restaurant data 
+from around the 
+world 
+
+For each 
+country, perform 
+feature 
+selection to 
+pick the 
+attributes that 
+correspond to 
+high star ratings 
+
+Run various 
+classification 
+and regression 
+models to 
+evaluate the 
+strength of 
+selected feature 
+sets 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

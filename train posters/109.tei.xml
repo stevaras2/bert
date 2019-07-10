@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Justin Chen (jyc100)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandra</forename><surname>Henzinger</surname></persName>
+						</author>
+						<title level="a" type="main">Justin Chen (jyc100)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Expand to more datasets &amp; protected variables • Test different predictor and adversary architectures • Incorporate fairness definition directly into differentiable loss function, to train only a predictor without the adversary (e.g. via Lagrange multipliers)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data + Features</head><p>• ML models mirror biases in data: model predicts ŷ based on features x, containing protected feature z • Goal: augment models to induce fair predictions • Numerous definitions of fairness:</p><p>• Demographic parity: ŷ and z independent • Equality of opportunity: ŷ and z conditionally independent given y = 1 • Equality of odds: ŷ and z conditionally independent given y • Incongruent: one model can never satisfy all 3 definitions • Adversarial network to encode fairness into model:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>• UCI Adult income dataset: predicting income (≤/&gt;$50K) based on demographic census data of individuals <ref type="bibr">(age, sex, race, workclass, occupation, investments, education degree, marital status, relationship, native</ref>  What are the tradeoffs between fairness and accuracy across methods?</p><p>• <ref type="figure">Fig 1:</ref> ROC Curve comparison for basic and opportunity models, with/without post-processing step enforcing EO</p><p>• <ref type="figure">Fig 2:</ref> Accuracy comparison for basic and parity models, with/without post-processing step enforcing DP</p><p>• Adversarial models show initial gains in fairness with little loss in accuracy.</p><p>• Post-processing techniques create predictions that are approximately as fair, using basic model (no adversary).</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>country) • Protected variables z : sex (presented here), race, age • 32K individuals in train &amp; 16K in test Motivation • Post-training processing: enforce fairness on black-box model by ROC analysis, e.g. equating true positive and false positive rates [Hardt et al. (2016)] Maximizes accuracy in ŷ Maximizes fairness in z ! " = ! $% &amp;, ŷ − α! * (,, ẑ) Predictor logistic loss Adversary logistic loss Predictor loss • Hyperparam / regulates accuracy/fairness tradeoff • Input to adversary A depends on choice of fairness metric: y for demographic parity; (y, ŷ) for equality of odds/opp. • 3-layer neural networks for predictor and adversary. Post-Processing • Alter class-specific thresholding of logits for predictions to align TP and FP across all classes z [Hardt et al. (2016)] • True positive (TP) rate: 0(ŷ = 1|&amp; = 1, ,) • False positive (FP) rate: 0(ŷ = 1|&amp; = 0, ,)à Equivalent TP across all z gives equality of opportunity à Equivalent TP and FP across all z gives equality of odds à Equivalent 0 ŷ = 1 , across all z gives parity • EO post-processing enforces equality of opportunity; DP enforces demographic parity.Future WorkM. Hardt, E. Price, and N. Srebro. Equality of Opportunity in Supervised Learning. ArXiv e-prints, October 2016. C. Wadsworth, F. Vera, and C. Piech. Achieving fairness through adversarial learning: an application to recidivism prediction. FAT/ML, 2018. B. Zhang, B. Lemoine, and M. Mitchell. Mitigating unwanted biases with adversarial learning. CoRR, abs/1801.07593, 2018.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

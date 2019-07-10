@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaimie</forename><surname>Xie</surname></persName>
+							<email>jaimiex@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Frank</forename><surname>Fan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Kim</surname></persName>
+							<email>mdkim@stanford.edu</email>
+						</author>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Online Social Networks, such as Facebook, provide a great interface for connecting with others, whether they are acquaintances or close friends. However, there is no distinction made between different social circles, which are clusters of friends who share some common feature(s). In this paper, we explore ways to apply Latent Dirichlet Allocation (LDA), an unsupervised learning algorithm traditionally used for topic detection in textual corpora, to automatically detect social circles among a subject's friends. For each friend, which we will consider as documents, we take in account both the profile features and users' friends, comparable to word "tokens." Finally, we will analyze our results by finding the cost-minimizing assignment from our circles to the ground-truth circles, based on the Balanced Error Rate (BER).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Social Network Circle Discovery Using Latent Dirichlet Allocation</head><p>Frank Fan; Jaimie Xie; Matthew Kim</p><p>After running the LDA Algorithm, we choose a cut-off probability to choose which circles each user should actually be assigned to. We placed user u in circle C if Pr(u ∈ C) &gt; 1/N, where N is the number of circles we predicted. After establishing the circles, we compare the circles with the Ground-truth circles. For our experiment, we used the Balanced Error Rate (BER) as the error/cost function to minimize total error of mapping circles, as did <ref type="bibr" target="#b0">Petkos et al (2015)</ref>. If we let C = {C 1 , C 2 ,...C k } be the set of automatically produced circles, and D = {D 1 , D 2 ,...D k } be the set of ground-truth. Then, we can define the BER as:</p><p>The BER cost function equally weights the fraction false-positives and false-negatives. If we compute the BER for every pair (C i ,D j ), we can construct the cost matrix where the ij-th entry is BER(C i , D j ).</p><p>We want to find a circle matching f: C ↦ D, which gives us the least total error. With the KuhnMunkres algorithm, we can solve the assignment problem in O(n 3 ) time instead of O(n!) by trying every possible f. For our final BER score, we take the average of the BER rates from each circle assignment, then subtract that from one:</p><p>For each algorithm we average the BER f values over all the ego networks. See <ref type="figure" target="#fig_2">Figure 1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Modeling the likelihood of the dataset:</head><p>Given a set of users, an LDA model produces a metric called perplexity, related to the log-likelihood as <ref type="bibr" target="#b3">[4]</ref>:</p><p>where D is a set of users and N is the total number of features, summed across all users in D.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Selection of the Number of Circles, with AIC c :</head><p>We select the number of circles through stepwise selection that minimizes the AIC c criterion:</p><formula xml:id="formula_0">[1][2]</formula><p>which rewards high likelihood, but penalizes model complexity, and corrects for small sample sizes relative to the dimension of the model's parameter space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Unsupervised learning</head><p>We then run online-LDA <ref type="bibr" target="#b2">[3]</ref> using the selected circle number to model the structure of the dataset. Let us call this algorithm LDA+C.</p><p>For comparison, using the same AIC c -selected circle number above, we also explored a k-means clustering algorithm. For this, we preprocessed the data using a truncated SVD representation <ref type="bibr" target="#b4">[5]</ref> to reduce dimensionality in terms of the number of features. We will refer to this as KMEANS+C Finally, for comparison/evaluation, we ran the above algorithms using the ground-truth number of circles of the networks. Let us call these algorithms LDA and KMEANS.</p><p>For both our K-means and LDA algorithms, we achieved better results when we predict the number of circles using AIC C , rather than just setting k = the number of ground-truth circles (See <ref type="figure">Figure 3)</ref>. This is because in the latter case, we are overfitting the data. Predicting our own circles protected against model complexity, as in the 1912 ego-network.</p><p>Another surprising result was that the K-Means algorithms, which used only the feature vectors of the user's friends, but did not consider the network structure or user's own profile features, did better than the LDA algorithms, which considered all three components. Our implementation of the LDA algorithm places larger weight on the network structure because the user's friends "documents" are largely comprised of their connections within the ego-network, rather than profile features. This implies that profile features (even using the compressed vectors) are more powerful than network structure in informing us about circle formations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Latent Dirichlet Allocation</head><p>LDA is a generative algorithm traditionally used in NLP for document topic-modeling <ref type="bibr" target="#b3">[4]</ref>. LDA models documents as mixtures of topics, with each topic being a multinomial distribution of words. In effect, the probability of a document is:</p><p>We extend this algorithm to apply it to social circle discovery --circles representing topics, users representing documents and user features representing words. Not only is this an intuitive extension of the field of linguistic topic-modeling, LDA proves to be more time-efficient than traditional circle-discovery methods <ref type="bibr" target="#b0">[1]</ref> In addition, in line with work by Hoffman et al. <ref type="bibr" target="#b2">[3]</ref>, we will utilize an online-learning variant of LDA <ref type="bibr" target="#b5">[6]</ref> for this project.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ABSTRACT CONTACT</head><p>The data is divided into ego networks, which consists of the ego node, all of the nodes it is connected to (called alters), and all of the edges there may be among these nodes. Within each ego network, we have the following:</p><p>• Circles: these are the circles that the user manually chose, the ground-truth circle.</p><p>• Edges: this contains every edge in the ego network, other than the implicit edges that connect each alter to the ego node.</p><p>• Features: for the ego and each alter, we are given a binary array, where a 1 in index i signifies that feature i is satisfied (and 0 otherwise). The features are constructed in a tree-structure:</p><p>• Feature names: this contains the names of the features that correspond with the feature arrays. In general, we will just use the numerical labeling of the features. <ref type="bibr" target="#b0">1</ref> The data that we used for training/testing is provided by the Stanford Network Analysis Project, and all of our data comes from Facebook.  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 5 .</head><label>5</label><figDesc>LDA on network 1912</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 4 .Figure 6 .</head><label>46</label><figDesc>Ground truth on network 1912 Figure 6. KMeans on network 1912</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>=Figure 1</head><label>1</label><figDesc>Figure 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 Figure 3</head><label>23</label><figDesc>Figure 2</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Social Circle Discovery in Ego-Networks by Mining the Latent Structure of User Connections and Profile Attributes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Georgios</forename><surname>Petkos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Symeon</forename><surname>Papadopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yiannis</forename><surname>Kompatsiaris</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2015 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining 2015 (ASONAM &apos;15)</title>
+		<editor>Jian Pei, Fabrizio Silvestri, and Jie Tang</editor>
+		<meeting>the 2015 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining 2015 (ASONAM &apos;15)<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="880" to="887" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Regression and time series model selection in small samples</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hurvich</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Tsai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrika</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page">297307</biblScope>
+			<date type="published" when="1989" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Online learning for latent dirichlet allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">R</forename><surname>Bach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="856" to="864" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Latent dirichlet allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">the Journal of machine Learning research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Using linear algebra for intelligent information retrieval</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">W</forename><surname>Berry</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">T</forename><surname>Dumais</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">W</forename><surname>Brien</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM review</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="573" to="595" />
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Software Framework for Topic Modelling with Large Corpora</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Radim</forename><surname>Rahurek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Sojka</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LSTM Network Architecture Hypernymy and Word Vectors Stacked LSTM Results Training and Hyperparameter Tuning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">LSTM Network Architecture Hypernymy and Word Vectors Stacked LSTM Results Training and Hyperparameter Tuning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Distributed word vectors learn semantic information between words with similar contexts.</p><p>• Hypothesis: Hypernymy (and other semantic relationships) are distributed across the dimensions of the learned vectors.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Irving Rodriguez</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Right: Update rules for LSTM cell. h denotes the predicted hypernym, w the input hyponym, and</head><p>C the cell state. <ref type="bibr">Left: Visualization of LSTM cell with input, forget, output, and activation (c)</ref>  • Hypernymy may be distributed in complex, non-uniform ways.</p><p>• As such, use LSTM cells with unified input-forget ("replacement") gate to update weights differently for different hypernym "types"  apple -fruit vs. apple -food vs. apple -company</p><p>• Datasets used in literature (number of hyponym-hypernym pairs):</p><p>• BLESS (1.4k), Linked Hypernym Datasets (3.7M)</p><p>• Pair examples: (chris_cristie, politician), (duathlon, event) • Previous models use BLESS to cluster vector differences, then learn linear projection for each cluster (piecewise-projection).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Top 3 principal components of the vector difference between pairs in each dataset. Left: BLESS. Right: LHD.</head><p>2) Train piecewise-projection classifier on BLESS and LHD sets, use as baseline accuracy for LSTM network.</p><p>• Classify word pairs whose projected difference norm is under some threshold <ref type="bibr">(Fu et. al):</ref> 3) Train stacked LSTM model to learn mapping from hyponym vector to hypernym vector.</p><p>• Minimize quadratic loss between predicted and label hypernym:</p><p>Number of clusters, BLESS </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>gates .</head><label>gates</label><figDesc>Source: Sak et. al, I"Long Short-Term Recurrent Neural Network Architectures for Large Scale Acoustic Modeling"Final Word Vector Model ParametersVocabulary Size: 250k• Mikolov et al. "Distributed Representations of Words and Phrases and their Compositionality". http://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf • Baroni et. al. "How we BLESSed distributional semantic evaluation." http://dl.acm.org/citation.cfm?id=2140491 • Kliegr. "Linked hypernyms: Enriching DBpedia with Targeted Hypernym Discovery • Fu et. al. "Learning Semantic Hierarchies via Word Embeddings." http://ir.hit.edu.cn/~jguo/papers/acl2014- hypernym.pdf • Google. "word2vec, tool for computing continuous distributed representations of words." https://code.google.com/p/word2vec/ • Abadi et. al. "TensorFlow: Large-Scale Machine Learning on Heterogeneous Systems." http://tensorflow.org/DataExample of hypernymy and its asymmetry and transitivity.</figDesc><table>Final Word Vector Model Parameters 
+Vocabulary Size: 250k 
+
+• Mikolov et al. "Distributed Representations of Words and Phrases and their Compositionality". 
+http://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf 
+• Data 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Final Stacked LSTM Model Parameters 4) Add dropout to the top layer of the two best-performing LSTM models.</figDesc><table>Threshold, 
+BLESS 
+
+Number of clusters, 
+LHD 
+
+Threshold, 
+LHD 
+
+30 
+3.5 
+15 
+4.0 
+
+Final Piecewise-Projection Model Parameters 
+
+Mini-batch SGD 
+Size 
+
+Number of 
+LSTM Layers 
+
+50 
+4 
+
+Model 
+Training 
+Accuracy 
+(%) 
+
+Validation 
+Accuracy 
+(%) 
+
+Test 
+Accuracy 
+(%) 
+
+PW-PROJ-
+LHD 
+
+66.1 
+69.1 
+61.3 
+
+4-LSTM 
+76.7 
+76.8 
+75.9 
+
+7-LSTM 
+73.4 
+77.1 
+75.0 
+
+4-LSTM + 
+D 
+
+84.0 
+82.4 
+79.8 
+
+7-LSTM + 
+D 
+
+85.2 
+84.1 
+81.3 
+
+References </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

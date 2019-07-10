@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Proximity-Based Early Warning System for Gentrification in California</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-13">December 13, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aakash</forename><surname>Pattabi</surname></persName>
+							<email>apattabi@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Economics</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Proximity-Based Early Warning System for Gentrification in California</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-13">December 13, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Introduction</head><p>With the recent failure of Senate Bill (SB) 827 in California, pressure is higher than ever on state politicians to better understand and respond to the increasing unaffordability of California's urban centers. Designed to issue more housing construction permits in high-opportunity areas, SB 827 was ironically crippled by its failure to explicitly acknowledge the possible gentrification externalities of new housing construction. Because of the astronomical (and increasing) cost of housing, more Californians live in poverty than in any other state when cost of living is accounted for <ref type="bibr" target="#b4">[6]</ref>. It is imperative that California's policymakers articulate smart housing policies that do not lock out access to the state's economic engines to the neediest Californians.</p><p>One tool that academics use to design thoughtful housing policy is the gentrification early warning system <ref type="bibr" target="#b2">[4]</ref>. Such systems are frameworks for using state and local data to describe emergent gentrification at a hyper-local level. Previously, <ref type="bibr" target="#b12">[14]</ref> analyzed Bay Area data and conducted nine in-depth case studies in Bay Area communities to develop a gentrification classification scheme labelling Census Tracts from "Not Losing Low-Income Households" to "Advanced Gentrification." Unfortunately, conducting focused ethnographic research will not always be possible within policymakers' budgetary and time constraints. While prior machine learning work in this area is sparse, <ref type="bibr" target="#b8">[10]</ref> used stepwise discriminant analysis to characterize gentrifying tracts in isolation using demographic and economic features, absent any spatial data or contextual focus. <ref type="bibr" target="#b10">[12]</ref> showed significant accuracy gains using off-the-shelf methods incorporating spatial features, but this work was limited to forecasting home prices over time, which may not perfectly correlate with gentrification, especially in California where affordable housing and rent caps are widespread. We extend prior work by:</p><p>i. Using California-wide Census data to classify emergent gentrification and to understand the leading indicators of gentrification through feature selection;</p><p>ii. And modelling the state's housing market as an interconnected network to test an economic theory of how gentrification spreads.</p><p>Specifically, we use machine learning techniques -primarily non-parametric models such as Random Forests and Gradient Boosting -to ascertain the leading indicators of gentrification at the Census Tract level in California. We formulate the problem as binary classification over a five-year time horizon, using custom-designed responses to proxy for whether gentrification was observed in a community over the prediction period.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Data: Responses and Features</head><p>We source data from American FactFinder (AFF ), a public information tool produced by the United States Census <ref type="bibr" target="#b1">[2]</ref>. We focus on "Census Tracts," local geographic bounding boxes that house on average 4000 people <ref type="bibr">[3]</ref>. Using Tract-level data from 2010-2016 from AFF, we construct two responses that indicate whether gentrification occurred in a Census Tract.</p><p>Prior research describes gentrification in terms of either rising costs of living or displacement of the poor, as income distributions shift towards affluence <ref type="bibr" target="#b12">[14]</ref>. To model the first as a response, we use the inter-year, intra-tract difference in the median monthly cost of housing for all residents:</p><formula xml:id="formula_0">y i = Median Cost i,t − Median Cost i,t</formula><p>Because gentrification occurs over a long time horizon, we split the feature set around a pivot year of 2012; we compute the responses using the data from years 2012-2016 with the data from 2010 and 2011 used as features (in the above formulation, t = 2012 and t = 2016). Splitting the data to forecast gentrification over a long time horizon comports with previous research; <ref type="bibr" target="#b10">[12]</ref> uses decennial Census estimates. We chose the pivot year by evaluating the performance of the models on an independent validation set for each pivot in {2012, 2013, 2014, 2015}.</p><p>To model the second response, we use an imputed measurement of the inter-year, intra-tract change in the income distribution of the tract (see <ref type="table" target="#tab_0">Table 1</ref>). To compute the inter-censal change in the income distribution, we use the Hellinger distance measurement of the distance between two distributions. Over two discrete distributions P (X), Q(X) with the same support, the Hellinger distance is:</p><formula xml:id="formula_1">∆ Hell = 1 √ 2 k i=1 P (X = x i ) − Q(X = x i ) 2</formula><p>For each tract, we compute the Hellinger distance between the observed income distribution and a baseline in which all residents are perfectly affluent with probability 1. Tracts with low Hellinger distances tend to be high-income; tracts with high Hellinger distances tend to be low-income. Finally, we compute the response by taking the differences of these Hellinger distances for each tract between 2012 (the pivot year) and 2016. A tract that becomes more affluent (gentrifies) from 2012 to 2016 has a negative difference, and vice versa for a tract that becomes more low-income. We rescale the responses so that they are bounded between 0 and 100 and positive differences signal gentrification. Finally, we relabel each response 1 (gentrification occurred) or 0 (gentrification did not occur) for both the monthly cost of housing and income distribution shift responses.</p><p>We characterize each Census Tract using a vector of roughly 150 features assembled from tables S2502, S2503, B25085, and DP03 in AFF. These include Tracts' demographic and economic characteristics, such as: employment by industry; ethnic and racial composition; level education; and more.</p><p>Additionally, we engineer four features based on the theory of spatial equilibrium proposed in prior work on endogenous gentrification <ref type="bibr" target="#b6">[8]</ref>. This theory posits that gentrifying Tracts are highly influenced by the gentrification patterns in their near neighbors. For each Census Tract, we calculate the first order spatial lag and the local Moran's I-Statistic of spatial clustering for both responses during the observation period. We construct these features by modelling California as an unweighted, undirected network with nodes being Census Tracts and edges occurring between Tracts that are adjacent (by queen's contiguity <ref type="bibr" target="#b11">[13]</ref>). The two first order spatial lag features describe the change in the average cost of living and in the income distribution between 2010 and 2011 for Census Tracts surrounding each given Tract. This lag is computed as follows:</p><formula xml:id="formula_2">lag i = j:i↔j y j j 1{i ↔ j}</formula><p>Here, y j denotes each response computed between the pre-pivot years, 2010 and 2011. Likewise, for each response, we compute the Local Moran's I-Statistic, a measure of spatial clustering <ref type="bibr" target="#b10">[12]</ref>. Economic theory suggests that spatial randomness in an area's housing market indicates that the market is in disequilibrium -an indicator of gentrification. Conversely, spatial homogeneity indicates the area is in equilibrium, with a low probability of gentrifying. We compute this feature for each response as:</p><formula xml:id="formula_3">Moran's I i = Z i j Z 2 j n j:i↔j Z j</formula><p>Where Z k is the deviation of the response of interest from the mean across all n Tracts in the training sample (computed between 2010 and 2011, the observation period). We do not use time-invariant features describing the geography of the Census Tracts. These ought not add much explanatory power to a model that forecasts gentrification by time. Likewise, we do not add network-topological features from e.g. <ref type="bibr" target="#b5">[7]</ref> as Census Tracts are modified or added with extreme rarity <ref type="bibr">[3]</ref>.</p><p>Overall, the data consist of 8,056 observations for each of California's Census Tracts (with one dropped due to missing data). Surprisingly, a priori we observed the classes to be roughly balanced for both responses, suggesting that there still exist pockets of affordability in the state. We split the data into a training set comprising 90% (7,262) of the observations and validation and test sets comprising 5% (397) respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Methods</head><p>We applied four machine learning methods to each classification problem (defining gentrification as the change in monthly cost and as the shift in income distribution). We used a Random Forest classifier; a Gradient Boosting model (XGBoost); an 1 -penalized logistic regression; and an ensemble approach that classified Census Tracts according to a majority vote of the aforementioned three models.</p><p>Random Forests are a variant of bagged decision trees; a Random Forest classifier grows a substantial number of independent classification trees each of which minimizes the Gini impurity of its leaf nodes through recursive binary splitting <ref type="bibr" target="#b0">[1]</ref>. The Gini impurity of node E given k classes is:</p><formula xml:id="formula_4">G(E) = 1 − k i=1 P r.{i|E} 2</formula><p>Gini impurity measures how often a randomly chosen observation in the node would be mislabelled if it were assigned a random label according to the distribution of responses in the node. As classification trees grown on the same set of bootstrapped data tend to be highly correlated, the Random Forest algorithm decorrelates the trees by constraining each split in each tree to be on a random subsample of features in the feature space.</p><p>Gradient Boosting is an ensemble technique using classification trees in which trees are grown sequentially (as opposed to simultaneously in Random Forests). Later trees are grown to minimize the errors made by their predecessors. Each subsequent tree "learns" from the mistakes made earlier in training. XGBoost, a popular implementation of Gradient Boosting which enables regularization of the trees, minimizes the loss function:</p><formula xml:id="formula_5">L(φ) = i (ŷ i , y i ) + k Ω(f k )</formula><p>Whereŷ i are the predicted class; each f k is a decision tree; and Ω(·) is a regularization function of the number of leaves in each tree and the weights of those leaves <ref type="bibr" target="#b3">[5]</ref>. We used logistic loss as the loss function (·).</p><p>For the Random Forest estimator, we tuned n, the number of trees and p, the number of features in the random split set at every split. For the XGBoost estimator, we tuned the learning rate α, the tree depth d on each tree, and the regularization parameter λ.</p><p>Our final unitary model was the only parametric estimator -1 -penalized logistic regression, commonly known as the LASSO. The LASSO estimator is a variation on linear regression that logit-transforms the responses to estimate:</p><formula xml:id="formula_6">log P r.{y i = 1|x i } 1 − P r.{y i = 1|x i } = β 0 + n i=1 β i x i +</formula><p>Logistic regression models P r.{y i = 1} as logistic in the features <ref type="bibr" target="#b9">[11]</ref>. This estimator imposes a penalty in the objective function on the size of the parameters β in absolute value. The parameters are:</p><formula xml:id="formula_7">β = argmin β L(β) + 1 C n i=1 |β i |</formula><p>Where L(β) is the logistic loss function. Because the LASSO penalizes parameter coefficients in absolute value, it implicitly performs feature selection as features with little predictive power have their parameter coefficients driven to zero. For the LASSO estimator, we tuned the regularization parameter C.</p><p>We tuned all hyperparameters via two-stage grid search. First, we drew test hyperparameters uniformly from a representative interval around the model implementations' default parameters in <ref type="bibr" target="#b9">[11]</ref>. For example, we initially searched random forest sizes n ∈ {25, 50, 100, 150, 250, 500}. Second, we narrowed the grid search to focus on tested hyperparameters around the values that maximized accuracy on an independent validation set in the first stage of the search (see <ref type="table">Table 2</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>Parameter  <ref type="table">Table 2</ref>: The grid-search values of λ for XGBoost and C for 1 -penalized logistic regression reveal that regularization greatly impacted model performance in classifying Tracts according to the change in the monthly cost of housing. This is likely due to the large feature dimensionality.</p><p>The high value of λ and low value of C found by grid search on the validation set suggest that models that perform poorly may be vulnerable to overfitting, especially given the high feature dimensionality.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Discussion</head><p>We evaluated each classifier on each of the two responses using accuracy, precision, and recall. While accuracy measures the proportion of test set class assignments that match the true labels, precision and recall provide granular insight into classification errors. Recall quantifies the proportion of positive classes (instantiations of gentrification) that were correctly captured by the classifier; precision quantifies the prediction accuracy solely among the samples that were predicted to be in the positive class. Precision is commonly used when the cost of false positives is high -such as, when there may be resources wasted in a misdirected policy response. Recall is commonly used when the cost of false negatives is high -such as when families are being displaced. While no one metric dominates in importance in this domain, precision and recall illuminate why the performance of all classifiers on the task of classifying Tracts according to their change in income distribution during the prediction period was so poor. All four classifiers outperformed the no information classifier in predicting whether a Tract would gentrify as defined by a rise in the monthly cost of housing (see <ref type="figure" target="#fig_2">Figure 3)</ref>. XGBoost, the ensemble model, and the Random Forest estimators outperformed the no information baseline substantially -by roughly 10 percentage points. Furthermore, all three outperformed the parametric logistic regression, suggesting either some implicit hierarchical structure to the problem or simply that the logit model's inherent bias limited its accuracy.</p><p>By contrast, no model outperformed the no information classifier in predicting whether a Tract would gentrify based on its income distribution. This is not surprising, given how uncorrelated these responses were, with ρ = 0.06. The high recalls and relatively low precisions reported by the Random Forest, logit model, and voting classifier suggest a plausible explanation: that all three were overly "trigger-happy" in labelling Tracts as positive instantiations of the response, leading to high counts of true positive labelings (and few false negatives -boosting recall) as well as high counts of false positive labelings (damping precision). The confusion matrix for the Random Forest estimator -the best model on this problemindicates that the estimator guessed "positive" 86% of the time, an overwhelming majority given that the classes were balanced in the training and test sets (see <ref type="table" target="#tab_2">Table 3</ref>). Examining the mislabelled Tracts in greater detail suggests that we may attribute these estimators' noisy performance to the fine granularity of the response. Some Tracts that saw only superficial income distribution changes over the prediction period were particularly susceptible to mislabeling, perhaps because their features were highly similar to Tracts further away spatially that underwent gentrification.  To understand the leading indicators of gentrification, we examine the most important features for the classifiers on the housing cost problem. The Local Moran's I-Statistics for income distribution shift and change in the monthly cost of housing were the two most important features extracted from XGBoost, the best-performing model on the independent test set. This lends credence to the theory that gentrification occurs when housing markets are in disequilibrium, indicated by high spatial randomness in their features. That the three next most important predictors quantify the number of elderly people; African Americans; and non-highschool graduates living in each Census Tract is intuitive as well. In California, these groups tend to earn below the median wage <ref type="bibr" target="#b7">[9]</ref> and tend to cluster in areas where the cost of living is low (e.g. in the case of the elderly, in retirement communities). These areas tend to be particularly vulnerable to gentrification as residents have few recourses when wealthy urbanites are willing to pay exorbitant prices to move out of even more exorbitantly priced cities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. Conclusion</head><p>In this research, we develop a classifier to predict whether gentrification will occur in a California Census Tract with 65% accuracy. We defined gentrification as an increase in the inflation-adjusted monthly cost of housing and observed experimentally that other definitions -such as ones based on localities' income distributions -yielded noisy results using public data. Non-parametric ensemble models such as Random Forests and XGBoost outperformed parametric models, which may have overfit the training data. Furthermore, engineered features describing the spatial characteristics of each Census Tract proved most consequential, lending credence to the theory that housing markets in spatial disequilibrium precede gentrification.</p><p>Further work might refine the spatially-engineered features by e.g. weighting the network adjacency matrix so that the i, jth entry denotes inverse intercentroid distance instead of adjacency. Alternatively, further work might focus on better defining gentrification by quantifying displacement of families or collapsing the bins of the income distribution response to increase the signal in the data. Finally, causal work could ascertain the drivers of gentrification as opposed to simply leading indicators. Accurately forecasting gentrification continues to be a pressing problem for California policymakers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. Code</head><p>All code written for this project can be found here.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>In this Census Tract, the income distribu- tion skews towards affluence (and becomes less tri- modal) between Year 1 and Year 2. This shift indi- cates that gentrification occurred.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>From left to right, these panels display high spatial autocorrelation (clustering); minimal spatial autocorrelation (randomness that tends to indicate market disequilibrium); and spatial anticorrelation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>XGBoost and the ensemble model per- formed best on the change in monthly housing cost response, with a 10% accuracy improvement over the no information classifier.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>No model outperformed the no information classifier on the income distribution shift response.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>Engineered features of spatial clustering were XGBoost's most important predictors, lending credibility to the theory of endogenous gentrification.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>The Census discretizes income reporting into bins that are more granular towards the lower end of the income scale.</figDesc><table>Less than $5,000 
+$5,000-$9,999 
+$10,000-$14,999 
+$15,000-$19,999 
+$20,000-$24,999 
+$25,000-$34,999 
+$35,000-$49,999 
+$50,000-$74,999 
+$75,000-$99,999 
+$99,999-$149,999 
+$150,000 or More 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3 :</head><label>3</label><figDesc>The confusion matrix for the Random For- est on the income distribution response reveals that the classifier predicted positive 86% of the time.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Random Forests</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Leo</forename><surname>Breiman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<date type="published" when="2001" />
+			<biblScope unit="page" from="5" to="32" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<ptr target="https://factfinder.census.gov/faces/nav/jsf/pages/index.xhtml.Accessed" />
+	</analytic>
+	<monogr>
+		<title level="j">United States Census Bureau. American FactFinder</title>
+		<imprint>
+			<date type="published" when="2018-11-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Forewarned: The Use of Neighborhood Early Warning Systems for Gentrification and Displacement</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Karen</forename><surname>Chapple</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miriam</forename><surname>Zuk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cityscape</title>
+		<imprint>
+			<biblScope unit="page" from="109" to="130" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">XGBoost: A Scalable Tree Boosting System</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianqi</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Carlos</forename><surname>Guestrin</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page">2016</biblScope>
+		</imprint>
+	</monogr>
+	<note>In: Knowledge Discovery in Databases</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The Supplemental Poverty Measure</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Liana</forename><surname>Fox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">United States Census Bureau: Economics and Statistics Administration</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aditya</forename><surname>Grover</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<title level="m">22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="855" to="864" />
+		</imprint>
+	</monogr>
+	<note>node2vec: Scalable Feature Learning for Networks</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Endogenous Gentrification and Housing Price Dynamics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Veronica</forename><surname>Guerrieri</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Hartley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><surname>Hurst</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">NBER Working Paper Series</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">The Hollowing-Out of the California Dream</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joel</forename><surname>Kotkin</surname></persName>
+		</author>
+		<ptr target="https://www.city-journal.org/html/california-economy-16076.html.Accessed" />
+		<imprint>
+			<date type="published" when="2018-12-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Modeling gentrification on the census tract level in Chicago from</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Han</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The University of Toledo Digital Repository: Theses and Dissertations</title>
+		<imprint>
+			<date type="published" when="1990" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Predicting gentrification using longitudinal census data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ken</forename><surname>Steif</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>Urban Spatial</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Quantitative Methods and Socio-Economic Applications in GIS</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fahui</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Regional Early Warning System for Displacement</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Miriam</forename><surname>Zuk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">US Department of Housing and Urban Development</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

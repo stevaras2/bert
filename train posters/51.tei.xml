@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Autonomous R/C Car Behavioral Cloning Optimization Behavioral Cloning [2] P* = P(s|π*) (distribution of states visited by expert)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joon</forename><surname>Jung</surname></persName>
+							<email>joonjung@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Autonomous R/C Car Behavioral Cloning Optimization Behavioral Cloning [2] P* = P(s|π*) (distribution of states visited by expert)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Objective Function:</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Behavioral cloning is relatively simple to implement but yields optimal result efficiently. We have used behavioral cloning to train a CNN based autopilot based on an open source platform. The goal of the project was to model and optimize the autopilot in a real world setting, other than a simulated one, trying to gain valuable insights to launch a real world machine learning agent. For the performance optimization, we have employed Data Aggregation[3] to augment the training process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Agent &amp; Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experiment Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN</head><p>State s: s1 = front direction camera image, s2 = steering angle, s3 = throttling value Actions a: a1 = steering angle, a2 = throttling value Training set: D = {":=(s,a)} from π* s: sequence of s a: sequence of a n/a 100% n/a n/a As shown in the experiment results, unfortunately the tried application of Data Aggregation is far from being optimal. The best performance is achieved only with one iteration of modifying the action control by the expert without aggregating the datasets. The main cause seems to be coming from the fact that it is very hard to modify each # $ , so it wouldn't perturbate the trajectory(") space already given. However, the agent reacts quite sensitively with the sequential dependency of each state (s, a) i with each other. * The CNN training and validation losses for each i iteration were all less than 0.05.</p><p>with MSE</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Agent &amp; Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Experiment Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN</head><p>State s: s1 = front direction camera image, s2 = steering angle, s3 = throttling value Actions a: a1 = steering angle, a2 = throttling value Training set: D = {":=(s,a)} from π* s: sequence of s a: sequence of a n/a 100% n/a n/a As shown in the experiment results, unfortunately the tried application of Data Aggregation is far from being optimal. The best performance is achieved only with one iteration of modifying the action control by the expert without aggregating the datasets. The main cause seems to be coming from the fact that it is very hard to modify each # $ , so it wouldn't perturbate the trajectory(") space already given. However, the agent reacts quite sensitively with the sequential dependency of each state (s, a) i with each other. * The CNN training and validation losses for each i iteration were all less than 0.05.</p><p>with MSE</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Metrics: (# of times being out of track / # of full wraps finished) x 100 with average of 50 full wraps finished for each iteration i ' + : policy trained after iteration i wo/w Aggregating Datasets Expert Control in Iteration j [1] Bojarski, M., Del Testa, D., Dworakowski, D., Firner, B., Flepp, B., Goyal, P., … &amp; Zhang, X. (2016). End to end learning for self-driving cars. arXiv preprint arXiv:1604.07316 [2] Yisong Yue, Hoang M. Le: ICML2018: Imitation Learning. https://drive.google.com/file/d/12QdNmMll-bGlSWnm8pmD_TawuRN7xagX/view [3] Stéphane Ross, Geoffrey J. Gordon, J. Andrew Bagnell: No-Regret Reductions for Imitation Learning and Structured Prediction. CoRR abs/1011.0686 (2010) [4] Donkey Car: http://www.donkeycar.com/ [5] Keras Salient Object Visualization: https://github.com/ermolenkodev/keras-salient-object-visualisation/tree/fix_tf1.8</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Training• Input1: 120 x 160 RGB image captured from frontal mono wide angle camera • Input2: Steering angle from a human driver or an autopilot • Input3: Motor throttling value form a human driver or an autopilot</figDesc><table>Auto Piloting 
+• Input: 120 x 160 RGB image captured from frontal mono wide 
+angle camera 
+• Output1: Steering angle 
+• Output2: Motor throttling value 
+
+Donkey Car [4] 
+
+Model # $ 
+
+Collect Training 
+Data from 
+human driver 
+#  *  
+
+Train CNN 
+
+Collect Training 
+Data from 
+autopilot driver 
+# $ 
+
+Train CNN 
+Model 
+# i+1 
+Data 
+Aggregation 
+
+# &amp; 
+
+Datasets 
+Aggregated 
+
+Human 
+' ( 
+' ) 
+' * 
+
+# $ isolated 
+10% 
+26.6% 
+20% 
+100% 
+Aggregating each 
+# $ 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

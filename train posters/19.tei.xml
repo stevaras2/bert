@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Dilated CNN + Classical Algorithms for Music Genre Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haojun</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of CS</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Siqi</forename><surname>Xue</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">ICME</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jialun</forename><surname>Zhang</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">ICME</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Dilated CNN + Classical Algorithms for Music Genre Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Our goal is to improve classical algorithm's performance in classifying music genres with a dilated convolutional neural network. First, we established baselines with classical algorithms with minimally pre-processed audio data and evaluate their performance. Then, we trained a dilated CNN, and use the different layers of our pre-trained CNN as the feature input for a few of the classical algorithms. The CNN has improved training time for other algorithms, but has proven to be easily overfitting the data. Classical algorithms seems to have some regularizing effect, but only to some extent. In general they achieve better results when working together.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Preprocessing</head><p>Our data set consists of 10 genres of music files. We will be only using 5 genres that we selected, namely classical, hiphop, metal, pop, blues. Each genre contains 100 pieces of music in wave form. Using the LibROSA library in Python, the data is preprocessed into the MFCC features, which allows us to represent each file as a 2D Numpy array. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dilated CNN</head><p>The convolution neural network that we trained consists of 2 dilated convolution units. Exact architecure is shown below: The Dilated CNN we have trained is very small and by itself it achieved around 86% train and test accuracy. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Classical Algorithms</head><p>We investigate the performance of four classical algorithms: Logistic Regression (LR), GDA, Random Forests and SVM. For each algorithm, we use three sets of inputs: <ref type="formula">(1)</ref> the input of the Dilated CNN network (2) the first dilated convolution layer in 4 (3) the second dilated convolution layer in 5. A comparison of the LR and CNN results using Layer 1 is shown in 7 and 8 As we can see in the above figures, there are only subtle differences in the coloring of the labels. Interestingly, Logistic regression actually performed better than the CNN with an accuracy of 88%, so we suspect some regularization effect by combining CNN and classical algorithms. However (below in PCA analysis), some purples are embedded in blue labels, which means classical algorithms are still constrained by CNN's overfitted features.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>We see that when training with raw data, the classical algorithms not only takes much longer, but also over-fit the data by a lot. Both aspects are greatly improved by incorporating CNN features. We suspect that combining classical algorithm and CNN have some regularization effect as LR with features from the CNN has greater accuracy. However, we also realize that classical algorithms are constrained by how well the CNN extract features, as shown in PCA analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>Convolutional neural networks might not be the best architecture for music classification. RNN architectures such as GRU and LSTM would likely produce better accuracy, but futher work needed to make them feature extractors. With more data we can also train deeper networks and also reduce overfitting.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :Figure 2 :</head><label>12</label><figDesc>Classical MFCC Features Figure 2: Metal MFCC Features</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Dilated CNN Architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 : DCNN Layer 1 Figure 5 : DCNN Layer 2 Figure 6 :</head><label>41526</label><figDesc>Raw PCA Graph above shows PCA of second layer features have significantly separated out the pop songs comparing to Layer 1, and even better than PCA analysis on Raw data.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 7 :</head><label>7</label><figDesc>CNN ConfusionMatrix Figure 8: LR confusion Matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 9 :</head><label>9</label><figDesc>True</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Accuracy Comparison</figDesc><table>LR 
+GDA Random Forest SVM 
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Cook</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Genre</surname></persName>
+		</author>
+		<ptr target="http://marsyasweb.appspot.com/download/data_sets" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">WaveNet: A generative model for raw audio</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Van Den Oord</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Aäron</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>SSW</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

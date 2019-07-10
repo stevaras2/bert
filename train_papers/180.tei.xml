@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Auto Grader for Short Answer Questions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pranjal</forename><surname>Patil</surname></persName>
+							<email>ppatil@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Civil and Environment Engineering Department of Civil and Environment Engineering</orgName>
+								<orgName type="institution">Stanford University Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashwin</forename><surname>Agrawal</surname></persName>
+							<email>ashwin15@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Civil and Environment Engineering Department of Civil and Environment Engineering</orgName>
+								<orgName type="institution">Stanford University Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Auto Grader for Short Answer Questions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Sentence Similarity</term>
+					<term>Attention layer</term>
+					<term>Bi-LSTM</term>
+					<term>Fully connected layer</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We present a hybrid Siamese adaptation of the Bi-directional Long Short-Term Memory (Bi-LSTM) network for labelled data comprised of pairs of variable length sequences. Our model is applied for the purpose of auto grading of short answer questions. We assess semantic similarity between the provided reference answers and the student response to that particular question. We exceed state of the art results, outperforming handcrafted features and recently proposed neural network systems of greater complexity. For these applications, we provide word embedding vectors to the Bi-LSTMs, which use a fixed size vector to encode the underlying meaning expressed in a sentence (irrespective of the particular wording/syntax). After this the time sequenced output of Bi-LSTM layer is passed through an attention layer to give importance to different words of the sentences. Finally a fully connected layer is proposed to measure the similarity between the word vectors.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Short answers are powerful assessment mechanisms. Many real world problems are open-ended and have open-ended answers which requires the student to communicate their response. Consequently, short-answer questions can target learning goals more effectively than multiple choice as they eliminate test-taking shortcuts like eliminating improbable answers. Many online classes could adopt short-answer questions, especially when their in-person counterparts already use them. However, staff grading of textual answers simply doesn't scale to massive classes. Grading answers has always been time consuming and costs a lot of Public dollars in the US. With schools switching to online tests, it is now time that the grading also gets automatic. In order to achieve this we start in this project by tackling the simplest problem where we attempt to make an machine learning based system which would automatically grade one line answers based on the given reference answers.</p><p>A typical example of the problem is as below:</p><p>Question: You used several methods to separate and identify the substances in mock rocks. How did you separate the salt from the water?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ref. Answer:</head><p>The water was evaporated, leaving the salt. Student -1 Response: By letting it sit in a dish for a day. -(Incorrect) Student-2 Response: Let the water evaporate and the salt is left behind. -(Correct)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>Comparison of sentence similarity is a significant task across diverse disciplines, such as question answering, information retrieval and paraphrase identification. Most early research on measurement of sentence similarity are based on feature engineering, which incorporates both lexical features and semantic features. Research has been carried around WordNet based semantic features detection in the QA match tasks and modelling sentence pairs utilizing the dependency parse trees. However, due to the excessive reliance on the manual designing features, these methods are suffering from high labor cost and nonstandardization. Recently, because of the huge success of neural networks in many NLP tasks, especially the recurrent neural networks (RNN), many researches focus on the using of deep neural networks for the task of sentence similarity. <ref type="bibr" target="#b0">[1]</ref> proposed a Siamese neural network based on the long short-term memory (LSTM) to model the sentences and measure the similarity between two sentences using Manhattan distance. These models, however, model the sentences mainly using the final state of RNN which are limited to contain all information of the whole sentence. <ref type="bibr" target="#b1">[2]</ref> proposed using an attention mechanism to give importance to different words and finally use a fully connected network at the end instead of Manhattan distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>We chose the publicly available Student Response Analysis (SRA) dataset. Within the dataset we used the SciEntsBank part of the dataset. This dataset consists of 135 questions from various physical sciences domain. It has a reference short answer and 36 student responses per question. Total size of dataset is 4860 data points. Ground truth labels are available in the dataset whether each student response is correct or incorrect. Data pre-processing including tokenization, stemming and spell checking each of the student responses. We used the Pre-trained Glove embedding trained on Wikipedia and Gigaword 5 with 400K vocabulary and 300 features. We split the dataset as follows: 80% train, 10% validation, 10% test data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Milestone Summary</head><p>We divided the auto grading task into 2 parts namely: grading answers of already seen questions given a reference answer and grading answers of unseen questions given a reference answer. The 2 nd case is of course more complicated as the algorithm hasn't been trained on the student responses for that question and is only working on the provided reference answer. For the first case <ref type="bibr" target="#b2">[3]</ref> showed that k-Nearest Neighbours (kNN) works better than the state of the art neural network approaches. In kNN approach, we need to decide the weights for the forming the sentence embedding from word embeddings. We came up with the following weights: After getting the weighted sentence vectors, we collected most similar 5 sentences (k=5) from the training set for a particular test sample and assigned the most frequent label. We achieved a 79% accuracy By the above procedure which is quite comparable to state of the are results on this dataset. Although this method is good, it can't be applied to unseen questions as we will not have student responses for that particular question in the train dataset. Hence we decided to take the neural network approach which we feel can generalise text similarity procedure. We observed that correct responses of students are unusually highly correlated and we use this surprising feature in our neural network approach to grade unseen questions. </p><formula xml:id="formula_0">W i = IDF i (W pos (i) − W neg (i))</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Framework</head><p>Our model composes of two sub-models: sentence modelling and similarity measurement. In sentence modelling we use Siamese architecture consisting of four sub-networks to get sentence representations. Each sub-network also has 3 layers namely: Word-embedding layer, Bi-LSTM layer and an attention layer. In the similarity model, we use a fully connected network and logistic regression layer to compute the correctness of the student response. The complete model architecture is shown in <ref type="figure">Figure-2</ref>. As mentioned above, from our initial baseline k-Nearest Neighbours (kNN) model, we observed that the correct student responses are unexpectedly highly correlated among each other. We also observed that their correlation among themselves is much higher than with the provided reference answer. Thus we decided to include a couple of correct student responses as well to capture various ways of student writings. The input to our model are 4 sentences, the word sequences of student's response X 1 = (x 1 1 , x 2 1 , . . . x n 1 ) the reference answer provided X 2 = (x 1 2 , x 2 2 , . . . x n 2 ) and the 2 correct student responses</p><formula xml:id="formula_1">X 3 = (x 1 3 , x 2 3 , . . . x n 3 ), X 4 = (x 1 4 , x 2 4 , . . . x n 4 )</formula><p>Figure 2: Hybrid Siamese Network</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Sentence Modelling</head><p>The sentence modelling part is a process of getting a fixed length sentence vector from individual word vectors. The aim is to get a sentence vector which can help in sentence similarity assessment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.1">Embedding Layer</head><p>The word embedding layer maps every token of the sentence to a fixed length vector. The size of the vector in our model is 300 which are pretrained GloVe vectors obtained from training over Wikipedia and Gigaword 5 vocabulary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.2">Bi-LSTM Layer</head><p>Take sentence X = (x 1 , x 2 ..., x T ) as an example. LSTM updates its hidden state h t using the recursive mechanism as</p><formula xml:id="formula_2">h t = sigmoid(W X t + U h t−1 )</formula><p>The LSTM also sequentially updates a hiddenstate representation, but these steps also rely on a memory cell containing four components (which are real-valued vectors): a memory state c t , an output gate that determines how the memory state affects other units, as well as an input (and forget) gate it (and h t ) that controls what gets stored in (and omitted from) memory based on each new input and the current state.</p><formula xml:id="formula_3">i t = sigmoid(W i x t + U i h t−1 + b i ) f t = sigmoid(W f x t + U f h t−1 + b f ) c t = tanh(W c x t + U c h t−1 + b c ) c t = i t ·c t + f t · c t−1 o t = sigmoid(W o x t + U o h t−1 + b o ) h t = o t · tanh(c t )</formula><p>where We obtain the final vector h i by concatenating the hidden states of both the layers. Thus a final concatenated vector is passed into the attention layer.</p><formula xml:id="formula_4">W i , W f , W c , W o , U i , U f , U c , U</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.3">Attention Layer</head><p>The attention mechanism can calculate a weight a i for each word annotation h i according the importance. The final sentence representation is the weighted sum of all the word annotations using the attention weight.</p><formula xml:id="formula_5">e i = tanh(W h h i + b h ) e i ∈ [−1, 1] a i = exp(e T i u h ) Σexp(e T t u h ) r = Σa i h i</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Similarity Measurement</head><p>The similarity measurement model functions as a binary classifier for the learned sentence embedding. Our model is an end to end model which means that sentence modelling layer and the similarity measurement model can be trained together.</p><p>Fully Connected Layer: Each output of our sentence modelling layer is a fixed size vector. We pass each of the student response , reference answer pair into the fully connected layer to measure the similarity between them. In this way we have 3 fully connected layers outputting 3 vectors for the pair wise similarity with the student response. <ref type="bibr" target="#b1">[2]</ref> showed that this works much better that Manhattan distance which was used by <ref type="bibr" target="#b0">[1]</ref> Logistic Regression Layer: The output of the fully connected layer is taken as input by this layer and it outputs a probability for the student response being correct.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Assesment and Loss Function</head><p>To evaluate the performance of our model, we chose two metrics namely accuracy (ACC) and mean square error (MSE). A threshold of 0.5 is used on predicted probability for assigning the final labels. For each sentence pair, the loss function is defined by the cross-entropy of the predicted and true label for training:</p><formula xml:id="formula_6">Loss = ylog(ỹ) + (1 − y)log(1 −ỹ)</formula><p>where y is the true label andỹ is the output probability for correct response.</p><p>It is most easily interpret able as well as an apt choice for our task which is very similar to a classification task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Experiments and Results</head><p>The hyper parameters used in our model were adapted from <ref type="bibr" target="#b0">[1]</ref> as it acted baseline for our case. Number of hidden layers in LSTM = 50. We selected the number of time-steps for the LSTM model to be equal to the length of the largest sentence in training the set which required us to pad the rest of the sentences to make the length equal. We used Adam optimizer to achieve faster convergence. Convergence rate was not an issue right now, but we wanted to make the model future proof for when we would run this on a much larger dataset than the current one.</p><p>Each model was trained for 50 epochs and batch size 16. Softmax activation function was used in the attention layer. LSTM was initialized with normal weights. Though <ref type="bibr" target="#b0">[1]</ref> suggests that LSTM is highly sensitive to initialization and we should start from a pre-trained network, we initialized the parameters randomly due to time constraints. L2 regularization was used in LSTM layer.</p><p>We built various models permuting with CNN, LSTM , Bi-LSTM, Attention layer, FNN and Manhattan Distance. Some of our best results are summarised in the table below. Our model is the best result obtained from these and it's architecture has been described above. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Discussion</head><p>Our Hybrid Siamese model achieved the highest accuracy. The credit for this success can be given to the kNN intuition. The observation that correct answers given by student are very similar to correct answers given by other students has helped in achieving this increased accuracy. Also it can be seen that the attention layer creates a large increase in the accuracy of the models as compared to the ones without accuracy. The ability of the attention layer to identify the weightage of each word according to its importance in the reference answer. We studied the cases in which the model was misclassifying the student answers. We found that there were two main causes for misclassification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.1">Length of student answer</head><p>The model misclassified cases where the difference between the length of the student answer and reference answers was large. We tried to overcome this by replacing the final fully connected layer with a cosine similarity measuring layer. This led to lower accuracies. Therefore the fully connected layer is better than cosine similarity but we need to change some properties of the layers to get better results. We believe that this problem can be solved by using a different attention layer which will enable the algorithm to remember the important words for longer time intervals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.2">Issue of Key words</head><p>Next up we observed the model misclassified answers which were missing the keywords from the reference answers. These student answers seem similar to the reference answer when we read it but are misclassified by the algorithm. This could be a result of the attention layer giving extra weight to the keywords and not being able to identify a phrase which means the same as the keyword. The example of the same is shown below.</p><p>Modifications must be implemented in the attention layer such as changing the activation etc to make it more robust.</p><p>Question : What is the relation between tree rings and time? Our hybrid model with the intuition of kNN beat all the other models on our dataset. Building upon our learnings from this project we would like to expand the analysis by training on run it on a larger unseen and out of domain dataset to gauge its robustness. During the poster presentation we talked with a researcher who was interested in providing us with a much larger dataset. We would also like to address all the issues we observed with our current model. We will be trying out different attention layer to smooth out key word issue. We would also consider adding better reference answers or better similarity detection mechanisms in the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Contributions</head><p>We worked on each part collaboratively and didn't explicitly divided the tasks. We both had equal contributions to literature review, data collection, writing code and report preparation.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Process</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>o are weight matrices and b i , b f , b c , b o are bias vec- tors. The Bi-LSTM contains two LSTM: forward LSTM and backward LSTM. The forward LSTM read the sentence from x 1 to x T , while the back- ward LSTM read the sentence from x T to x 1 .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Ref Answer: As time increases, number of tree rings also increases. Student Answer: They are both increasing Original Label: Correct Model Result: Incorrect 8 Conclusion &amp; Future Work</figDesc><table></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10">Github Link</head><p>This is the link to our code in Github repository:</p><p>Click here to access the Github Code</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Siamese Recurrent Architecture for learning sentence similarity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonas</forename><surname>Muller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aditya</forename><surname>Thygarajan</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">16</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">A sentence similarity estimation method based on improved Siamese Network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ziming</forename><surname>Chi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bingyan</forename><surname>Zhang</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">2018</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Identifying Current Issues in Short Answer Grading</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianqi</forename><surname>Wang</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">2018</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Investigating neural architectures for short answer scoring</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brain</forename><surname>Riordan</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">2017</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Reasoning about entailment with Neural Attention</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Grenfenstette</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1509.06664</idno>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">CAN: Enhancing Sentence Similarity Modeling with Collaborative and Adversarial Network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGIR-2018</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

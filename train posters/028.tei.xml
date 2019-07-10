@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Shale Gas Production Decline Prediction Using Machine Learning Algorithms</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaochuan</forename><surname>Xu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Geophysics Department</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wentao</forename><surname>Zhang</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Civil and Environmental Engineering Department</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Shale Gas Production Decline Prediction Using Machine Learning Algorithms</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• Locally Weighted Linear Regression</head><p>In order to make predictions for a specific well, find several wells in the training set that are 'close' to the target, using functional regression.</p><p>• Principal Component Analysis Since the component of the data is too large (about 100 dimensions), we compress the into 5 dimensions and then make prediction.</p><p>• PCA after K-means We separate the wells in to HighProductivity Cluster and LowProductivity Cluster using K-means, then use PCA in each cluster.</p><p>Leave-one-out cross-validation is adopted. We define a threshold to remove the extreme errors which are caused by irregular manipulation on the wells (such as shutting down by engineers).</p><p>LWLR has the lowest error because there is no information loss due to dimension reduction.</p><p>PCA for prediction can be improved by using high and low productivity clusters respectively.</p><p>Prediction will be unprecise if the irregular activities (such as shutting down or restimulating) dominate in the true production history.</p><p>We want to substitute PCA by Principal Curve in the future to see if it can make more accurate prediction.</p><p>Row: Different types of wells (top 2: high productivity; bottom 2: low productivity) Column: Different methods to make predictions</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

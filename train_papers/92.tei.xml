@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Machine Learning Approach to Assess Education Policies in Brazil</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">A Machine Learning Approach to Assess Education Policies in Brazil</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Alexandre Simoes Gomes Junior -asimoes@stanford.edu</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In this context, the present project offers a new approach in the estimation of the budget for the Secretary of Education of the State of Sao Paulo. The idea, in accordance with the new framework adopted, is to start with a goal. In this case, it is a Quality Index called IDEB (Development Index of Basic Education), which is based on the scores of students in a national exam called Prova Brasil and on specific approval data from schools. Each school in the state has its own IDEB score, which is updated every two years, and its IDEB goal, defined for the next 4 years.</p><p>The spending data in the education sector represents the policies implemented by the government. This includes the segmentation of spending across several categories. The idea is to identify the minimum necessary budget to each category that will allow the school to achieve its goal.</p><p>Finally, since different schools might have different needs, a cluster algorithm having as input descriptive data on the schools is used to separate them in different groups with similar needs. The main assumption is that schools in the same cluster have similar problems and, therefore, need an equal distribution of spending across the categories in order to improve and achieve its goal. The final problem consists of finding the minimum total budget and its optimal categorical distribution for each cluster of schools.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>There are several studies evaluating the impact of increase in government spending for specific sectors in quality indexes, for example the cited works by Baldacci et al, Sutherland et al and Gupta et al. In the first example, different variations of the least mean squared error regression model are tested, as well as a covariance structure model based on latent variables. The models are used to find the relation between public spending and quality indexes. In all the studies there was statistical evidence of a correlation between increase in spending and increase in the indexes. The present project aims to explore this relation to create a tool for budget planning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and Features</head><p>The target variable, as explained previously, is the IDEB score of each school. This data can be found on the page http://ideb.inep.gov.br/. It contains the evolution of the in Brazilian public schools, for the years of 2013, 2015 and 2017. This index combines the scores of students in a national mandatory exam with data provided by each school describing rate approvals, to assess the quality of basic education in public schools. In the year of 2017, the goals for the 2019 and 2021 were established.</p><p>The second data source is the Brazilian school census of 2013, http://portal.inep.gov.br/microdados, that has survey data on every public school in Brazil. This dataset contains information describing many aspects of the infrastructure of the school, the qualification of teachers and the profile of students. Some examples of features include:</p><p>• Total number of students • Number of professors by level and area of education • Number of laboratories, computers and offices • Number of students per race • Number of classes per subject • Total amount of time spent by students with extracurricular activities In total, after the preparation of data, the dataset includes 353 features per school. Most of them are count variables, as the number of professors from each educational background, number of different equipment, etc. A big part of transforming the data included counting different categories in categorical variables. For example, there is one entry in the original data for each student and teacher in the school, in the final dataset there is only counts for the number of male/female students, mathematics/biology/chemistry teachers, etc.</p><p>The last data source is the website https://www.fazenda.sp.gov.br. It has data detailing all of the disbursement made by the state government of Sao Paulo since 2010. The database contains information on the targeted sector (education, health, transportation, etc.), the subarea (primary, secondary, higher education, etc.) as well as a more detailed classification of the purpose of the spending (scholarship for poor students, construction of new schools, purchase of food or transportation for students, etc.). Some of the expenditure categories include:</p><p>• Transportation for students • Food for students and workers </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methodology</head><p>The final project includes three different models that process data in different phases. First, a regression model uses the descriptive data from the school census (353 features) to predict the Ideb of each school (3190) in 2013. The purpose of this model is to reduce the number of features from the census considered in the next phase. Only the most important variables detected by the algorithm in this phase continue in the dataset. The final set of variables have an accumulated feature importance of 0.99 in the model. In this phase, 3 different algorithms are tested, SVM, Gradient Boosted Trees (GBT) and Ridge Regression. For the GBT, two different implementations are evaluated, scikit-learn and LightGBM. The evaluation metric chosen is the R², defined as:</p><formula xml:id="formula_0">ܴ ଶ = ∑ ‫ݕ(‬ − ℎ ) ଶ ∑ ‫ݕ(‬ − ‫ݕ‬ ത) ଶ</formula><p>The model chosen is the one that presents greatest R² in the test set (638 schools). After the selection of variables, 129 features continued to the next phase, the clustering algorithm. This second model uses the descriptive variables to separate schools in groups with similar needs. Since the final goal of the project is to define the budget and its optimal distribution for each school, there is the need to isolate the effect of other variables, not related to expenditure, that are correlated to the Ideb. This is the purpose of the second stage in the data processing framework.</p><p>The evaluation metric for the clusters is the mean Silhouette Coefficient. For one sample in the train set, the Silhouette is given by:</p><formula xml:id="formula_1">‫ݏ‬ = ܾ − ܽ max (ܽ, ܾ)</formula><p>Where a is the mean intra-cluster Euclidean distance to the considered point and b is the Euclidean distance to the nearest point in other cluster. Two different approaches are tested, both of them use K-means as the main algorithm. In one of them, however, the original data is first transformed with Principal Component Analysis (PCA) in order to reduce the dimensionality of the dataset. The model used data from 9837 schools, this phase did not consider only schools administered by the state government but also those ran by the federal and city governments.</p><p>The final phase is a combination of multiple classifiers, one for each cluster. Each model predicts whether the school achieved its goal for the 2017 Ideb. The input variables are the expenditure data for each school, there are 3152 schools and 711 features. The assumption in this phase is that, after isolating the effects of descriptive variables in the Ideb, it is possible to find an expenditure distribution that will minimize the total sum of investments per school while allowing it to achieve its goal. This distribution will be equal for all schools in the same cluster.</p><p>The evaluation metric is the F1-score, that combines both precision and recall, in order to guarantee that the model do not present good performance only for the most common class. The F1-score is given by:</p><formula xml:id="formula_2">‫1ܨ‬ = 2 × ‫݅ݏ݅ܿ݁ݎ‬ ݊ × ‫݈݈ܽܿ݁ݎ‬ ‫݅ݏ݅ܿ݁ݎ‬ ݊ + ‫݈݈ܽܿ݁ݎ‬</formula><p>In this phase only one algorithm was implemented, derived from the first part, the GBT implementation in scikit-learn. The final tool can be applied in the estimation of the budget for each school.</p><p>In the chosen approach, first, all the schools that achieved their goals and for which the model presented correct predictions are selected. The initial budget estimate for each category is the minimum value (greater than 0, if there is one) found for that category in this group of schools. If the model predicts success in goal achievement with this expenditure distribution, it is considered as the final budget.</p><p>If the model predicts fail in goal achievement, one of the categories is chosen to be increased. The probability of selecting a specific category is equal to the normalized feature importance of the variable that represents this category, according to the final model. The budget for the selected category than assumes the value of the second lowest expenditure for this category in the selected subset of schools. This process is repeated until the model predicts success in goal achievement. If a specific category achieves its maximum possible value its probability of being selected in the following iterations goes to 0.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Regression</head><p>The results for the each model tested is in </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Clustering</head><p>The 129 most important features in the previous model are then used in the clustering algorithm to separate schools in groups. The results of the two models tested are in table 2. The number of clusters varied from 4 to 20 and in the final model consisted of 10 clusters, in a tradeoff between increase in the silhouette and guaranteeing a reasonable number of schools in each cluster. Still, some clusters ended up with few schools, to the minimum of one. These consist of outliers and these clusters did not enter in the next phase.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>Silhouette K-means 0.767</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PCA + K-means 0.805</head><p>Although the Silhouette for the model with PCA preprocessing was higher, both algorithms presented a very similar result, with clusters almost identical. The output of both cases were tested in the classification phase and the clusters from the model with PCA presented a better weighted average F1-score for the classifiers. For this reason, this was the selected model. As expected, by separating schools into clusters the performance of the classifiers increase. This means that it is easier for the model to find patterns in expenditure data when schools with similar descriptive features are grouped together and isolated from other groups. This supports the initial hypothesis. However, it is also possible to observe that some clusters, as number 0, presented a test F1-score lower than the model with all schools together. This might be an indication that this cluster is not homogeneous in terms of characteristics that might affect the Ideb. In addition, clusters as number 5, had problems with overfitting due to the small sample of schools it represents.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Classification</head><p>Cluster number 3 had excellent performance, which indicates that this cluster is homogeneous and that it is possible to find a common expenditure distribution for these schools that will allow them to achieve their goals. For this cluster the method of budget estimation described previously was implemented. The prediction for the initial budget estimation (minimum values for each category) was 1, therefore there was no need to iteratively search for the expenditure distribution.</p><p>Applying the minimum estimated budget for each school, there is a reduction of R$314,972,841.00 in the total spending of the government of Sao Paulo with the schools in cluster 3. In addition, according to the model, all schools would have achieved their goals using the estimated expenditure distribution, while with the current budget approximately 30% of schools in this cluster did not achieve their goals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion and Future Work</head><p>The usefulness of the tool developed in this study depends heavily on the quality of the clustering algorithm. For the initial assumption about the clusters to hold, all the relevant factors associated with the schools that do not relate to their spending and that affect the Ideb, must be represented in the clustering variables. When this is the case, the separation of schools in groups will be able to isolate the effect of this variables and all variation observed in the Ideb will be explained solely by differences in the expenditure distribution.</p><p>In the present project, the assumption was valid for some clusters, mainly number 3. For this cluster, it was possible to create a good predictor of goal achievement only with expenditure features. When this condition is present, this tool can be very useful in minimizing the budget of the schools while guaranteeing they will achieve their goals.</p><p>However, other clusters, mainly number 0, are too heterogeneous to have the Ideb explained only with spending data. It means that, to create a good predictor for goal achievement more variables are needed. Therefore, for this clusters, it is not possible to explain goal achievement only as a function of spending distribution.</p><p>To solve the problem described above, the first step would be to incorporate new variables in the clustering phase. For example, sociodemographic variables of the region where the school is located are probably highly correlated with its Ideb also. Features as the average income of residents, average number of people in one house and distance from the center of the city are not present in the school census data used in the first two phases of the project.</p><p>The Brazilian Census have this type of sociodemographic data. However, in this dataset, locations are described as sectors and each sector has its own code. The problem when linking this dataset to the school Census is that the last one does not have information on the code of the sector where the school is. This needs to be solved in order to include data from the Brazilian Census in the clustering algorithm.</p><p>A second point of improvement is aggregating redundant categories of spending. This problem was detailed previously. Because of these redundancies, it might be difficult for the last model to identify the real impact of each subarea of investment on the Ideb.</p><p>Other limitation also explained previously is that the data provided by the government of Sao Paulo does not have detailed spending for each school. There certainly is, in the government database, this type of data, however it is not open to the public.</p><p>Finally, this project did not explicitly try to find a causal relation between the input features and the target variable, which is a necessary step in the design of public policies. A qualitative evaluation of the importance of the features in the first and third models, as well as the impact they have on the target variable needs to be conducted. This would be better performed with the assistance of specialists in the area.</p><p>This tool, however, is a good starting point for the government to explore quantitative tools in the design of public policies. In a real implementation, there would be an evaluation period when the tool would suggest the expenditure distribution and, after its implementation, the results would be reevaluated and incorporated in the model.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Constructions and maintenance of schools • Salaries of school employees • School supplies • Contracts with third parties After transforming the data, it ended up with 711 different categories. The final variables consist of the summed expenditure in each category for the years of 2014, 2015, 2016 and 2017. There are, however, two main limitations with this dataset. First, many categories are redundant, for example, there are approximately 5 different categories related to constructions in schools. Second, the source website only offers spending data per local administration center. There are 1382 different centers and 3152 schools. To get to spending per school the expenditure of each center was divided by the number of schools it attends.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Finally</head><label></label><figDesc>, for each cluster with at least 20 schools, one classification model was created to predict goal achievement. The results are shown in table 3. The final weighted (regarding number of schools) average F1-score of the classifiers was 0.692. The last row in table three shows the result of the model when there is no separation of schools according to clusters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>table 1 .</head><label>1</label><figDesc>The chosen model had a final test R² of 0.647.</figDesc><table>Model 
+Train R² 
+Test R² 
+
+GBT -scikit-learn 
+0.745 
+0.647 
+
+SVM 
+0.069 
+0 
+
+Ridge Regression 
+0.674 
+0.575 
+
+GBT -LightGBM 
+0.812 
+0.550 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Python libraries -scikit-learn, LightGBM</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Semi-supervised clustering methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">-</forename><surname>Bair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Wiley Interdisciplinary Reviews: Computational Statistics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="349" to="361" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The effectiveness of government spending on education and health care in developing and transition economies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>-State Government Of Sao Paulo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marijn</forename><surname>Sanjeev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erwin</forename><forename type="middle">R</forename><surname>Verhoeven</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tiongson</surname></persName>
+		</author>
+		<ptr target="http://www.ppa.sp.gov.br/docs/OpR.pdf(accessedDecember14" />
+	</analytic>
+	<monogr>
+		<title level="m">Orcamento por Resultados no Estado de Sao Paulo: experiências, desafios e perspectivas</title>
+		<imprint>
+			<date type="published" when="2002" />
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="717" to="737" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Performance indicators for public spending efficiency in primary and secondary education</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">-</forename><surname>Sutherland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Douglas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">More on the effectiveness of public spending on health care and education: a covariance structure model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>-Baldacci</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Maria</forename><forename type="middle">Teresa</forename><surname>Emanuele</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luiz De</forename><surname>Guin-Siu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mello</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of International Development: The Journal of the Development Studies Association</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="709" to="725" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

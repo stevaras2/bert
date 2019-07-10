@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Identifying Transcription Unit Structure from Rend Sequencing Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Travis</forename><surname>Horst</surname></persName>
+							<email>thorst@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Identifying Transcription Unit Structure from Rend Sequencing Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Input Layer Nodes: features x window</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Summary</head><p>The goal of this project is to identify transcription unit initiation and termination sites within a genome through sequencing data to determine which genes are expressed together. Although partially known, identifying all transcription units in an organism can help create more accurate models of biologic behavior by better capturing interactions between coexpressed genes. Unsupervised and supervised methods were used to identify structure from transcript sequencing data. Results show that supervised learning methods performed better at identifying transcription start and stop sites and avoiding false predictions.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>Data comes from high throughput Rend sequencing of E. coli from Lalanne et al. <ref type="bibr" target="#b0">1</ref> For every position in the genome, the data contains a read count for the 3' and 5' end of fragmented mRNA. A small subset of the data was labeled by hand with transcription unit initiation and termination sites (152 genome locations).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>A few feature sets were tested on certain models. In some cases, the raw data for the 3' and 5' reads was used. The raw data follows a Poisson distribution (coming from count data) so a moving average along the position in the genome was used to transform to Gaussian distributions within genes, which also incorporated some positional information in the data. Further, two moving averages to the left and right of a point of interest were taken to account for potential shifts in distributions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Unsupervised Learning</head><p>-Divide data into groups of neighboring genes DBSCAN: 1. Cluster points based on distance (ε). 2. Identify outliers that are part of groups with fewer than a minimum number of points (min_points).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hidden Markov Model:</head><p>Number of hidden states dependent on genes in region. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Unsupervised methods suffered from low precision and sensitivity. At first, supervised methods did not perform as well as expected. After annotating more data for training, performance improved but these methods potentially still suffer from a class imbalance problem due to the low number of spikes in the genome (roughly 1 every 1000 base pairs). Overall, performance for unsupervised methods was surprisingly low and higher sensitivity was expected for supervised methods on the test set. Because of the small sample size, the test and validation data might not be completely representative of the entire genome. The unsupervised methods could be improved by finding a way to encode positional dependence (ie. a sample is likely in the same TU as its neighbors). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>-</head><label></label><figDesc>Sliding window along genome (varied to find optimal window) -3 classes: -Oversample minority classes with SMOTE 2 Multinomial Logistic Regression: Probability for each class (c): Neural Network: -Varied model architecture with sigmoid activation function</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>-Data processing -feature engineering and class imbalance -Methods -convolutional neural network Example data with genes. Orange and blue are reads, black indicates TUs.<ref type="bibr" target="#b0">1</ref> </figDesc><table>Validation Data 
+Test Data 
+Sensitivity Precision Sensitivity Precision 
+DBSCAN 
+33.1 
+35.0 
+14.3 
+70.0 
+HMM 
+23.4 
+70.7 
+12.2 
+42.9 
+Log Reg 
+87.5 
+85.4 
+47.4 
+94.7 
+NN 
+90.0 
+81.8 
+55.3 
+80.8 
+
+Normal 
+Initiation 
+Termination 
+
+Hidden Layers 
+2-4 layers, 5-30 nodes each 
+
+Output Layer 
+Softmax function 
+
+Normal 
+
+Initiation 
+
+Termination 
+
+= = 
+σ =1 </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Evolutionary Convergence of Pathway-Specific Enzyme Expression Stoichiometry</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">B</forename><surname>Lalanne</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">173</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="749" to="761" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">SMOTE: Synthetic Minority Over-sampling Technique</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">V</forename><surname>Chawla</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">JAIR</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="321" to="357" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Algorithm Feature Space Data Clutter Introduction Tissue Classification for Modeling Classification of Abdominal Tissues by k-Means Clustering for 3D Acoustic and Sheer-Wave Modeling Motivation Methodology: k-Means Clustering</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><forename type="middle">T</forename><surname>Looby</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Radiology</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeremy</forename><forename type="middle">J</forename><surname>Dahl</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Electrical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Algorithm Feature Space Data Clutter Introduction Tissue Classification for Modeling Classification of Abdominal Tissues by k-Means Clustering for 3D Acoustic and Sheer-Wave Modeling Motivation Methodology: k-Means Clustering</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tissue Classification for Modeling</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Classification of Abdominal Tissues by k-Means</head><p>In ultrasonic imaging, clutter, a phenomenon associated with poor-quality images, produces a temporally-stable obstruction resulting in decreased image contrast and a reduced ability to discern imaging targets. The effects of clutter a major obstacle for clinical ultrasound imaging. As such, modeling and characterizing the interactions that produce clutter is of major interest.</p><p>High-resolution 3D acoustic maps of the abdominal wall are needed to model the interactions that give rise to clutter. In the context of this problem, an acoustic map is a mapping of tissue characteristics to spatial locations. These maps are to be produced through the processing of 3D MRI scans.</p><formula xml:id="formula_0">( ) ≔ argmin j − 2</formula><p>(1) As an ideal ex-vivo abdominal tissue model, a fresh piece of pork belly was used for data acquisition. Using such a model allows for a reduction of noise artifacts and the ability to improve the signal-to-noise ratio (SNR) by averaging multiple scans. An average over six scans of a 100 micron isotropic scan was obtained. A fat-water separation sequence was used to obtain separate water (left) and fat (right) signals.</p><formula xml:id="formula_1">≔ σ =1 = σ =1 =<label>(</label></formula><p>The two steps below comprise the bulk of the k-means algorithm. In (1), the label corresponding to the closest centroid is assigned to each point. In (2), the centroid locations are updated to be the mean of all points assigned to that centroid. Initial centroid locations were chosen manually based on prior assumptions about the data.</p><p>Overall, excellent qualitative results were achieved. An example 2D slice is presented in the adjacent panel.</p><p>While some misclassifications occurred, the effects of these misclassifications will not have a dramatic effect. In order to alleviate the effect of misclassified voxels, the features were chosen such that misclassifications tended to identify voxels as the "connective tissue' class. This is ideal as the properties to be assigned to this class in simulations will be such that significant error does not occur.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion and Conclusion</head><p>It is desired to use this algorithm on in-vivo scans in the future. The data from these scans will suffer from decreased SNR, lower contrast, and the potential for motion artifacts, all of which may interfere with the algorithm's ability to correctly classify voxels. As such the robustness of the algorithm for this purpose will need to be assessed in order to guarantee continued good results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Department of Electrical Engineering, Stanford University 1 ; Department of Radiology, Stanford University 2</figDesc><table>Clustering 
+for 3D Acoustic and Sheer-Wave Modeling 
+
+Kevin T. Looby 1 , Jeremy J. Dahl 2 
+
+Motivation 
+Methodology: k-Means Clustering 
+
+General Electric (GE) for serving as the source of 
+funding for this project 
+
+Tao Zhang for acquiring the MRI data and supplying a 
+water-fat separation scan sequence 
+
+Jeremy Dahl for proposing the topic and supporting 
+the project 
+
+This project seeks to take water-fat separated 
+volumetric magnetic resonance imaging (MRI) scans of 
+abdominal tissue samples and classify each voxel as 
+one of four primary tissue types of interest: skin, fat, 
+muscle, and connective tissues (voxels not containing 
+tissue are classified as a fifth group). 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>Results</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

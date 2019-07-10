@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Foreign Exchange Forecasting via Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christian</forename><forename type="middle">González</forename><surname>Rojas</surname></persName>
+							<email>cgrojas@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Molly</forename><surname>Herman</surname></persName>
+							<email>mrherman@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Foreign Exchange Forecasting via Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>The finance industry has been revolutionized by the increased availability of data, the rise in computing power and the popularization of machine learning algorithms. According to The Wall Street Journal (2017b), quantitative hedge funds represented 27% of total trading activity in 2017, rivaling the 29% that represents all individual investors. Most of these institutions are applying a machine learning approach to investing.</p><p>Despite this boom in data-driven strategies, the literature that analyzes machine learning methods in financial forecasting is very limited, with most papers focusing on stock return prediction. <ref type="bibr" target="#b4">Gu, Kelly, and Xiu (2018)</ref> provide the first comprehensive approach to quantifying the effect of using machine learning (ML) to the prediction of monthly stock returns. Our intention is to implement machine learning methods in a relatively unexplored asset class: foreign exchange (FX).</p><p>The objective of this paper is to produce directional FX forecasts that are able to yield profitable investment strategies. Hence, we approach the problem from two perspectives: 1) Classification of long/short signals.</p><p>2) Point forecasts of FX levels that translate into long/short signals.</p><p>These frameworks allow us to exploit different machine learning methodologies to solve a single problem: designing a profitable FX strategy based on ML-generated forecasts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Machine learning methods have long been used in stock return prediction. For instance, variations of Principal Component Analysis, an unsupervised learning technique, have been applied by <ref type="bibr" target="#b2">Connor and Korajczyk (1988)</ref>, <ref type="bibr" target="#b3">Fan, Liao, and Wang (2016)</ref>, <ref type="bibr" target="#b6">Kelly, Pruitt, and Su (2018)</ref> and <ref type="bibr" target="#b8">Lettau and Pelger (2018)</ref> to identify latent risk factors that can explain the dynamics of stock returns. Moreover, <ref type="bibr" target="#b4">Gu et al. (2018)</ref> have found that regularization, dimension reduction and the introduction of nonlinearities significantly improve stock return predictions.</p><p>Nevertheless, despite the large adoption of machine learning in stock return forecasting, ML applications in FX prediction have been widely ignored by the literature. Few exceptions are available. <ref type="bibr" target="#b9">Ramakrishnan, Butt, Chohan, and Ahmad (2017)</ref> find that, when trained with commodities prices, Random Forests outperform Support Vector Machines and Neural Networks in forecasting the Malaysian FX. Furthermore, <ref type="bibr" target="#b0">Amat, Michalski, and Stoltz (2018)</ref> conclude that economic fundamentals gain power to forecast exchange rate even at short horizons if ML methods are applied. Finally, <ref type="bibr" target="#b5">Hryshko and Downs (2004)</ref> apply Reinforcement Learning to create FX trading strategies based on technical analysis.</p><p>The main contribution of this paper is the assessment of the statistical and economic performance of ML-generated directional forecasts.</p><p>III. DATASETS We make use of two different datasets to explore the forecasting power of two types of variables: market and fundamentals. We define a market variable as an indicator with daily to weekly frequency that has a close relationship with traded securities. On the other hand, we define a fundamental variable as an indicator with monthly frequency that is closely related to the macroeconomy.</p><p>Finally, we limit the scope of our project to forecasting the USDMXN, which is the exchange rate between the US Dollar (USD) and the Mexican Peso (MXN), expressed in MXN per USD. However, the exercise can be generalized to other currencies. All data was retrieved either from Bloomberg, the Global Financial Dataset or the Federal Reserve Bank.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Market Variables Dataset</head><p>We obtained the weekly closing price of the USDMXN currency pair, which we use as our target variable. In addition, we consider 25 features across both Mexico and the United States. A summary is shown in <ref type="table" target="#tab_0">Table I</ref>. The dataset spans between the first week of January 2003 and the second week of November 2018.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Fundamental Variables Dataset</head><p>The fundamental variables data uses the monthly closing price of the USDMXN currency pair as our target variable. We use 27 features that describe the macroeconomic conditions of both the US and Mexico between March 1990 and October 2018. The additional features that are considered in this dataset are detailed in <ref type="table" target="#tab_0">Table II</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Data Processing</head><p>Almost all data processing is identical in both datasets. We first split the data into 60% train set, 20% validation set, and 20% test set. These subsets are taken sequentially in order to keep the time-series nature of the data and to guarantee our algorithms train exclusively on past data.</p><p>To translate our problem into a classification problem, we introduce the Signal t variable which we set to 1 if the USDMXN was higher tomorrow than today. This is:</p><formula xml:id="formula_0">Signal t = 1 if USDMXN t+1 − USDMXN t ≥ 0 0 otherwise</formula><p>We also perform data processing on the features. In particular, we standardize using the mean and standard deviation of the training set for every covariate.</p><p>For the fundamentals dataset, covariates are lagged by an additional period. This is done to approximate the fact that it is extremely rare to obtain real-time macroeconomic data. By lagging the features by one month we ensure we are not peeking into the future by including unpublished data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. FRAMEWORKS AND MODELS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Frameworks</head><p>First, we perform binary classification on the Signal t variable we constructed in the data processing step. This essentially transforms what initially is a continuous variable problem into a classification task.</p><p>On a second exercise, we use ML algorithms to construct point forecasts for our raw continuous target variable, USDMXN t . We then construct an estimated long/short signal by computing:</p><formula xml:id="formula_1">Signal t = 1 if USDMXN t+1 − USDMXN t ≥ 0 0 otherwise</formula><p>Both strategies yield a binary signal output that we can execute as a trading strategy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Models</head><p>The performance of different machine learning algorithms is tested for each framework. In particular, we considered: 1) Logistic/Linear Regression: We use logistic and linear regression as our benchmark models.</p><p>2) Regularized Logistic/Linear Regression: We consider L 1 and L 2 regularization applied to logistic and linear regression. This allows to reduce overfitting in the validation set. The hyperparameter λ , which penalizes large coefficients, is tuned using the validation set accuracy.</p><p>3) Support Vector Machines/Regression (SVM/SVR): It is highly likely that fitting FX dynamics requires a non-linear boundary. SVM/SVR with a Gaussian kernel provide the flexibility to generate a non-linear boundary as a result of the infinite-dimensional feature vector generated by the kernel.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4) Gradient Boosting Classifier/Regression (GBC/GBR):</head><p>Tree-based models allow us to capture complex interactions between the variables. Unlike Random Forests, which require bootstrapping, GBC allows us to keep the time-series structure of the data while considering non-linearities. It is important to notice that GBC and GBR is just considered for the market variables dataset, due to the division of work between the authors (See section IX).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5) Neural Networks (NN):</head><p>Neural networks can model complex relationships between input features, which could improve the forecasting performance. We consider fullyconnected networks. The architecture is shown in <ref type="figure">Fig. 1</ref>  <ref type="bibr" target="#b4">Gu et al. (2018)</ref> show that shallow learning outperforms deeper learning in asset pricing applications. We follow this result and only consider shallow architectures. In particular, we use a network with two hidden layers for the market variables dataset and a neural net with one hidden layer for the fundamentals dataset.</p><p>Our choice for loss depends on the framework. We select logistic loss for classification and mean squared error for the continuous target variable problem. We choose the proper activations in the same fashion: sigmoid is used for classification, while ReLU is used for the continuous target variable. Finally, we use dropout or activation regularization to avoid overfitting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. HYPERPARAMETER TUNING</head><p>All model parameters are tuned using the validation set. We use accuracy as our performance evaluation in the binary classification model and mean squared error in the continuous target variable model. The resulting parameters are detailed in <ref type="table" target="#tab_0">Table III.   TABLE III</ref>   <ref type="table" target="#tab_0">Table IV</ref> shows the statistical performance of every model for the binary classification framework applied to the market variables dataset and the fundamentals dataset. The results provide evidence that market variables have a stronger forecasting power than fundamentals when it comes to classifying long/short signals. The largest test accuracy (56.0%) for the market variables was obtained by the SVM, while the maximum test accuracy (44.9%) is achieved by logistic regression for the fundamentals data.</p><p>There is, however, an important caveat when interpreting the results. Being a measurement of the fraction of predictions that we can correctly forecast, accuracy does not differentiate between true positives and true negatives. A successful trading strategy should exploit true positives and true negatives, while minimizing false positives and false negatives.</p><p>To discern between these cases, <ref type="figure" target="#fig_1">Fig. 2</ref> shows the confusion matrix for the SVM model in the market variables dataset. The plot suggests a bad performance on the classification of short signals, as well as a prevalence of long predictions. We further explored why this would be the case, even after significant efforts were made to reduce overfitting via regularization. <ref type="figure" target="#fig_2">Fig. 3</ref> shows the density of the standardized 3-month yield of Mexican Treasury Bills computed using kernel density estimation, conditional on the binary target variable. The plot provides evidence that both conditional densities are very similar, a pattern that we observed was recurrent across all features. This complicates the classification task and likely induces underperformance in short signals.   The outperformance of the continuous variable target with respect to the binary classification models is significant. The improvement between the accuracy of the best performing models in the market variables test set is of around 7%, while of 21% for the fundamentals test set. All continuous target models outperform the binary classification in terms of accuracy and all market-variables models outperform fundamentals models.</p><p>Given the bad results of the confusion matrix for the binary classification problem, we explore the results of the continuous experiments. <ref type="figure" target="#fig_3">Fig. 4</ref> shows the confusion matrix of the best performing model in terms of accuracy on the market variables data for the continuous variable framework, Ridge regression. It is easy to observe that the change with respect to the continuous model is dramatic. From a 4% true negative rate obtained in the best model for binary classification, this new continuous target framework yields a 59% rate. This is obtained at the expense of a lower true positive rate. However, the true positive rate still yields a reasonable performance of 61%.</p><p>VII. ECONOMIC PERFORMANCE A model with very successful statistical performance of long/short signals does not imply positive economic implications. This is an inherent problem in directional forecasts.</p><p>A profitable investment strategy requires algorithms that correctly predict the direction of very large movements in the price of the asset. In our case, if an algorithm correctly predicts most small changes but misses large jumps in the exchange rate, it is very likely that it will produce negative economic performance upon execution. This issue has been previously assessed in the literature by <ref type="bibr" target="#b7">Kim, Liao, and Tornell (2014)</ref>. Therefore, to assess the economic performance of our models, we compute the cumulative profits generated by the execution of the ML-generated strategy in the test set. The implemented strategy is simple: we start with enough cash in MXN to buy a unit of USD. We then execute the following for every time t:</p><formula xml:id="formula_2">Strategy t = Long USD 1 if Signal t = 1 Short USD 1 if Signal t = 0</formula><p>At the end of every period, the position is closed, profits are cashed-in and the strategy is repeated. Finally, we use a longonly strategy as our benchmark for economic performance.</p><p>A. Binary Classification  The statistically best performing model corresponds to the economically most profitable specification. However, it is important to notice that this positive result is mostly driven by a single correct bet made between weeks 725 and 750. All other strategies produce profits that are equal to or worse than the long-only benchmark.</p><p>These results can be explained by the bad performance of the models in terms of the confusion matrix. Due to the very low true negative rate of most models, all specifications are close to the long-only benchmark and the departures are a consequence of few correct or incorrect short bets. The differences with respect to the binary classification results are, once again, significant. The final cumulative return in the continuous target variable framework is around 15% higher than under the binary classification framework. Furthermore, all strategies outperform the long-only benchmark with the best strategy being Ridge regression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Continuous Variable Target</head><p>In addition, the economic effect of an improved true negative rate is considerable. Unlike the binary classification case, the outperformance of all strategies with respect to the benchmark is not driven by few correct short positions. Moreover, the reduction in the true positive rate observed for the continuous target variable framework does not significantly penalize cumulative profits. The gains of a high specificity outweigh any losses derived from the reduction in sensitivity.</p><p>A natural question to address is which variables explain exchange rate forecasts the most. <ref type="figure" target="#fig_7">Fig. 7</ref> shows the relative importance of the features in explaining FX dynamics. It is no surprise that fixed income variables are the most relevant features. The result is consistent with the idea that the exchange rate is closely related to interest rates, as explained by the Uncovered Interest Rate Parity condition widely studied in economics.</p><p>Finally, another interesting insight is that the USDMXN reacts strongly to global and emerging-market (EM) fixed income indicators. In theory, the bilateral exchange rate should react strongly to the interest rate differential between the two countries. We believe the observed result provides evidence of investor behavior. As documented in recent years by <ref type="bibr" target="#b1">Bloomberg (2015)</ref>, The Wall Street Journal (2017a) and The Financial Times (2018), the high liquidity of the Mexican Peso has allowed its role as a hedge for long EM positions. Our results are consistent with these findings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. CONCLUSION AND FUTURE WORK</head><p>This paper makes use of machine learning methods to forecast the US Dollar against Mexican Peso exchange rate. We use an innovative framework to find the best possible performance. First, we consider a market variables dataset and a fundamentals dataset on which we train ML algorithms. Second, we conduct binary classification experiments and continuous target experiments to produce the same output: a binary long/short signal on which we are able to execute a simple trading strategy.</p><p>Our results suggest that continuous target prediction outperforms binary classification not only in terms of accuracy, but also in terms of specificity and sensitivity. The economic results are in line with this finding, with all algorithms outperforming a long-only benchmark. The best results are produced by SVM in the binary classification case and Ridge regression in the continuous target case, both in terms of accuracy and cumulative profits. Last, we find that the fundamentals dataset yields poor results.</p><p>Future work could focus in several areas. First, the recursive validation procedure proposed in <ref type="bibr" target="#b4">Gu et al. (2018)</ref> for time-series data could be implemented. This would allow to obtain classifiers and models that perform better out-ofsample. Second, a major improvement on model performance could be achieved through model ensembling. Finally, using more complex neural network models, such as LSTMs could increase the forecasting power of our features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IX. CONTRIBUTIONS</head><p>The team worked on the same problem but used different datasets. The contribution to this work was as follows:</p><p>Christian González Rojas was in charge of data collecting, data processing, algorithm selection and algorithm implementation on the market variables dataset for both the continuous and the binary framework. He decided to consider GBC/GBR as an additional model to further test the value of nonlinear relationships. He was also responsible for writing the CS229 poster and the CS229 final report. His data and code can be found at this link.</p><p>Molly Herman worked on data collection, data processing and algorithms for the fundamentals dataset. She was responsible for modifying the CS229 poster to create an alternative version for the CS229A presentation and was in charge of writing her own final report for CS229A.</p><p>The division of work for the poster and the final report was done to provide deeper insight on the results to which each author contributed the most.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>0</head><label>0</label><figDesc>λ LASSO = 0.39 λ LASSO = 0.0785 Regression λ Ridge = 0.14 λ Ridge = 1.13 Continuous λ LASSO = 0.0002 λ LASSO = 0.75 λ Ridge = 0.0071 λ Ridge =</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Confusion matrix of the SVM model on the market variables dataset</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 .</head><label>3</label><figDesc>Conditional density of 3-month Mexican T-Bills 3 B. Continuous Experiments</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 4 .</head><label>4</label><figDesc>Confusion matrix of the Ridge model on the market variables data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5</head><label>5</label><figDesc>plots the cumulative profits of executing the binary classification algorithms on the market variables dataset as a trading strategy.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 5 .</head><label>5</label><figDesc>USD cumulative profits of the market variables dataset</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 6</head><label>6</label><figDesc>plots the cumulative profits of executing the con- tinuous variable target algorithms on the market variables dataset as a trading strategy.Fig. 6. USD cumulative profits of the market variables dataset</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 7 .</head><label>7</label><figDesc>Variable importance for ridge regression on the market variables dataset under the continuous target framework</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I MARKET</head><label>I</label><figDesc>FEATURES: WEEKLY DATASET</figDesc><table>Type 
+Country Variables 
+Fixed Income Mexico 
+Bond yields (3m, 6m, 1Y and 10Y) 
+Debt holdings 
+US 
+Bond yields (3m, 6m, 1Y and 10Y)  *  
+Bond Index 
+Federal Funds Rate  *  
+Global 
+Global High-Yield Indices 
+Emerging Market Bond Index 
+Stock Market 
+Mexico 
+Mexican Stock Exchange Index  *  
+US 
+S&amp;P 500 Index  *  
+Global 
+Volatility Index  *  
+Currency 
+Dollar Index  *  
+Trader positions on USDMXN 
+Other 
+Global 
+Economic Surprise Indices 
+Commodities Index  *  
+
+* Also considered in the monthly dataset 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II FUNDAMENTAL</head><label>II</label><figDesc>FEATURES: MONTHLY DATASET</figDesc><table>Type 
+Country Variables 
+Economic 
+Mexico 
+IP, Industrial Production 
+Activity 
+Trade Balance (Exports -Imports) 
+US 
+IP, Industrial Production 
+Trade Balance (Exports -Imports) 
+Labor 
+US 
+Unemployment 
+Market 
+Non-farm Payroll 
+Prices 
+Mexico 
+CPI, Consumer Price Index 
+PPI, Producer Price Index 
+US 
+CPI, Consumer Price Index 
+PPI, Producer Price Index 
+Debt 
+Mexico 
+National Debt 
+US 
+National Debt 
+Sentiment US 
+PMI, Purchasing Managers Index 
+Investor Sentiment 
+Other 
+Mexico 
+M2 Money Supply 
+US 
+M2 Money Supply 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>. . . . . . . . . . I 1 I 2 I n H 1 1 H 1 2 H 1 m H 2 1 H 2 2 H 2 p O 1 Input Hidden Hidden * Output Fig. 1. NN architecture. * Second hidden layer only for the market variables model.</figDesc><table>. . . 
+. . . 
+. . . 
+
+I 1 
+
+I 2 
+
+I n 
+
+H 1 
+
+1 
+
+H 1 
+
+2 
+
+H 1 
+
+m 
+
+H 2 
+
+1 
+
+H 2 
+
+2 
+
+H 2 
+
+p 
+
+O 1 
+
+Input 
+Hidden 
+Hidden  *  
+Output 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head>TABLE IV BINARY</head><label>IV</label><figDesc>CLASSIFICATION: ACCURACY (%) Model Market Fundamentals Train Validate Test Train Validate Test Logistic 62.5 55.2 53.0 67.8 39.1 44.9 Lasso 59.1 58.8 53.6 58.5 53.6 34.8 Ridge 60.1 61.8 54.2 59.0 53.6 37.7 SVM 59.1 60.0 56.0 65.4 53.6 40.6 NN 69.7 56.4 54.2 65.5 55.1 40.6 GBC 81.9 52.1 48.2 Note: Best performance on test set marked in red.</figDesc><table>Model 
+Market 
+Fundamentals 
+Train Validate 
+Test 
+Train Validate 
+Test 
+Logistic 
+62.5 
+55.2 
+53.0 
+67.8 
+39.1 
+44.9 
+Lasso 
+59.1 
+58.8 
+53.6 
+58.5 
+53.6 
+34.8 
+Ridge 
+60.1 
+61.8 
+54.2 
+59.0 
+53.6 
+37.7 
+SVM 
+59.1 
+60.0 
+56.0 
+65.4 
+53.6 
+40.6 
+NN 
+69.7 
+56.4 
+54.2 
+65.5 
+55.1 
+40.6 
+GBC 
+81.9 
+52.1 
+48.2 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="false"><head>Table V</head><label>V</label><figDesc>presents the statistical performance of every model for the continuous target framework applied to the market variables and the fundamentals datasets.</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5" validated="false"><head>TABLE V CONTINUOUS</head><label>V</label><figDesc>TARGET: ACCURACY (%) Model Market Fundamentals Train Validate Test Train Validate Test Linear 65.3 65.9 58.8 54.5 55.9 50.0 Lasso 63.2 67.1 57.0 50.5 63.2 52.9 Ridge 63.6 67.1 60.0 52.0 52.9 50.0 SVR 67.3 56.7 58.2 55.9 45.6 54.5 NN 79.2 54.9 60.0 65.2 45.6 54.4 GBR 73.9 50.6 56.4 Note: Best performance on test set marked in red.</figDesc><table>Model 
+Market 
+Fundamentals 
+Train Validate 
+Test 
+Train Validate 
+Test 
+Linear 
+65.3 
+65.9 
+58.8 
+54.5 
+55.9 
+50.0 
+Lasso 
+63.2 
+67.1 
+57.0 
+50.5 
+63.2 
+52.9 
+Ridge 
+63.6 
+67.1 
+60.0 
+52.0 
+52.9 
+50.0 
+SVR 
+67.3 
+56.7 
+58.2 
+55.9 
+45.6 
+54.5 
+NN 
+79.2 
+54.9 
+60.0 
+65.2 
+45.6 
+54.4 
+GBR 
+73.9 
+50.6 
+56.4 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Fundamentals and exchange rate forecastability with simple machine learning methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Amat</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Michalski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Stoltz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of International Money and Finance</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="page" from="1" to="24" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Why Traders Love to Short the Mexican Peso</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bloomberg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Risk and return in an equilibrium APT: Application of a new test methodology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Connor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">A</forename><surname>Korajczyk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="255" to="289" />
+			<date type="published" when="1988" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Projected principal component analysis in factor models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ann. Statist</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="219" to="254" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Empirical Asset Pricing via Machine Learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">T</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Xiu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="page" from="18" to="22" />
+		</imprint>
+		<respStmt>
+			<orgName>Chicago Booth Research Paper</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">System for foreign exchange trading using genetic algorithms and reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hryshko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Downs</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Systems Science</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="763" to="774" />
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Characteristics are covariances: A unified model of risk and return</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Kelly</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Pruitt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Su</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Financial Economics, Forthcoming</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Speculators&apos; Positions and Exchange Rate Forecasts: Beating Random Walk Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><forename type="middle">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tornell</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Factors that fit the time series and cross-section of stock returns</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lettau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Pelger</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">Working Paper</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Forecasting Malaysian exchange rate using machine learning techniques based on commodities prices</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ramakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Butt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Chohan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Ahmad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2017 International Conference on Research and Innovation in Information Systems (ICRIIS)</title>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="1" to="5" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Mexico&apos;s Peso remains the bellwether for Emerging Markets</title>
+	</analytic>
+	<monogr>
+		<title level="j">The Financial Times</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">The Mexican Peso: A Currency in Turmoil</title>
+	</analytic>
+	<monogr>
+		<title level="j">The Wall Street Journal</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">The Quants Run Wall Street Now</title>
+	</analytic>
+	<monogr>
+		<title level="j">The Wall Street Journal</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

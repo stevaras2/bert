@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Appliance-level Residential Consumer Segmentation from Smart Meter Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lily</forename><surname>Buechler</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University Physical Sciences</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zonghe</forename><surname>Chua</surname></persName>
+							<email>chuazh@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University Physical Sciences</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Appliance-level Residential Consumer Segmentation from Smart Meter Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Index Terms-Consumer segmentation</term>
+					<term>demand response</term>
+					<term>un- supervised learning</term>
+					<term>clustering</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-The objective of this project was to segment residential consumers based on their appliance-level power consumption from smart meter data for demand response program targeting. Consumers were segmented based on three characteristics of power consumption: their availability (temporal use patterns), variability, and flexibility (willingness to shift power consumption). Four different unsupervised methods were used to segment based on availability from empirical start time distributions of different appliances: K-means clustering, hierarchical clustering, Gaussian mixture models, and latent Dirichlet allocation. Hierarchical clustering most consistently yielded clusters with high load availability during specified hours. Consumer variability was evaluated by clustering load profiles into load profile types and calculating the entropy of the distribution of load profile types assigned to each consumer. Finally, three supervised learning methods were used to predict the responsiveness of consumer power consumption to price based on household characteristics and time-series features. Linear regression with recursive feature selection resulted in the lowest prediction error on the test set.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>The increasing deployment of distributed energy resources (e.g. solar, electric vehicles) in power distribution systems will result in greater uncertainty in power demand. One method to mitigate this uncertainty and maintain grid reliability is to enable more control of demand-side resources through demand response programs. Demand response (DR) is a reduction or shift in power consumption relative to baseline behavior during peak loads or high prices. While DR programs have historically focused on the industrial and commercial customers, residential DR programs are expanding. These programs are run by utility companies or third party aggregators and generally focus on control of specific types of residential appliances, such as air conditioners or pool pumps <ref type="bibr" target="#b0">[1]</ref>.</p><p>The effectiveness of a DR program depends on the power consumption patterns of consumers and their responsiveness to prices or incentives. Power consumption at the household level is extremely volatile and can vary significantly from one household to another, given heterogeneity in consumer behavior and the stochastic nature of exogenous variables (e.g. weather patterns). Direct targeting of consumers with behavior patterns well suited for DR would be highly beneficial and cost effective for utility companies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Past research has focused on using smart meter data for consumer segmentation to identify households with similar power consumption patterns using unsupervised learning <ref type="bibr" target="#b1">[2]</ref>- <ref type="bibr" target="#b5">[6]</ref>. An overview of clustering approaches and techniques is provided in <ref type="bibr" target="#b3">[4]</ref>, and specific relevant studies are highlighted below.</p><p>Kwac et al. utilized a combination of adaptive K-means and hierarchical clustering to develop a load profile dictionary from a dataset of 220,000 consumers in CA <ref type="bibr" target="#b1">[2]</ref>. Quilumba et al. generated clusters of load profiles using K-means clustering, which they used to improve meter-level load forecasting algorithms <ref type="bibr" target="#b5">[6]</ref>. Similarly, Gajowniczek and Zabkowski clustered appliance level activity patterns with hierarchical clustering and used the results to improve load forecasting models <ref type="bibr" target="#b2">[3]</ref>. Rhodes et al. analyzed the correlations between seasonal load profiles obtained from K-means clustering and various household characteristics using a probit regression model <ref type="bibr" target="#b4">[5]</ref>. Other unsupervised methods that have been tested include support vector clustering, self organizing maps, and fuzzy Kmeans <ref type="bibr" target="#b5">[6]</ref>. All of these studies except for <ref type="bibr" target="#b2">[3]</ref> focused on clustering the total load profile of each home, rather than the appliance-level power consumption. However, most DR programs focus on appliance-level control.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. PROJECT OBJECTIVE</head><p>The objective of this project is to segment consumers based on their appliance-level power consumption with respect to three factors: consumer (1) availability, (2) variability, and (3) flexibility. In contrast with previous studies, we focus on appliance-level power consumption. Availability refers to the tendency of a consumer group to consume power during periods of peak system demand when a utility would be most interested in curtailing power consumption. We evaluate consumer availability using unsupervised learning to cluster consumers into groups with similar temporal use patterns for each appliance. Variability is associated with the consistency of power consumption patterns. Consistent use patterns typically result in more accurate power demand forecasts, which improve the effectiveness of a DR program. We evaluate variability by using unsupervised learning to cluster load profiles into discrete groups, and analyze the entropy of the distribution of the load profile assignments for each consumer. Flexibility refers to the willingness of a consumer to shift power consumption from a peak load period to an off-peak period. We use supervised learning to predict the responsiveness of consumers to changes in price based on household characteristics and features extracted from power consumption profiles.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. DATASET AND FEATURES</head><p>Appliance and meter-level real power consumption data was obtained from the open-source Pecan Street Database <ref type="bibr" target="#b6">[7]</ref> for homes in Austin TX. Nine of the most common types of appliances were analyzed, and are listed in <ref type="table" target="#tab_0">Table I</ref>. Since not all homes had the same appliances, the amount of data obtained for each appliance type varied.</p><p>For the availability and variability analyses, twelve months of minute-level data from 2014, 2015, and 2016 were used for the training, validation, and tests sets, respectively. Availability analysis was applied only to deferrable loads, which are appliances that are user-initiated. The power consumption of these appliances is primarily dependent on consumer use patterns. We extracted the start times of each appliance use event from the raw data using thresholding heuristics based on changes in the moving average of power consumption. A multinomial distribution of the start time over the hours of the day was fit for each home and appliance using maximum likelihood estimation with Laplace smoothing. Given an extracted set of appliance start times S = {s 1 , . . . , s N }, the probability that an appliance use event for house j occurs during hour h is given by</p><formula xml:id="formula_0">P (j) (s = h) = N k=1 1{s k = h} + 1 N + 24</formula><p>where</p><formula xml:id="formula_1">P (j) (s) ∈ R 24 .</formula><p>We analyzed the variability of all nine appliance types listed in <ref type="table" target="#tab_0">Table I</ref>. The 1-minute power consumption data was aggregated to hourly average values, resulting in 365 24-hr profiles for each appliance and consumer. These profiles were then used for consumer segmentation.</p><p>For the flexibility analysis, data was obtained from a critical peak pricing study conducted in 2013 on participants in the Pecan Street project <ref type="bibr" target="#b7">[8]</ref>. These participants were subjected to a higher electricity price during certain hours (16:00-19:00) on 12 peak pricing days during summer 2013. In the trial, peak days occurred when the predicted maximum daily temperature exceeded a certain threshold. Consumers were notified of the peak pricing event the day before. For this project, we utilized four months of meter-level power consumption data from 32 homes that include all 12 peak pricing days. For each peak pricing day, we calculated the percent reduction in energy consumption during the peak pricing window (16:00-19:00) relative to the mean consumption during the same hours over the previous 14 days. Models were trained to predict the mean percent reduction in consumption over all peak pricing days for each consumer, as a function of various features including household characteristics and attributes of the timeseries power consumption profile, as listed in <ref type="table" target="#tab_0">Table  II</ref>. Several of these features were chosen based on analysis from <ref type="bibr" target="#b8">[9]</ref>, which identified specific load profile features that are most indicative of consumer participation rates and response. Daily baseload consumption is defined as the minimum hourly consumption level over the course of a day. The entropy of the load profile of each consumer, which is defined in Section V-B, was also used as a feature. While the availability and variability analysis utilized appliance-level power consumption data, we used the total power consumption of each home to evaluate consumer flexibility. Out of the 32 homes in the dataset, 20 homes were used for training, 6 homes were used for validation, and 6 homes were used for testing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Availability</head><p>Four different unsupervised learning methods were utilized for the availability analysis: K-Means clustering, hierarchical clustering, latent Dirichlet allocation (LDA) and Gaussian mixture models (GMM).</p><p>For K-means clustering, we ran the algorithm 10 times, each time re-initializing the cluster centers, and chose the cluster assignments with the lowest intra-cluster variation.</p><p>For hierarchical clustering, we used a symmetrized version of the KL divergence, which is equal to twice the JensenShannon divergence, as a similarity measure between the starttime probability distributions of consumer i and consumer j for each appliance:</p><formula xml:id="formula_2">D(P (i) ||P (j) ) = s P (i) (s)log P (i) (s) P (j) (s) + s P (j) (s)log P (j) (s) P (i) (s)<label>(1)</label></formula><p>Using Laplace smoothing in the parameter estimation of the probability distributions ensured that P (j) (s) &gt; 0 ∀s = 0, . . . , 23 such that Equation 1 is always defined. For hierarchical clustering, we used agglomerative methods with the Ward variance minimization algorithm <ref type="bibr" target="#b9">[10]</ref> for the cluster linkage method. Preliminary results indicated that Ward linkage yields more uniform cluster sizes compared to other methods. Latent Dirichlet Allocation (LDA) is a generative model typically used in natural language processing that characterizes word "topics" as latent variables <ref type="bibr" target="#b10">[11]</ref>. We used LDA since the multinomial distribution of appliance start time probabilities lends itself well to being characterized as a topic modeling type problem. In this application, a "topic" is distribution of start time probabilities and the 24 start times are "words" in a "dictionary". The LDA model was trained by converting the start time probability distributions back into a frequency distribution to use as inputs.</p><p>The GMM was modeled as a mixture of 24-dimensional multivariate Gaussians each with tied covariance matrices. This was required since the 24 features are elements of a discrete probability distribution and are thus not independent of each other. The model was trained using expectation maximization.</p><p>Both probabilistic models were each run 10 times for 2-14 clusters and the assignments with the lowest intra-cluster variation as measured by symmetrized KL divergence were selected for each of the analyzed cluster sizes.</p><p>All four unsupervised learning methods were implemented using the Sci-kit Learn <ref type="bibr" target="#b11">[12]</ref> and SciPy <ref type="bibr" target="#b12">[13]</ref> Python packages.</p><p>Three different metrics were used to evaluate the performance of each method. Suppose the training and validation set both contain n consumers, and k clusters are obtained from both sets such that cluster c T ∈ [0, . . . , k] from the training set contains n c T consumers and cluster c D ∈ [0, . . . , k] from the validation set contains n c D consumers. Supposec (j) is the cluster assignment associated with consumer j. We define the availability of a cluster of appliances during hour h as the mean power consumption during hour h for the entire cluster. The increase in availability from consumer segmentation is the maximum availability over all clusters divided by the availability of all of the appliances in the entire dataset</p><formula xml:id="formula_3">A τ = max c T 1 nc T |τ | t∈τ n j p (j) t 1{c (j) = c T } 1 n|τ | t∈τ n j p (j) t<label>(2)</label></formula><p>where τ is the set of all time indices associated with hour h and p (j) t is the power consumption of consumer j at time t in the test set. An effective consumer segmentation algorithm should yield a large increase in availability.</p><p>The completeness score <ref type="bibr" target="#b13">[14]</ref> is a metric generally used to compare a set of cluster assignments to a set of ground truth labels. For this project, we extended the completeness score to the unsupervised case and used it to compare the similarity of clusters obtained from the training and validation sets</p><formula xml:id="formula_4">CS =1 − H(C T |C D ) H(C T )<label>(3)</label></formula><formula xml:id="formula_5">H(C T |C D ) = − k c T =1 k c D =1 n c T ,c D n log n c T ,c D n c D (4) H(C T ) = − k c T =1 n c T n log n c T n<label>(5)</label></formula><p>where n c T ,c D is the number of consumers assigned to cluster c T in the training set and cluster c D in the validation set. This analysis assumes that consumer power consumption patterns remain similar between the training, validation, and test sets, such that a "perfect" clustering algorithm would recover identical clusters.</p><p>Finally, we used the intra-cluster variation of the samples as a measure of cluster quality. The KL-divergence as defined in Equation 1 was used a distance measure between samples. The elbow method <ref type="bibr" target="#b14">[15]</ref> was used to select the optimal number of clusters for each appliance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Variability</head><p>The variability of consumer power consumption patterns was also analyzed using unsupervised learning. First, K-means clustering was used to cluster the 24-hour power consumption profiles of all homes for each specific appliance into k load shape types. This resulted in 365 load shape cluster assignments for each home and appliance. The distribution over these load shape types Q (j) ∈ R k for each home and appliance over the entire training set was calculated using Laplace smoothing. The entropy of Q (j) gives a measure of the variability of consumer use patterns:</p><formula xml:id="formula_6">S(Q (j) ) = − 365 i=1 Q (j) (i)log(Q (j) (i))<label>(6)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Flexibility</head><p>Three methods were compared for predicting the responsiveness of the power consumption of each consumer to changes in electricity price: linear regression with recursive feature selection, K-nearest neighbors (KNN) regression, and random forests with recursive feature selection. The tuning parameters for each algorithm were selected to minimize the mean squared error (MSE) in the validation set. Tuning parameters included the number of features for linear regression and random forests, the number of neighbors for KNN, and the number of estimators and the maximum tree depth for random forests.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. RESULTS AND DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Availability</head><p>An example of the cluster assignments for the start time distributions of clothes washers obtained with K-means clustering for k=5 are shown in <ref type="figure" target="#fig_0">Figure 1</ref>. The cluster assignments for all four algorithms are qualitatively similar, and effectively segment households by their temporal use patterns. For example, cluster 1 represents consumers with a higher probability of using their clothes washer between 6:00-8:00 and 17:00-19:00. By analyzing such plots, a DR provider would be able to manually select clusters with temporal use patterns most useful for DR program participation. For example, curtailing the power consumption of consumers in cluster 4 could help power system operators meet evening peak system demand.</p><p>As shown in <ref type="figure">Figure 2</ref>, availability generally improves as the number of clusters increases. Results show that consumer segmentation can result in a x2 increase in the availability of residential loads to participate in DR. While the performance of different algorithms generally depends on the number of clusters, hierarchical clustering consistently results in good performance, especially for large number of clusters. Results also indicate that hierarchical clustering also results in clusters with the most uniform cluster sizes compared with the other algorithms. Additionally, use of KL-divergence as a distance measure between probability distributions is more theoretically justifiable than use of the Euclidean distance in K-means clustering. The performance of the two probabilistic methods may have been limited by the size of the dataset. This is because GMM and LDA use EM-type training methods and thus a dataset where the sample is more typical of the overall population might be more effective. Furthermore, LDA is typically used for natural language processing, where the number of words in the dictionary is significantly larger than the number of hours in a day and the frequency count of words in a corpus is higher than appliance start times in a year. The use of the elbow method <ref type="figure">(Figure 3</ref>) to find the most appropriate cluster size was difficult due to the fact that there were no clear points where the intra-cluster variation dropped sharply. To aid in our selection of the optimal number of clusters, we also considered silhouette scores, and for LDA, perplexity scores. Though not presented for the sake of brevity, these other evaluation metrics also agreed to a large extent with the clusters found by the elbow method. The number of clusters selected fell into 2 groups: 5 for EVs, dishwashers, clothes washers, and clothes dryers; 3 for washer/dryers and waterheaters.</p><p>The completeness scores in <ref type="figure" target="#fig_2">Figure 4</ref> were calculated using the selected cluster numbers. Hierarchical clustering had the highest completeness scores for most of the appliances and thus had the most consistent assignments between training and validation sets. The probabilistic methods once again showed poor performance. This was likely due to the same reasons they showed poor performance on the availability metric. Across all algorithms, completeness scores were higher for appliances with smaller number of clusters. This suggests that there is a trade-off between obtaining greater resolution in consumer groups and having higher variance or over-fitting in the clusters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Variability</head><p>The distribution of the entropy of the load profiles of different appliances are shown in <ref type="figure" target="#fig_3">Figure 5</ref> for k=20 (number of load profile types). The mean entropy of the load profiles of deferrable appliances, such as clothes washers, dryers, and dishwashers tend to be higher than that of other appliances.  The power consumption profiles of these loads are primarily dependent on occupant behavioral patterns, which can be highly stochastic. In contrast, the mean entropy of the load profiles of thermal loads such as air conditioners, refrigerators, and waterheaters is much lower, but the variance of these distributions is larger. Targeting of consumers with comparatively lower entropy values would be beneficial to utility companies as their behavior is much more consistent on a day-to-day basis.</p><p>Increasing the number of load profile types k increases the entropy of the load profiles of all consumers and appliance types. However, it generally does not significantly affect the relative ordering of the mean load profile entropy of different appliance types. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Flexibility</head><p>The training, validation, and test mean squared error (MSE) for the three supervised learning algorithms are shown in <ref type="table" target="#tab_0">Table  III</ref>. The optimal number of features from feature selection was 10 for both linear regression and random forests. For KNN, the optimal number of neighbors was 2 and for random forests the optimal number of estimators was 10 and the maximum depth was 100. Linear regression with recursive feature selection resulted in the lowest test error, followed closely by KNN regression. The three features with highest importance from the recursive feature selection for linear regression were the mean baseload power consumption, the mean energy consumption above the baseload level, and the mean hourly power consumption. Because of the small size of the dataset (n=32), models with lower variance achieved better performance. Random forests would likely have higher performance with a larger dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONCLUSIONS AND FUTURE WORK</head><p>In this project, we developed methods for segmenting residential consumers based on their appliance-level power consumption with respect to their availability, variability, and flexibility. Results indicated that segmentation using unsupervised learning methods can increase load availability for DR programs by up to a factor of two. Hierarchical clustering applied to the start time probability distributions of deferrable appliances produced the most consistent performance. Results indicated that cluster assignments can vary significantly from one appliance to another and can differ from the cluster assignments obtained by only analyzing the total power consumption of each home. This highlights the importance of performing consumer segmentation based on appliance-level power consumption data. Power consumption variability was assessed by calculating the entropy of the distribution of load profile types for individual consumers, identified using Kmeans clustering. Results indicated notable differences in the variability of power consumption of different appliance types and segments of the population, which could be exploited by a DR program provider. We tested three different supervised learning approaches for predicting consumer responsiveness to electricity prices, and found that low-variance models such as linear regression paired with recursive feature selection resulted in the lowest test error.</p><p>Future work may investigate incorporating additional variables, such as day of the week and season into the availability analysis. Expanding the analysis to a larger dataset may provide more insight into the generalizability of the results.</p><p>Code for this project can be found at https://github.com/ebuech/cs229.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VIII. CONTRIBUTIONS</head><p>Lily Buechler performed feature extraction on the raw data, implemented k-means clustering and hierarchical clustering for the availability and variability analysis, implemented the three supervised learning methods for the flexibility analysis, and contributed to the poster and report.</p><p>Zonghe Chua implemented the GMM and LDA models and performed the cluster number selection analysis using the elbow method and silhouette scores on all the unsupervised algorithms for the"availability" segmentation. He also contributed to the poster and report.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Cluster assignments for start time distributions of clothes washers for different consumers, obtained with K-means clustering (k=5)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :Fig. 3 :</head><label>23</label><figDesc>Increase in load availability from consumer segmentation for different appliances and numbers of clustersFig. 3: Intra-cluster variation based on the KL divergence for each unsupervised learning algorithm as a function of the number of clusters</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 :</head><label>4</label><figDesc>Completeness score comparison clusters obtained from the training and validation sets for different algorithms and appliance types.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5 :</head><label>5</label><figDesc>Histogram of the entropy of load profiles for different consumers for each appliance type</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Dataset size for each appliance and the type of analysis applied to each</figDesc><table>(V=variability, A=availability, F=flexibility). 
+
+Appliance 
+Number of homes Analysis type 
+Air conditioner (A/C) 
+129 
+V 
+Refrigerator 
+103 
+V 
+Dishwasher 
+82 
+V,A 
+Clothes washer 
+80 
+V,A 
+Dryer 
+62 
+V,A 
+Electric vehicle (EV) 
+29 
+V,A 
+Water heater 
+13 
+V,A 
+Clothes washer + dryer heater 
+13 
+V,A 
+Pool pump 
+9 
+V 
+Total home consumption 
+132 
+V,F 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Features used for predicting consumer responsiveness to price.</figDesc><table>Flexibility features 
+Units 
+Home size 
+ft 2 
+Year built 
+year 
+Number of stories 
+-
+Mean 6-hr energy consumption (24:00-6:00,6:00-
+12:00,12:00-18:00,18:00-24:00) 
+
+kWh 
+
+Mean, 10%ile, and 90%ile of daily energy consumption above 
+baseload 
+
+kWh 
+
+Mean and variance of hourly power consumption 
+kW 
+Mean, 10%ile, and 90%ile of maximum and minimum daily 
+energy consumption 
+
+kWh 
+
+Entropy of load profile (see Section V-B) 
+-
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE III :</head><label>III</label><figDesc>Mean squared errors (MSE) for predicting consumer responsiveness to price.</figDesc><table>Method 
+Train MSE 
+(n=20) 
+
+Validation 
+MSE (n=6) 
+
+Test MSE 
+(n=6) 
+Linear regression 
+0.0200 
+0.0305 
+0.0404 
+K-Nearest Neighbors 0.0148 
+0.0589 
+0.0608 
+Random forests 
+1.6907 
+0.7048 
+0.3187 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">2017 utility demand response market snapshot</title>
+		<ptr target="https://www.navigantresearch.com/reports/market-data-demand-response" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Smart Electric Power Alliance</orgName>
+		</respStmt>
+	</monogr>
+	<note>SEPA) and Navigant Research</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Household energy consumption segmentation using hourly data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kwac</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Flora</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Rajagopal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Smart Grid</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="420" to="430" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Electricity forecasting on the individual household level enhanced based on activity patterns</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Gajowniczek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Zabkowski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">174098</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Load profiling and its application to demand response: A review</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Tsinghua Science and Technology</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="117" to="129" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Clustering analysis of residential electricity demand profiles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Rhodes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">J</forename><surname>Cole</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">R</forename><surname>Upshaw</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">F</forename><surname>Edgar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">E</forename><surname>Webber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Energy</title>
+		<imprint>
+			<biblScope unit="volume">135</biblScope>
+			<biblScope unit="page" from="461" to="471" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Using smart meter data to improve the accuracy of intraday load forecasting considering customer behavior similarities</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">L</forename><surname>Quilumba</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W.-J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">L</forename><surname>Szabados</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Smart Grid</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="911" to="918" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Dataport from pecan street</title>
+		<ptr target="https://dataport.cloud/" />
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>Pecan Street Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Center For The Commercialization Of Electric Technology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>None</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+			<pubPlace>Austin, TX (United , Tech</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Technology solutions for wind integration in ercot</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Uses for smart meter data, topic 2: Advanced consumer segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Cappers</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Todd</surname></persName>
+		</author>
+		<ptr target="https://emp.lbl.gov/webinar/uses-smart-meter-data-advanced-customer" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Modern hierarchical, agglomerative clustering algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Müllner</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1109.2378</idno>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Latent dirichlet allocation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Blei</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">I</forename><surname>Jordan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine Learning research</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="993" to="1022" />
+			<date type="published" when="2003-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">SciPy: Open source scientific tools for Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Oliphant</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Peterson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+	<note>Online; accessed ¡today¿</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">V-measure: A conditional entropybased external cluster evaluation measure</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Hirschberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2007 joint conference on empirical methods in natural language processing and computational natural language learning (EMNLP-CoNLL)</title>
+		<meeting>the 2007 joint conference on empirical methods in natural language processing and computational natural language learning (EMNLP-CoNLL)</meeting>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">The application of cluster analysis in strategic management research: an analysis and critique</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">J</forename><surname>Ketchen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">L</forename><surname>Shook</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Strategic management journal</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="441" to="458" />
+			<date type="published" when="1996" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

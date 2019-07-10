@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Bridge Performance under Earthquakes with Supervised Learning Motivation and Objective</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ziyang</forename><surname>Jiang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Civil and Environmental Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Bridge Performance under Earthquakes with Supervised Learning Motivation and Objective</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Since 1970s, the seismic bridge design process has gone through a great change from "capacity-based" design to "performance-based" design. In this project, we try to train a model of bridge performance under earthquakes and predict how well/badly an existing bridge will perform in a future earthquake as well as guiding the design of a new bridge to survive possible future earthquakes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>The raw features we have in our dataset are bridge age, earthquake magnitude and its distance to epicenter. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The following training and testing accuracy are the average results from 5 cases with different #pos/#neg ratio after resampling:</p><p>From  In this project, we pre-process the raw dataset with bootstrap resampling and implement 3 supervised learning models on the training set. During training process, we observe that the accuracy decreases as we increase the size of resampling. However, since the test set is also unbalanced, a very high testing accuracy may not be meaningful as it always tends to predict the result to be negative. To view this study in a broader scope, it may be observed that there are usually lots of different constraints (on features, data size, physical meanings of results, etc.) in civil engineering scenarios, which may impact the practicality of machine learning in such kind of studies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Positive Example Negative Example</head><p>Damages of I-880 Cypress Structure in Oakland after 1989 Loma Prieta Earthquake</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Data</head><label></label><figDesc>Our positive examples (failure) are obtained mainly from government reports of historic earthquakes happened around the world. Negative examples are obtained from USGS earthquake search catalog. Data collection takes time and effort as there are not many available records of bridge failures due to earthquakes worldwide. For the same reason, our dataset is unbalanced. (i.e. the ratio of # # is around 10:1). In this case, we use bootstrap resampling with replacement to up-sample the positive class and generate a training set with more reasonable number of positive and negative examples.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>threshold) K-value is: = 4.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>Expand size of dataset (increase # of positive examples)  Run tests on other generative models  Implement multi-class classification (No damage = 0, Mild/Severe damage = 1, Collapsed = 2, etc.)</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Bootstrap re-sampling for unbalanced data in supervised learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Dupret</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Koda</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Earthquakes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Kellerman</surname></persName>
+		</author>
+		<ptr target="https://www.nist.gov/topics/disaster-failure-studies/studies-hazard-types/earthquakes" />
+		<imprint>
+			<date type="published" when="2017-02" />
+			<biblScope unit="volume">28</biblScope>
+		</imprint>
+		<respStmt>
+			<orgName>NIST</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

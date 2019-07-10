@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Human Activity Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aristos</forename><surname>Athens</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><surname>Blum</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Navjot</forename><surname>Singh</surname></persName>
+						</author>
+						<title level="a" type="main">Human Activity Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Activity recognition is an important task in several healthcare applications. By continuously monitoring and analyzing user activity it is possible to provide automated recommendations to both patients and doctors <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b6">6]</ref>. There are also applications to consumer products such as data logging for smart watches health apps <ref type="bibr" target="#b2">[3]</ref>. Common consumer devices such as smart phones and smart watches generally ship with IMUs (Inertial Measurement Unit), which are packaged accelerometer and gyroscope sensors. Through the information provided by these IMUs, machine learning techniques can then be used to train activity classifiers, giving users, doctors, and app developers access to an individual's lifestyle and activity choices. In this paper we examine two questions in parallel: what is the "best" classification technique and how well can it perform with less features. To compare classification techniques we use a variety of metrics, including classification accuracy, required dataset size, and prediction speed. In particular, we examine the use of logistic regression, support vector machines (SVM), various decision tree techniques, and neural networks. We then examine if these techniques can perform just as well with reduced sensor channels, for example an IMU from a single body location vs. multiple IMU's placed across the body.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Because of its many applications, supervised human activity classification using sensor data is a relatively popular research area. Through our research, we have found that related articles and their approaches can generally be divided into three categories: Naive Bayes Classification, SVM/Decision Trees, and Neural Networks. We consider the use of Naive Bayes as a classifier for human activity as clever and interesting, since it is usually used for text classification. One such article that uses the Naive Bayes Classifier is Long, Yin, and Aarts, 2009 <ref type="bibr" target="#b9">[9]</ref>. This article was similar to our paper in that it included sensor data from multiple subjects for the purpose of multi-class activity classification, and evaluated their models using crossvalidation (and compared their results to that of other methods, including decision trees). One way in which this paper differs from our work (and is a strength of the paper) is its use of Principal Component Analysis before conducting Naive Bayes to reduce the feature space and correlation between the features. This classification model, however, only had an accuracy of around 80 percent. One study that examined decision trees was <ref type="bibr">[Parkka, 2006]</ref>  <ref type="bibr" target="#b4">[5]</ref>. Similar to our paper, the study used an ordinary decision tree grown via cross-validation and using the Gini Loss for each split. One strength of the article is that, in addition to this "automatically generated decision tree," the researchers also created a "custom decision tree" using their expert knowledge and analysis of the sensor output. However, the classes in the article are improperly balanced (with one class accounting for between 50 and 60 percent of all of the data), which could affect the true test performance (assuming that the test data also suffers from the same problem). The paper by Youngwook Kim and Hao Ling <ref type="bibr" target="#b7">[7]</ref> discusses an interesting approach of human activity recognition through data obtained by a Doppler radar. Similar to our approach, this paper incorporate SVM models that are tuned through cross-validation over a range of hyperparameter values to pick an optimal one. However, the features and characteristics of the data are intrinsically different than the IMU and heart rate data that our paper deals with. For example, we do not have to take into consideration the angle of the subject with respect to the radar and apply a different model based on these edge cases. These variations in the data lead the authors to create a classification model consisting of both decision trees and SVM's. We believe our data is easier to classify and as such can achieve a higher classification rate than the 90% achieved in this paper. We found that the stateof-the-art approach to supervised human activity classification generally involved neural networks, particularly convolution neural networks (CNN) and recurrent neural networks (RNN). A number of studies <ref type="bibr" target="#b8">[8]</ref> [12] use multiple datasets to classify similar activities. Both <ref type="bibr">[Hamerla, 2016]</ref> and [Xue] incorporate CNN's and KNN's with moving windows in order to look at the activities of a user of a period of time and achieved accuracy results above 95%. Given the limited scope of the CS 229, we did not try to emulate these techniques but believe they can produce more robust models, especially for similar activities like playing soccer or running, where it may be important to look over a history rather than a particular timestamp.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND FEATURES</head><p>We used the PAMAP2 Dataset from the UCI repository of machine learning datasets. <ref type="bibr" target="#b16">[16,</ref><ref type="bibr" target="#b15">15]</ref> This dataset includes raw 9-axis IMU data streams (from the hand, chest, and ankle) as well as heart rate data from nine different subjects performing various activities. Each IMU provides temperature, 3-axis acceleration, 3-axis angular velocity, and 3-axis magnetometer data at a rate of 100 Hz. In total there are 1.9 million data points, each containing 52 features. In the dataset, each time-step is labeled with an activity ID, one of 12 different activities that the subjects were engaged in. The 12 activities are the following: ironing, walking, lying, standing, sitting, Nordic walking, vacuum cleaning, cycling, ascending stairs, descending stairs, running, rope jumping. We had to clean the data for a few reasons. The frequency of the time-stamps matches the highest frequency sensors, the IMUs, which read every 0.01 seconds (100 Hz). However, the heart-rate monitor had a frequency of 9 Hz, meaning approximately 90% of the heart-rate column consisted of Nan values. We filled in missing heart-rate values by linearly interpolating between nearest valid readings. For the logistic regression, SVM, and neural network models, an additional preprocessing step of removing the training mean and dividing by the training standard deviation was added. We combined each subjects data into a single matrix and divided that into a training and test set. We used 85% of our data for training and 15% for testing. To avoid over-fitting on only a certain subset of classes, we randomly split the data between training and testing. To train our models, we performed 5-fold cross-validation using our training set, to tune the hyperparameters for the given model. We then used this optimized model and analyzed its performance on the test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Regression</head><p>As a baseline measure, we incorporated a standard logistic regression model with a loss function of the form shown in 1. To make the model more robust against overfitting, L2 regularization was incorporated with the C parameter inversely related to the strength of regularization. In order to pick the optimal value for C, the model was independently trained over a range of C values. The C value that produced the highest accuracy on the validation set was selected and tested on the test set.</p><formula xml:id="formula_0">J(θ) = m i=0 (h θ (x (i) ) − y (i) ) 2 + 1 C ||θ|| 2 2<label>(1)</label></formula><p>For each training phase, 5-fold cross validation was incorporated in order to reduce the variance in a trained model. Stochastic Average Gradient (SAG) descent was selected as the solver to use for training as it generally provides fast convergence for large feature-sets such as ours <ref type="bibr" target="#b10">[10]</ref>. The SAG solver is only guaranteed to converge quickly if all features are of about the same scale. Thus, the normalization preprocessing step described earlier is necessary.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Support Vector Machine</head><p>We wanted to also create a non-linear classifier in the hopes that it can outperform the linear logistic regression model, so a SVM was a natural choice, as it is fairly easy to implement with few parameters to tune. We created our SVM's by solving the following primal problem:</p><formula xml:id="formula_1">min y,w,b 1 2 ||w|| 2 + C m i=1 ζ i s.t. y (i) (w T x (i) + b) ≥ 1 − ζ i , i = 1, ..., m ζ i ≥ 0, i = 1, ..., m<label>(2)</label></formula><p>and the decision function is defined as:</p><formula xml:id="formula_2">sgn( n i=1 y i α i K(x i , x) + ρ)<label>(3)</label></formula><p>Through training, an SVM model can create multiple hyperplanes to split the training set into its labeled categories. This is done through the use of kernels that transform the input data into a higher dimension, so that the data can then be linearly separated. Part of the advantage for SVM's is that only a fraction (represented by n in eqn 3) of the original training set has to be retrained for creating the hyperplane during predictions. Another advantage is that various kernel functions can easily be tested and selected for the one that best fits a particular application. Thus, to select the optimal kernel function along with the C parameter specifying the softmargin size, a grid search was performed over three standard kernel functions (polynomial, rbf, and linear) with a range of C values for each.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Deep Learning</head><p>Based on our literature review we believed that Deep Learning techniques should work well for this classification problem. We therefore implemented a MultiLayer Perceptron architecture for multi-class classification. A MultiLayer Perceptron architecture is a fully connected feedforward neural network with one input layer, one or more hidden layers and one output layer. Formally, the MLP can be considered a function f: R n −→ R k , where n is the number of input features and k is the number of classes. Each hidden layer can be formalized as f:R a −→ R b , where a is the input size and b is the output size. In matrix notation, it would be:</p><formula xml:id="formula_3">f (x) = A c (W c x + b c )<label>(4)</label></formula><p>where x is the input vector, W c is the weight matrix associated with layer c, and b c is the bias vector associated with layer c, and A c is the activation function associated with layer c. We use softmax as the final activation, so each prediction is size (kx1) where k is the number of classes. The classifier predicts a score for each class, instead of simply producing a single class label. This can give a sense of how close we are to the correct label. We converted the true labels to use one-hot encoding, that is we took an (mx1) array and made it (mxk), where m is the number of datapoints. We initially found that making the model deeper produced worse results, but increasing the number of neurons per layer improved the accuracy. Our final architecture is Layer1 Relu Layer2 Relu Layer3 Softmax. The layers have weight sizes of Layer1(n, 512), Layer2(512, k). In order to generalize better we apply dropout for each hidden layer; this helps combat overfitting by suppressing each node with 50% probability. We tried different gradient descent rules, with the best result coming from the SGD optimizer. To evaluate loss we use categorical cross entropy, which is as follows:</p><formula xml:id="formula_4">CE(y ) = − k j=i y j log(y j )<label>(5)</label></formula><p>We use this in conjunction with softmax activation for the final layer, which gives us a probability, or confidence, for each prediction. Softmax output for the i th element is as follows:</p><formula xml:id="formula_5">SM (y , i) = − e y i k j=1 e y j<label>(6)</label></formula><p>This is advantageous because we have multiple classes, instead of simple binary classification. We want the loss to give a sense of the degree of error for each category, instead of a simple yes or no. For example, assume we have 3 classes, and the first class is the correct label for this time step. Consider two example outputs: (0.98, 0.01, 0.01) and (0.51, 0.48, 0.01). The first output is clearly superior to the second, because it has a higher confidence for the correct class, however both will "predict" the first class. If we use something like simple error rate for our loss, we are not able to capture the confidence of our predictions. Using softmax activation with cross entropy loss helps us capture this difference. Our final architecture is shown in <ref type="figure">figure 1</ref>. This neural network was implemented using TensorFlow's Keras <ref type="bibr" target="#b0">[1]</ref>. <ref type="figure">Fig. 1</ref>. We achieved our best results with this architecture. Our architecture had size Layer1(n, 512), Layer2(512, k), where n is the number of data features ranging from 12 − 52 and k = 18 is the number of class labels. We use ReLU activation, softmax final activation, cross entropy loss, and applied dropout to avoid overfitting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Trees</head><p>Decision trees are a useful method for multi-class classification for nonlinear feature sets. Decision trees perform greedy "splits" on the each feature of the data at a specific threshold. In order to choose a split, a decision tree seeks to maximize the difference between the loss of the parent node and the sum of the losses of the child nodes. The specific loss function we used was the Gini Loss shown below, where p mk is the proportion of examples in class k present in region R m , and q m is the proportion of examples in R m from tree T with | T | different R m regions <ref type="bibr" target="#b13">[13]</ref>:</p><formula xml:id="formula_6">|T | m=1 q m K k=1 p mk (1 − p mk )<label>(7)</label></formula><p>There are multiple methods of regularizing, or preventing overfitting, for decision trees including setting a minimum size of leaf (terminal) nodes, and setting a maximum tree depth, setting a maximum number of nodes <ref type="bibr" target="#b11">[11]</ref>. For this paper, we chose to regularize using the maximum tree depth. All of these decision tree classifiers were implemented using the scikitlearn library <ref type="bibr" target="#b14">[14]</ref> 1) Ordinary Decision Trees The ordinary decision tree classifier uses the above algorithm to create one tree, and we test the resulting tree on a test set. While this generally perform well (depending on the dataset), there are a few reasons for the desire to "ensemble," or combine, multiple decision trees, including primarily the fact that individual decision trees have high variance which could lead to low prediction accuracy <ref type="bibr" target="#b11">[11]</ref> 2) Boosted Decision Trees One form of ensembling is using "boosting," which combines many "weak learners" (simple decision trees) in order to reduce bias in the model (at the expense of increasing variance). Boosting these weak decision trees is done for the purpose of ideally improving accuracy, though it may be prone to overfitting <ref type="bibr" target="#b11">[11]</ref>. One specific algorithm for boosting, is AdaBoost (which was used in this paper), as described in <ref type="bibr" target="#b3">[4]</ref>.</p><p>3) Random Forest Another ensemble method for decision trees, for the purpose of improving prediction accuracy, is random forest. Random Forest is a form of bagging (bootstrap aggregation), which involves sampling with replacement from the original population for the purpose of reducing variance (at the expense of an increase in bias, increased computational cost, and decreased interpretability of the trees). For a random forest, a large number of decision trees are generated, and the bias is further reduced (by decorrelating the trees) by only considering a subset of the total number of features at each split in the decision tree <ref type="bibr" target="#b11">[11]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS AND DISCUSSION</head><p>As discussed previously, we were interested in classification performance on both the full set of features and performance when using a reduced set of features. We tried several feature combinations and discovered that we could get decent performance when using just the hand IMU plus heart rate sensor. The hand IMU performed better than any individual IMU. This is a positive result, as we are particularly interested in applications where a user is holding a phone or wearing a smart watch. We will refer to the hand IMU plus heart rate data as the "reduced" or "limited" feature-set. Our primary evaluation metric for all models was classification accuracy. This is simply the count of correctly classified data points divided by the count of classifications attempted. It is as follows:</p><formula xml:id="formula_7">f (y ) = 1 m m i=1 1{y i == y i }<label>(8)</label></formula><p>where y is our set of predicted labels, and y is the set of true labels. We used various loss functions, as described in the subsection for each technique. The full results are shown below in <ref type="figure">Figure 3</ref>, and explained in detail in the remainder of this section. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Logistic Regression</head><p>Through 5-fold cross-validation, in <ref type="figure">fig. 3</ref> we see that the optimal C value for both feature-sets occurs around 0.01.The SAG algorithm automatically calculates the learning rate value, so one was not needed to be selected prior <ref type="bibr" target="#b10">[10]</ref>. With a chosen C value of 0.01, the limited feature-set model performed with an 63.9% accuracy on the test set and the full feature-set model performed with a 81.5% accuracy, both of which are very similar to the validation sets. From the confusion matrix (which is not posted due to space constraints), the main sources of error for the both feature-set models are activities like vacuum cleaning and ironing, Nordic walking and walking, or lying and sitting. As expected, these activities have similar body movements, so from the point of view of a sensor reading, these may be hard to distinguish for a linear classifier. <ref type="figure">Fig. 3</ref>. Validation curves for a given range of regularization constants C for the SVM and logistic regression models. Training curves for logistic regression cannot be seen easily as they lie just above the validation curves</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Support Vector Machine</head><p>Using 5-fold cross-validation for each training model, <ref type="figure">fig.  3</ref> shows that a good C value for the limited feature-set model is 1000 and 100 for the full. Using these C values, on the test set the limited feature-set and full feature-set models performed with accuracy values of 95.0% and 98.9%, respectively. Due to space constraints, only the graphs for the rbf kernel are shown because it outperformed both the linear and polynomial kernel. Comparing the highest validation scores, the rbf kernel produced scores that were higher than the linear and polynomial kernels by on average about 15% and 10%, respectively for both feature-sets combined. For larger values of C (greater than about 10) the model becomes considerably more expensive to train and predict since the amount of support vectors needed to store becomes larger. For a C value of 100 on the reduced feature-set, the model consisted of about 10,000 training samples, about 8% of the training data. From the confusion matrix (not posted due to space constraints), the main sources of error for the SVM model in general were distinguishing between vacuum cleaning and ironing, ascending stairs and walking, and standing and sitting. These points of confusion are similar to those of logistic regression, but SVM seems to do a much better job in being able to distinguish between active and inactive tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Decision Trees 1) Ordinary Decision Trees</head><p>In order to tune the maximum depth hyperparameter of the decision tree, we used scikit-learn's validation curve function to perform 5-fold cross-validation. The training and crossvalidation curves for the limited feature-set is shown in the left side of 4 below as a function of maximum tree depth, and similar curves were produced for the full feature-set It is typical in practice to use the "one-standard error rule" when using cross-validation to choose the simplest model whose accuracy or error is within one standard deviation of the best performing model <ref type="bibr" target="#b3">[4]</ref>. This serves to further reduce the chance of overfitting. Using the one-standard error rule for the validation accuracy, the results suggest that for both the limited and full feature-sets, a maximum depth of 15 should be used. Using a maximum depth of 15, the limited featureset achieved a test accuracy of 0.873 and the full featureset achieved a test accuracy of 0.927. Because of the size of the tree, it was in-feasible to include the image of the tree in this report. From the confusion matrix for this model, the most frequent misclassifications were between vacuum cleaning and ironing, ascending and descending stairs, ironing and standing, and vacuum cleaning and standing. While the first two common misclassifications are understandable based on the similarity in hand movements and heart rate data, the latter two misclassifications are surprising and highlight areas where the decision tree performed poorly.</p><p>2) Boosted Decision Trees For boosted decision trees, we used the default learning rate, and manually tuned the maximum depth of the base decision tree estimators, and the number of trees. Since the base estimator of boosting should be a "weak learner," and since the "strong learner" from the results from Ordinary Decision Trees had a maximum depth of 15, we decided to limit our weak learners to having a maximum depth of less than or equal to 10. For both the limited and full feature-sets, we created tables that presented the training and validation accuracy values for different combinations of maximum depth of the weak learners (from 1-10) and number of trees (50, 100, 250, or 500). Using the one-standard error rule from the optimal validation performance, we chose 500 trees of maxdepth=10 for the limited feature set and 250 trees of maxdepth=9. Using these models, the limited feature-set scored an accuracy of 0.940 on the test set, and the full feature-set scored an accuracy of 0.985 on the test set. A confusion matrix for the limited feature-set is shown below in 5 <ref type="bibr">Fig. 5</ref>. Confidence Matrix for Boosted Decision Trees on Limited Featureset. The four most frequent misclassifications are highlighted in yellow. These represented misclassifications between ascending and descending stairs, and between vacuum cleaning and ascending/descending stairs. These misclassifications are expected because of the relative similarity in hand motions and heart rate between these activities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3) Random Forest</head><p>We decided to include 100 trees in our random forest model, because 100 was a well-performing trade-off of time and accuracy (for random forests, increasing the number of trees will only serve to decrease the variance, and will not increase the likelihood of overfitting). We used the default option of only considering a random subset of the square-root of the total number of features for each split. In order to tune the maximum depth for each decision tree in the random forest, we again used scikit-learn's validation curve function to perform 5-fold cross-validation. The training and cross-validation curves for the limited feature-set and the full feature-set, as a function of maximum tree depth in the random forest, were created using a similar approach to the cross-validation for ordinary decision trees. Using the one-standard error rule for the validation accuracy, the results suggest that for both the limited and full feature-sets, a maximum depth of 20 should be used. Using a maximum depth of 20, the limited featureset achieved a test accuracy of 0.937 and the full featureset achieved a test accuracy of 0.980. From the confusion matrix for this model, the most frequent misclassifications were between vacuum cleaning and ironing, ascending and descending stairs, vacuum cleaning and ascending/descending stairs. These are exactly the common misclassifications found in boosting, and are expected because of the relative similarity in hand motions and heart rate between these activities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Deep Learning</head><p>The MultiLayer Perceptron neural network was able to achieve high classification accuracy. When trained on the entire dataset, it consistently achieved training accuracies greater than 98% and test accuracies greater than 95%. The best model we trained produced a test accuracy of 98.1%. When trained on the reduced feature-set consisting of only the hand IMU and the heart rate sensor, it achieved 81.4 % test accuracy. We noted a trend in accuracy vs hidden layer size. Increasing the size of each layer (number of neurons) improved performance, while increasing the depth (number of hidden layers) degraded performance. We did not notice a significant difference in performance when using ReLU vs other activation functions.</p><p>However, we did find that our model converged faster when using softmax for the final activation function in conjunction with categorical cross entropy loss. As expected, reducing the dropout rate tended to improve training accuracy, but reducing it too much caused a degradation in test accuracy. In this project we were limited in both time and compute, and we believe we can improve accuracy given more of both. We can improve performance by training for more epochs. Loss continued to decrease at the end of our training, indicating performance was still improving when training finished. We could also further increase the number of neurons per hidden layer, at the cost of a larger model with slower training time. <ref type="figure" target="#fig_1">Figure 4</ref> shows the training accuracy and loss when this model was trained on the limited feature-set for 100 epochs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION AND FUTURE WORK</head><p>Unsurprisingly, logistic regression performed the worst. Having the advantage of extremely low memory usage and speed for predictions, it can still be a viable method in lowcompute devices like microcontrollers. SVM's, on the other hand, provide great results in accuracy but may not be viable solutions for microcontrollers because of the large number of support vectors required to store and do operations on for predicting. For decision tree methods, as expected, ensembling methods improved test performance over ordinary decision trees for both the full and limited feature-sets. Boosted decision trees performed slightly better than random forest on both feature sets, which is promising because it is generally less computationally intensive, and thus is a good candidate for a model to actually deploy in a smart device. We would also be interested in exploring different types of Deep Learning architectures. We considered using RNN's (Recurrent Neural Networks) but our feature-set had a relatively large number of features per time step, and the activities did not involve more than a few actions, so it was not necessary to take history into account when classifying a single time-step. As such, simple feed-forward neural nets were sufficient for this problem. However, we would like to explore CNN's (Convolutional Neural Networks) which could potentially give similar or improved performance while using substantially less memory. In general, the limited feature-set performed only slightly worse than the full feature-set on all of the methods, which is a promising result for actual deployment in smart devices. In the future, we would like to test these models using real IMU's. In particular, we would want to see if a low-compute embedded device could perform classifications with neural nets or SVM's in real-time, in addition to computationally cheaper methods such as decision trees.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>APPENDICES</head><p>All code used in this project can be found at: https://github.com/aristosathens/Human A ctivity C lassif ier CONTRIBUTIONS Aristos, Zach, and Navjot all contributed equally to this project. Aristos focused on Deep Learning, Navjot focused on Logistic Regression and SVM, and Zach focused on Trees (ordinary decision trees, boosting, and random forests). All three members worked on data preprocessing, analysis, and writing this report.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2 .</head><label>2</label><figDesc>Training and Test Results for all Methods, for both Full and Limited Feature-sets</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 4 .</head><label>4</label><figDesc>Left: Training and Validation Curves for Limited Feature-set using Ordinary Decision Trees. Right: Training loss and accuracy for the Multilayer Perceptron neural net when trained on the reduced feature-set.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+		<ptr target="https://www.tensorflow.org/" />
+		<title level="m">Large-Scale Machine Learning on Heterogeneous Systems. Software available from tensorflow.org. 2015</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Amount of time spent in sedentary behaviors and cause-specific mortality in US adults</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">E</forename><surname>Matthews</surname></persName>
+		</author>
+		<ptr target="https://www.ncbi.nlm.nih.gov/pubmed/22218159" />
+	</analytic>
+	<monogr>
+		<title level="j">American Journal of Clinical Nutrition</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Multiple-Goal Recognition from Low-Level Signals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoyong</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qiang</forename><surname>Yang</surname></persName>
+		</author>
+		<ptr target="http://www.aaai.org/Papers/AAAI/2005/AAAI05-001.pdf" />
+		<imprint>
+			<date type="published" when="2005" />
+			<biblScope unit="page">AAAI</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Hasting</surname></persName>
+		</author>
+		<ptr target="https://web.stanford.edu/∼hastie/Papers/ESLII.pdf.pg.339" />
+		<title level="m">The Elements of Statistical Learning</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Activity Classification Using Realistic Data From Wearable Sensors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Panu Korpipa Juha Parkka Miikka</forename><surname>Ermes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE TRANSACTIONS ON IN-FORMATION TECHNOLOGY IN BIOMEDICINE</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+				<ptr target="https://s3.amazonaws.com/academia.edu.documents/12195796/parkka06.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">? AWSAccessKeyId = AKIAIWOWYYGZ2Y53UL3A &amp; Expires = 1544770601 &amp; Signature = QBZmGI0nx4 \ %2FLEqsaBbGl6Sm1AXQ \ %3D &amp; response -contentdisposition=inline\%3B\%20filename\%3DActivity Classification Using Realistic.pdf</title>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Sedentary behaviour and life expectancy in the USA: A cause-deleted life table analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">T</forename><surname>Katzmarzyk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I-M</forename><surname>Lee</surname></persName>
+		</author>
+		<ptr target="https://bmjopen.bmj.com/content/2/4/e000828" />
+	</analytic>
+	<monogr>
+		<title level="j">BMJ Open</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Human Activity Classification Based on Micro-Doppler Signatures Using a Support Vector Machine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Youngwook</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hao</forename><surname>Ling</surname></persName>
+		</author>
+		<ptr target="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=4801689&amp;tag=1" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING</title>
+		<imprint>
+			<date type="published" when="2009" />
+			<publisher>IEEE</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Understanding and Improving Deep Neural Network for Activity Recognition</title>
+		<ptr target="https://arxiv.org/ftp/arxiv/papers/1805/1805.07020.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">School of Computer Science and Technology</title>
+		<editor>Nie Lanshun Li Jiazhen Ding Renjie Zhan Dechen Chu Dianhui Li Xue Si Xiandong</editor>
+		<imprint/>
+		<respStmt>
+			<orgName>Harbin Institute of Technology</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Single-accelerometerbased daily physical activity classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>B; Aarts</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Yin</surname></persName>
+		</author>
+		<ptr target="https://pure.tue.nl/ws/files/2828549/Metis234421.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the EMBC</title>
+		<meeting>the EMBC</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Minimizing Finite Sums with the Stochastic Average Gradient</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francis Bach Mark Schmidt Nicolas Le</forename><surname>Roux</surname></persName>
+		</author>
+		<imprint>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+		<ptr target="http://cs229.stanford.edu/notes/rf-notes.pdf.CS229onlinecoursenotes" />
+		<title level="m">CS229 Course Notes Decision Trees</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Deep, Convolutional, and Recurrent Models for Human Activity Recognition using Wearables</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nils</forename><forename type="middle">Y</forename><surname>Thomas Plotz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Hammerla1 Shane Halloran2</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1604.08880.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">Open Lab, School of Computing Science</title>
+		<meeting><address><addrLine>UK. URL</addrLine></address></meeting>
+		<imprint/>
+		<respStmt>
+			<orgName>Newcastle University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rajan</forename><surname>Patel</surname></persName>
+		</author>
+		<ptr target="https://web.stanford.edu/class/stats202/content/lec19-cond.pdf.STATS202onlinecoursenotes" />
+		<title level="m">STATS 202 Lecture 19</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Attila</forename><surname>Reiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Dataset</surname></persName>
+		</author>
+		<ptr target="https://archive.ics.uci.edu/ml/machine-learning-databases/00231/readme.pdf.UCIMachineLearningdataset" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Activity Monitoring</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Introducing a New Benchmarked Dataset for Activity Monitoring</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Attila</forename><surname>Reiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dider</forename><surname>Stricker</surname></persName>
+		</author>
+		<ptr target="https://dl.acm.org/citation.cfm?id=2358027" />
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>IEEE Computer Society Washington</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

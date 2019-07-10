@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CLASSIFYING ADOLESCENT EXCESSIVE ALCOHOL DRINKERS FROM FMRI DATA 1 Classifying Adolescent Excessive Alcohol Drinkers from fMRI Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yong-Hun</forename><surname>Kim</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Cindy</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><surname>Noh</surname></persName>
+						</author>
+						<title level="a" type="main">CLASSIFYING ADOLESCENT EXCESSIVE ALCOHOL DRINKERS FROM FMRI DATA 1 Classifying Adolescent Excessive Alcohol Drinkers from fMRI Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Index Terms-machine learning</term>
+					<term>computer vision</term>
+					<term>fMRI</term>
+					<term>alcoholism !</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Excessive alcohol drinking impacts the structural development of brain in adolescents, but its impact on the functional activity or connectivity of the brain has not yet been explored. Our goal is to design a classification model to predict if a subject is a heavy drinker based on their resting-state fMRI data (stored as blood oxygen-level dependent (BOLD) signals). Logistic regression of pre-processed data was used as a baseline for CNN/RNN-based models and SVMs. Surprisingly, using derived features and including demographics with logistic regression yielded far better results than applying the simple, processed data to complex models. Code: https://github.com/jnoh4/CS229ToShare or bit.ly/CS229Code</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Existing studies have shown that excessive alcohol drinking can impact the normal structural development of brain anatomy during adolescence <ref type="bibr" target="#b0">[1]</ref>  <ref type="bibr" target="#b1">[2]</ref>. However, it remains unclear whether adolescent binge drinking can impact the functional activity or connectivity of the brain. A preliminary attempt has been made on the NCANDA (National Consortium on Alcohol and Neurodevelopment in Adolescence) dataset to analyze functional networks of hundreds of adolescent participants based on statistical hypothesis testing. However, such analytical models tend to overfit the population, thereby producing false-positive findings <ref type="bibr" target="#b2">[3]</ref>.</p><p>In this project, our goal is to design a classification model to predict if a subject is a heavy drinker based on their resting-state fMRI data (stored as blood oxygen-level dependent (BOLD) signals). After pre-processing, the inputs to our models are parcellated fMRI data as BOLD signals, as well as patient demographic information (age, sex, scanner type). We then used each model (logistic regression, SVM, deep learning) to output a predicted classification of the patient as a heavy drinker versus non-heavy drinker.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORK</head><p>As more and more neuroimaging databases become publicly available, machine learning models are becoming increasingly useful in functional neuroimaging classification. Over the past decade, there have been several attempts to leverage machine learning on fMRI data to classify neurodegenerative diseases or different tasks. These fMRI classifications are often compared to traditional manual classification methods using clinical behavioral data, such as the DSM-IV criteria for psychological disorders.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">SVM and Linear Classifiers</head><p>The earliest experiments we found mostly relied on support vector machines (SVMs) or linear classifiers, which achieved accuracies between 69-92%. Chanel et al. used SVMs for classifying austistic spectrum disorder (ASD) from both task-based and resting-based fMRI <ref type="bibr" target="#b3">[4]</ref>. Wang et al. performed regression on fMRI scans for depression classification <ref type="bibr" target="#b4">[5]</ref>. Yoon et al. used LDA on task-based fMRI scans for schizophrenia classification <ref type="bibr" target="#b5">[6]</ref>. Yadav et al. compared the performance of SVMs, Naive Bayes, and neural networks for classifying Alzheimer's disease (AD) from resting-state fMRI, noting that a CNN LeNet5-based model achieved 96.5% accuracy <ref type="bibr" target="#b6">[7]</ref>. These experiments show promise for using machine learning models towards fMRI classification, but SVM and linear classifier performance is often still limited by current neurobiological knowledge of these diseases.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Recurrent Neural Networks</head><p>Recent and current techniques for classifying on fMRI data seem to take more advantage of recurrent neural networks (RNNs), which naturally lends itself to time-series data. Chen and Hu developed a RNN-based model that was able to identify individuals by their fMRI "functional brain fingerprints" with up to 94% accuracy <ref type="bibr" target="#b7">[8]</ref>, demonstrating the ability of RNNs to distinguish between differing brain activation patterns. Dvornek et al. utilized an RNNbased model for autism spectrum disorder classification on resting-state fMRI, achieving 70% accuracy <ref type="bibr" target="#b8">[9]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Alcohol Abuse and Our Problem</head><p>For alcohol abuse classification, little work has been done with machine learning models on fMRI data, with most analyses being done statistically or using basic regression models <ref type="bibr" target="#b9">[10]</ref>.</p><p>These papers vary on their feature selection and validation methods. Based on the results presented by these works, a mixed CNN+RNN-based approach seemed promising due to the nature of our data, which consists of resting-state fMRI only. As a result, we chose to build a CNN+RNN-based model to classify heavy drinkers, as well as compare the performance against other neural networkbased models as well as regression and SVM-based models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data</head><p>Our original dataset consists of fMRI scans from 715 adolescents/young adults from the NCANDA database. The scans measure the BOLD signal from each brain region per second (over T = 269 timesteps, 2.2 seconds/frame). Preliminary visualization of the data, such as time-series plots of individual patients <ref type="figure" target="#fig_0">(Fig. 1)</ref> show that most BOLD signals were within the same general range of values. Most BOLD signal histograms <ref type="figure" target="#fig_1">(Fig. 2)</ref> were approximately normal; however, we did see some patient BOLD signal distributions that were not normal or skewed, suggesting differences between brain regions. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Pre-processing and Derived Features</head><p>Fundamentally, BOLD signals were normalized by Z-score to reduce variability between patients. Moreover, there was significant class imbalance within the dataset (122 (17%) heavy drinkers out of 715). After setting class balance (50/50), our dataset size was reduced to 244 patients.</p><p>Because we were limited by the size of our dataset, it was imperative for us to make smart use of our data. Because neural networks have a high tendency to overfit, we needed a proper dev set in addition to train/test. We took a random sample of 5% of our dataset (13 taken, 231 leftover) and set it aside as our dev set, which will not be used during kfold cross validation of the test/training data. We decided on 5% of the dataset because we wanted to keep this set size small but still enough to not be overly skewed towards one class (based on the cumulative probability of the binomial distribution, likelihood of getting 3 or less of a single class is .17). For 10-fold validation, the remaining 231 samples were split 90/10, resulting in 208 training and 23 test samples. <ref type="table">208  23  13  244</ref> fMRI scans were split into regions in one of two ways: using Independent Component Analysis (ICA) into N = 25 brain regions, or using Craddock parcellation <ref type="bibr" target="#b10">[11]</ref> into N = 100 brain regions. The derived features we used for logistic regression, reduced the time series data for each brain region into a single point. For each brain region in each patient, the entire time series was reduced to its signal range (max signal -min signal). In the code, this process was boiled down to:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Train Test Dev Total</head><formula xml:id="formula_0">x derived (N ) = max(x N ) − min(x N )</formula><p>Other features included demographic information (sex, age, and scanner type).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">METHODS</head><p>To classify heavy drinkers versus non-heavy drinkers, we implemented a series of models based on related experiments found in the literature. For our baseline, we utilized logistic regression. For our main exploration of the project, we experimented with deep learning models. We briefly attempted support vector machines as a foil for deep learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Logistic Regression</head><p>Logistic regression, a common binary classification algorithm, utilizes the sigmoid function (also known as the logistic function). Incorporated with linear prediction parameters, θ and the features of x, the classification prediction is given by the following probability distribution:</p><formula xml:id="formula_1">h θ (x) = 1 1 + e −θ T x</formula><p>whose log likelihood is given by the following:</p><formula xml:id="formula_2">l(θ) = m i=1 y (i) log h(x (i) ) + (1 − y (i) ) log(1 − h(x (i) )</formula><p>Due to our low number of features (25 when using derived features from ICA parcellated data), we used Newton's method for convergence. Newton's method requires the Hessian of the loss with respect to the features to be calculated, which is impractical for high dimensional data. For fewer features, Newton's method has the benefit of converging quickly, which also allows us to use batch gradient ascent. Newton's method update rule is given by the following:</p><formula xml:id="formula_3">θ := θ − H −1 ∇ θ l(θ)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Support Vector Machines</head><p>Support vector machines (SVMs) map a given set of features to a higher dimensional space so that nonlinear classifications can be made. As opposed to logistic regression, which minimizes functional margin defined by the following equation:</p><formula xml:id="formula_4">γ (i) = y (i) (w T x + b)</formula><p>support vector machines seek to minimize the geometric margin, which is defined by the following equation:</p><formula xml:id="formula_5">γ (i) = y (i) w T x (i) + b ||w||</formula><p>In doing so, the convergence of the algorithm takes the norm of the parameters into account, and essentially, the parameters become invariant to random, meaningless scaling. This is important in allowing the parameter change to be small enough for the algorithm to converge appropriately. As various SVMs have been used on fMRI classification models in the literature, we ran 4 SVMs with different kernels: 1) Linear, 2) Polynomial (degree 2), 3) Sigmoid, and 4) Radial Basis Function (RBF).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Deep Learning</head><p>Finally, we chose to primarily use deep learning in our most promising model, as we saw an analogy between our data, image-processing and natural language processing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.1">Convolutional Neural Networks</head><p>Convolutional Neural Networks (CNNs) are used frequently in image-processing to recognize patterns that can be anywhere throughout the picture <ref type="bibr" target="#b11">[12]</ref>. Moreover, images have RGB "channels", which are taken into account in CNNs. Finally, the results from the channels our summed and outputted into "filters" (each with its own matrix) that theoretically detect a particular, overall "feature" in the image <ref type="bibr" target="#b11">[12]</ref>.</p><p>In our case, the fMRI data is a time-series data for different brain regions. We are trying to recognize patterns of brain activity at any time point throughout the time series along multiple "channels" (brain regions).</p><p>We tried using 1-D convolution (each region as an input channel, time series for convolution). Formally, the equation for computing 1-D convolution looks like the following:</p><formula xml:id="formula_6">o[m, i] = b[m] + di,n w[m, n, di] * x[n, i + di]</formula><p>where o represents the output of the convolution, m represents the m th filter output in the convolution, i represents the axis for time series, b represents the bias term in the convolution, w represents the weight matrix associated with a given output filter, x represents the input data and n represents the n th input channel (brain region in this case). (Note: convolution above assumes stride = 1)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.2">Recurrent Neural Networks</head><p>Recurrent Neural Networks (RNNs) are used frequently in natural language processing <ref type="bibr" target="#b12">[13]</ref>, because sentences carry information through words and their potential relations to each other-both short and far. The same applies to our fMRI data. The potential relations between convolutions may carry information that is important for the classification of heavy drinkers versus non-heavy drinkers using fMRI data. More specifically, we use a type of RNN called Long ShortTerm Memory (LSTM) <ref type="bibr" target="#b13">[14]</ref>. An RNN normally functions by storing "hidden states" that essentially "stores" information as the model processes data. These hidden states are updated directly with each input that comes into the RNN. However, in LSTM, additional "weighting" steps occur. A newly calculated hidden state is weighted against the hidden state calculated in the previous iteration and creates a new hidden state value. This new hidden state value is then weighted to account for its relevance for the model's predictive purposes (See <ref type="figure" target="#fig_3">Fig. 4</ref> for a visualization of an LSTM model next to its set of key equations) <ref type="bibr" target="#b13">[14]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.3">Our Deep Learning Models</head><p>Our most promising model <ref type="figure" target="#fig_4">(Fig. 5)</ref>, based on existing experiments in the literature and parallels we drew from image processing and natural language processing, consists of a CNN feeding into an RNN followed by a single-layer neural network (to represent the final logistic regression step), outputting the final classification. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">EXPERIMENTS</head><p>In general, for all models, because we used 10-fold cross validation (as described in the data section) to get an accurate measurement of the measurement of our model (small dataset means cross validation is imperative), we had to make sure to set aside a dev set that will not be seen during cross-validation, but will be used as a means for adjust for the hyperparameters. This was the best way to properly adjust hyperparameters without being biased by the very data that we eventually train the model on.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Logistic Regression Hyperparameters</head><p>For logistic regression, we either used fMRI data in addition to all demographic information, or with all demographic information excluding age. As expected of Newton's method, the algorithm converged very quickly (1-6 iterations depending on the threshold for convergence; batch gradient descent). The criteria for convergence (c) was measured by the magnitude of change in the parameter c = ||dθ|| 2 2 &lt; where the threshold for convergence, , was determined manually using the dev set. We started with a value of 100 for and decreased by a factor of 10 and observed the effect on the average difference in accuracy between the train set and dev set over the k-fold validation (the dev set never enters the train or test set). The average difference in accuracy was invariant to the changes in (see chart below). In other words, 1 iteration was enough for meaningful convergence of the algorithm and that any additional iterations will not cause significant overfitting. Therefore, we left the value of at 1e-5, a value used in class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10</head><p>1 1e-1 1e-2 Avg train -dev accuracy .16 .16 .14 .17</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Support Vector Machine Hyperparameters</head><p>Using sklearn's package for SVMs <ref type="bibr">[15]</ref> and changing the "tolerance" variable to control convergence of the algorithms, we carried out the same analysis as done above for logistic regression. For each SVM (linear, poly2, sigmoid and rbf), we saw that they either underfit or overfit and decided on tol = 10 (see table below). As SVMs were not the central focus of our project, we did not yet look deeper into ways of making SVM more robust for our data, but this certainly will be a future direction for us given the support it's received in literature. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Deep Learning Hyperparameters</head><p>For the deep learning models, which was implemented through Keras with Theano backend <ref type="bibr" target="#b14">[16]</ref>, the number of epochs was the best way to control when to stop the training. We found that especially our CNN + RNN + DenseNet model had the tendency to underfit if we didn't run enough epochs, but also overfit if we ran too many. Therefore, we had to establish a good standard for stopping at the correct epoch in order to not underfit or overfit (more important than dropout = 0.8, which didn't have a huge impact).</p><p>To that end, we established three conditions for exiting iterations. As the model was training, the model was to exit iterating if:</p><p>1)|T rainAcc − DevAcc| ≤ T rainAcc + DevAcc 20 T rainAcc, DevAcc &gt; T HRESHOLD (The difference in accuracy between train and dev sets is fairly small, and they both have reached a threshold value of our interest (0.6; better than random guessing))</p><p>2)|T rainAcc − DevAcc| ≥ T rainAcc + DevAcc 20 T rainAcc &gt; M AX; T rainAcc &gt; DevAcc (The difference in accuracy between train and dev sets is getting too large, the train accuracy is too high (0.65), and it is greater than the dev accuracy. Suggests that the model is beginning to overfit.)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3)T rainAcc &gt; M AX; DevAcc &lt; M IN</head><p>(The train accuracy is high (&gt;0.65) while the dev accuracy is low (&lt;0.55). Suggests that the model is beginning to overfit).</p><p>As for window size, stride and output filter dimensions for CNN; and output dimensions for RNN, we manually judged, based on the rate of training and changes in accuracy differences between the train and dev set, to have window size = 5, stride = 1, output filter dimensions = 5 and output dimensions for RNN = 5 (except for when RNN was the only layer present).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Performance Evaluation Metrics</head><p>To measure the final performance of all our models, we utilized accuracy and F1 score</p><formula xml:id="formula_7">F 1 = 2 * precision * recall precision + recall</formula><p>Since we balanced our classes, accuracy gave us a good indications of how the models performed. However, F1 score was a way to formally take both recall (what proportion of correct predictions was for heavy drinkers over non-heavy drinkers?) and precision (what proportion of heavy drinker predictions was correct?) into account. Logistic regression with our derived features and demographics performed the best <ref type="figure">(Fig. 6, 7, 8)</ref>. Surprisingly, we found that most of the correlation came from age. Upon taking out only age from the demographic information, we immediately lose the success of logistic regression and find that any form of training yields no significant benefits (slight overfitting). However, this finding is helpful in suggesting that we should integrate demographics into our deep learning models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">RESULTS/DISCUSSION</head><p>Generally, SVMs were not our major focus. Purely based on data we obtained while adjusting for the threshold hyperparameter, we saw that all SVMs either underfit or overfit. To prevent overfitting, we were able to adjust our threshold, but we may need to explore other hyperparameters/kernels relevant to SVMs.</p><p>The bulk of our work went into attempting deeplearning models. As we initially experimented with different hyperparameters, one of the first things we noticed was the tendency to underfit or overfit. We had to make sure to have a dev set we could test on such that we could determine window size, output filter dimension, and output dimension for RNN. We also attempted using regularization (to no avail) as well as drop-out. Our most important use of the dev set was to know when to drop after an epoch. To ensure the model trained enough, but not too much, we reasoned that the best place to stop was when both the train and dev set accuracies were fairly close and above a certain threshold, or when the two accuracies were getting too far apart. In doing so, we were able to avoid overfitting. However, all-in-all, we saw that we could not yield any significant improvements in accuracy/F1 score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION / FUTURE WORK</head><p>Overall, although we were able to control many of the hyperparameters to prevent under/overfitting, and adjust the number of layers, we found that deep learning models did not perform very well. This is either because our overall architecture was fundamentally flawed, inclusion of demographics is crucial, or we were simply lacking in data to be able to make meaningful distinctions (as indicated by aggressive guessing of a single class). As for SVMs, they were not our primary focus for developing our models, so we weren't able to see their full potential on the data. Nonetheless, our most preliminary work suggests they will have similar issues as our deep learning models. Although we do have our most "successful" model (baseline -logistic regression using derived features), we also found that removing age as a factor reduces its efficacy, suggesting that even logistic regression with our derived features was not any more successful than our other models.</p><p>Moving forward, there are multiple things we would like to try for our future directions. As mentioned above, we simply may not have had enough data to be able to pick up sensitive features. To circumvent this issue, we can use transfer learning, which is commonly used for model development on medical images due to relatively modest sample sizes. This involves applying learned parameters from other large datasets, ideally those that combine images and sequence data as our fMRI dataset does, and training our own final few layers to use features detected from larger data, but predicting for or own.</p><p>Another important direction is to incorporate demographics as features into our deep learning models. Although we were limited by the fact that all of us had just learned to use Keras and didn't have the time to incorporate multiple data inputs, we saw how important demographics can be. Moreover, we have not normalized for an natural, biological changes in brain function as an individual ages. Including demographics may potentially drastically change our models' performances.</p><p>Another idea would be to look into different parcellation methods for pre-processing the data (Craddock with more regions, etc.), as currently there is no consensus on the best parcellation method of fMRI data.</p><p>Lastly, we can look into making our SVM models more robust for our classification problem. For this project, we kept most of the default scikit-learn parameters (except for tolerance) as exploring SVMs was not the main focus of our project. However, fine tuning additional parameters (as in poly, sigmoid, rbf kernels) or considering additional/custom kernels may help with the issue we had of either extremely underfitting or extremely overfitting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">CONTRIBUTIONS</head><p>All team members contributed equally to writing this project report. Joseph Noh researched models and built the frame-work to use through Keras/Theanos. He was primarily responsible for pioneering different methods/models. Yong-hun Kim tested code for different model combinations and hyperparameters, and recorded the resulting data. Cindy Liu generated a large number of images/tables for data and result visualizations, implemented the SVM models, and created the model diagram.</p><p>We would like to acknowledge Qingyu Zhao for providing the pre-processed data and serving as a mentor for the project, giving us guidance on our set-up and answering our questions about the data. We would also like to thank TAs Atharva Parulekar and Raphael Townshend for providing guidance and advice during project office hours, as well as Professors Andrew Ng and Ron Dror for teaching CS229 this quarter.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Example time-series plots from two patients with ICA parcellation. a) female non-heavy drinker b) male heavy drinker.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>BOLD Signal Histograms. a) Normal b) Skewed</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 .</head><label>3</label><figDesc>Craddock Parcellation examples<ref type="bibr" target="#b10">[11]</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 4 .</head><label>4</label><figDesc>An example of LSTM visualized, side-by-side with the relevant equations.<ref type="bibr" target="#b13">[14]</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5 .</head><label>5</label><figDesc>CNN + RNN + DenseNet-based model Given the sheer capacity of each deep learning model alone (RRN/CNN) as well as for comparison, we also attempted three more deep learning models: 1) RNN ONLY with a single output, 2) RNN + NN, 3) CNN + Flatten + NN.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 6 .Fig. 7 .Fig. 8 .</head><label>678</label><figDesc>Confusion Matrix for a representative result of a single K-Fold cross validation instance for Logistic Regression (ICA) CLASSIFYING ADOLESCENT EXCESSIVE ALCOHOL DRINKERS FROM FMRI DATA 5 Fig. 7. Logistic Regression (LR); RNN (R); CNN (C); NN (N); SVM (L)inear, (P)oly 2, (S)igmoid, (RB)F; Yellow = Best model; Blue = Best model -age Fig. 8. Performance plotted against various models</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The effect of alcohol use on human adolescent brain structures and systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">M</forename><surname>Squeglia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Jacobus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">F</forename><surname>Tapert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Handbook of Clinical Neurology</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="page" from="501" to="510" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Alcohols effects on the adolescent brainwhat can be learned from animal models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hiller-Sturmhfel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">S</forename><surname>Swartzwelder</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Alcohol use effects on adolescent brain development revealed by simultaneously removing confounding factors, identifying morphometric patterns, and classifying individuals</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">H</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kwon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">M</forename><surname>Zahr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Pfefferbaum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">V</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">M</forename><surname>Pohl</surname></persName>
+		</author>
+		<ptr target="http://www.nature.com/articles/s41598-018-26627-7" />
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2018-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Classification of autistic individuals and controls using cross-task characterization of fMRI activity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Pichon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Conty</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Berthoz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Chevallier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Grzes</surname></persName>
+		</author>
+		<ptr target="https://linkinghub.elsevier.com/retrieve/pii/S2213158215300279" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage: Clinical</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="78" to="88" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Depression Disorder Classification of fMRI Data Using Sparse Low-Rank Functional Brain Network and Graph-Based Features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<ptr target="https://www.hindawi.com/journals/cmmm/2017/3609821/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Automated classification of fMRI during cognitive control identifies more severely disorganized subjects with schizophrenia -ScienceDirect</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Yoon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">V</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">M</forename><surname>Mcvay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Deramo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Minzenberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Ragland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Niendham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Solomon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">S</forename><surname>Carter</surname></persName>
+		</author>
+		<ptr target="https://www.sciencedirect.com/science/article/pii/S0920996412000035" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Classification of alzheimer using fmri data and brain network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Yadav</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gautam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">B</forename><surname>Mishra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computer Science Information Technology</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Individual Identification Using the Functional Brain Fingerprint Detected by the Recurrent Neural Network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Hu</surname></persName>
+		</author>
+		<idno type="doi">10.1089/brain.2017.0561</idno>
+		<ptr target="http://www.liebertpub.com/doi/10.1089/brain.2017.0561" />
+	</analytic>
+	<monogr>
+		<title level="j">Brain Connectivity</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="197" to="204" />
+			<date type="published" when="2018-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Combining phenotypic and resting-state fMRI data for autism classification with recurrent neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">C</forename><surname>Dvornek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Ventola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">S</forename><surname>Duncan</surname></persName>
+		</author>
+		<ptr target="https://ieeexplore.ieee.org/document/8363676/" />
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE 15th International Symposium on Biomedical Imaging</title>
+		<meeting><address><addrLine>Washington, DC</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018-04" />
+			<biblScope unit="page" from="725" to="728" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The ability of functional magnetic resonance imaging to predict heavy drinking and alcohol problems 5 years later</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Schuckit</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">L</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">P</forename><surname>Paulus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">F</forename><surname>Tapert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">N</forename><surname>Simmons</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">J</forename><surname>Tolentino</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Shafir</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Alcoholism: Clinical and Experimental Research</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">206213</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A whole brain fMRI atlas generated via spatially constrained spectral clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">C</forename><surname>Craddock</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">E</forename><surname>Holtzheimer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><forename type="middle">P</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">S</forename><surname>Mayberg</surname></persName>
+		</author>
+		<idno type="doi">10.1002/hbm.21333</idno>
+		<ptr target="http://doi.wiley.com/10.1002/hbm.21333" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Brain Mapping</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1914" to="1928" />
+			<date type="published" when="2012-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Convolutional neural networks for image processing: An application in robot vision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Browne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">S</forename><surname>Ghidary</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Artificial Intelligence</title>
+		<imprint>
+			<date type="published" when="2003" />
+			<biblScope unit="page">641652</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A generalized recurrent neural architecture for text classification with multi-task learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Jin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence</title>
+		<meeting>the Twenty-Sixth International Joint Conference on Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Long short term memory (lstm) -recurrent neural networks</title>
+		<ptr target="https://www.coursera.org/lecture/nlp-sequence-models/long-short-term-memory-lstm-KXoay[15" />
+		<imprint/>
+	</monogr>
+	<note>sklearn.svm.svc.&quot; [Online</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Keras: The python deep learning library</title>
+		<ptr target="https://keras.io/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

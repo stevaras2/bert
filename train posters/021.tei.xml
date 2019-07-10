@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Modeling Malicious Network Packets with Generative Probabilistic Graphical Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashe</forename><surname>Magalhaes</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gene</forename><surname>Lewis</surname></persName>
+						</author>
+						<title level="a" type="main">Modeling Malicious Network Packets with Generative Probabilistic Graphical Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Motivation Generative Adversary Models Experimental Results</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A cyber enterprise is an elaborate web of applications, software, storage, and networking hardware that can see up to a megabit of network traffic per second. The problem of detecting malicious network packets in such a system can be addressed by modeling a controller of the host and Intrusion Detection System as a Markov Decision Process. To boost the resiliency of this MDP controller, we explore generative probabilistic graphical models of network packets to better characterize attack types.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NSL-KDD Dataset</head><p>DoS attack: denial-of-service; attempt to make a machine or network resource unavailable to its intended users Probe attack: attack in which the hacker scans a machine or a networking device in order to determine vulnerabilities R2L attack: remote-to-user; user sends packets to a machine over the internet, which s/he does not have access to in order to expose the machines vulnerabilities U2R attack: user-to-root; hacker starts off on the system with a normal user account and attempts to abuse vulnerabilities in the system in order to gain super user privileges Each packet is annotated with 40 distinct features, ranging from duration of connection to protocol type to total number of failed logins.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A cyber enterprise is an elaborate web of applications, software, storage, and networking hardware that can see up to a megabit of network traffic per second. The problem of detecting malicious network packets in such a system can be addressed by modeling a controller of the host and Intrusion Detection System as a Markov Decision Process. To boost the resiliency of this MDP controller, we explore generative probabilistic graphical models of network packets to better characterize attack types.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>NSL-KDD Dataset</head><p>DoS attack: denial-of-service; attempt to make a machine or network resource unavailable to its intended users Probe attack: attack in which the hacker scans a machine or a networking device in order to determine vulnerabilities R2L attack: remote-to-user; user sends packets to a machine over the internet, which s/he does not have access to in order to expose the machines vulnerabilities U2R attack: user-to-root; hacker starts off on the system with a normal user account and attempts to abuse vulnerabilities in the system in order to gain super user privileges Each packet is annotated with 40 distinct features, ranging from duration of connection to protocol type to total number of failed logins.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

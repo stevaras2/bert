@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Improving Context-Aware Semantic Relationships in Sparse Mobile Datasets</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Hansel</surname></persName>
+							<email>pwhansel@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nik</forename><surname>Marda</surname></persName>
+							<email>nmarda@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><surname>Yin</surname></persName>
+							<email>wyin@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Improving Context-Aware Semantic Relationships in Sparse Mobile Datasets</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Traditional semantic similarity models often fail to encapsulate the external context in which texts are situated. However, textual datasets generated on mobile platforms can help us build a truer representation of semantic similarity by introducing multimodal data. This is especially important in sparse datasets, making solely text-driven interpretation of context more difficult. In this paper, we develop new algorithms for building external features into sentence embeddings and semantic similarity scores. Then, we test them on embedding spaces on data from Twitter, using each tweet's time and geolocation to better understand its context. Ultimately, we show that applying PCA with eight components to the embedding space and appending multimodal features yields the best outcomes. This yields a considerable improvement over pure text-based approaches for discovering similar tweets. Our results suggest that our new algorithm can help improve semantic understanding in various settings.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Determining the semantic similarity between texts is an important task in practical NLP. New methods like Doc2Vec <ref type="bibr" target="#b3">[4]</ref> and Contextual Salience <ref type="bibr" target="#b9">[10]</ref> achieve better results by incorporating context in computing semantic similarity. However, these methods still rely on solely textual features. When a dataset is sparse, these methods will perform even worse, as context is even harder to effectively determine.</p><p>However, with the advent of mobile devices, we often have access to a wealth of passively-collected information tied to any given piece of text, such as the time and location at which the text was recorded <ref type="bibr" target="#b1">[2]</ref> <ref type="bibr" target="#b8">[9]</ref>. This multimodal data might provide valuable insight into the context of text input that cannot be captured by textual analysis alone. As a result, we might be able to develop more effective methods for determining semantic similarity.</p><p>In this paper <ref type="bibr" target="#b0">1</ref> , we demonstrate that these additional fea- <ref type="bibr" target="#b0">1</ref> Our code is available at https://github.com/nmarda/cs229 tures can capture information about the context of a text, helping discover semantic similarities that traditional stateof-the-art methods often miss. We use data from popular microblogging website Twitter, which has temporal and geospatial features alongside short paragraphs of text, to test our method and demonstrate its effectiveness. The inputs to our algorithms are pairs of tweets along with their corresponding temporal and geospatial information. We then used iterative minimization and PCA-based techniques to output predicted semantic similarity scores for each tweet pair. These scores were compared against data labeled by hand by political science students.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>We build off of previous work that incorporates the context of a sentence to better determine semantic similarity between sentences. Staple models like Term FrequencyInverse Document Frequency (tf-idf) struggle to incorporate contextual information. Instead, we let two more recent methods, Doc2Vec and Contextual Salience (CoSal), guide our approach toward building better contextual understanding.</p><p>Doc2Vec is a method that learns continuous distributed vector representations for inputted text, allowing it to better incorporate text ordering and semantics <ref type="bibr" target="#b3">[4]</ref>. This allows it to take the context of a document into account when computing similarity.</p><p>CoSal computes the importance of a word given its context. This is then used to produce weighted bag-of-words sentence embeddings, thereby incorporating context into semantic similarity computations. These contexts can also be small, as CoSal works well with as few as 20 sentences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Sample Demonstration on Twitter Data</head><p>We tested our algorithms on the data.world Politician tweets dataset <ref type="bibr" target="#b2">[3]</ref>, a collection of over 1.5 million tweets from American federal politicians. We chose political tweets because we expected there to be meaningful temporal and geospatial information that text-based models would miss. Four Stanford political undergraduate students each manually labeled the semantic similarity between 360 pairs of randomly selected tweets from each of our models, assigning scores based on criteria of topical, ideological, and stylistic similarity. Then these scores were averaged and scaled to produce similarity labels between 0 and 1.</p><p>We preprocessed the data prior to constructing an embedding space. We began by associating each tweet with its corresponding user location. Then, using the GeoPy Nominatim API, we associated each location with corresponding longitude and latitude values. Next, we encoded time as cyclical continuous features <ref type="bibr" target="#b6">[7]</ref>, separating the timespans of one day from that of one year, and then maintaining the linear continuous feature form of multiple years. This made it possible to test our hypothesis that tweets that are closer during the cycle of a short period of time are more likely to be semantically similar. Finally, we stripped the tweets of URLs and stopwords and converted them all to lowercase.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head><p>We tested two different approaches to including multimodal data in semantic similarity computations. Each of them build on related work described in Section 2.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Iterative Minimization</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.1">Modifying Contextual Salience</head><p>Our first approach was to directly improve upon the existing CoSal algorithm. We chose to work with CoSal because we believed it to be most suitable for sparse mobile datasets. The CoSal algorithm sends each sentence to a 50-dimensional embedding space using Mahalanobis distance over the context. It then computes the similarity score (not adjusting for context):</p><formula xml:id="formula_0">sim CoSal (a, b) = a · b</formula><p>In this method, our approach was to modify this equation to take into account additional features, such as geolocation and timestamp. In general, each input sentence s can be represented by n + 1 features: s = {s CoSal , s 1 , s 2 , ..., s n } where s CoSal is the vector encoding produced by the CoSal algorithm and each s i is an additional feature of the sentence (for example, in the Twitter data set s 1 is the time at which the Tweet was published and s 2 is an ordered pair representing longitude and latitude of where the Tweet was published). With these new inputs, we proposed two potential new functions as improvements over sim CoSal :</p><formula xml:id="formula_1">sim Σ (s (1) , s (2) ) = s (1) CoSal · s (2) CoSal + n i=1 α i d i (s (1) i , s (2) i ) (1) sim Π (s (1) , s (2) ) = s (1) CoSal · s (2) CoSal n i=1 α i + d i (s (1) i , s (2) i ) (2)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2">Defining Distance Formulas</head><p>Each d i is a distance function with two basic properties: ∀a, b we have d i (a, b) ∈ [0, 1] and when sentences are "closer" in a certain feature, their distance d i is smaller than the distance between two "further" sentences. Several candidate distance functions were tried for each d i , such as:</p><formula xml:id="formula_2">d i (a, b) = exp (−|a − b|)<label>(3)</label></formula><p>and</p><formula xml:id="formula_3">d i (a, b) = 1 |a − b| + 1<label>(4)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.3">Loss Function and Parameter Optimization</head><p>Using these equations, a new similarity score was assigned to each pair of tweets. The model was trained and tested with batches of 10-20 tweets (smaller batches were necessary due to the difficulty of manually labeling all points).</p><p>The output of the model was an m by m matrix where each row corresponded to a tweet and each entry in the row was the ranking of similarity between that tweet and every other tweet. The loss function</p><formula xml:id="formula_4">L(α 1 , α 2 ) = (s (i) ,s (j) ) (ŷ(s (i) , s (j) ) − y(s (i) , s (j) )) 2</formula><p>(5) calculated the difference between this matrix and the ranking matrix of the manually labeled data, where y(a, b) is the ranking of a tweet from the labeled data andŷ(a, b) is the ranking from our function. This function was then minimized by varying α 1 and α 2 . This was done by manual gradient descent: since the loss function is discrete, there is no well-defined gradient to use for traditional gradient descent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">PCA and t-SNE</head><p>We hypothesized that appending time and geolocation features to the Doc2Vec embedding space could induce closer semantic relationships. Recent work has suggested Doc2Vec works similarly to implicit matrix factorization <ref type="bibr" target="#b5">[6]</ref>. Hence, we applied PCA as matrix factorization to the embedding space, artificially weighting the effect of the original space on the calculated similarity of word vectors. Note that the effect of the appended features is determined by the number of dimensions in the original embedding space, since the number of additional features is fixed. <ref type="figure" target="#fig_1">Figure 1</ref> shows that the difference in cosine similarity decreases as the number of components increases.</p><p>We tested two ways of encoding time as a feature, shown in <ref type="figure">Figure 3</ref>. The first included all appended features, encoding the two cyclical timescales of one day and one year, and the one linear timescale of multiple years. The second condensed time into a single value, representing all date/time values in terms of single values in seconds. In both variants, all features were standardized to zero mean and unit variance.</p><p>We also varied the number of components for the reduced tweet embedding space to determine which number of components produced the most realistic semantic similarity metric, according to similarity data labeled by Stanford political science students.</p><p>Finally, we performed t-stochastic neighbor embedding (t-SNE) <ref type="bibr" target="#b7">[8]</ref> to reduce the embedding space to two dimensions for visualization. t-SNE is a method which first computes a joint probability distribution over each pair of vectors in the original space,</p><formula xml:id="formula_5">p j|i = exp(− x i − x j 2 /2σ 2 i ) k =i exp(− x i − x k 2 /2σ 2 i )<label>(6)</label></formula><p>as well as one over each pair of vectors in the twodimensional space,</p><formula xml:id="formula_6">q j|i = exp (− y i − y j 2 ) k =i exp(− y i − y k 2 )<label>(7)</label></formula><p>to then minimize the Kullback-Leibler divergences</p><formula xml:id="formula_7">C = i KL(P i Q i ) = i j p j|i log p j|i q j|i<label>(8)</label></formula><p>over all datapoints using gradient descent.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Results of Iterative Minimization</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.1">Demonstrated Increase in Accuracy</head><p>We performed gradient descent on our model, with many different combinations of function (sim Σ and sim Π ) with different d i 's. We found that the loss function was minimized with the similarity function:</p><formula xml:id="formula_8">sim * Π (s (1) , s (2) ) = s (1) CoSal · s (2) CoSal × (.02 + d 1 (s<label>(1)</label></formula><p>1 , s</p><p>1 ))</p><formula xml:id="formula_10">× (9.55 + d 2 (s (1) 2 , s<label>(2)</label></formula><p>2 ))   ), where a − b is the geographical distance between locations of tweets in miles.</p><p>Purely text-based CoSal similarity achieved an average loss of 32.80. Our best model achieved an average error of 29.86, for a loss decrease of 9.0 percent. In the next subsection, we discuss the inherent flaws of this model. <ref type="figure" target="#fig_2">Figure 2</ref> displays the results CoSal and our best algorithm versus the labeled data rankings. We can observe that the rankings output by our model with this batch slightly better match the rankings from the labeled data. Notice that in the CoSal rankings matrix, many of the columns are almost entirely one color, meaning that corresponding Tweet was ranked nearly the same for most other tweets. This problem is slightly alleviated by incorporating other features (time and geolocation, in this case), but we see columns (such as column 9) that have largely uniform rankings. This is certainly not the case in the labeled data, and this problem is a trend in all data sets, regardless of exactly which functions we used in our optimization. Ultimately, we can conclude <ref type="figure">Figure 3</ref>. Average user-reported similarity scores (n=4) measured over randomly selected pairs of tweets from the new embedding space that the model marked as highly similar, versus the number of components that are selected. Blue is all appended features, orange is condensed time, and green is the original embedding space with PCA applied.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.2">Limitations of this Approach</head><p>that this method of modifying sim CoSal does indeed better predict similarity between sentences, but the level to which it can accurately do so is limited at a relatively low bar, possibly less than 10 percent better than unmodified CoSal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">PCA and Visual Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.1">PCA Component Selection</head><p>By comparing against manually labeled similarity scores, we found that reducing the original embedding space to 8 components prior to appending all features produced the most realistic semantic similarity metric, as displayed in <ref type="figure">Figure 3</ref>. At 8 components, our model performed approximately 280% more effectively in representing true semantic similarity than the baseline model without the addition of multimodal features.</p><p>What could explain such a large improvement? We saw that politicians often tweet about similar topics, such as policy topics and sporting events, at similar times. Our dataset also included tweets during natural disasters, which led to many geospatially and semantically similar tweets. Furthermore, it is also worth keeping in mind that labeled data was collected in limited quantities. While it would be worthwhile to replicate this study with more labeled data, our results provide compelling evidence for the incorporation of temporal and geospatial information in analyzing tweet similarity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.2">Qualitative Visual Analysis Using t-SNE</head><p>We applied t-SNE to compare the two embedding spaces visually. <ref type="figure" target="#fig_3">Figure 4</ref> shows the original embedding space, containing only the embedded text of the tweets themselves.  <ref type="figure" target="#fig_4">Figure 5</ref> shows the embedding space after applying PCA to the embedding space and then appending all multimodal features. In both plots, the red dots represent the following two tweets:</p><p>These tweets are semantically similar: Both concern the U.S. debt-ceiling crisis of 2011, and their authors share similar desired policy outcomes. However, they are not textually similar, and hence are classified as dissimilar according to the distributional hypothesis taken by Doc2Vec. On the other hand, they are separated by small amounts of time and distance, and hence are significantly closer in this new space.</p><p>We also tested our method on a small subset of tweets spanning the months prior to the 2016 election. <ref type="figure" target="#fig_5">Figure 6</ref> shows the original embedding space, while <ref type="figure" target="#fig_6">Figure 7</ref> shows the modified space with appended features. The tweets are colored as follows:  Semantically, the blue tweet is much closer to the green tweet than the red tweet. In the original space, they are evenly-spaced; however, in the new space, the blue and green tweets are much closer to one another, while the red tweet has remained distant, suggesting that negative semantic relationships are also preserved under this transformation. 6. Conclusion</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1.">Final Thoughts</head><p>In this paper, we introduced methods to incorporate additional features into traditional semantic similarity algorithms. We found that reducing the dimension of the original embedding space and then appending additional nontextual features performed better than the original embedding space itself. This also performed better than iterative minimization, which we believe is due to the PCA-based approach working in more dimensions. By acting on the level of the embedding space, it incorporated multimodal attributes directly into the orientation of the tweet vectors. On the other hand, iterative minimization lacked spatial context and only acted on the final computed similarity score.</p><p>Overall, the success of our PCA-based model supports the hypothesis that multimodal data can provide valuable context for determining semantic similarity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2.">Future Work</head><p>We would like to broaden our experimentation in collecting more labeled data. We would also like to apply our algorithm in testing if tweets from local politicians differ from national politicians when controlling for location. More broadly, we would like to extend our results beyond the scope of political microblogging and apply it to other multimodal datasets. In practice, multimodal attributes are extraordinarily powerful and underutilized contextual markers, and so may prove to be quite valuable in building NLP engines of the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Contributions</head><p>All team members have contributed equally to this project. Peter Hansel developed and tested our iterative minimization method. Nik Marda conducted the literature review and data collection efforts. William Yin developed and tested our PCA and t-SNE methods. All team members contributed equally to writing this report.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>1 is the distance function d 1 (a, b) = 1 |a−b|+1where the inputs are the times (in units of days) when the</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Average differences in cosine similarity score over 10 trials between the modified embedding space and the original em- bedding space. Blue is all appended features; orange is condensed time.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc>Comparing our algorithm against native CoSal and the labeled data. The (i, j)th entry in each grid is the number of tweets that are ranked more similar than tweet j to tweet i.tweets were published, and d 2 (a, b) = 1 10 (10 − a−b 500</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>t-SNE applied to the original embedding space, with the two tweets marked in red.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>t-SNE applied to the modified embedding space, with the two tweets marked in red.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>t-SNE applied to the original embedding space of the 2016 election subset, with the three tweets colored.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>t-SNE applied to the modified embedding space of the subset, with the three tweets colored.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The places of our lives: Visiting patterns and automatic labeling from longitudinal smartphone data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">M T</forename><surname>Do</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Gatica-Perez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Transactions on Mobile Computing</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="638" to="648" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The University of Sussex-Huawei Locomotion and Transportation Dataset for Multimodal Analytics with Mobile Devices</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Gjoreski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Ciliberto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">J O</forename><surname>Morales</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Mekki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Valentin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Roggen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Access</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Politician tweets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Kay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">data.world</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Distributed representations of sentences and documents</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1188" to="1196" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Linguistic Regularities in Sparse and Explicit Word Representations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Goldberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Eighteenth Conference on Computational Language Learning</title>
+		<meeting>the Eighteenth Conference on Computational Language Learning</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Neural word embedding as implicit matrix factorization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Goldberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Encoding Cyclical Features 24-hour time</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>London</surname></persName>
+		</author>
+		<ptr target="https://ianlondon.github.io/blog/encoding-cyclical-features-24hour-time" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Visualizing Data using t-SNE</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Maaten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Journal of Machine Learning Research</title>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Spatio-temporal knowledge discovery from georeferenced mobile phone data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Raubal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2010 Movement Pattern Analysis</title>
+		<meeting>the 2010 Movement Pattern Analysis</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Context is Everything: Finding Meaning Statistically in Semantic Spaces</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Zelikman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1803.08493</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

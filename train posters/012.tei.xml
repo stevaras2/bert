@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Online Active Trajectory Classification for Motion-based Communication of Robots Haruki Nishimura (M.S. Candidate in Aeronautics and Astronautics) Entropy-based Control Policy Simulation Results Contact details Online State Estimation Problem Set-up</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haruki</forename><surname>Nishimura</surname></persName>
+							<email>hnishimura@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Online Active Trajectory Classification for Motion-based Communication of Robots Haruki Nishimura (M.S. Candidate in Aeronautics and Astronautics) Entropy-based Control Policy Simulation Results Contact details Online State Estimation Problem Set-up</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Both of the two trajectory classes in the example codebook (left) fit equally well to the observed trajectory (right), yielding two different hypotheses about the message and the camera pose.</p><p>The message receiver makes successive moves u around the sender to estimate the trajectory class z and its own position/attitude r. The actual trajectories and observations as well as the control inputs have Gaussian noise.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The message sender sends a message by performing the corresponding trajectory chosen from the trajectory codebook. The receiver is allowed to sequentially move around the sender to estimate the trajectory class as it observes the trajectories of the same class repeated by the sender.</p><p>We have formulated a recursive Bayesian state estimation algorithm based on the Multi-hypothesis Extended Kalman filter with a linearized observation model.</p><p>The Bayesian network structure allows us to iteratively update the current trajectory class belief and the pose belief given a new action and an observation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation Results</head><p>The control policy is formulated to minimize the conditional entropy over the categorical distribution z.</p><p>Due to the weighted Gaussian approximation to the belief state, this objective function can be evaluated analytically.</p><p>Three different trajectory classes were used in the simulation. All the trajectories were assumed to be 2D. We also estimated the accuracy of this algorithm evaluated at k = 15 based on 20 simulations for each true trajectory class. In each simulation, the initial camera pose was randomly initialized. The performance was compared to the random policy under the same conditions. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>estimate is based on the first observation. The Direct Linear Transformation algorithm and the Levenberg- Marquardt algorithm are employed for the parameter fitting. 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v trajectory class 1 trajectory class 2 trajectory class 3 true image -1 -0.5 0 0.5 1 x -0.8 -0.6 -0.4 -0.2 0 0.2 0.4 0.6 0.8 1 y Trajectory Codebook (z = 0) trajectory class 1 trajectory class 2 trajectory class 3 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v 1 0.5 1 y 0 0.8 0.6 0.4 x 0.2 0 -0.5 -0.2 -0.4 -0.6 -0.8 -1 -1 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v 0.8 0.6 1 0.8 0.4 0.6 0.2 0.4 y 0 0.2 x -0.2 0 -0.2 -0.4 -0.4 -0.6 -0.6 -0.8 -0.8 -1 0 20 40 60 80 100 u 0 10 20 30 40 50 60 70 80 90 100 v 1 0.8 0.6 0.4 0.2 1 0.8 x 0 0.6 0.4 -0.2 0.2 y -0.4 0 -0.2 -0.6 -0.4 -0.6 -0.8 -0.8 -1 k = 2 k = 3 k = 4 Posterior (k = 5) Class 1: 1.0 Class 2: 0.0 Class 3: 0.0The algorithm converged to the configuration perpendicular to the trajectory plane. The resulting classification was correct (Class 1).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>AccuracyClassification Accuracy at k = 15</figDesc><table>Sender 
+
+Receiver 
+
+0% 
+
+10% 
+
+20% 
+
+30% 
+
+40% 
+
+50% 
+
+60% 
+
+70% 
+
+80% 
+
+90% 
+
+100% 
+
+Random Active 
+Random Active 
+Radom Active 
+
+True Class: 1 
+True Class: 2 
+True Class: 3 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

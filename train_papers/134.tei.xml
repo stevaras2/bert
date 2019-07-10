@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Utilizing Latent Embeddings of Wikipedia Articles to Predict Poverty</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evan</forename><surname>Sheehan</surname></persName>
+							<email>esheehan@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS Department</orgName>
+								<orgName type="department" key="dep2">CS Department</orgName>
+								<orgName type="department" key="dep3">CS Department</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zaid</forename><surname>Nabulsi</surname></persName>
+							<email>znabulsi@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS Department</orgName>
+								<orgName type="department" key="dep2">CS Department</orgName>
+								<orgName type="department" key="dep3">CS Department</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+							<email>chenlin@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS Department</orgName>
+								<orgName type="department" key="dep2">CS Department</orgName>
+								<orgName type="department" key="dep3">CS Department</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Utilizing Latent Embeddings of Wikipedia Articles to Predict Poverty</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this paper, we propose a novel method for the task of poverty prediction, utilizing natural language processing on latent embeddings of Wikipedia articles, as well as satellite imagery, to predict poverty for geographical regions, providing an alternative to on-the-ground surveys and nightlights estimation. We demonstrate there are latent traits in the articles which correlate strongly with poverty. This framework can be deployed across the globe and provides a successful and intriguing link between latent textual embeddings and socioeconomic applications.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Elimination of extreme poverty is one of the foremost UN Sustainable Development Goals <ref type="bibr">[1]</ref>. However, in order to assess progress made on this front, traditional methods of poverty prediction and estimation revolve around the utilization of laborious and expensive on-the-ground surveys. While these surveys are often quite accurate and precise, it is highly impractical and costly to increase their temporal frequency, and many regions of the globe lack the infrastructure to even conduct them. As such, estimating the level of need for desperate regions of the globe and distributing resources accordingly requires the ability to assess extreme poverty and other lifestyle metrics without the use of these on-the-ground surveys. Although this is conventionally done using the nightlight satellite imagery of a region, we utilize Wikipedia <ref type="bibr" target="#b0">[2]</ref> articles as research into the corpus and distribution of these articles has suggested they could possibly contribute to socioeconomic factor prediction <ref type="bibr" target="#b14">[16]</ref>. By providing detailed textual information about locations and entities in a region deemed important enough by the open-source crowds to document, we view the articles as data rich proxies representing the area around them. As such, though the article types are diverse (eg. dam, town, company) and often do not contain explicit information on wealth, in aggregate we demonstrate they possess a confluence of latent features which are robust predictors of poverty.</p><p>In this paper, we utilize latent embeddings of Wikipedia articles, as well as satellite imagery, to predict poverty levels of regions. In short, the input to our model consists of the embeddings of the k-closest geolocated Wikipedia articles to the coordinate of interest (and for our final model, a nightlight satellite image histogram of the region). The output is a poverty prediction (a continuous number between -2 and 2). We use a variety of different methods to accomplish this task, before arriving at a model that outperforms the current state-of-the-art results. Lastly, we provide a study of article embedding activations and what features the model is learning in order to better understand what is happening.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Previous attempts to predict poverty in geographical regions have been limited to the use of satellite imagery. <ref type="bibr" target="#b5">[7]</ref> uses nightlight satellite imagery to predict wealth levels, and <ref type="bibr" target="#b11">[13]</ref> utilizes multispectral satellite imagery with an increased number of channels to improve upon <ref type="bibr" target="#b5">[7]</ref>'s results. <ref type="bibr" target="#b17">[19]</ref> also utilizes features derived from satellite imagery to extract features for poverty prediction. To the best of our knowledge, there hasn't heretofore been any work done on the extraction and utilization of textual features for poverty prediction purposes, though <ref type="bibr" target="#b14">[16]</ref> proposes that geolocated Wikipedia articles could prove a useful source for such features. Representation learning is often used to learn mappings to latent domains, and <ref type="bibr" target="#b6">[8]</ref> engages in this for satellite imagery, providing a framework for understanding traditional approaches to the task, while <ref type="bibr" target="#b8">[10]</ref> and <ref type="bibr" target="#b10">[12]</ref> validate this from a textual perspective.</p><p>In order to utilize latent Wikipedia articles to predict poverty levels around the world, we first obtained a corpus of Wikipedia articles from the June 2018 dump, parsed it into its constituent articles, and extracted all those which were geolocated. This process netted over 1 million geolocated articles. We then trained a Doc2Vec model <ref type="bibr" target="#b9">[11]</ref> on this text corpus to create a system for obtaining standardized article embeddings, which embedded each article into a vector V ∈ R 300 . As a sanity check, we examined the Tsne embeddings of articles from various regions to verify that the model was learning useful similarities ( <ref type="figure" target="#fig_0">Figure  1</ref>). For our groundtruth wealth data, we obtained data regarding the wealth index, or poverty level, at over 44,000 coordinates across Africa from the Stanford sustainability laboratory, with each point's value scaled between -2 and 2, higher numbers indicating greater wealth. For our Multi-Modal model, we also utilized nightlight VIIRS images <ref type="bibr" target="#b3">[5]</ref>, obtained from <ref type="bibr" target="#b11">[13]</ref> and covering 5km by 5km regions with 224 x 224 pixels.</p><p>To train our models, we specifically focused on five countries: Ghana, Malawi, Nigeria, Tanzania, and Uganda. These are five of the most common countries for evaluating new model performance on and thus allow us to compare our model to benchmarks in the literature. For each of these countries, we trained a model on 80% of the points within it, used the other 20% as our dev set, and then evaluated the model on the other four countries. This was repeated for each of the countries. This approach is motivated by the fact that our nearest article and nightlights images have high spatial dimensions, so primarily evaluating across national boundaries guarantees no train and test contamination. Also, this cross-boundary evaluation strategy and train/dev/test split is common practice for the space and is observed in much of the literature in this task <ref type="bibr" target="#b5">[7]</ref> [13].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Approaches</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Baselines</head><p>Doc2Vec SVM Regression: For a baseline, we created a simple support vector machine regression <ref type="bibr" target="#b1">[3]</ref>. Specifically, for each coordinate we make a prediction for, we obtained the ten (hyperparameter) closest geolocated Wikipedia articles to the point. Next, we obtained a 300-dimensional vector embedding of each of the articles through Doc2Vec <ref type="bibr" target="#b15">[17]</ref> (see Dataset for more information), and averaged all the vectors to get one, 300-dimensional vector. We then passed that vector through a support vector regression, using the following loss:</p><formula xml:id="formula_0">L = 0 |y −ŷ| &lt; |y −ŷ| − otherwise<label>(1)</label></formula><p>Support vector regression uses the same principles as SVM classification, where input spaces are mapped into higher dimensional spaces using kernels, essentially converting non-separable problems to separable problems. <ref type="bibr" target="#b13">[15]</ref>. However, in the regression problem, a margin of tolerance , as in Equation 1, is set, since there are infinite possible outputs. This is called a "soft margin", whileŷ is the kernel output of a weight vector and an input. <ref type="bibr" target="#b16">[18]</ref> Averaging Doc2Vec Neural Network: For our second baseline, we designed a simple, feed-forward neural network, where our input is the same as that for our SVM baseline, but now, we pass the embedding through a multi-layer perceptron to get a poverty prediction. We train the network with mean squared error for our loss, given by:</p><formula xml:id="formula_1">1 n n i=1 (Y i −Ŷ i ) 2<label>(2)</label></formula><p>Neural Networks work by passing the input through a series of matrix multiplications, in order to learn a complex relationship between the input features and the output. These networks minimize the loss, and update weights through a process called gradient descent, finding the optimal set of weights for the task by backpropagating the derivative with respect to each of the weights. <ref type="bibr" target="#b12">[14]</ref> 4.  Wikipedia Embedding MLP: Following our baselines, we proceed with a similar, slightly more advanced model to help improve on our results. From our baselines, we observe that averaging the document embeddings results in a non-trivial loss of information as ten vectors are cut down to a single one of the same size. Thus, we decided to concatenate the document embeddings instead of averaging them so as to allow our model to utilize all the information, resulting in one large, 3000-dimensional vector. Furthermore, the distance from the articles to the point of interest is an important factor to consider, as the further away the article is, the less influential it should be. Thus, we also append the distance from each article to the point of interest to our vector, resulting in our final, 3010-dimensional vector that is input to our neural network. Note that since this neural network has more inputs than our second baseline, it required a more complicated architecture, as discussed under the Experiments section. We train this network similarly to our second baseline, with mean squared error loss (Equation 2). Multi-Modal Model: Following our previous model, we decided that in addition to using Wikipedia articles for the task of poverty prediction, we could also use the satellite nightlights imagery of the region of interest. It has been shown in current state-of-the-art methods for poverty prediction, as discussed previously, that nighttime satellite images of the region of interest are quintessential. Thus, we decided to extend our model to use the image as an input in addition to our Wikipedia documents as this will provide our model with more information, and thus, potential for better results. We utilize the same input as our Wikipedia Embedding MLP, for the bottom part of our network, as depicted in <ref type="figure" target="#fig_2">Figure 3</ref>. In the top part of our network, we first obtain a histogram of pixel values from the nightlights image V ∈ R 256 , and we pass it through several dense layers with ReLU activations, and obtain a 32-dimensional tensor. We then concatenate this tensor with our original 3010-dimensional Wikipedia Embedding feature, and feed it through a series of fully connected layers before a regression prediction is made. We train using mean squared error loss (Equation 2).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head><p>To evaluate our models, the primary metric we use is the squared Person correlation coefficient <ref type="bibr" target="#b4">[6]</ref>, which is a measure of correlation between predicted and observed values. We use this as it tells us how well what we are predicting matches groundtruth, and this metric is widely used in literature for this task.</p><p>We observed a steady improvement in r 2 values as we progressed from our baselines to our final architectures <ref type="figure" target="#fig_3">(Figure 4</ref> left, <ref type="figure" target="#fig_4">Figure 5</ref>), as expected, since our models became more complicated. When transitioning from the Averaged MLP to the Concatenated MLP, we altered the number of units in each layer from 256 to 512, and increased the number of hidden layers from 3 to 5, to take into account the more complicated input set. Additionally, we iterated through different types of activation functions before settling on Leaky ReLU <ref type="bibr" target="#b18">[20]</ref>, which performed best. This is because it avoided the dying neuron problem frequently caused by the ReLU <ref type="bibr" target="#b2">[4]</ref>, where neurons are never activated due to the gradient of the ReLU being 0 at every negative number. We found that the Adam optimizer <ref type="bibr" target="#b7">[9]</ref> with learning rate 0.001 worked best, as it combines the advantages of momentum and RMSprop. Finally, we settled on batch size of 32, which is standard for this task, and cleanly fit in memory. These changes, combined with a more detailed input, boosted results and began to yield r 2 's challenging the state-of-the-art without using any visual input. Finally, after combining this with nightlights imagery in the Multi-Modal Model, we attained state-of-the-art results, beating <ref type="bibr" target="#b5">[7]</ref> by over 10% for nearly all models. These results suggest that the latent article features are indeed robust predictors of poverty which allow networks to perform the task better than previously possible. In our final model, based on our results as shown on the right side of <ref type="figure" target="#fig_3">Figure 4</ref>, we see that training on certain countries yields better results than training on certain other countries, indicating a slight overfitting problem, as the model is not able to generalize to all countries with the same outcome. However, in the future, this can be mitigated with more data and training on multiple countries at once.</p><p>For error analysis, we observe that often the points which the model receives the highest MSE for are ones which come from areas where points with disparate ground truth values are tightly packed together, such as urban areas where there are slums and wealthy places in close proximity to each other. This makes sense, since the spatial resolution of our input (5km x 5km image)</p><p>does not allow us to discern features at a higher resolution than its dimensions (ie. any two points within 5km of each other often share much of the same image and thus receive similar predictions; this is a common issue with the nightlights approach).  To help us better understand Wikipedia article embeddings, especially the components that play key roles in poverty prediction, we performed PCA analysis on the first two principle components of Wikipedia article embeddings. More specifically, we picked the article embeddings of the richest 33% and the poorest 33% points in the Ugandan test set and compared their PCA projections to the projections of 'school', 'university', 'hospital', 'company', and 'settlement' articles that appeared in the test set (see <ref type="figure" target="#fig_6">Figure 6a</ref>). We observed that the average Doc2Vec embeddings for wealthier places tend to cluster with 'school', 'university', 'hospital', and 'company' article embeddings, while poorer places were more related to 'settlement' articles. Additionally, in our attempt to better understand the embeddings and their significance, we evaluated all our models on Uganda, utilizing our Average MLP model, to analyze R 300 inputs to see which embedding indices were most important for the model's predictions. We did this by evaluating the model 300 times, each time masking all but one of the input dimensions, and observing the resulting r 2 values. We found several indices, most notably indices 24 and 182, that were highly predictive (obtaining .3 and .4 r 2 by themselves, respectively; see <ref type="figure" target="#fig_6">Figure 6b</ref>). Searching our inputs, we found that Ugandan articles which possess the highest values at these indices are often those related to healthcare and education (ie. hospitals and schools; see <ref type="figure" target="#fig_7">Figure 7</ref>). This analysis is very informative, as it reveals that our model is learning to look at the healthcare and education of a region (via Wikipedia articles) in order to predict the poverty of the region. In other words, our model is learning that the healthcare and educational status of a region is very informative for predicting poverty, which, in reality, is true.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusions</head><p>In this paper, we present preliminary yet state-of-the-art results for poverty prediction, using Wikipedia article embeddings and nightlights histograms. Before this becomes usable in real-world applications, we plan to acquire Wikipedia datasets with article creation dates in order to match them with appropriate nightlights imagery and explore using Wikipedia articles written in different languages, such as French, as they may provide us with more Africa-related articles. Overall, we feel our approach is a novel method that holds promise for future exploration and application.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>The code for our models and error analysis can be found at the following link: https://drive.google.com/open?id=1ZmOzz7UXOE2eSesRWLSdSAK5X13lvznb</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>All members of this team contributed equally to the research presented in this paper. Specifically, Evan worked on obtaining and pre-processing the dataset, as well as developing and running our two main models. Zaid worked on developing and running the baselines, as well as conducted error analysis. Chenlin worked on developing the second model and running experiments with all of our models, as well as conducting error analysis.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Left: Tsne of a subset of Ghanaian articles, with a cluster of rural village articles noted; Tsne clusters similar embeddings together; Middle: Heatmap of wealth coordinates for Ghana, with red being wealthier and blue being poorer. Right: Distribution of groundtruth wealth data after scaling (range between -2 and 2.)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Diagram of our Wikipedia embedding model. The ten (hyperparameter) closest geolocated Wikipedia articles are obtained and the Doc2Vec embeddings are generated and concatenated into one large 3000-dimensional vector. We then append 10 nodes to that vector, representing the distance between each doc and the point of interest.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Diagram of our Multi-Modal Model, which utilizes the same idea as our Wikipedia Embedding MLP, but also concatenates in the nighlights histogram as input to a more complicated network.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Left: Comparison of average cross-boundary performance for all models; Right: Multi-Modal Model Results -Trained on column country, tested on row; metric -pearson's r 2 .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Model results trained on Malawi and tested on Uganda. The leftmost graph shows results for a model trained only on Doc2Vec, the centermost shows results for a model trained only on the nighlights imagery, and the rightmost shows results for our Multi-Modal Model, which combines both inputs. As is clear, the combination of inputs yields the best results.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>Activation Results (all other indices set to 0), with pearson's r 2 for each index shown.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6</head><label>6</label><figDesc>Figure 6</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 :</head><label>7</label><figDesc>Left: Titles with largest values at indices in embedding most predictive of wealth level (24, 182; larger words indicate larger values); Right: Admin 2 level prediction vs ground truth for model trained on Ghana, evaluated on Tanzania.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Preprint. In review, CS229.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We would like to acknowledge the help of Stefano Ermon, Marshall Burke, and David Lobell in brainstorming ideas to tackling this problem, as will as their assistance in finding datasets and exploring previous research efforts. We'd also like to thank Christopher Yeh for his feedback and guidance.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wikipedia Online Encyclopedia</surname></persName>
+		</author>
+		<ptr target="https://www.wikipedia.org/.Accessed" />
+		<imprint>
+			<biblScope unit="page" from="2018" to="2030" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Support vector regression</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Basak</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">P</forename><surname>Pal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Patranabis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Information Processing -Letters and Reviews</title>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Outlier detection with autoencoder ensembles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Sathe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Aggarwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Turaga</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 SIAM International Conference on Data Mining</title>
+		<meeting>the 2017 SIAM International Conference on Data Mining</meeting>
+		<imprint>
+			<publisher>SIAM</publisher>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="90" to="98" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Viirs night-time lights</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Elvidge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Baugh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zhizhin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">C</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Ghosh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<biblScope unit="page" from="5860" to="5879" />
+			<date type="published" when="2017-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Comparison of values of pearson&apos;s and spearman&apos;s correlation coefficients on the same sets of data. Quaestiones geographicae</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Hauke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Kossowski</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="87" to="93" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Combining satellite imagery and machine learning to predict poverty</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">M</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">B</forename><surname>Lobell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">353</biblScope>
+			<biblScope unit="issue">6301</biblScope>
+			<biblScope unit="page" from="790" to="794" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Tile2vec: Unsupervised representation learning for remote sensing data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Azzari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Lobell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1805.02855</idno>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Distributed representations of sentences and documents</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Le</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1188" to="1196" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Efficient estimation of word representations in vector space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1301.3781</idno>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Wordnet: a lexical database for english</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="39" to="41" />
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Poverty prediction with public landsat 7 satellite imagery and machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Yeh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Azzari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Lobell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">11</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Deep learning in neural networks: An overview</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural networks</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="85" to="117" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Learning with kernels: support vector machines, regularization, optimization, and beyond</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Scholkopf</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">J</forename><surname>Smola</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Sheehan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Uzkent</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Lobell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1809.10236</idno>
+		<title level="m">Learning to interpret satellite images using wikipedia</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">A gentle introduction to doc2vec</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Shperber</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">A tutorial on support vector regression</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">J</forename><surname>Smola</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Schölkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Statistics and computing</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="199" to="222" />
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Transfer learning from deep features for remote sensing and poverty mapping</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jean</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">B</forename><surname>Lobell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ermon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Empirical evaluation of rectified activations in convolutional network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1505.00853</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

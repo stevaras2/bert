@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting the Survivability of Breast Cancer Patients after Neoadjuvant Chemotherapy Using Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Linda</forename><surname>Banh</surname></persName>
+							<email>lbanh@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Dept. of Electrical Engineering</orgName>
+								<orgName type="department" key="dep2">Dept. of Computer Science</orgName>
+								<orgName type="department" key="dep3">Dept. of Computer Science</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robel</forename><surname>Daniel</surname></persName>
+							<email>robeld@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Dept. of Electrical Engineering</orgName>
+								<orgName type="department" key="dep2">Dept. of Computer Science</orgName>
+								<orgName type="department" key="dep3">Dept. of Computer Science</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Preston</forename><surname>Ng</surname></persName>
+							<email>plng@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Dept. of Electrical Engineering</orgName>
+								<orgName type="department" key="dep2">Dept. of Computer Science</orgName>
+								<orgName type="department" key="dep3">Dept. of Computer Science</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting the Survivability of Breast Cancer Patients after Neoadjuvant Chemotherapy Using Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Breast cancer is the most common type of cancer in the United States <ref type="bibr" target="#b0">[1]</ref>, and in 15-20% of these cases, these breast cancer patients receive neoadjuvant chemotherapy (NAC) to improve survival. This project was designed around improving methods for predicting survivability in breast cancer NAC patients using characteristics observed at the time of diagnosis. After NAC treatment, breast cancer patients are typically reported as free of cancer if they have a complete response or a partial/no response, otherwise. This paper attempts to correlate survival with patient responses using the Kaplan-Meier Survival Analysis Curve and explores prediction models based on a patient's response to NAC.</p><p>The Jupyter Notebook that was used for this project can be viewed here:</p><p>goo.gl/rPgXci.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction and Motivation</head><p>Breast cancer is the most common type of cancer in the United States, with an estimated 268,670 new cases expected by the National Cancer Institute in 2018 <ref type="bibr" target="#b0">[1]</ref>. In about 15-20% of cases, breast cancer patients receive neoadjuvant chemotherapy (NAC), chemotherapy before surgery, to improve chances of survival. Generally, doctors rely on the residual cancer burden (RCB) score, which is a strong predictor for the patient's likelihood of survival <ref type="bibr" target="#b1">[2]</ref>.</p><p>This score is comprised of six features <ref type="bibr" target="#b2">[3]</ref>:</p><p>• diameters of primary tumor bed (d 1 and d 2 )</p><p>• proportion of primary tumor bed that contains invasive carcinoma (which is dependent on overall percentage of carcinoma <ref type="bibr">[%CA]</ref> and percentage of in situ carcinoma [%CIS])</p><p>• number of axillary lymph nodes containing metastatic carcinoma (LN )</p><p>• the diameter of largest metastasis in lymph node (d met )</p><p>However, because electronic medical records (EMRs) tend to be unstructured and have missing data, there was not enough information to calculate the RCB score. In addition, pathology reports were written in free text form, so it was challenging to get a decently-sized dataset, even after using regular expressions for RCB features. Since there were barriers in creating labels with RCB, a patient's response to NAC was used instead. Patients were labeled as follows:</p><formula xml:id="formula_0">• 0: Partial/No Response • 1: Complete Response</formula><p>A partial/no response meant that there were still some signs of cancer for the patient after NAC at the time of their last check-up, and a complete response meant that the patient had no signs of cancer after NAC at the time of their last check-up. These responses were evaluated by looking at a patient's overall AJCC (American Joint Committee on Cancer) staging status in their EMR.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Kaplan-Meier Survival Analysis</head><p>The Kaplan-Meier Survival Analysis Curve was used to demonstrate the claim that patients with complete responses after NAC will have a higher chance of survival in comparison to patients who did not. This analysis measures the fraction of subjects living for a certain amount of time after a specified time <ref type="bibr" target="#b4">[4]</ref>. In this case, this specified timeline was the date of diagnosis until the last time of contact (including the death date if patient is deceased at last time of contact).</p><p>Patients who did not have had a death event before the last date of contact were labeled as censored observations. To calculate survivability (Ŝ(t)), the following probabilities were calculated:Ŝ</p><formula xml:id="formula_1">(t) = i:t i ≤t 1 − d i n i ,</formula><p>t i is a time when at least one event happened, d i the number of deaths that happened at time t i , and n i the individuals known to survive (have not yet had a death or have been censored) at time t i . This was calculated for two groups of subjects (i.e. complete response vs. partial/no response). This is shown in <ref type="figure" target="#fig_0">Figure 1</ref>. The R code that generated this plot can be viewed here: https://goo.gl/NTnRS8</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>As mentioned in the introduction, previous approaches to predicting breast cancer patient survivability post-NAC involve using the RCB score <ref type="bibr" target="#b1">[2]</ref>. This value was shown to be a useful predictor in the prognosis of breast cancer recurrence; the simple formula for RCB is given by</p><formula xml:id="formula_2">1.4(f inv d prim ) 0.17 + [4(1 − 0.75 LN )d met ] 0.17<label>(1)</label></formula><p>and the fields used (such as primary tumor bed area, cancer cellularity, and cancer-positive lymph node count) were correlated with higher recurrence. However, the unstandardized and incomplete nature of many pathology reports makes RCB difficult to calculate from reports in a database. If the doctor does not record even one of the attributes necessary to calculate RCB, then this value is impossible to find. Even if they do record all the inputs necessary, the nature of pathology reports makes it very difficult to extract the meaningful information automatically.</p><p>Other approaches for predicting breast cancer survivability have also been done, but differ from our work in key ways. For example, Delen, Walker, and Kadam have found success with decision trees; however, their data doesn't focus on NAC patients, and they use an arbitrary definition of survival <ref type="bibr" target="#b5">[5]</ref>; Bellaachia and Guven take a similar approach as Delen et al <ref type="bibr" target="#b6">[6]</ref>. Khan, Choi, Shin, and Kim use fuzzy decision trees, on the general SEER breast cancer dataset that Bellaachia and Guven used; they also did not use NAC patients only and had lower accuracy <ref type="bibr" target="#b7">[7]</ref>, which is also true for the decision tree model proposed by Liu, Wang, and Zhang <ref type="bibr" target="#b8">[8]</ref>. In general, past researchers have used large datasets and have not gone into detail with how they chose features and why.</p><p>Our approach, focuses on neoadjuvant chemotherapy breast cancer patients using patient response as a label (proven to be correlated with survival through the Kaplan-Meier estimator) with discerning feature selection, and using bootstrap random forests to avoid overfitting. This differs from the few previous papers on using statistical/ML methods to predict breast cancer patient survivability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methods/Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data and Feature Selection</head><p>Data was received from the OncoShare database <ref type="bibr" target="#b9">[9]</ref>, a project between Stanford and Palo Alto Medical Foundation (PAMF) founded in 2008. Their goal is to use "big data" to improve breast cancer care. This database is comprised of the statewide, population-based California Cancer Registry, EMRs from Stanford University Hospital, and multiple sites of the community-based PAMF healthcare system. Records detail genomic sequencing results from clinical testing laboratories, patient-reported data on cancer care preferences, pathology/radiology reports, and more.</p><p>For this project, feature selection was a notable challenge since there were more than 200 features, many of which were sparse (missing information) or not relevant for patient response pre-diction. Thankfully, the OncoShare database had a codebook detailing the specifics of each column of the EMRs. However, looking through the codebook, more than a dozen seemed relevant for prediction models, and this drew some concern for over-fitting features. Therefore, after some discussion with Professor Itakura (oncologist from Stanford School of Medicine), the long list of features was reduced to the following:</p><p>• primary site (location where the tumor originated)</p><p>• laterality of the tumor (side of the body in which the tumor originated)</p><p>• tumors cell type</p><p>• tumor behavior (malignant, in situ, benign, or uncertain)</p><p>• sequence of all reportable neoplasms during the patient's lifetime determined by the central registry</p><p>• estrogen-receptor characteristics of tumor</p><p>• progesterone-receptor characteristics of tumor</p><p>• actual number of tumors</p><p>• site specific information</p><p>• the type of diagnostic/staging procedure</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Preprocessing</head><p>Generally, EMRs are missing information or are sparse; thus, a large part of this project was dedicated to pre-processing. To pre-process the data, a combination of Microsoft Excel and pandas <ref type="bibr" target="#b10">[10]</ref> was used. Since this project focused on NAC breast cancer patients, the data needed to be screened and parsed for this requirement. From the 24,301 patient records received, 2,139 were NAC breast cancer patients. From these 2,139 records, only 340 records were usable and did not have missing data for the features selected in Data and Feature Selection. Looking through the 340 NAC patients, 109 patients exhibited a complete response to NAC (labeled as 1), and the remaining 231 patients showed partial/no responses (labeled as 0). Afterwards, some data needed to be re-encoded. Since many features had categorical data, a way to overcome this was to re-encode the categorical data to discrete numbers starting at 0. An example of this is shown in <ref type="table">Table 1</ref>, on page 4 for SITE 02 (location where tumor originated).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Choosing Machine Learning Models</head><p>After the data was pre-processed, the NAC patient response predictions were tested using logistic regression, k-nearest neighbors (KNN), and bootstrapped random forests.</p><p>Logistic regression is a binary classifier, and makes a prediction (ŷ) using the sigmoid function: <ref type="bibr" target="#b11">[11]</ref>. This classifier makes a decision based on the probability of what is observed given a feature set (P (y = 1|x) = h θ (x), P (y = 0|x) = 1 − h θ (x)). To put this quantitatively,</p><formula xml:id="formula_3">h θ (x) = 1 1+exp(−θ T x)</formula><formula xml:id="formula_4">y = 0, P (y = 0|x) ≥ P (y = 1|x) 1, otherwise</formula><p>It was chosen as a baseline since it is known to produce reliable classification for binary data and is a good fit for this problem since we aim to classify patients with complete or not a complete response. KNN is a simple, non-parametric machine learning technique that classifies data based on a majority vote from its k neighbors; because of this, KNN seemed like a good choice in balancing the bias-variance trade-off since the dataset was so small, with a size of 340. In addition, it made sense intuitively that patients who exhibited similar characteristics at the time of diagnosis might also have similar responses after NAC.</p><p>Lastly, bootstrapped random forest was chosen. Bootstrapped random forest is an algorithm that utilizes decision trees to split on features depending on a threshold.</p><formula xml:id="formula_5">S p (j, t) = ({x : x j &lt; t}, {x : x j ≥ t})</formula><p>Best splits are selected via Gini Impurity:</p><formula xml:id="formula_6">I G (p) = J i=1 p i (1 − p i )</formula><p>and each tree is run with "bagged" subsamples (randomly sampled datapoints with replacement). All trees are averaged afterwards <ref type="bibr" target="#b12">[12]</ref>. Because all randomly generated trees are bagged and averaged afterwards, bootstrap random forest is helpful in reducing variance and thus, this seemed appropriate for the problem since there were many features but relatively few patients.</p><p>All three algorithms were implemented using scikit-learn <ref type="bibr" target="#b13">[13]</ref> and NumPY <ref type="bibr" target="#b14">[14]</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Testing/Measuring Performance</head><p>For training, validation, and testing, the NAC breast cancer patient dataset was split 80/20% for train/test, and then the 80% was utilized for 5-fold cross validation (CV). Afterwards, each model's performance was evaluated using the following metrics: train/test accuracy, precision, recall, and specificity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments/Results</head><p>As stated in Introduction and Motivation, the objective is to predict whether a patient exhibits a complete response or partial/no response at the time of a NAC patients last follow-up, which is determined by their overall AJCC stage in their EMR. To test this, logistic regression <ref type="figure" target="#fig_1">(Figure 2</ref>), knearest neighbors ( <ref type="figure" target="#fig_2">Figure 3, 4)</ref>, bootstrapped random forests ( <ref type="figure">Figure 5, 6</ref>) algorithms were implemented and each model's performance was evaluated <ref type="table" target="#tab_2">(Table 2</ref>). </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Discussion/Challenges</head><p>Since the averaged CV accuracy and the train accuracy (from the 80/20 split) were quite similar (with a +/-2% margin), the train and test accuracy from the 80/20 split will be used to compare the models in this discussion. (Other information such as confusion matrices and train/test accuracy plots can be viewed in the figures discussed in Experiments/Results.)</p><p>Looking across all models, each algorithm performed relatively well. Bootstrap random forest performed the best (optimal performance with a depth of 7); it had a train accuracy of 99% and a     Despite the good results that were seen across all models, there may be some sampling bias, since the dataset is so small (m = 340). Even though there was a strong correlation between patients with a complete response and higher chances of survivability (as shown in <ref type="figure" target="#fig_0">Figure 1)</ref>, it is hard to make a conclusion about how reliable predicting survivability via complete response is and how it compares with RCB scores (since required RCB data fields could not be collected). However, the information gathered proves that logistic regression, KNN, and bootstrap random forest can be good measures of whether a patient will have complete or not a complete response after NAC, and these models have the potential to be applied to the larger NAC breast cancer population.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusions and Future Plans</head><p>For this project, simple supervised learning methods (logistic regression, KNN, and bootstrap random forest) were implemented to predict whether a patient would exhibit a complete or not a complete response at the time of their last visit. These responses were compared to the Kaplan-Meier Survival Analysis Curve and used to estimate their chances of survival after some specified time (measured in days).</p><p>After some assessment, bootstrap random forest performed the best and had high accuracy, but because of a small dataset (m = 340), there may be some sampling bias. Therefore, if there was more time to work on this project, we would take the following steps:</p><p>1. Collaborate with pathologists/radiologists and other healthcare professionals to gather more RCB data. It would be helpful to have an RCB model to compare with our current model (complete or not a complete response) to see how well this model predicts survivability in NAC patients.</p><p>2. Utilize more robust natural language processing techniques that could potentially be used to process EMRs. Again, this would help create a reliable NAC breast cancer RCB dataset, which can be used to assess how accurate survivability of NAC breast cancer patients is predicted.</p><p>3. Use a mixture of RCB and EMR features in our models and see how it improves the current RCB model.</p><p>Hopefully with these changes, this can help provide clearer conclusions about our model and how it could improve in the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Contributions</head><p>As a group working on this project, we contributed equally overall. Linda Banh had large individual contributions in evaluating data features, analyzing the model performance, and writing the milestone report. Robel Daniel had large individual contributions in literature research, evaluating data features, and putting together the poster. Preston Ng had large individual contributions in preprocessing the data, implementing each machine learning model, and putting together the poster. Together, we designed the pipeline for this project, collaborated on what models were appropriate for the problem we were solving, and put together this final report.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>This Kaplan-Meier Survival Analysis curve shows some correlation between com- plete response and likelihood of survival, with p-value = 0.12.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Logistic Regression Confusion Matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>KNN K vs. Accuracy</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :Figure 5 :</head><label>45</label><figDesc>KNN Confusion Matrix (K=3) Figure 5: Random Forest Depth vs. Score</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Models</head><label></label><figDesc></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="true"><head>Table 2 :</head><label>2</label><figDesc>Comparison of Performance Metrics Across All Models</figDesc><table>Figure 6: Bootstrap Random Forest Confusion 
+Matrix 
+
+test accuracy of 93%. Meanwhile, KNN, with k 
+= 3, performed the worst, with a train accuracy of 
+84% and test accuracy of 75%. Logistic regression 
+was somewhere in the middle with a 90% train 
+accuracy and 81% test accuracy. Bootstrapped 
+random forest may have shown good performance 
+since the algorithm was built to combat high vari-
+ance from over-fitting features, since all randomly 
+generated trees were averaged. On the other hand, 
+KNN may have performed poorly because it was 
+built based on the assumption that NAC patients 
+who exhibited similar traits at the time of diagno-
+sis would show similar responses after NAC at the 
+time of their last checkup. 
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>Thank you to Professor Haruka Itakura for her contributions to this project. Not only did she give us access to the breast cancer patient database in OncoShare, but she also helped us focus on important patient features for our model designs. We would also like to thank our project TA, Ethan Steinberg, for his help in guiding us on how we should pre-process EMRs and helping design ways to handle sparse data.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Common cancer types</title>
+		<ptr target="https://www.cancer.gov/types/common-cancers" />
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>American Cancer Society, Inc</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Measurement of residual breast cancer burden to predict survival after neoadjuvant chemotherapy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">Fraser</forename><surname>Symmans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Peintinger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hatzis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Kuerer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Valero</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Assad</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Poniecka</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Hennessy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Buzdar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">Eva</forename><surname>Singletary</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hortobagyi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Pusztai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of clinical oncology : official journal of the American Society of Clinical Oncology</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="4414" to="4436" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Nahleh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Md</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sivasubramaniam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Md</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Dhaliwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Md</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">D</forename><surname>Sundarajan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Residual cancer burden in locally advanced breast cancer: a superior tool</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">D</forename><surname>Komrokji</surname></persName>
+		</author>
+		<ptr target="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2601022/" />
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Nonparametric estimation from incomplete observations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Kaplan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Meier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">282</biblScope>
+			<biblScope unit="page" from="457" to="481" />
+			<date type="published" when="1958" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Predicting breast cancer survivability: a comparison of three data mining methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Delen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Walker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kadam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="113" to="127" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Predicting breast cancer survivability using data mining techniques</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bellaachia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Guven</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Predicting breast cancer survivability using fuzzy decision trees for personalized healthcare</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">U</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">30th Annual International Conference of the IEEE Engineering in Medicine and Biology Society</title>
+		<imprint>
+			<date type="published" when="2008" />
+			<biblScope unit="volume">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Decision tree based predictive models for breast cancer survivability on imbalanced data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y.-Q</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">3rd International Conference on Bioinformatics and Biomedical Engineering</title>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="113" to="127" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Oncoshare</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">W</forename><surname>Kurian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">S</forename><surname>Luft</surname></persName>
+		</author>
+		<ptr target="http://med.stanford.edu/oncoshare.html" />
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">pandas: Data analysis python library</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wes</forename><surname>Mckinney</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Others</surname></persName>
+		</author>
+		<ptr target="http://www.pandas.pydata.org/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Supervised learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Ng</surname></persName>
+		</author>
+		<ptr target="http://cs229.stanford.edu/notes/cs229-notes1.pdf" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Online</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">CS229 Midterm Review</title>
+		<ptr target="http://cs229.stanford.edu/materials/cs229-mt-review.pdf" />
+	</analytic>
+	<monogr>
+		<title level="m">Course Staff Fall</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">scikit-learn: Machine learning in python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gael</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandre</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vincent</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Others</surname></persName>
+		</author>
+		<ptr target="http://www.scikit-learn.org/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Numpy: Scientific computing with python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jim</forename><surname>Hugunin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Others</surname></persName>
+		</author>
+		<ptr target="http://www.numpy.org/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

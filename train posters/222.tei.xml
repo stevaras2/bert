@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reconstructing Pore Networks Using Generative Adversarial Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kelly</forename><surname>Guan</surname></persName>
+							<email>kmguan@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Energy Resources Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Reconstructing Pore Networks Using Generative Adversarial Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note># of training images 36,869</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>• Flow properties (porosity and permeability) of porous media can vary due to rock heterogeneity • Recreating variations of the pore network can be time-consuming (both in the lab and computationally)  Original dataset black=solid white=pore</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DCGAN-2 (Wasserstein)</head><note type="other">DCGAN</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DCGAN-2 D_loss</head><p>Discriminator Loss</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>metrics (2D Minkowski functionals) • Area ~ available pore (white) space • Perimeter ~ pore shape • Euler characteristic, χ~ connectivity Strategies:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>• Label smoothing had a noticeable effect on training stability • DCGAN model performs well for 2D case using the log loss function • Wasserstein distance does not work/leads to collapse, possibly due to binary nature of dataFuture work • Modify to train and generate 3D reconstructions of the pore network • Explore other network architectures and the effect on training stability • Evaluate performance using other metrics, e.g. single phase permeability Image size (voxels) 256 x 256 x 256 Voxel size 6.12 um Subvolume spacing 16 pixels Training image size 64 x 64 # of training images 36,869IntroductionCS 229 Fall 2018References and Acknowledgements[1] L . Mosser, O. Dubrule, and M. J. Blunt, "Reconstruction of three-dimensional porous media using generative adversarial neural networks," Physical Review E, vol. 96, no. 4, 2017. [2] A. Radford, L. Metz, and S. Chintala, "Unsupervised Representation Learning With Deep Convolutional Generative Adversarial Networks," arXiv:1511.06434, 2016. [3] N. Inkawhich, "DCGAN Tutorial," https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html. [4] I. Gulrajani, F. Ahmed, M. Arjovsky, V. Dumoulin, and A. Courville, "Improved Training of Wasserstein GANs," arXiv:1704.00028, 2017. Thanks to Tim Anderson and Dr. Tony Kovscek for their guidance on this project. Part of this work was performed at the Stanford Nano Shared Facilities (SNSF), supported by the National Science Foundation under award ECCS-1542152.</figDesc><table>• Recent advances in deep learning have shown 
+promising use of generative adversarial networks 
+(GANs) for rapid generation of 3D images with no a 
+priori model [1] 
+
+Objective 
+• Investigate feasibility of generating 2D sandstone 
+images by training a deep convolutional GAN model 
+(DCGAN) [2] 
+• Try different architectures to determine optimal 
+parameters 
+• Evaluate model performance against real images 
+using morphological properties 
+
+Data Acquisition &amp; Evaluation 
+Results 
+Conclusion 
+
+Model Architecture and Training 
+
+Future work 
+• Modify to train and generate 3D reconstructions of the pore network 
+• Explore other network architectures and the effect on training stability 
+• Evaluate performance using other metrics, e.g. single phase permeability 
+
+Image size (voxels) 
+256 x 256 x 256 
+
+Voxel size 
+6.12 um 
+
+Subvolume spacing 
+16 pixels 
+
+Training image size 
+64 x 64 
+
+# of training images 
+36,869 
+
+Introduction 
+
+CS 229 
+Fall 2018 </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reconstruction of three-dimensional porous media using generative adversarial neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Mosser</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Dubrule</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Blunt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Unsupervised Representation Learning With Deep Convolutional Generative Adversarial Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Metz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1511.06434</idno>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">DCGAN Tutorial</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Inkawhich</surname></persName>
+		</author>
+		<ptr target="https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Gulrajani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Ahmed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Arjovsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dumoulin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Courville</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.00028</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Improved Training of Wasserstein GANs</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

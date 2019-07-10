@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reinforcement Learning for Intelligent Traffic Network Control Motivation Technique</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2016">2016</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matt</forename><surname>Stevens</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Tamkin</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Yeh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Reinforcement Learning for Intelligent Traffic Network Control Motivation Technique</title>
+					</analytic>
+					<monogr>
+						<title level="m">Machine Learning) Final Project</title>
+						<meeting> <address><addrLine>Spring</addrLine></address>
+						</meeting>
+						<imprint>
+							<date type="published" when="2016">2016</date>
+						</imprint>
+					</monogr>
+					<note>Simulate Extract Features + Rewards Train Choose Action</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation Technique</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Simulation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental Results</head><p>In 2014, traffic congestion caused American to waste about 7 billion hours and 3 billion gallons of fuel, for a total cost of $160 billion. This makes up roughly 2% of all of the gasoline consumed in the U.S. We use reinforcement learning to learn the optimal traffic light policy to minimize the average time that cars spend idling in front of traffic lights as well as their CO 2 emissions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SUMO (Simulator of Urban Mobility) Features</head><p>At each time step, we collect the following features for each traffic light and neighboring traffic lights, aggregated over the past 5 time steps </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reward Function</head><p>We maximize the throughput of cars by using the distance traveled by cars within the intersection as a reward function because the two are proportional.</p><p>Our simulations are based off of SUMO, a versatile traffic simulator. It runs a per-vehicle simulation, in which the user can configure road layouts, traffic light patterns, and vehicle flows. We control the traffic lights and extract detailed information about the system state using a python interface called TraCI.</p><p>We compare our results with Q-learning to multiple baselines: a long cycle of 45 seconds for each green light, a short cycle of 15 seconds per green light, and a heuristic algorithm called Longest Queue First (LQF). LQF measures the number of cars in each lane and turns lights green for the lanes that contain the largest number of cars.</p><p>Our algorithm outperformed the cycle algorithms but did worse than the LQF algorithm. It is worth noting that LQF has more information available to make decisions, making it a simpler problem to solve.</p><p>Our experiments were run on the 2x2 network shown above, where each road had 3 lanes. Cars were routed evenly between every entrance and exit in the network. Sensors were placed in every lane. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Q-Learning</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training</head><p>We used random search for hyperparameter optimization to explore search spaces too large for grid search. Since usually only a small number of hyper-parameters are relevant, most of the detail in grid search is unnecessary.</p><p>Due to the recursivity of the Q function, regularization is important to prevent exploding gradients. We used regularization ( ≈ 1) and a low learning rate ( = 10 −5 ) to achieve convergence.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>• Sensor (Induction Loop) in each lane • Number of cars • Speed of each car • Action taken (direction of traffic light chosen to be green)</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Conclusions Algorithm 1: Modeling Probability Simulation Results: Baseline vs. Machine Learning Intro to Path Planning with Uncertainty Using Bayesian Learning to Safely Plan through Partially Observable Environments</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Toby</forename><forename type="middle">John</forename><surname>Buckley</surname></persName>
+						</author>
+						<title level="a" type="main">Conclusions Algorithm 1: Modeling Probability Simulation Results: Baseline vs. Machine Learning Intro to Path Planning with Uncertainty Using Bayesian Learning to Safely Plan through Partially Observable Environments</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Motivating Example: Naïve baseline planner greedily moves towards goal. Such a planner will get stuck when it comes too close to the corner and be forced to execute its emergency braking maneuver.</p><p>A probabilistic planner avoids this through its learned probability of collision. It will either slow down/swing out when collision probability is high, or cut the corner sharply when collision probability is low.</p><p>Simulation results for a maze-like map.</p><p>Main Question: Given a car-like vehicle, how can we traverse an unknown environment quickly?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Solution:</head><p>Implement Bayesian learning to calculate probability of collision for a given state.</p><p>Original Algorithm's Shortcomings: Maps are too highdimensional to boil down to a handful of features, only trained on one type of environment.</p><p>New Changes: Double the number of features, train on more diverse maps (maze, forest, hybrid shown below).</p><p>Original Features: A = min distance to obstacle B = mean range to obstacle C = min straight free path D = total velocity Additional New Features: E = information gain F = ratio of walls to free space G = total turn angle H = number of obstacle clusters</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 2: Bayesian Learning</head><p>We have shown two variations on a greedy probabilistic path planning algorithm which reduce time to the goal significantly in some environments but with considerable risk involved.</p><p>The machine learning algorithms had 40% success rate. If collision cost was increased or more training data generated, the number of failed runs should decrease.</p><p>The results of the ML algorithm with changes show the limitations of selecting too many features without generating enough training data.</p><p>It is clear that machine learning is not right for all environment types; in some cases, the baseline planner is satisfactory.</p><p>With improvements in sensing technology and computational power, robots capable of moving through an environment in real-time are becoming more feasible. The general methodology for a robot, given a movement task, is to sense its surroundings, compute a trajectory which will bring it closer to the goal location, and begin to move. While moving, the robot may re-sense the environment and update its algorithm to utilize this new information.</p><p>Shown left is the path of a car as it moves through time in an unknown environment. It's knowledge of the environment improves as it progresses.</p><p>The baseline uses hard safety constraints which require the vehicle to always have a feasible emergency stopping maneuver for candidate paths.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Main Question: Given a car-like vehicle, how can we traverse an unknown environment quickly?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Solution:</head><p>Implement Bayesian learning to calculate probability of collision for a given state.</p><p>Original Algorithm's Shortcomings: Maps are too highdimensional to boil down to a handful of features, only trained on one type of environment.</p><p>New Changes: Double the number of features, train on more diverse maps (maze, forest, hybrid shown below).</p><p>Original Features: A = min distance to obstacle B = mean range to obstacle C = min straight free path D = total velocity Additional New Features: E = information gain F = ratio of walls to free space G = total turn angle H = number of obstacle clusters</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithm 2: Bayesian Learning</head><p>We have shown two variations on a greedy probabilistic path planning algorithm which reduce time to the goal significantly in some environments but with considerable risk involved.</p><p>The machine learning algorithms had 40% success rate. If collision cost was increased or more training data generated, the number of failed runs should decrease.</p><p>The results of the ML algorithm with changes show the limitations of selecting too many features without generating enough training data.</p><p>It is clear that machine learning is not right for all environment types; in some cases, the baseline planner is satisfactory.</p><p>With improvements in sensing technology and computational power, robots capable of moving through an environment in real-time are becoming more feasible. The general methodology for a robot, given a movement task, is to sense its surroundings, compute a trajectory which will bring it closer to the goal location, and begin to move. While moving, the robot may re-sense the environment and update its algorithm to utilize this new information.</p><p>Shown left is the path of a car as it moves through time in an unknown environment. It's knowledge of the environment improves as it progresses.</p><p>The baseline uses hard safety constraints which require the vehicle to always have a feasible emergency stopping maneuver for candidate paths. Velocity Profile:</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Baseline is unnecessarily curvy from its cost function's dependence on maximizing velocity.• Probabilistic planner cuts the majority of corners very closely.• Near corners, machine learning data gives low risk of collision allowing maintenance of high speedNumerical Results:</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Bayesian learning for safe high-speed navigation in unknown environments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Richter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. ISRR</title>
+		<meeting>ISRR</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">High-speed autonomous navigation of unknown environments using learned probabilities of collision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Richter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. IEEE ICRA</title>
+		<meeting>IEEE ICRA</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Nonparametric bayesian inference on multivariate exponential families</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Vega-Brown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NIPS</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+	<note>Cost function: Bayesian probability of collision</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

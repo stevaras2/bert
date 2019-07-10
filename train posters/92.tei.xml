@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:20+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Machine Learning Approach to Assess Education Policies in Brazil</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandre</forename><forename type="middle">Simoes</forename><surname>Gomes</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junior</forename></persName>
+						</author>
+						<title level="a" type="main">A Machine Learning Approach to Assess Education Policies in Brazil</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Goals:</p><p>1. Estimate the budget for government spendings in public education necessary to achieve pre estipulated goals (quantitative approach) 2. Identify subareas that should be prioritized by the government when deciding where to allocate the amount defined by the budget (quantitative + qualitative approach)</p><p>• Models and Results: 1. Regression model to predict current quality index of schools (only descriptive features): Gradient Boosted Trees (GBT). R²(test) = 0.647 2. Clustering model to identify groups of school with similar profiles: K-means. Silhouette = 0.805 3. Classification model to predict goal achievement in schools (only spending data): GBT. F1-score(test mean) = 0.692</p><p>• Main assumption: it is possible to cluster schools according to their descriptive features . For each cluster there is an optimal distribution of spendings that will allow the school to achieve its goal</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Regression</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Regression Regression Regression</head><p>• Input variables: descriptive data from school census (290 features) • <ref type="table">Target</ref>  </p><formula xml:id="formula_0">‫ݏ‬ = ܾ − ܽ max (ܽ, ܾ)</formula><p>Where a is the mean intra-cluster euclidean distance to the considered point and b is the euclidean distance to the nearest point in other cluster.</p><p>• Results:</p><p>• The final model used 10 clusters • As expected, the inclusion of information on the cluster of the school improved the performance of the classifiers, except for clusters 0 and 5 • The most relevant spending features for the classifiers changed for diferent clusters. Example:</p><p>• Only for cluster 2, financial assistance for students appeared among the 10 most important features (third). For schools in this cluster, increasing this type of assistance for students and their families might have a big impact on their education Discussion Discussion Discussion Discussion</p><p>• Inclusion of sociodemographic data of school location • Evaluation of the causal relation between spending in different categories and the Ideb result • Grouping of categories in spending data to avoid redundancy • Exploration of better approaches to identify spendings per school (spending data is associated with regional administration centers, not schools)</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>••</head><label></label><figDesc>feature: Ideb score of 2013 • Purpose: detect the descriptive features most correlated with the quality index • Evaluation metric: R² ܴ ଶ = ∑ ‫ݕ(‬ − ℎ ) ଶ ∑ ‫ݕ(‬ − ‫ݕ‬ ത) ଶ W here h is the output of the model • Results: Model Train R² Test R² GBT -scikit-learn 0.745 0.647 SVM 0.069 0 Ridge Regression 0.674 0.575 GBT -LightGBM 0.812 0.550 Clustering Clustering Clustering Clustering • Input variables: most importante variables from school census (129 features). Accumulated feature importance in the regression model of 0.99 • Purpose: separate schools into groups according to characteristics relevant to the Ideb • Evaluation metric: mean Silhouette Coefficient of samples. For one sample the Silhouette is given by</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>••</head><label></label><figDesc>Input variables: spending data (711 categories) for each school • Target feature: 1 if school achieved goal in 2017, 0 otherwise • Purpose: this tool can be used to estimate the necessary budget for each school given the Ideb goal. It is also useful to evaluate how the spending should be distributed among diferent categories. One model was constructed for each cluster in order to isolate the effect of the school descriptive variables in the Ideb.• Model: GBT -scikit-learn • Evaluation metric: F1-score ‫1ܨ‬ = 2 × ‫݅ݏ݅ܿ݁ݎ‬ ݊ × ‫݈݈ܽܿ݁ݎ‬ ‫݅ݏ݅ܿ݁ݎ‬ ݊ + ‫݈݈ܽܿ݁ݎ‬ •</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Semi-supervised clustering methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">•</forename><surname>Bair</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">•</forename><surname>Cs229</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine Learning lecture notes</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Example of features: • Spendings with transportation for students • Spendings with food for students and workers • Spendings with constructions and maintenance of schools • Spendings with salaries of school employees 2. School census: descriptive data on each school in the state of Sao Paulo. Survey conducted in 2013. Source: Inep (National Institute of Educational Studies) • Number of students • Number of professors separated by level of education • Number of laboratories, computers and offices 3. Education quality index: Ideb (Development Index of Basic Education) score for each school in the state of São Paulo</title>
+	</analytic>
+	<monogr>
+		<title level="m">Government spending data: detailed anual information of all government spendings in public education in the state of Sao Paulo</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Source: State Government of Sao Paulo. Source: Inep • School performance according to Ideb in 2013</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+	</analytic>
+	<monogr>
+		<title level="j">• School goal for Ideb</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

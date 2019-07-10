@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Prediction of Stock Price Movement from Options Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charmaine</forename><surname>Chia</surname></persName>
+							<email>cchia@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Prediction of Stock Price Movement from Options Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Type equation here. Type equation here.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Q: Can we predict how the underlying stock price will move from time series data on the options market?</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Examples of options variables:</head><p>• Volume of puts &amp; calls traded • Put-call parity (PCP) deviance</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• Implied volatility (IV)</head><p> Perceived future volatility of stock  Used to calculate options price • IV spread &amp; skew</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The Data</head><p>• Time series data of 57 healthcare companies from 1/3/2007 to 12/4/2014</p><p>• Data from successive time points is not i.i.d</p><p>• Not necessarily normally distributed</p><p>• From the stock price data, we can obtain daily returns:</p><formula xml:id="formula_0">= −</formula><p>• From the options data, we get 39 options market-related variables, often highly correlated with each other.</p><p>• Time series data can be smoothed by applying either  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overlay of 57 Cross-correlation plots for time series Raw &amp; Smoothed Returns vs an Options Variable</head><p>Based on model that there might be a lag between stimulus (due to options variable) and effect (on returns)  useful for regression However, the xcorr plots are hard to interpret. Results from raw and smoothed variables also differ.</p><p>Linear regression with regularization (elastic net, α = 0.5)</p><p>• Returns (t) ~ Returns (t-1) + Returns (t-2) + Options variables (t-1) + Options variables (t-2)</p><p>• Not expected to work well, since Returns are determined by far more factors</p><p>• Hard to compare relative importance of variables since they are not standardized</p><p>• No clear non-zero predictor emerges from regression on raw returns</p><p>• Past returns and Variables 37-42 possibly useful</p><p>• Can we even predict the direction of stock movement (i.e. + or -return)?</p><p>• Does a linear model accurately capture the relationship between the signal and effect?</p><p>• What variables contain should we use? Try:</p><p>• Put-to call ratio  indication of trader sentiment about market direction</p><p>• 26-day EMA of Returns and PCR capture trends with less random jumps</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>T = 26</head><p>Decision stumps boosting</p><p>• Second plot shows the PCR data processed to get daily fractional change in PCR.</p><p>• Possible (negative) correlation between position of thresholded spikes in PCR and returns?</p><p>• Decision stump: </p><formula xml:id="formula_1">φ , = − = • x j consist</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Summary of average training error for different combinations of X variables used in decision stumps</head><p>• Raw returns are too noisy to make predictions on / with</p><p>• EMA return (t-1) is the most predictive variable</p><p>• PCR, IV and PCPdev contain some signal</p><p>• Raw return can be extracted from EMA return prediction</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Other classification schemes</head><p>• One problem with decision stumps boosting is that the way hypotheses are picked is somewhat arbitrary and difficult to intuitively explain</p><p>• Nonetheless, it informed us on which variables were more significant. We can plot the data along the top 3 variables from each class (A, B, C):</p><p>(Contrast this to the scatter plots for classifications thresholded on raw returns):</p><p> Region of overlap of data points labelled +1 and -1. Unlikely to be resolved effectively using a linear learning algorithm.  Tried: SVM with different kernels <ref type="bibr">(linear, quadratic, RBF)</ref> Convergence obtained only when the KKT violation level is increased to 0.2 ~ 0.4</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future work</head><p>• Model to predict the magnitude of returns, given prediction of whether it will be + or - MSE of 7.18e-06 on full dataset</p><p>• MSE of elastic net regression ranged from 6.66e-06 to 1.82e-05 (as the lambda is decreased)</p><p>• Also try: Regression trees, SVM regression</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>C) IV + PCPdev B) + C): PCR + IV + PCPdev</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>of past returns, PCR and options variables • 10-fold CV: training data drawn from 52 companies, testing data from remaining 5 companies • Effect of omitting certain variables tested Prediction error for 3 experiments using different X variables. 100 iterations, 10-fold CV 1 ≥ −1 ℎ i) PCR, IV, PCPdev (t-1,2) ii) EMA Returns (t-1,2) iii) Predict Raw returns (t) with raw returns (t-1,2)</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

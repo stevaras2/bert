@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine Recognition of &quot;Squiggles&quot; in SETI Signal Data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Travis</forename><surname>Chen</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenny</forename><surname>Smith</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Machine Recognition of &quot;Squiggles&quot; in SETI Signal Data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Insights</head><p>We performed chi-square tests to determine relationships between temporal characteristics and squiggle subgroups derived from Hierarchical Ward D2, Euclidean clustering. We found several strong correlations shown at right. The question, "are we alone?," has boggled scientists for centuries. The Search for Extraterrestrial Intelligence (SETI) Institute operates the Allen Telescope Array, a set of 42 antennas, to observe star systems for radio signals which may provide evidence of ET intelligence. The key problem is identifying recurring patterns in the signal stream that are not associated with known interferences, such as aircraft RFI, radio waves, etc. Recently, an unknown subset of signals inelegantly referred to as "squiggles" has become prevalent. We seek to study squiggles and their origin in two ways:  The dynamic programming algorithm traces the optimal 129-time slice vertical path. We tuned our parameters toα= 0.5, β= 0.</p><formula xml:id="formula_0">Squiggle Non-Squiggle</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baseline</head><p>Logistic Regression on 129 scaled raw time series points</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Final Model</head><p>We used a total of 72 predictors in our squiggle vs nonsquiggle classifier. Boosting and L2-regularized logistic regression resulted in the highest accuracy and AUC, respectively at &gt;99% each.      Results are plotted using the first two linear discriminant functions</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :Figure 2 :</head><label>12</label><figDesc>Each spectrogram image is 768x129 pixels, which corresponds to ~100 MHz in bandwidth (x-axis) and 93 seconds in time (y-axis).Spectrogram Model ACC AUC Unregularized 0.875 0.504 Lasso (L1) 0.875 0.5 Ridge (L2) 0.875 0.5 Model ACC AUC Unregularized 0.955 0.967 Lasso (L1) 0.953 0.963 Ridge (L2) 0.959 0.962Time SeriesChoose path to minimize L(α,β) = -α*(Intensity)-β*(Neighbor Intensities)+(1-α-β)(Deviation)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>We applied a discrete Fourier transform, sampling 63 times between 0 and π. This alteration in feature space resulted in a significant improvement.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>The full dataset was split 90% training, 10% test. Using the training set, we applied 10-fold cross validation to tune model parameters. The ACC and AUC values regard the initial validation test set. Our baseline models classify the entire test set as nonsquiggles, which comprise 90% of the training set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :Figure 8 :</head><label>58</label><figDesc>The two most significant predictors across all models are highlighted above. A • denotes that a feature was deemed significant by a particular classifier.Classify Squiggle vs NonsquiggleIdentify Squiggle SubgroupsCharacteristic p-value August 5.75E-03 4 AM -8 AM 2.31E-06 8 AM -12 PM 5.79E-06 12 PM -4 PM 7.32E-16 L-Polarization 1.24E-03 R-Polarization 3.14E-05 0.93 0.94 0.95 0.96 0.97 0.98 0.99 1 Efficacy of Classification Methods ACC AUC Source/Model Feature Logistic (Lasso) Logistic (Unreg. + Ridge) SVM Tree- Based Image Signal Width • • • Discretization Algorithm Loss • • Linear Model • • • • White Noise Process ARIMA (1, 1, 1) Process • • • • • • • • Long Memory Process FFT • σ 2 X W 128 n ( ) , n = 1,…, 63 μ σ 2 σ 2 φθĤ Figure 8:The clusters found using k-means correspond roughly to those we found using Ward D2 clustering and Manhattan distance.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>We can observe three clusters composed of 1. faint, quickly modulating signals, and 2. faint, slowly-modulating signals, and 3. strong low-bandwidth signals.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 9 :</head><label>9</label><figDesc>Here we observe two distinct clusters composed of 1. low-bandwidth signals and 2. high-bandwidth slowly modulating signals.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 10 :</head><label>10</label><figDesc>In particular, we note that squiggles from the red cluster tend to occur in a 4-hour timespan.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

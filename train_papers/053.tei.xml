@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Introduction</head><p>Recognizing human actions is a popular area of interest due to its many potential applications, but it is still in its infancy. Successful human action recognition would directly benefit data analysis for large-scale image indexing, scene analysis for human computer interactions and robotics, and object recognition and detection. This is more difficult than object recognition due to variability in real-world environments, human poses, and interactions with objects. Since researches on human action recognition in still images are relatively new, we rely on methods for object recognition as basis of our approaches. In particular, we were interested in seeing how convolutional neural networks (CNN) 1 perform in comparison with past feature selection methods such as Bag of Words (BoW). Also, we experimented with various supervised and unsupervised classifiers, examined our methods' properties and effects on our action data set, and also pre-processed our data set in order to better our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Related Work</head><p>In past decades, many ideas proposed to solve this problem. Some people put interest on understanding human-object reaction. Bourdev et .al proposed Poselet to recognize human body part and further research on human pose relation. Although those methods have very impressive result, hand-crafted feature method still can't be very generalized to all purpose. They all are used for specific goal.</p><p>To conquer that, Krizhevsky et al. <ref type="bibr" target="#b5">[6]</ref> first used Convolutional Neural Network(CNN) for image classification in 2013. Convolutional Neural Network is a powerful method because, unlike handcrafted feature methods, it learns features from whole image through forward and backward processes in deep layer structure. In 2014, Ji, Shuiwang et al. <ref type="bibr" target="#b3">[4]</ref> first apply Convolutional Neural Network to recognize human action in video and popularized CNN methods. However, CNN is bad on localization. To overcome the difficulties, Girshick et al. <ref type="bibr" target="#b2">[3]</ref> proposed R-CNN which combine region proposal and CNN. Although CNN has promising result, its training is a huge task. To reduce the cost, people used a pre-trained model, such as by Chi Geng et al. <ref type="bibr" target="#b1">[2]</ref> use pre-trained CNN model to learn features from images and classify images by SVM. To reduce the overfitting problem of CNN, Srivastava et al. gave "dropout" which prevent neural units from co-adapting too much to address overfitting problem.</p><p>To fully understand CNN, we looked into feature extracted by CNN. We thought some preprocessing to image will be helpful to human action recognition. Our goal is to recognize human action. We though background should be irrelevant noise. To reduce training cost, we will use pre-trained model. We will finetune it and change some hyperparameter to improve the prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Setup</head><p>We utilized Caffe, Python (and pycaffe), and Matlab to create and run our CNN and BoW models. We rented a server with 30GB of harddrive space and 4GB of Nvidia GPU memory, costing roughly $400 including usage time. Due to hardware limitations, we had to reduce our data set size, so we chose to classify 8 actions out of the Stanford40 data set, using 1839 images for training (and validation, for CNN), and 456 images for testing. With such small data set, we allocated more images for training, which only had 100 images per action for training. Instead, we used a train-val-test ratio of 7-1.5-1.5. We were at risks of overfitting, but we took precautions to prevent overfitting.</p><p>As a default, we used the images as given in the data set. Then, we applied cropping to our images in two ways: one with a tight bound to isolate our subject and nearby objects, and one that is 50% larger than our tight bound to capture some background information. Lastly, we pre-processed images to a color segmentation process using k-means.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bag of Words</head><p>In general, objects in an image can be described by feature descriptors, forming a histogram for the image. A collection of histograms from different images form the Bag of Words (BoW) model, which can be learned by a classifier. During training, we used a Scale-Invariant Feature Transform (SIFT) method to extract features, then we utilized Spatial Pyramid Matching (SPM) to obtain histograms from increasingly small sub-regions. Stacking these histograms together helps us maintain spatial information. We then used K-means method to cluster the final histograms into K code words. During testing, match the histogram of the input image with our BoW model. BoW is unaffected by position and orientation of objects in the image, and the SPM method gives us more spatial information to help us localize objects.  We used Caffenet <ref type="bibr" target="#b4">[5]</ref> architecture as the basis to our experiments. It is similar to AlexNet, but pooling is done before normalization in Caffenet. In brief, Caffenet has 5 convolution layers followed by 2 fully connected layers and a softmax layer. We trained using pre-trained weights, which have ran for 350,000 iterations, to give better generalization and to prevent overfitting our data. This is our control case.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Human Action Recognition Using CNN and BoW Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 2 Caffenet architecture</head><p>Then, we experimented with changing learning rates and hyperparamters for each layer, which are: kernel size, padding amount, stride, and number of outputs. Hyperparameter tuning involves changing the sizes of the CNN layers, creating a very different CNN, despite having the same number of layers. To study the effect of locality sizes on our results, we conducted two tests with the first layer's kernel size being 15 and 7, respectively, and different amounts of paddings were used to keep other layers the same. In a third test, we also changed the first layer's kernel size from 11 to 27, then decreased our kernel sizes in the following layers until the 5th layer matches the original 256x13x13 dimension.</p><p>We also created CNN's from scratch, using our customdefined layers and hyperparameters. Below is a summary of our three custom models (we only show kernel size, k, since we only adjusted other parameters to suit our new k):</p><formula xml:id="formula_0">Custom 1: Conv(k=11) → RelU → pool → norm → Conv(k=3) → RelU → Conv(k=3) → RelU → FC → Softmax Custom 2: Conv(k=13) → RelU → pool → Conv(k=7) →RelU →pool→ Conv(k=3) →RelU →pool→FC→ FC→Softmax Custom 3: Conv(k=13) → RelU → pool → Conv(k=7) → RelU → pool→ Conv(k=3) → RelU → pool → FC → Dropout → FC → Softmax</formula><p>Our custom CNN 1 is a small CNN with 3 layers. The other two are larger. The difference between our custom CNN 2 and 3 is that custom CNN 3 has a dropout layer. This is to prevent our network from overfitting by giving each neuron a 0.5 probability that its activation will become zero in each iteration. In other words, a dropout of data. This avoids co-adaption of units.</p><p>We also ran Googlenet for comparison, which uses an "atypical" architecture embedded with inception layers that contain multiple convolutions. In terms of recognition, Googlenet is known to yield better results than Caffenet, but it is more difficult to fine-tune so we kept Caffenet as our basis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>t-Distributed Stochastic Neighbor Embedding</head><p>We used the t-SNE algorithm to help us visualize the features obtained from the last FC layer of the Caffenet in relation to our actual data. Features from this layer is a high dimensional histogram for each image, and t-SNE allows us to cluster these images together in 2D space. With t-SNE, we set similarities of high dimensional points (distribution Q) and low dimensional points (distribution P) as two different joint probabilities, where a higher probability indicate similarity. The cost function is then a Kullback-Leibler divergence of distribution Q from P. Coincidentally, since t-SNE is an unsupervised method to cluster our data, we also tested to see how well it classifies our data by applying a K-means algorithm on top of t-SNE.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN + Classifier</head><p>Similar to using the t-SNE algorithm, we extracted activations from the last fully connected layer of our CNN's as features and put them through various classifiers. We are interested in using features from CNN for image classification problem, but skip the Softmax layer that Caffe uses. The second term ∑ =1 let us can have margin less than 1. C control the two goal want to achieve: Keep ‖ ‖ 2 small and make margin less than 1.</p><p>To use this linear SVM on our multiclassifier data set, we used "one vs one" comparison. We first experimented with "one vs all" method then used "one vs one" for better results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multi-Class Support Vector Machine</head><p>We used one versus one for our dataset. For one versus one method, if we have N class, there will be N(N-1)/2 classifier.</p><p>Each classifier is for two classes from our dataset. We are going to solve the following optimization problem Each classifier will vote to one class, and the most voted class will be final result</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additive Chi Square Kernel</head><p>Additive Chi-square kernel does normalization to the feature histograms, so that spikes in the histograms will not be heavily affect the result. We used the "one vs one" comparison.</p><formula xml:id="formula_1">( , ) = ∑ 2 [ ] [ ] [ ] + [ ]</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>K-nearest neighbor algorithm</head><p>Choose an integer K. KNN classifier will find the nearest K neighbors of x0from training data. According to the class of nearest k point, it give conditional probability for each class.</p><formula xml:id="formula_2">( = | = 0 ) = 1 ∑ ( = )</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random Forest</head><p>A random Forest method is an ensemble method. It build a series of simple trees which are used to vote for final class. For classification, RF predict the class that predicted by most trees. The predictions of the RF will be the average of the predictions by simple trees</p><formula xml:id="formula_3">= 1 ∑ ℎ =1</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Experiments and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Default CNN</head><p>We first obtained data from running our data with pre-trained weights of Caffenet and Googlenet. We obtained these accuracies:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>Top1 accuracy Caffenet 0.8223 Googlenet 0.8552</p><p>We then examined some properties of Caffenet. We verified that our model has converged by looking at the 1 st layer weights to verify there's no noise.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 4 Nicely converged 1st layer weights (left) vs noisy weights (right)</head><p>Testing on training data yielded an accuracy of 0.9833. This may indicate some overfitting, but we believe it is mostly due to the original models doing well. This is because using pretrained weights and giving 0 learning rates to some of the weights should provide enough generalization.</p><p>We examined Caffenet's first layer's outputs and noticed that while Caffeent can capture large features correctly, it sometimes recognizes background noise and irrelevant information as key features. <ref type="figure">Figure 5</ref> First layer outputs. 2 nd row shows main features and local objects are captured. 3 rd row shows some noise is captured.</p><p>For improvement, we believe it would be beneficial to filter out noise and have larger locality of features.</p><p>It becomes difficult gauging the activations in later layers, due to the locality of each neuron, so it was not used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Custom CNN</head><p>Based on preliminary results, we wanted our CNN to capture larger features and ignore smaller objects or noise. Hence, we created our custom CNNs, as described in the Methods section. None of our custom CNN's matched the default model's accuracy. This could be we did not have the time to train our models for long enough because we could only run for 20,000 iterations, which takes half a day. But we noticed that the 1 st layer's weights appear to converge nicely, so it's also possible that the default Caffenet was designed to be the best CNN of its kind. Hyperparameter tuning is, we realized, an optimization problem of its own.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN</head><p>We noticed that, unexpectedly, a larger kernel size at the first convolution layer yielded lower accuracies. We compared the 1 st layer's outputs and noticed that, while a larger kernel size does give us larger locality and capture bigger features in the images, as intended, it is perhaps too broad for our CNN. The smaller kernel size, on the other hand, captures too much detail. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bag of Words</head><p>From looking at BoW code words, we also thought it would be beneficial to filter out background noise.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 7 BoW features</head><p>We tried to filter out the background by changing our K size for the k-mean cluster, but it's not inherently obvious how many codewords to use. We tried K=200 and K=300. We saw that for the most part, K=200 performed better. But this may not be optimized, since number of code words is heavily related to the properties of images, so there is no best way to find K but trial and error, like finding CNN hyper parameters. According to our result, K=200 is better, so we can deduce that SIFT doesn't use as many distinct features from our images, so that we don't need too many words.</p><p>A more useful takeaway is looking at our results of our cropping. After we cropped the image based on tight bounding box, we saw that accuracy actually dropped. This is contradictory to our expectation. We thought that removing background noise would reduce error and improve our result. However, we realized that contextual information is actually important for classification.</p><p>We then expanded our bounding box by 1.5 times to include local background information. As predicted, we saw an improvement in our result. As shown above, if we train SVM and other classifiers on top of features extracted by CNN, we achieve better results than using CNN alone. This was surprising, since CNN's own accuracy was already high.</p><p>We again thought it may be due to the overfitting issue described in previous section. So, when we use SVM for classification, we made SVM resistant to overfitting by tuning the parameter C.</p><p>Although kernel trick perform better than linear SVM in BoW model, we didn't use it on CNN feature because CNN feature is very high dimension. Using kernel on CNN will be time consuming with not a better result. So, we simply use linear SVM here for CNN feature.</p><p>We observe that SVM, KNN, RF all perform well on our dataset when using CNN features, even though in our BoW model KNN and RF both did badly. Even though CNN is not perfect at extracting features, it is much better than BoW model, which takes in too much noise from the image.</p><p>We saw CNN+KNN have even higher accuracy after we cropped the image. <ref type="table">Table below</ref> show some predictions using CNN+KNN on different cropped images. We can see that the background is a contributing factor. Image 3 was classified as climbing because of the wall background, so does the image 4. After we cropped the image and put tight bounding box on action, image 3 and image 4 became right but image1 was missed. Without rock in image1, it was classified as jumping. In our expanded bounding Box, predictions for images 1,3, and 4 became correct..</p><p>We can see that the background is necessary when the action relies on the environment. Some action is highly related to the background, like climbing, where as some do not, like jumping. If we could recognize the relationship between the background and the action, we can achieve better results. We also tested the classifiers on non-trained CaffeNet. Surprisingly, we found SVM give a pretty good accuracy. It is only a little lower than fine-tuned feature. KNN and RF are not like SVM, their accuracy is much lower than fine-tuned CaffeNet feature. This confirms that Caffenet's pretrained model does a very good job at recognizing objects, such that when we insert our data set we do not need to train much.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Un-Fine-tuned CaffeNet</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Examination: t-SNE</head><p>After applying the t-SNE method, we noted that the accuracy was only 0.5203, much like our other classifiers. What's more interesting, though, is visualizing our data. We see that images with clearly distinct objects (holding an umbrella, riding a horse, playing guitar, etc) are more distinguishable. On the other hand, actions that require environmental interactions (jumping, climbing) are not as obvious. Also, images taken from afar or from unconventional angles would be harder to cluster. This could be due to the introduction of background noise or occlusion. It becomes obvious that pre filtering our data set would be an important step prior to training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>We experimented with and validated many methods and techniques in our project. The most useful takeaways for future work is that, for either supervised or unsupervised learning, it is important to include sufficient but not excess background and contextual information prior to training for human action recognition. The key point is how to select the region from image. We saw that cropping is a strong tool to use, but we cannot crop too much or too little background.</p><p>Then, we found that KNN performs well with fine-tuned CaffeNet model on our dataset. KNN is a very fast calculating model. For future work, we will test and evaluate KNN using the whole 40 action dataset.</p><p>In general, CNN is a great tool at extracting features from images, even though it lacks the ability to distinguish subject, object, and background, similar to BoW. Even so, it significantly outperforms BoW model, as we expected from literature. For small size dataset, using SVM, KNN on CNN feature gives even higher accuracy than CNN itself. We thought that CNN could overfit such small size dataset. In small size dataset, It may be more accurate to combine SVM,KNN with CNN feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. References</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>##### captionConvolutional Neural NetworkCNN is a different method of obtaining image features and training on feature representations in high dimensional space. It has been quite successful in recent years, since its introduction in 2012 (Alex Krizhevsky 2012).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3</head><label>3</label><figDesc>Our pipeline: applying SVM on extracted features Support Vector Machine SVM is to find a hyperplane that give the largest minimum distance to training data. It is to optimize</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>∅( ) + , ≥ 1 − , , = ( ) ∅( ) + , ≤ −1 + , , ≠ , ≥ 0, = 1,2, … … , ( − 1)/2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6</head><label>6</label><figDesc>Layer 1 outputs, same column is from the same model. From left to right: K=15 K=11, K=7</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 8</head><label>8</label><figDesc>Figure 8 Plot of our results CNN + CLASSIFIER Fine-tuned CaffeNet Top 1 accuracy Original Cropped Cropped (larger) CaffeNet 0.8223 0.7785 0.8377 CaffeNet+SVM (linear 0.8469 0.7938 0.8728</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<title level="m">ImageNet Classification with Deep Convolutional. NIPS Proceedings</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chi</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jianxin</forename><surname>Song</surname></persName>
+		</author>
+		<title level="m">Human Action Recognition based on Convolutional Neural Networks with a Convolutional Auto-Encoder. 5th International Conference on Computer Sciences and Automation Engineering</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Rich feature hierarchies for accurate object detection and semantic segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">3D convolutional neural networks for human action recognition. Pattern Analysis and Machine Intelligence</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shuiwang</forename><surname>Ji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="221" to="231" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Caffe: Convolutional Architecture for Fast Feature Embedding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yangqing</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evan</forename><surname>Shelhamer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeff</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Karayev</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sergey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ross</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sergio</forename><surname>Guadarrama</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Darrell</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename></persName>
+		</author>
+		<idno type="arXiv">arXiv:1408.5093</idno>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Imagenet classification with deepconvolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Combining PPO and Evolutionary Strategies for Better Policy Search</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennifer</forename><surname>She</surname></persName>
+						</author>
+						<title level="a" type="main">Combining PPO and Evolutionary Strategies for Better Policy Search</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>A good policy search algorithm needs to strike a balance between being able to explore candidate policies and being able to zero-in on good ones. In this project we propose and implement hybrid policy search algorithms inspired by Proximal Policy Optimization (PPO) and Natural Evolutionary Strategies (ES) in order to leverge their individual strengths. We compare these methods against PPO and ES in two OpenAI environments: CartPole and BipedalWalker.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>The standard reinforcement learning framework is modelled by a Markov Decision Process M = (S, A, P, R, γ), where at each time step t, the agent takes an action a t ∈ A at a state s t ∈ S, and as a result, transitions to a new state s t+1 according to P and receives a reward r t according to R.</p><p>The objective of policy search is to determine a policy π : S×A → [0, 1], parameterized by θ in our case, that specifies how the agent should act at each state s, ie. π θ (a|s) = Pr(a t = a|s t = s).</p><p>We want π θ to maximize the expected return</p><formula xml:id="formula_0">J(θ) = E τ ∼p(τ ;θ) [R(τ )],<label>(1)</label></formula><p>where R(τ ) = T t=0 γ t r t is the return from following a specific trajectory τ under π θ .</p><p>Two types of policy search algorithms are policy gradients like Proximal Policy Optimization (PPO), and evolutionary strategies or derivative-free optimization (ES). Policy gradient methods leverage the problem structure by estimating ∇ θ J(θ), and incorporates it into stochastic gradient descent methods in order to arrive at a potential solution quickly. However, they are said to face a lack of exploration in the space of policies due the greediness of their <ref type="bibr">1</ref> Computer Science, Stanford University. Correspondence to: Jennifer She &lt;jenshe@stanford.edu&gt;.</p><p>updates. Evolutionary strategies in contrast, are able to exhibit better exploration by directly injecting randomness into the space of policies via sampling θ. However, they make use of less information and thus require more time and samples to perform well. A natural extension is to construct a hybrid method that leverages the strengths of both types of methods. We test out 3 hybrid methods combining PPO and ES, that make use of the gradient, and involve stochastic sampling of θ. We compare these methods to the original PPO and ES in CartPole (CP) and BipedalWalker (BW). The code for this project is available at https: //github.com/jshe/CS229Project.git.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>The family of policy gradient methods stems from the original REINFORCE algorithm by <ref type="bibr" target="#b5">Williams (1992)</ref>. Since then, there have been many new variants that improve RE-INFORCE in many aspects: encouraging training stability by adding an advantage term, decreasing sample complexity by using off-policy sampling, and improving computation efficiency by using parallelism. Notable methods include Asynchronous Advantage Actor-Critic <ref type="bibr" target="#b1">(Mnih et al., 2016)</ref>, Trust-Region Policy Optimization <ref type="bibr" target="#b3">(Schulman et al., 2015)</ref>, and PPO <ref type="bibr" target="#b4">(Schulman et al., 2017)</ref>.</p><p>Evolutionary strategies in contrast have traditionally been used outside of reinforcement learning. A recent paper by <ref type="bibr" target="#b2">Salimans et al. (2017)</ref> has brought them to the attention of the reinforcement learning community, as a competitive alternative to policy gradients.</p><p>A recent paper <ref type="bibr" target="#b0">(Hämäläinen et al., 2018)</ref> proposes an algorithm that combines PPO and ES, however the algorithm still only incorporates stochasticity in the action space, rather than θ. PPO stems from the REINFORCE algorithm <ref type="bibr" target="#b5">(Williams, 1992)</ref>, which we briefly discuss. REINFORCE involves</p><formula xml:id="formula_1">rewriting ∇ θ J(θ) as E τ [∇ θ log p(τ ; θ)R(τ )]<label>(2)</label></formula><p>which can be approximated by taking the gradient of samples</p><formula xml:id="formula_2">log p(τ ; θ)R(τ ) = T t=0 log π θ (a t |s t )R(τ ).<label>(3)</label></formula><p>PPO increases sample efficiency by reusing trajectories from past policies π θold , and improves training stability by ensuring that π θ updates at every iteration are small. At each iteration, trajectories are sampled under π θold for a total of H state-action pairs. We then use mini-batch samples of these pairs (s t , a t ) of to update π θ . π θ is updated using a modification of (3), where log π θ (a t |s t ) is replaced by a ratio π θ (at|st) π θ old (at|st) to allow for this type of sampling, and the ratio is clipped if it falls outside of some range [1 − , 1 + ] to increase stability. This results in the objective</p><formula xml:id="formula_3">T t=0 min π θ (a t |s t ) π θold (a t |s t )Â t (τ ), π θ (a t |s t ) π θold (a t |s t ) clipÂ i (τ ) ,<label>(4)</label></formula><p>where τ is sampled using π θold .</p><p>The advantage functionÂ t (τ ) = R t (τ ) − v θ (s t ), where R t (τ ) = T t =t γ t −t r t is a modification of R(τ ) calculated using a learned value function v θ . v θ is updated along with π θ using an additional loss</p><formula xml:id="formula_4">T t=1 (v θ (s t ) − R t (τ )) 2 .<label>(5)</label></formula><p>An entropy term</p><formula xml:id="formula_5">c ent · H(π θ (a t |s t ))<label>(6)</label></formula><p>can also be optionally added to the objective to encourage exploration in a t . Combining <ref type="formula" target="#formula_3">(4)</ref>, <ref type="formula" target="#formula_4">(5)</ref> and <ref type="formula" target="#formula_5">(6)</ref> results in the final PPO objective.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2.">EVOLUTIONARY STRATEGIES (ES)</head><p>In evolutionary strategies, or derivative-free policy optimization, the function J(θ) is treated as a black-box.</p><p>The general framework of evolutionary strategies involves at each step, sampling candidate parameters {θ (1) , ..., θ (k) } from some distribution Θ, and using these θ (i) 's based on their performance in terms of J(θ), to update Θ.</p><p>A recent variant called Natural Evolutionary Strategies <ref type="bibr" target="#b2">(Salimans et al., 2017)</ref> scales to problems in reinforcement learning. This variant represents Θ using a Gaussian distribution Θ =θ + σ where ∼ N (0, I). The objective is</p><formula xml:id="formula_6">θ (i) ∼ Θ PPO PPO PPO Updateθ θ (1) θ (2) θ (k) θ (1) θ (2) θ (k)</formula><formula xml:id="formula_7">max θ E θ∼Θ [J(θ)],<label>(7)</label></formula><p>whereθ is updated using an approximation of the gradient ∇θE θ∼Θ [J(θ)], derived by rewriting it as E ∼N (0,I) [∇θ log p(θ;θ)J(θ)] and approximating this using the samples</p><formula xml:id="formula_8">{θ (1) , ..., θ (k) } by 1 k k i=1 [∇θ log p(θ;θ)R(τ t )] = 1 kσ k i=1 [ t R(τ t )].<label>(8)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Our Approaches</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1.">ES-PPO</head><p>Instead of sampling θ (i) naively as in ES, we propose running PPO with each of these samples as initializations to obtain new samples θ (i) . We then update π θ by (8) with returns from these new samples and modified perturbations</p><formula xml:id="formula_9">t = 1 σ (θ (i) −θ).</formula><p>The general idea of this algorithm is summarized in <ref type="figure" target="#fig_1">Figure  1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2.">MAX-PPO</head><p>Instead of using the update (8) as in ES-PPO, we directly setθ to θ (i) with the highest return</p><formula xml:id="formula_10">argmax i R(τ t )| τ ∼p(τ ;θ (i) ) .</formula><p>We conjecture that this method would work well despite its apparent greediness because θ (i) are likely to be decent solutions as a result of the PPO updates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.3.">ALT-PPO</head><p>We alternate between ES and PPO iterations by running ES every j iterations withθ = θ in order to inject stochasticity.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Experiments/ Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">CartPole-v0 (CP)</head><p>The objective of CP (see <ref type="figure">Figure.</ref> 3) is to move the cart left and right in order to keep the pole upright. The agent receives +1 reward for every time step, for a maximum of 200 points. The episode ends when the pole falls, the cart goes off screen, or it reaches a max of 200 time steps. S ⊂ R 4 represent the position/velocity of the cart, and A = {0, 1} represent the actions left and right.</p><p>For ES in this setting, we represent π θ by</p><formula xml:id="formula_11">π θ (a|s) = 1[a = f θ (s)]<label>(9)</label></formula><p>where f θ is a fully-connected neural network: FC(4×100) + ReLU + FC(100×1) + Sigmoid + 1[]. For all other methods, we use</p><formula xml:id="formula_12">π θ (a|s) ∼ Bernoulli(g θ (s))</formula><p>where g θ is a fully-connected neural network: FC(4 × 100) + ReLU + FC(100 × 100) + ReLU + FC(100 × 1) + Sigmoid. We also parameterize v θ by: FC(4 × 100) + ReLU + FC(100 × 100) + ReLU + FC(100 × 1), where the first fullyconnected layer is tied with g θ . We perform hyperparameter search for each method to obtain the best configuration, and describe the details below. The results are shown in <ref type="figure" target="#fig_4">Figure  4</ref> and ble. We choose H = 256 and batch size 32, and iterate over the entire 256 samples l = 3 times on each iteration (which seem sufficicent for CP). We set c ent = 0.0 among {0.0, 0.0001} because the entropy term seems unnecessary. We also set clipping = 0.2 among {0.01, 0.02, 0.2} to give the largest signal. Finally, we fix γ = 0.99.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2.">ES</head><p>We choose k = 5 among {5, 10, 20} as it seems to be sufficient for CP and results in the fastest training time. We also set σ 2 = 0.1 among {0.1, 0.001, 0.0001} with learning rate 0.001 among {0.0001, 0.0025, 0.001}.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.3.">ES-PPO</head><p>We use the same hyperparameters as in ES and PPO, with the exception that each PPO subcall runs for 3 iterations with l = 1 instead of 3, as we found this helps decrease variance in the updates, despite resulting in worse sample efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.4.">MAX-PPO</head><p>We use the same hyperparameters as ES-PPO, except we find that σ 2 = 0.001 works better, as it also reduces variance in the updates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.5.">ALT-PPO</head><p>We use the same hyperparameters as ES-PPO, and additionally set j = 5 between {5, 20}.</p><p>We note that CP is a very simple setting, likely with no evident local minima. Thus with the stopping condition being that each method must achieve the maximum episodic reward of 200 for 10 consecutive iterations (with the maximum number of iterations capped at 3000), all methods are able to achieve 200 at the end of training across all 5 trials.</p><p>However, based on training time, it seems like ES and PPO take the shortest amount of time to converge. In contrast, ALT-PPO takes a factor of 2 − 3 as much time, which we conjecture is due to the randomness from ES sometimes perturbing θ away from a good solution achieved by PPO. This can be seen by the long tail of plot (c) in <ref type="figure" target="#fig_4">Figure 4</ref>. Lastly, ES-PPO and MAX-PPO both take around a factor of 5 as much time as ALT-PPO, with MAX-PPO performing slightly better than ALT-PPO. This is likely due to the high computation of running 5 instances of PPO at a time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">BipedalWalker-v2 (BW)</head><p>The objective of BW is to maneuver the walker to the rightmost side of the environment without falling. The agent receives + for moving forward for a total of 300 on the walker reaching its destination. The agent also receives −100 for falling. The episode ends when the walker reaches its destination or falls. S ⊂ R 24 , and A = [−1, 1] 4 represent the various states and actions of the walker and its components (hips, knees etc).</p><p>For ES in this setting, we again represent π θ by (9) where f θ is a fully-connected neural network: FC(24 × 100) + ReLU + FC(100 × 4) + Tanh. For all other methods, we use</p><formula xml:id="formula_13">π θ (a|s) ∼ N (g θ (s), σ 2 )</formula><p>where g θ is a fully-connected neural network: FC(24 × 100) + ReLU + FC(100 × 100) + ReLU + FC(100 × 4) + Tanh. We also parameterize v θ by: FC(24 × 100) + ReLU + FC(100 × 100) + ReLU + FC(100 × 1), without tied layers this time (because we need more parameters in a more complex setting). We perform hyperparameter search for each method to obtain the best configuration under the constraints of our compute, which we detail below. The results are shown in <ref type="figure" target="#fig_5">Figure 5</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1.">PPO</head><p>We use the same setting as PPO in the case of CP, except we increase H to 2048 and batch size to 64, and make use of the entropy term with c ent = 0.0001.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2.">ES</head><p>We set σ = 0.1, but increase population size to 20, which we find helps performance significantly here, and we modify learning rate to 0.01 to allow for larger updates corresponding to better directions as a result of larger k.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.3.">ES-PPO</head><p>We use the same setting as ES-PPO in the case of CP, with the modification that H = 2048, batch size = 64, and c ent = 0.0001 as in PPO. k = 20 is too computationally slow, so we stick with k = 5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.4.">MAX-PPO</head><p>We use the same setting as ES-PPO, except with σ 2 = 0.01 as in the CP case.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.5.">ALT-PPO</head><p>We use the same setting as ES-PPO, and set j = 5 as in the CP case.</p><p>We note that none of the algorithms are able to achieve the maximum reward of 300 in BW, so all of the methods are terminated early. ES and PPO achieve the highest episodic rewards. However the training curves of PPO is much more volatile than that of ES. We suspect that this is because PPO reuses samples from π θold in order to encourage sample efficiency.</p><p>We also find that while using k = 20 for ES leads to much more stable training and greater improvements in episodic return, each iteration as a result becomes very slow. ES-PPO and MAX-PPO exponentiate this problem, and as a result, we choose a maximum sample size of k = 5 for ES-PPO and MAX-PPO.</p><p>One insight we have about the poor performance of ES-PPO in BW is that the PPO subcalls may drive θ (i) far from θ. Thus, a weighted average of the returns at θ (i) may no longer be a good predictor of the return at a weighted average of θ (i) . This can cause misleading updates that result inθ having a much lower return than the weighted average.</p><p>MAX-PPO mitigates this averaging problem of ES-PPO, as seen by the few trials in plot (d) in <ref type="figure" target="#fig_1">Figure 1</ref> with returns that improve much earlier on during training. However, we find that it still has very high training instability. We believe this is because MAX-PPO is unable to stay at its current θ unless the PPO subcalls are run for long enough. This means MAX-PPO can lead away from good solutions when all neighbouring θ (i) have low returns.</p><p>ALT-PPO also seems to have high variance, as demonstrated by some trials leading to much better returns than others. We believe that in order for a hybrid method to achieve good performance, we cannot simply inject stochasticity naivelythis stochasticity needs to take into account the quality of the currentθ.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Conclusion</head><p>From the results above, we believe that in order for a hybrid method to achieve better performance than PPO and ES, it needs to combine them in a more clever way. One potential idea to try is to somehow adaptively modify the variance of Θ using gradient information, so that only closer θ (i) are sampled whenθ has a relatively good return.</p><p>Another potential direction is to investigate how we can better leverage large-scale parallel compute in order to speed up methods like ES-PPO and MAX-PPO.</p><p>In the case of PPO, it would also be interesting to look into the trade-offs between sample efficiency and training stability, and see whether sampling from π θ instead of π θold can reduce this instability.</p><p>Lastly, it may be more effective to compare these methods in more complex environments, where there exist obvious local minima, and PPO should fail.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>1.1. PROXIMAL POLICY OPTIMIZATION (PPO)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Diagram of ES-PPO and MAX-PPO.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc>Initial state of CP.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc>Initial state of BW.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>Episodic/sum of rewards over training CP (in 10's of iterations) across 5 trials each. Vertical bars are the standard deviation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc>Episodic/sum of rewards (in 10's of iterations) over training across 5 trials each.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 .</head><label>1</label><figDesc>Table 1. Final results from CP averaged across 5 trials.</figDesc><table>4.1.1. PPO 
+
+We use an ADAM optimizer with learning rate = 0.0001 
+chosen among {0.0001, 0.00025, 0.001} to be the most sta-
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>We thank Mario Srouji for the project idea and help during the project.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">PPO-CMA: proximal policy optimization with covariance matrix adaptation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Perttu</forename><surname>Hämäläinen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Babadi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Amin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoxiao</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaakko</forename><surname>Lehtinen</surname></persName>
+		</author>
+		<idno>abs/1810.02541</idno>
+		<ptr target="http://arxiv.org/abs/1810.02541" />
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Asynchronous methods for deep reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mnih</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Volodymyr</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adria</forename><surname>Badia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Puigdomenech</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mirza</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mehdi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lillicrap</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Timothy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Harley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Silver</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Koray</forename><surname>Kavukcuoglu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International conference on machine learning</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="1928" to="1937" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Evolution strategies as a scalable alternative to reinforcement learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tim</forename><surname>Salimans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Ho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Xi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Szymon</forename><surname>Sidor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ilya</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1703.03864</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Trust region policy optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sergey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pieter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Michael</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philipp</forename><surname>Moritz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning</title>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="1889" to="1897" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Schulman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Wolski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Filip</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Prafulla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alec</forename><surname>Radford</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Oleg</forename><surname>Klimov</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1707.06347</idno>
+		<title level="m">Proximal policy optimization algorithms</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Simple statistical gradient-following algorithms for connectionist reinforcement learning. Machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ronald</forename><forename type="middle">J</forename><surname>Williams</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992" />
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="229" to="256" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Final Project Shale Gas Production Decline Prediction Using Machine Learning Algorithms rate ( mcf / day ) shale gas production decline -all curves</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wentao</forename><surname>Zhang</surname></persName>
+							<email>wentaoz@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaochuan</forename><surname>Xu</surname></persName>
+							<email>scxu@stanford.edu</email>
+						</author>
+						<title level="a" type="main">CS229 Final Project Shale Gas Production Decline Prediction Using Machine Learning Algorithms rate ( mcf / day ) shale gas production decline -all curves</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In petroleum industry, oil companies sometimes purchase oil and gas production wells from others instead of drilling a new well. The shale gas production decline curve is critical when assessing how much more natural gas can be produced for a specific well in the future, which is very important during the acquisition between the oil companies, as a small under--estimate or over--estimate of the future production may result in significantly undervaluing or overvaluing an oilfield. In this project, we use the Locally Weighted Linear Regression to predict this future production based on the existing decline curves; Then, we apply the K--means to group the decline curves into two categories, high and low productivity; Moreover, Principal Component Analysis is also tried to calculate the eigenvectors of the covariance matrix, based on which we also predict the future production both with K--means as a preprocess and without K--means. At last, three methods are compared with each other in terms of the accuracy defined by a standardized error.</p><p>l Dataset</p><p>The data we used are monthly production rate curves of thousands of shale gas wells as below. In order to deal with different lengths of different curves, and the 0 production rate data points of some curves, we modify these data a little bit. We substitute 0 data points in any curve by a very small number 0.0001, and we make all the curves the same length by adding zeros to the end, for the sake of being loaded into MATLAB as a matrix. Our goal is to predict the future gas production of a new well, given its historical production data and information from other wells with longer history. Suppose that we randomly choose a decline curve r with n months in total. We want to use the first l month to</p></div>
+			</abstract>
+		</profileDesc>
+		<revisionDesc>
+				<date type="submission" when="-1" />
+		</revisionDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In petroleum industry, oil companies sometimes purchase oil and gas production wells from others instead of drilling a new well. The shale gas production decline curve is critical when assessing how much more natural gas can be produced for a specific well in the future, which is very important during the acquisition between the oil companies, as a small under--estimate or over--estimate of the future production may result in significantly undervaluing or overvaluing an oilfield. In this project, we use the Locally Weighted Linear Regression to predict this future production based on the existing decline curves; Then, we apply the K--means to group the decline curves into two categories, high and low productivity; Moreover, Principal Component Analysis is also tried to calculate the eigenvectors of the covariance matrix, based on which we also predict the future production both with K--means as a preprocess and without K--means. At last, three methods are compared with each other in terms of the accuracy defined by a standardized error.</p><p>l Dataset</p><p>The data we used are monthly production rate curves of thousands of shale gas wells as below. In order to deal with different lengths of different curves, and the 0 production rate data points of some curves, we modify these data a little bit. We substitute 0 data points in any curve by a very small number 0.0001, and we make all the curves the same length by adding zeros to the end, for the sake of being loaded into MATLAB as a matrix. Our goal is to predict the future gas production of a new well, given its historical production data and information from other wells with longer history. Suppose that we randomly choose a decline curve r with n months in total. We want to use the first l month to predict the rest (n--l) months of the curve. In order to find curves from the training set that are "similar" to r, we define the distance between two curves by squared L--2 norm. Before we calculate the distance, we need to filter the training set by removing curves whose history is shorter than n. Then we pick k wells from the filtered training set that are closest to r, give each of them a weight wi and make prediction for r as:</p><formula xml:id="formula_0">! ! f predicted = w(d( f past _existing (i ) , f measured )/h)⋅ f future _existing (i ) i∈neighb k ( f past _existing ) ∑ w(d( f past _existing (i ) , f measured )/h) i∈neighb k ( f past _existing )</formula><p>∑ Where h is the longest distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results:</head><p>Figure <ref type="formula">2</ref>  Since each well has a history as many as tens of months, intuitively, we want to reduce the dimensions of time and keep the intrinsic components that reflect production decline.</p><p>First of all, we filter the training set by removing the wells whose history is shorter than the total months n of a test curve. After the normalization on the data, we eigen--decompose the empirical covariance matrix and extract the first 5 eigenvectors as the principal components.</p><p>Then, we fit the known part of the test curve by using a linear combination of 5 eigenvectors.</p><p>The coefficients θ of the linear combination are calculated from linear regression, </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Standarlized Error Well 1923 -LWLR</head><p>Where yknown∈R l is the normalized known history of the test well, Ul∈R l*5 is the eigenvectors with the first l dimensions. Our estimation is therefore yestimate. <ref type="figure">Figure 5</ref> High-productivity, good fit (upper left); High-productivity, bad fit (upper right);</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results:</head><p>Low-productivity, good-fit (lower left); Low-productivity, bad fit (lower right).</p><p>As can be seen from <ref type="figure">Figure 5</ref>, the prediction is either too smooth or too variant compared to the real data. This is because at the fitting step, θ is either underfitted (high variance) or overfitted (low variance). Another problem in PCA is that all the training wells have contribution to the estimation, which makes it unprecise for very high or low production prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>l PCA after K--means</head><p>If we assume high--productivity wells are similar to each other and low--productivity wells are similar to each other, we can group all the decline curves into two categories. We modify the K--means method to be applied into this real situation that different decline curves have different dimensions. We calculate the distance between a centroid and a curve by using the dimension of the shorter one. As comparing two figures in <ref type="figure">Figure 6</ref>, this modified K--means method is good enough to distinguish high--productivity wells from low--productivity wells. <ref type="figure">Figure 6</ref> Decline curves in the high productivity wells (left) and the low productivity wells (right)</p><p>Then, we run PCA again after clustering the original decline curves by K--means. From <ref type="figure" target="#fig_4">Figure 7</ref>, we can see that although the underfitting/overfitting problem still exists, the results are better than the original PCA. This might be due to we add the L--2 norm distance information into the PCA, which makes it an integrated method. l Discussion <ref type="figure">Figure 8</ref> Errors of three methods calculated from Leave-One-Out cross validation</p><p>We apply Leave--One--Out cross validation to all the three methods, compare the predictions with real production data and calculate the average relative errors as in <ref type="figure" target="#fig_2">Figure 3</ref> and <ref type="figure">Figure 4</ref>. We also define a threshold value to avoid the extremely large errors. The reason we do this is that one extreme value can make the average of all relative errors really huge, but these extreme values are due to the shutting down periods of the wells (when the production is nearly zero). <ref type="figure">Figure  8</ref> verifies our intuition that LWLR is the best among the three methods because no information is lost due to dimension reduction. PCA has the largest relative error among three methods because higher order principal characteristics, reflecting the details of decline curves, are not included. K--means helps cluster the wells into high and low productivity classes, which improves PCA with the availability of that prior information.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1</head><label>1</label><figDesc>2152 decline curves used to learn to predict production in the future l Locally Weighted Linear Regression (LWLR)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3</head><label>3</label><figDesc>High-productivity, good fit (upper left); High-productivity, bad fit (upper right); Low-productivity, good-fit (lower left); Low-productivity, bad fit (lower right). We restrict the number of neighbors k equal to 3. In Figure 2, four typical predicted curves are shown. The results are generally consistent with the real values. Comparatively, the predicted curves are smoother than the real ones, because the predictions are the sum of multiple training wells. 20 40 60 80 100 120 month 0 1000 2000 3000 4000 5000 production rate ( mcf / day ) Well 1219 -LWLR known curve predicted curve test curve 20 40 60 80 100 120 month 0 1000 2000 3000 4000 5000 production rate ( mcf / day ) Well 1219 -LWLR known curve predicted curve test curve Figure 3 Predicted curves with l (known months) increasing for a good fitting; error vs. l Figure 4 Predicted curves with l (known months) increasing for a bad fitting; error vs. lInFigure 3andFigure 4, we change the known curve from short to long, and plot the error versus the known months. The error does not decrease when we know longer curve and predict shorter. The reason might be that the Standardized Error is defined as the average relative error of predicted months. For this reason, in the tail of the curve, since absolute values are small, relative errors are easily to be large. A better error needs to be defined if we really want to tell if the prediction is better with longer known curve.l Principal Component Analysis (PCA)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>And we predict the future decline curve as,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7</head><label>7</label><figDesc>High-productivity, good fit (upper left); High-productivity, bad fit (upper right); Low-productivity, good-fit (lower left); Low-productivity, bad fit (lower right).</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

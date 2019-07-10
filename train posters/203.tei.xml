@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Improving Context-Aware Semantic Relationships in Sparse Mobile Datasets</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Hansel</surname></persName>
+							<email>pwhansel@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nik</forename><surname>Marda</surname></persName>
+							<email>nmarda@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><surname>Yin</surname></persName>
+							<email>wyin@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Improving Context-Aware Semantic Relationships in Sparse Mobile Datasets</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>➢ Cutting-edge NLP techniques often fail to capture semantic context ➢ Microblogging (and many other types of mobile datasets) have inputs other than text ➢ How do we make relationships between sentences more semantically salient using multimodal data? [1]</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head><p>[2]</p><p>[3] ➢ Multimodal data improves recognition of semantic relationships ➢ Especially valuable when tweets are about the same event but lack textual similarity ➢ Iterative Minimization has an upper bound on performance</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Including Multimodal Features Excluding Multimodal Features</head><p>Green: "Good news-The House passed a bill to exempt those who lost coverage due to the failure of #Obamacare's co-ops from the individual mandate." -Janesville, <ref type="bibr">WI, 2016-10-03 20:39:</ref> </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>➢</head><label></label><figDesc>Iterative Minimization -Given embeddings a, b, and multimodal features m a,i , m b,i , iteratively optimized various distance functions d i for various multimodal features: ➢ PCA for dimensionality reduction of sentence embedding space ➢ t-Distributed Stochastic Neighbor Embedding (t-SNE) for constructing visualizations and determining relative similarity [4] ➢ Manually-annotated comparisons ➢ Distance function ➢ Iteratively optimizing objective ○ Discrete ranking system means no continuous gradient ○ Minimizing this function: ➢ Scaling outputs of distance functions / integrating into above PCA and t-SNE "RT @CantorPress: House Republicans Unveil Debt Plan via @NROCorner #tcot #GOP #2Futures" -Peoria, AZ, 2011-07-25 18:58:42 "I'll be going on @foxnews at 11:20 (ET) to discuss the current negotiations of the #debtceiling. Check it out!" -Arizona, 2011-07-13 14:29:17</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>43 Blue: "RT @DrPhilRoe: Bottom line: Obamacare is NOT working, especially not in Tennessee. Tennesseans deserve a #BetterWay." -Jefferson, LA, 2016-10-06 19:34:56 Red: "It is too soon to rule out impacts to Florida. Please visit so that you and your family can get prepared." -The Sunshine State, 2016-10-01 21:16:00</figDesc><table>Labeled data 
+Rankings 
+
+Iterative Minimization 
+Rankings </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

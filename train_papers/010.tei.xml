@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:42+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Optimised Prediction of Stock Prices with Newspaper Articles</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bryan</forename><surname>Cheong</surname></persName>
+							<email>bcheong@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="department" key="dep3">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Yuan</surname></persName>
+							<email>cqyuan@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="department" key="dep3">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><surname>Ou</surname></persName>
+							<email>sdou@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Mathematical and Computational Science</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="department" key="dep3">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Optimised Prediction of Stock Prices with Newspaper Articles</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">ABSTRACT</head><p>For this project, we investigated the predictive power of newspaper articles on the stock prices of various companies. Using supervised learning, we were able to obtain a testing accuracy of up to 61%. We then performed reinforcement learning on this predictor, feeding its predictions into a Markov Decision Process (MDP) which bought and sold shares on a simulation that we programmed. We compared the MDP's performance on a year's stock prices to that of a random guesser. Overall, we conclude that the MDP with our predictor generally outperforms a random guesser.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">INTRODUCTION</head><p>We treated data from newspaper articles with machine learning tools to predict up or down changes in the stock prices, i.e. our response was binary. In particular, we examined four algorithms, the Naive Bayes algorithm, SVM, the Perceptron, and Boosting with weak learners on a Bag-of-Words model of newspaper articles. In addition, we optimised these algorithms by stemming the Bag-ofWords, introducing Term Frequency-Inverse Document Frequency (TF-IDF) to improve our algorithms' grasp of the relevance of words, and finally with cross-validation for the best parameters.</p><p>After obtaining a base predictor that predicts using newspaper articles whether the stock of a company would go up or go down, we also wrote a Markov Decision Process (MDP) learner that builds on the base predictor using reinforcement learning that is able to buy and sell shares of a company. In order to do so, we needed to make the assumption that this approximates to a Markov process. Our final simulation tests if there may be credence in such an assumption, despite its limitations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">PREVIOUS WORKS</head><p>Our literature survey found five works that also used news articles for classifying stock prices. However, almost all of these previous works used a Naive Bayes classifier on a simple Bag-Of-Words model, which generally performed poorly.</p><p>Gidfalvi <ref type="bibr" target="#b0">[1]</ref> implemented a naive Bayes text classifier on financial news to track very short-term (on the scale of minutes) fluctuations in stock prices, and concluded that there is a strong correlation between news articles and the movement of stock prices in a window between 20 minutes before and 20 minutes after the news articles are published.</p><p>Two such previous works were former CS 224N projects from Stanford University, Ma <ref type="bibr" target="#b1">[2]</ref>, and Lee and Timmons <ref type="bibr" target="#b2">[3]</ref>. Both projects used two approaches, a naive Bayes classifier and a logistic regression classifier (which both papers referred to as a maximum entropy classifier), and both projects generally concluded that the Naive Bayes classifier was relatively ineffective, and the logistic regression classifier had slightly better accuracy.</p><p>Chen et al. <ref type="bibr" target="#b3">[4]</ref> are an undergraduate group at UC Berkeley that used a Naive Bayes classifier and sense-labelling of words in news articles (whether they are positively or negatively connotated) to categorise stock movements in the companies mentioned in these articles, once again to test the efficient market hypothesis. However, they concluded that the sense-labelling of news articles have no impact on the movement of stock prices.</p><p>The last work is a Masters thesis from the Norwegian University of Science and Technology by Aase <ref type="bibr" target="#b4">[5]</ref>. In his work, Aase used an SVM text classifier with an RBF kernel and sense labelling of words to make predictions on stock prices, but limited his scope only to Norwegian oil companies.</p><p>We observe that none of these previous works employed TF-IDF or cross-validation to improve their algorithms, which may explain why they mostly concluded that newspaper articles have weak predictive power on changes in stock prices. In addition, none of these previous works used reinforcement learning to improve on their base predictor.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">DATA</head><p>We needed to obtain articles that mention specific companies from reputable newspapers in order to compile our data set and set up our Bag-of-Words models. We decided to use 'reputable sources' instead of publications like Twitter, Buzzfeed, etc. because we hypothesize that reputable articles based on fundamental company research and understanding will generally have more predictive power than less reputable articles. Unfortunately, the newspapers that we wish to examine, such as the New York Times and the Wall street Journal, have paywalls that block their websites and make automatic scraping difficult. Instead, we relied on the Proquest NewsStand database to obtain our data. Proquest NewsStand archives all articles from these newspapers in a searchable database. By writing an algorithm to generate Federated Search URLs, we were able to automatically obtain the PQMS XML Tree which contains the URLs of the full texts of articles that mention the company in interest, from the newspapers that we want the articles from, and the year for which we wish to generate the data. We then wrote an XML tree parser in order to automatically compile a list of all the PQNS URLs wherein the article full texts are contained.</p><p>Unfortunately, Proquest does not allow these articles to be accessed without a validating URL. Hence, we also had to write a web scraper specifically tailored to work around the limitations of the Proquest database by generating cURLs so that our automatic article gatherer behaved like a real user's browser. We then used regular expressions to parse only the full texts and the article publication dates from the webpages to finally obtain our raw text data, which could then be treated with the Python stemming library for pre-processing. The schematic in <ref type="figure" target="#fig_0">Fig.1</ref> summarize the webscrapping pipeline that we used in order to obtain our text data.</p><p>Next, we modeled our input data (i.e. news articles) as a Bagof-Words model. For the input matrix X, each of the n columns represents a word in our dictionary, and each of the m rows represents a news article. Each X ij entry contains the frequency for which the word j appears in the news article i.</p><p>Our response variables were the stock movements of individual companies. We obtained the end-of-day stock prices for the last twenty years of six companies:</p><formula xml:id="formula_0">(1) Boeing (2) General Motors (3) McDonald's (4) Tesla (5) Twitter (6) Valeant</formula><p>We chose these particular companies either because their stock prices are volatile or mainstream news publications frequently write about them.</p><p>The stock prices for these six companies were obtained from the Quandl database using their API. For our base predictor, we only took into account whether the stock prices moved up or down to obtain a binary response. Our response (i.e. stock prices) is a binary label where +1 indicates the stock price has gone up and -1 indicates the stock price has gone down. We computed the label by subtracting the closing price on the day the article came out from the closing price before the day the article came out. If the article published date falls on a weekend, when the markets are closed, we used the difference between the Monday closing price and the Friday closing price.</p><p>We separated our data into a training and testing set, where the training set was twice the size of the testing set. In total, we processed 6,776 articles for our dataset over six companies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">METHODOLOGY</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">SUPERVISED LEARNING ALGORITHMS</head><p>We used four supervised learning algorithms to treat our data. Since previous literature mostly used the Naive Bayes algorithm, we included it in our investigation to compare with other algorithms. For Naive Bayes, we made what's called the Naive Bayes assumptionwe assumed that all the x i 's are conditionally independent given y.</p><p>Therefore,</p><formula xml:id="formula_1">p(x 1 , . . . , x n ) =p(x 1 |y) · p(x 2 |x 1 , y) . . . p(x n |x 1 , . . . , x n−1 , y) =p(x 1 |y) · p(x 2 |y) . . . p(x n |y) = n i=1 p(x i |y)</formula><p>Now, to figure out whether the stock price will go up (y = 1) or go down (y = −1), we will calculate the probability</p><formula xml:id="formula_2">p(y = 1|x) = p(x|y = 1)p(y = 1) p(x) = ( n i=1 p(x i |y = 1))p(y = 1) n i=1 p(x i |y = 1))p(y = 1) + n i=1 p(x i |y = −1))p(y = −1)</formula><p>Then, we will calculate the same probability for stock price going down, i.e. p(y = −1|x). Now, we can classify whether y = 1 or y = −1 based on which one has a higher probability.</p><p>In addition, we also treated our data using Support Vector Machines (SVM) in the hope to capture the nonlinear relationship in our data. The Support Vector Machine model was initialised without smoothing on a Gaussian kernel,</p><formula xml:id="formula_3">K(x, z) = exp(− 1 2τ 2 ||x − z|| 2 2 )</formula><p>Then, we used the Perceptron algorithm, a simple linear algorithm that decides whether an input belongs to one class or another. We first tried the algorithm with a bias term, so we made a prediction according to</p><formula xml:id="formula_4">h θ (x) = g(θ T x + b) where g(z) = 1 if z ≥ 0 −1 if z &lt; 0 .</formula><p>Finally, we applied a Boosting algorithm that automatically chooses its feature representation. In this case, our Boosting algorithm was initialized using simple decision stumps as weak learners.</p><p>Our motivation for using these four algorithms was to compare their relative performance in testing accuracy as we applied the various optimisations in subsequent steps.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">OPTIMIZATIONS</head><p>Our first step in dealing with the raw text data was to pre-treat it with a stemming library. This is to ensure that reflects the various forms of a word (e.g. "diversify," "diversifying," "diversified") as the same token. Our reasoning for this is that the various forms of the word do not differ significantly in semantic content, and indicate roughly the same meaning when they occur in newspaper prose, so the stemmed forms of the words is a better representation. We will compare the test accuracy of the various algorithms using stemmed and unstemmed tokens.</p><p>Our second step in optimising the four algorithms was to apply Term Frequency -Inverse Document Frequency (TF-IDF) weighting on the stemmed text data. TF-IDF places the following weights on the tokens as they appear:</p><formula xml:id="formula_5">tfidf(t, d, D) = tf(t, d) · idf(t, D), tf(t, d) = 1 + log tf t,d , idf(t, D) = log size(D) df t ,</formula><p>where t refers to the term index, d refers to the document index, and D the corpus of all documents. Additionally, tf t,d refers to the number of times the term t appears in the document d and df t refers to the number of documents D the term t appears in. Finally, tfidf(t, d, D) refers to the final weight placed on the term t. This weighting places less weight on words that occur in more articles, and that are therefore less able to distinguish between articles. Our motivation for applying TF-IDF was because we observed that a naive weighting on token frequencies put heavy weights on very common words such as "the," "for," etc. which dominate other words in terms of absolute frequency. We hypothesized that while such words are, on an absolute level, more common words, they are less able to distinguish between articles than rarer words that are able to distinguish more between articles, or better reflect an article's semantic content.</p><p>Finally, we applied parameter optimisation via cross-validation of these four algorithms, drawing on the training data for a crossvalidation set. The final optimised parameters are: Naive Bayes with a Laplace smoothing of 1 on the observations, SVM with a linear kernel without smoothing, Perceptron without regularisation, and Boosting on decision trees with arbitrary depth on 100 estimators. We used the final parameter-optimised algorithms to be used on our MDP reinforcement learning simulation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">REINFORCEMENT LEARNING</head><p>Having obtained a base predictor for stock price movements based on newspaper articles, we applied reinforcement by using it to build a Markov Decision Process (MDP) that simulated the buying and selling of shares. The base predictor we used to train the MDP is the optimised Naive Bayes predictor. We placed our MDP learner in a simulation run using real data from the stock price of Tesla in the year 2015, and using real newspaper articles from the New York Times and the Wall Street Journal, all of which were not in the training set used to train the base predictor. Our design of the MDP learner is as follows.</p><p>These are the parameters we used to write our Markov Decision Process:</p><p>(1) States: Percent return from the starting amount (2) Rewards: Same as the state. A higher percent return equates to a higher reward (3) Discount factor: 0.995 (4) Actions: For the most part, our algorithm was allowed to buy or sell up to 3 stocks, or take no action. However, we placed restrictions on the actions based on the following conditions: -If we had negative cash, the algorithm was only allowed to sell stocks (up to 3) -If there was no article for a particular day, the only allowable action was to do nothing (0) (5) Transition Probabilities:</p><p>-Before discussing transition probabilities, we must first consider the observations we recorded. We observed every transition from one state to another under an action. For example, if we moved from 3% return to 4% return by buying 3 shares, we would record it. -Now, let the prediction we get from an article on a given day be represented by p, and the test accuracy of that prediction be η. Let the number of states we have be represented by N . Finally, let O sa (s ) be the number of observations from state s to s under the action a. Then the transition probability is given by the following:</p><formula xml:id="formula_6">P sa (s ; p, η, N ) =    1 ηN O sa (s ) if p(s − s) ≥ 0 1 − 1 ηN O sa (s ) otherwise</formula><p>In order to implement MDP, however, we needed to fundamentally assume that the day-to-day transitions of a stock buy-and-sell portfolio satisfy the Markov property. Such an assumption is, we acknowledge, possibly contentious. While changes in the price of a stock on a day-to-day basis and the actions of buying and selling a stock are arguably independent, because our MDP is a trader, it necessarily needs to hold different amounts of stocks in its portfolio from day to day. This different level of stocks being held or shorted is not reflected in the state, which therefore dissatisfies the Markov property. Hence, we implemented a penalty on holding or shorting too much stock, such that the amount of stock held by our MDP's portfolio is usually within -3 to 3 shares. In that manner, it is able to buy or get rid of stocks within a single action, and so the transitions between states and actions approximates the Markov property. In other words, we are able to implement MDP by making the percent changes in the value of the portfolio and the actions of buying and selling stock a pseudo-Markov decision process. Then, we implemented the Value Iteration algorithm to compute an optimal MDP policy and its value. For each day that the stock market is open, we compute the maximum Q values that a state can obtain by taking all the possible actions, where the Q value equals the sum of Q i for each of the new states s reachable from the current state s, and</p><formula xml:id="formula_7">Q i = transProb(s, s ) · (reward(s ) + discount · value(s )).</formula><p>Please see the appendix A for a pseudocode summary of our Markov Decision Process and Value Iteration implementation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">RESULTS</head><p>Generally, the four algorithms showed incremental improvement with each optimisation that we applied, as demonstrated in the upward trend in test accuracy shown in <ref type="figure" target="#fig_1">Fig. 2</ref>, which plots the average test accuracy of the algorithms across the six companies for which we used in our dataset. The baseline algorithms, without any optimisations, generally were no better than chance, with test accuracy around 0.5. However, after applying all our optimisations, the algorithms generally improved in test accuracy to around 0.6, except for the Naive Bayes algorithm which was favoured by previous literature, which was never able to obtain a test accuracy above 0.55. We summarise the test accuracy of the incrementally optimised algorithms in <ref type="figure">Fig.3</ref> In addition, we also observed that after TF-IDF, the weights that the Naive Bayes algorithm placed on tokens seemed to be intuitively meaningful. We extract some of the top positive and negative weighted terms in <ref type="figure" target="#fig_2">Fig. 4</ref> below. Seeing how the test accuracy for the algorithms improved all around after the application of TF-IDF, it bears out our hypothesis that such rarer words, which are better able to distinguish between different articles, should be given more weight. These rarer words, as listed <ref type="figure" target="#fig_2">Fig. 4</ref>., are what we would ordinarily expect to connote "positivity" or "negativity" surrounding a description of a company in a newspaper article.  Finally, for our results from the MDP simulation, we find that the learner is generally able to outperform a random guesser when buying and selling stock using the base predictor. There may be multiple sources of error for our models. In particular, we noted that the testing accuracy of our Boosting algorithm decreased when we used cross-validation to optimise the parameters from using boosted decision stumps to boosted decision tree of arbitrary depth. This is probably a case of over-fitting.</p><p>In addition, since there were insufficient days in the year to allow the learner to converge, the MDP is still not making optimal decisions. It is unclear, however, if extending the learning period and increasing the amount of data the learner has access to will lead to convergence, since the if we extend the period to more than one year, the assumption of the Markov property may begin to break down, and the transition probabilities arrived at by the MDP for one year may not be useful in the next year, or in the long run in general. Whether this is a fundamental limitation of using MDP for such a use would require further experimentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">CONCLUSIONS</head><p>In summary, the four algorithms that we used (Naive Bayes, Support Vector Machine, Perceptron, and Boosting) without any optimisations only produced results no better than random, as expected. However, adding several optimisations were able to bring the test accuracy up to 61%.</p><p>Stemming helps unify the words that are represented in different forms in our training and test data but have the same semantic meanings. TF-IDF helps increase the weights of rare words that are strong indicators of a particular class and decrease the weights of common words that are weak indicators of a particular class. Parameter tuning helps us to figure out what are the best parameters to use in the four algorithms in order to produce the best results.</p><p>There are few interesting takeaways from our work in modeling the stock simulation as a Markov Decision Process and run-ning the Value Iteration algorithm on it. First, we found that modeling the discretised percentage returns as states helps the Value Iteration algorithm converge quickly. Second, we found that using past observations to determine the transitional probabilities gave us an accurate measure of the magnitude with which the stock would change in the future. Third, adding a penalty for buying too much stock helps prevent the case where it would take too long to sell the stocks during a negative run of a particular stock. Fourth, this penalty also helped us approximate the Markov process even when some assumptions about the model have been violated. Lastly, we acknowledge that in order to conclusively determine whether or not the MDP simulator consistently outperforms a random guesser, more analysis must be performed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">FUTURE WORK</head><p>We tested the four algorithms of our base predictor on individual companies' stock prices separately. It remains an open question as to whether such supervised learning methods would be effective in predicting stock price movements in general, i.e. if there is a general model that is able to be tested on companies in general. This would be especially interesting if there is significant predictive power when testing on companies that were never included in the training dataset in the first place.</p><p>It was clear that even after running a year's worth of data on our MDP algorithm, it still had not reached convergence after the end of the year. While we may suggest that the MDP algorithm be simulated over a longer time period than one year, there is an open question as to whether a company's stock price, over a longer period of time will still allow the MDP learner to approximate a Markov decision process. It is generally acknowledged that stock prices are more variable in the long run, hence the short term forces that underlie the MDP learner's transition probabilities may change over the long run. While investigating the long-run future accuracy of the base predictor, and the long run soundness of modelling stock purchase and sale on an MDP are interesting, they are unfortunately outside the scope of our project, wherefore we leave these questions to future work.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc>Webscraping pipeline</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc>Test accuracy with various learning algorithms 4 •</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>Tokens with positive or negative weight from Naive Bayes predictor. In unstemmed form for readability.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5</head><label>5</label><figDesc>Fig.5 below il- lustrates the percentage of return of our learner (in red) v.s. the per- centage return of the random guesser (in blue). This figure is based on Tesla stock and articles from January 1, 2015 to December 31, 2015. After running simulation of 250 trading days (a full year has only around 250 working days, excluding weekends and holidays, when the stock markets are closed), our learner produces a return of 1.95%, while the random guesser produces a return of -2.88%. 0 50 100 150 200 250 Number of Days -8 -6 -4 -2 0 2 4 Percent Return Simulation Performance Random Guesser Value Iteration algorithm Fig. 5 MDP returns vs. Random guesser for Tesla, Jan. 01, 2015 to Dec. 31, 2015.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>.</figDesc><table>Naive Bayes SVM 
+Boosting 
+Perceptron 
+Baseline 
+0.516 
+0.500 
+0.487 
+0.516 
++ stemming 
+0.496 
+0.522 
+0.534 
+0.544 
++ TF-IDF 
+0.534 
+0.585 
+0.604 
+0.566 
++ optimised params 0.546 
+0.610 
+0.594 
+0.604 
+
+Fig. 3: Tabulated test accuracies from incrementally optimised 
+algorithms 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>if max(oldValues -values) &lt; epsilon then break</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Using news articles to predict stock price movements</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gyozo</forename><surname>Gidofalvi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+			<pubPlace>San Diego</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Department of Computer Science and Engineering, University of California</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Stock Price Prediction Using News Articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qicheng</forename><surname>Ma</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS224N, Final Report</title>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Predicting the stock market with news articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Timmons</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kari</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS224N, Final Report</title>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Predicting Stock Prices from News Articles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jerry</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aaron</forename><surname>Chai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Madhav</forename><surname>Goel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Donovan</forename><surname>Lieu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Faazilah</forename><surname>Mohamed</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Nahm</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bonnie</forename><surname>Wu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Text mining of news articles for stock price predictions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kim-Georg</forename><surname>Aase</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<idno>epsilon ← 0.01</idno>
+		<title level="m">Algorithm 1 Reinforcement Learning Algorithm 1: date ←</title>
+		<imprint>
+			<date type="published" when="2000" />
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+	<note>: prices ← getStockPrices</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

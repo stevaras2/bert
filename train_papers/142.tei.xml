@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Correctness of Protein Complex Binding Orientations</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><surname>Gurev</surname></persName>
+							<email>sgurev@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nidhi</forename><surname>Manoj</surname></persName>
+							<email>nmanoj@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kaylie</forename><surname>Zhu</surname></persName>
+							<email>kayliez@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Correctness of Protein Complex Binding Orientations</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>1. Introduction</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1.">Motivation</head><p>Protein-protein interactions are integral to most biological processes. Scientists would like to know the structure of these protein complexes in order to understand the processes they are used for. Unfortunately, most protein complexes do not have an experimentally determined structure, and these structures will not be solved given the current experimental techniques for structure determination. Therefore, it is useful to be able to model the structure of protein complexes using the individual structures of each protein via docking (simulation) methods. However, numerous orientations can result from computational docking, and so being able to predict which of the simulated complexes are the correct orientation would be essential in order to use the modelled structures. As a result, we developed models that are capable of predicting whether the binding orientation of a protein-protein docking is correct.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2.">Problem Formulation</head><p>Our project can be formulated as both a regression and classification task. Our inputs are Protein Data Bank (PDB) files that have energies and other information about a simulated protein complex as well as the position of all atoms in the complex. We also have as labels the root mean squared deviation (RMSD) of all atom positions in the simulated complex to the experimentally determined structure of each complex. A smaller RMSD signifies an orientation that is closer to the true binding orientation of the protein complex. When we frame the problem as a regression task, our SVM (regression) model takes features from the PDB file to output a predicted RMSD. Previous work in the field has shown that an RMSD of 0-1 is considered very good, 1-2 is good, and 2-4 is acceptable, thus we threshold our RMSD at 4 for our classification problem. Then, our classification model (either SVM or 3D CNN) outputs a binary prediction as to whether a binding orientation is correct.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>We build our SVM model after studying various related works of research such as Pairpred, which employs SVM methods to predict whether a pair of residues from two different proteins interact <ref type="bibr" target="#b1">[2]</ref>. Another recent work uses SVMs to improve docking scoring functions in order to better predict binding affinity <ref type="bibr" target="#b15">[16]</ref>. Currently, predicting whether a docking model is correct would be done via ZRANK <ref type="bibr" target="#b17">[18]</ref> or ProQDock <ref type="bibr" target="#b2">[3]</ref>. Similar to our SVM model, ZRANK uses electrostatics, van der Waals, and desolvation information to score docking predictions. However, they use a downhill simplex minimization algorithm to find the correct weights for each feature. ProQDock later builds on ZRANK's score model, and cleverly trains an SVM by combining different types of features that describe both the protein-protein interface and the overall physical chemistry. Our SVM model is based on the work from ProQDock, though narrowed down to four key features. ProQDockZ, a hydbrid of ProQDock and ZRANK, should be considered state-of-the-art in terms of finding correct protein-protein docking models.</p><p>With the advent of convolutional neural networks (CNNs) in recent years, we have seen no short of remarkable developments for their powerful performance in fields ranging from image recognition to bio-structural analysis, with constantly newer, deeper and better-performing CNN architectures. In 2015, ResNet-50 and ResNet-101 architectures were introduced for their relative ease to optimize and their higher accuracy gained from considerably increased depth. <ref type="bibr" target="#b12">[13]</ref> Such leaps in advances in deep learning methods have greatly facilitated research in protein structural analysis, as knowledge and insights in the field of image recognition is adapted and extended to deal with threedimensional bio-physio-chemical data and spatial features.</p><p>We, too, are inpsired by the multitude of recent endeavours turn to 3D CNN architecture for structure-based analysis of protein and other biomolecules. One such established literature documents EnzyNet, a 2-layer 3D-convolutional neural network classifier that predicts the Enzyme Commission number of enzymes based only on their voxel-based spatial structure. <ref type="bibr" target="#b0">[1]</ref> While most conventional research to date explores relatively shallow 3D architectures, more con-temporary algorithms employ much deeper 3D convolutional networks. For instance, one such model is successfully used to predict the ranking of model structures solely on the basis of their raw three-dimensional atomic densities, without any feature tuning <ref type="bibr" target="#b7">[8]</ref>. Our paper draws inspiration from such research findings as well as the 3D ResNeXt architecture in order to find accurate predictions of correctness of protein complex binding orientations.</p><p>We also refer to established literature such as AtomNet <ref type="bibr" target="#b21">[22]</ref>, which uses a similar 3D CNN to predict protein-ligand bioactivity, and BIPSPI, which attempts to predict partnerspecific protein-protein binding sites using classical machine learning <ref type="bibr" target="#b19">[20]</ref>. While these pose related questionsand mirror our project in terms of the methodologies used in many ways -none of these investigate whether the orientation is correct from protein-protein interaction. As a result, the input to our 3D CNN model is significantly different from the sequence and structural features fed into BIP-SPI's model. AtomNet, which predicts bioactivativy rather than binding orientation and works on protein-ligand interactions rather than protein-protein complexes, has the most similar input to their model as to our 3D CNN, whose inputs we will explain more in the following section. They also focus on the center of mass of the interaction and randomly rotate before making a voxelized cube. However, their voxels contain structural information beyond atom type, they only need one cube because ligand binding site will be smaller (and so it is not necessary to aggregate results), and they unfold their cube into a 1D vector.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Dataset</head><p>Our dataset is a modified version of Docking Benchmark 5 (DB5) <ref type="bibr" target="#b20">[21]</ref>, which is a group of protein complexes commonly used for protein-protein interaction prediction. For each protein complex in DB5, we have 10,000 PDB files (positions for all atoms) that correspond to different minimized Haddock <ref type="bibr" target="#b9">[10]</ref> dockings of the two proteins in the complex. We received this dataset from João Rodrigues in the Stanford Levitt Lab.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Data Preprocessing</head><p>We split the 135 complexes we have from DB5 into train, validation and test sets. Each complex is only in exactly one of the sets, with 70% of the complexes in train, 20% in validation and 10% in test. With high class imbalance due to our dataset containing significantly more negative examples (incorrect binding orientations) than positive, we choose to undersample the negative examples. Therefore, for each of the complexes, we include all positive examples and an equal number of negative examples in the corresponding training, validation, or test set, using an RMSD of 4 as the threshold for correct orientation (positive). Ultimately, the training set has 80% of the positives (and of the used data), the validation set has 15% and the test set has 5%. For our SVM model, we then extract four different features (electrostatics, van der waals, buried surface area, and solvation energy) from each PDB file and normalize each feature by the mean and standard deviation of the training data.</p><p>For our 3D CNN, we process the PDB files into cubic representations of the interface. We split the interface into cubes of 10 cubic angstroms, with 1 cubic angstrom voxels, giving a value of 0 (no atom at that location) or a number representing the atom present. To get the cube representations, we first remove cofactors if present and randomly rotate the complex (by multiplying all atoms by a rotation matrix with 3 randomly generated angles, first around the x-axis, then y-axis, and z-axis). We then find the center of mass of the alpha carbons of all residue pairs that interact between the two proteins. We then cluster these centers of mass into regions of 10 cubic angstroms, and the center of each cluster becomes the center of the cube. Overall, for our SVM and CNN inputs, our training set has 7812 samples and our test set has 1472 samples. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Support Vector Machine (SVM)</head><p>For our baseline approach, we use a support vector machine (SVM), which is a supervised learning algorithm used to separate data by calculating the margin between data points <ref type="bibr" target="#b13">[14]</ref>. Using the scikit-learn library for implementation <ref type="bibr" target="#b16">[17]</ref>, we parameterize our classifier with w, b and write our classifier as h w,b (x) = g(w , y</p><formula xml:id="formula_0">(i) ) is y (i) (w T x (i) + b).</formula><p>The functional margin can be thought of as a measure of confidence in correct hypothesis so we want it to be large in scale. We use the following optimization problem, where the solution is the optimal margin classifier.</p><formula xml:id="formula_1">min w,b 1 2 ||w|| 2 such that y (i) (w T x (i) + b) 1, i = 1, ..., m</formula><p>We pass the four features we listed in the previous section, all of which serve to describe the favorability of a protein complex interaction, as inputs into the SVM, which then outputs a prediction of RMSD. We perform regression on RMSD values as well classification using a threshold of 4.0.</p><p>Previous related work has found that with 5-fold cross validation and a radial basis function (RBF) kernel, the optimal C and values could be found using grid search over the following ranges to compromise between training error and margin: C from 2 15 to 2 10 and from 2 10 to 2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>10</head><p>incrementing by log 2 <ref type="bibr" target="#b2">[3]</ref>. Thus, we employ 5-fold cross validation and a grid search for our SVM experimentation using our training set with the same parameter value ranges.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">ResNeXt 3D CNN</head><p>We additionally construct and investigate performance of a 3D CNN model on the cubic data we prepared as training input. The model is inspired by cutting-edge architecture ResNet, but utilizes 3D convolutions to better process and analyze three-dimensional data.</p><p>A homogeneous, highly-modularized architecture, ResNeXt is constructed by repetition of a building block that aggregates a set of transformations with the same topology. The model introduces group convolutions in ResNeXt blocks, as well as a new dimension called "cardinality" (which is the size of the set of transformations), an addition to factors such as dimensions of depth and width. <ref type="bibr" target="#b22">[23]</ref> We employ ResNeXt, but with 3D convolutions and other modifications tailored to our task. In building the network, we build upon previous work and research relating to kinetics and video comprehension. <ref type="bibr" target="#b11">[12]</ref> [7] <ref type="bibr" target="#b8">[9]</ref> We replace the final fully connected layer with one that has a single output, after which we apply a sigmoid nonlinearity (f (t) = 1 1+e t ). Layer-wise details of our 3D ResNext model is delineated in <ref type="figure" target="#fig_2">Figure 2</ref>.</p><p>For a single example in the training set, we optimize the weighted binary cross entropy loss</p><formula xml:id="formula_2">L(X, y) = w + · y log p(Y = 1|X) w · (1 y) log p(Y = 0|X),</formula><p>where p(Y = i|X) denotes the probability that the network assigns to the label i, w + = |N |/(|P | + |N |), and w = |P |/(|P |+|N |) where |P | and |N | are the number of correct and incorrect cases of protein complex binding orientations in the training set respectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Evaluation Metric</head><p>We evaluate the accuracy of predicted RMSD values of protein orientations (regression) using R-squared statistic. R-squared, the coefficient of determination, is a statistical measure of how close the data is to the fitted regression line <ref type="bibr" target="#b5">[6]</ref>.</p><p>While at first, we frame the problem as a regression task, we later select a RMSD threshold of 4.0 and convert the problem into a classification task. For evaluating classification performance, we utilize ROC-AUC score and F1 score. ROC-AUC score is the Area Under the Receiver Operating Characteristic Curve from prediction scores, which is created by plotting the fraction of true positive rate (sensitivity) against the fraction of false positive rate (FPR), at various threshold settings <ref type="bibr" target="#b3">[4]</ref>  <ref type="bibr" target="#b4">[5]</ref>. F1 score is the harmonic mean of the precision and recall <ref type="bibr" target="#b10">[11]</ref>. These classification metrics reach their best values at 1 and worst values at 0.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Support Vector Regression</head><p>Framing the problem as a regression task, we implement an SVM baseline. We experiment with different SVM hyperparameters and run a grid search for the optimal model performance. From preliminary experiments we see that the RBF kernel outperforms alternatives such as sigmoid, linear and polynomial. We then experiment with different C and values for our RBF kernel SVM. C serves as a regularization parameter in SVM, trading off correct classification of training examples with maximization of the margin of the decision function. The parameter defines the extent of influence of a single training example, also known as the inverse of the radius of influence of samples selected by the model as support vectors. We present our regression results (train scores based on an average of 5-fold cross validation) in <ref type="table">Table 1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hyperparameters Train</head><p>Test R 2 C = 4, = 32 0.4445 0.171 <ref type="table">Table 1</ref>. Results for SVM regression and corresponding hyperparameter values. Train scores were computed using 5-fold cross validation. C is the regularization parameter and gamma is the inverse of the radius of influence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">Support Vector Classification Baseline</head><p>Seeing that our regression baseline does not perform well, we instead propose the reframing of predicting correctness of protein binding orientations as a classification task, in an effort to improve our model performance. We proceed to run a grid search for the optimal SVM parameters (C and values) using RBF kernel SVM. We present our classification results (train scores based on an average of 5-fold cross validation) in <ref type="table">Table 2</ref>. The model performs well on train but seems to overfit.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hyperparameters Train</head><p>Test F1 Score C = 2, = 32 0.888 0.705 ROC-AUC C = 2, = 64 0.950 0.876 <ref type="table">Table 2</ref>. Results for SVM classification and corresponding hyperparameter values. C is the regularization parameter and gamma is the inverse of the radius of influence.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4.">ResNeXt 3D CNN</head><p>Seeing as the SVM classification overfits on the train set, we experiment with a ResNeXt 3D CNN. We prepare cubic representations of the protein interface region. After passing in the 3D cubes into the CNN and outputting a prediction for each cube, we aggregate model output decisions for each cube in the docking (orientation) by computing a weighted average over all cubes along the interface, where the weight depends on the number of atoms present in the respective cube.</p><p>We experiment with various initial learning rates, batch sizes, and ResNeXt model depths. We decide to use learning rate reduced on plateau, which is common practice and known to help model optimization. We experiment with initial learning rates of 1e 3, 1e 4, and 0.5e 3. We find that our results with initial learning rate 1e 3 are poor so we reduce the value to 1e 4 in an attempt to increase training performance. However, this model learns too slowly, so we employ an intermediate value of 0.5e 3 which performs well. Thus, we use an initial learning rate of 0.0005 that is decayed by a factor of 10 each time the validation loss plateaus after an epoch, and pick the model with the lowest validation loss.</p><p>The mini-batch size is chosen to be 32, after empirically testing mini-batch sizes of 16, 32, and 64. We chose the cardinality value to be 32 which is commonly used and generally works well <ref type="bibr" target="#b22">[23]</ref>. Adam optimizer, which computes adaptive learning rates on a per parameter basis, empirically works well in practice and is widely adopted in the deep learning community. Thus the network is trained end-to-end using Adam optimizer with standard parameters ( 1 = 0.9 and 2 = 0.999) <ref type="bibr" target="#b14">[15]</ref>.</p><p>Lastly, we experiment with various model depths. We test ResNeXt50 model as well as a ResNeXt101 model and find that the ResNeXt50 model had better results. We figure that the ResNeXt101 model might be trying to learn a more complicated function over the data and overfits on the training data. Seeing that the ResNeXt50 model performs better, we decide not to experiment with larger model depths.</p><p>The results of the ResNeXt50 and ResNeXt101 models are provided in <ref type="table" target="#tab_0">Table 3 and Table 4</ref> respectively. Our best model is ResNeXt50, which has a F1 score of 0.929 and an ROC-AUC of 0.954 that, as expected, outperforms our SVM results. A normalized confusion matrix of this model is computed and provided in <ref type="figure" target="#fig_3">Figure 3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hyperparameters</head><p>Train Test F1 Score lr = 0.5e 3, bs = 32 0.956 0.929 ROC-AUC lr = 0.5e 3, bs = 32 0.981 0.954  To qualitatively evaluate our model performance, we used PyMOL which is molecular visualization software to create 3D visualizations of protein dockings. <ref type="figure" target="#fig_4">Figure 4</ref> displays, on the left, an incorrect protein docking that was predicted as 0, which is what the CNN model should do. The right side of <ref type="figure" target="#fig_4">Figure 4</ref> depicts a correct protein docking that was incorrectly predicted as 0, which demonstrates a protein docking that the CNN model misclassifies. Until now, we train and evaluate the models on a balanced dataset that we sampled (explained in the Data Preprocessing section). Since the original dataset was unbalanced with more negative samples, in order to further evaluate our model performance, we determine the efficacy of our model on an unbalanced dataset. In real life, there will be many more negative than positive simulated examples, and so it is valuable to know how well our model predicts positive examples. Since we did not want to use all of the docking models from the complexes in our validation set (which would be a very large number of dockings and would take a lot of time to make the cubic inputs for), we subsampled from our test set negative and positive inputs that would maintain a near-original ratio of 10 : 700 positive to negative samples. The performance of our best model (ResNeXt50 CNN) on an unbalanced dataset is as follows in <ref type="table">Table 5</ref> which indicates reasonable results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hyperparameters</head><p>Test F1 Score lr = 0.5e 3, bs = 32 0.824 ROC-AUC lr = 0.5e 3, bs = 32 0.850 <ref type="table">Table 5</ref>. ResNeXt50 Results on unbalanced dataset. lr is the initial learning rate and bs is the mini-batch size. Test results based on trained model with performance seen in <ref type="table" target="#tab_0">Table 3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion</head><p>We consider the problem of predicting correctness of a protein binding orientation (docking). When formulated as a regression task (predicting RMSD values), we have poor performance with our SVM regression baseline. Thus in order to improve performance, we reframe the problem as a classification task, which achieved more promising results as expected. This SVM classification baseline seems to be overfitting on the training set so we consider a 3D CNN implementation that accepts 3D cubes of atom position data from the protein interface region. Using the model predictions on each cube, we compute a weighted average over all cubes in a respective protein orientation interface and output a final binary value predicting if the protein orientation is correct. Upon empirical analysis, our best model is a ResNeXt50 3D CNN, which has a F1 score of 0.929 that, as expected, outperforms our SVM results. We believe this model outperforms the ResNeXt101 model perhaps because the latter tries to learn a complicated function on the data and thus overfits on the training set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Future Work</head><p>In the future, we would also like to evaluate precision (percentage of called positives that are true positives) and recall (percentage of positives that are called positive) on the unbalanced dataset <ref type="bibr" target="#b10">[11]</ref>. It will also be interesting to determine from our ranked probabilities of being correct for the unbalanced dataset, the average rank of the top true positive. We can imagine this as how many structures would a scientist have to examine in order to get a true orientation.</p><p>Given our promising results with ResNeXt 3D CNN, in future work, we would like to experiment with a multichannel 3D CNN and use more than just the atom type and position data to incorporate other attributes such as atom charge, specific atom type (such as alpha carbon). We would also like to experiment with different ensemble techniques and try to outperform our results.</p><p>With more time, it would also be fruitful to experiment with different ways of generating cubes to CNN input. We want to ensure that as much information of the binding interface is captured by the cubic representation. Therefore, it could be meaningful to vary how much overlap there is between the cubes. It could also be valuable to randomly rotate each cube rather than just each orientation in order to help reduce overfitting. Lastly, since more data is generally helpful, we could potentially oversample positive data (so that our original dataset is more balanced) by using data augmentation via molecular dynamics which would allow us to avoid undersampling our original dataset <ref type="bibr" target="#b18">[19]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">Acknowledgements</head><p>Thanks to João Rodrigues in the Levitt Lab for the dataset and advice as well as Raphael Townshend for his guidance on this project.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.">Contributions</head><p>All group members contributed to the SVM experiments and the writing of the paper. Sarah also extracted features for the SVM and processed the data (cubes) for the CNN, while Kaylie implemented the base code for model training and deployment. All group members worked on creating balanced data sets for the CNN and then worked on the 3D CNN architecture implementation to ensure that all project work was evenly spread out.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Make cubes pipeline: (a). Randomly rotate atom posi- tions of docked protein complex, (b). Find center of the interac- tion, (c). Find cluster center and all atoms within radius, (d). For each cluster, make cubes with 1 cubic angstrom voxels that are 0 if no atom and number for atom type otherwise 4. Methods</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc>ResNeXt model architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc>ResNeXt50 normalized confusion matrix where label is a binary value predicting correctness of protein binding orientation</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>[Left] Incorrect protein docking with RMSD value 16.37 ( 4.0) that was properly predicted as 0.[Right] Correct protein docking with RMSD value 0.5 (4.0) that was misclassified and predicted as 0.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 3 .</head><label>3</label><figDesc>ResNeXt50 Results for classification and corresponding hyperparameter values. lr is the initial learning rate and bs is the mini-batch size.</figDesc><table>Hyperparameters 
+Train 
+Test 
+F1 Score 
+lr = 0.5e 3, bs = 32 
+0.851 
+0.825 
+ROC-AUC lr = 0.5e 3, bs = 32 
+0.903 
+0.864 
+
+Table 4. ResNeXt101 Results for classification and corresponding 
+hyperparameter values. lr is the initial learning rate and bs is the 
+mini-batch size. 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">EnzyNet: enzyme classification using 3D convolutional neural networks on spatial representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Amidi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Amidi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Vlachakis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Megalooikonomou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Paragios</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">I</forename><surname>Zacharaki</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1707.06017</idno>
+		<imprint>
+			<date type="published" when="2017-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">hur (corresponding. Pairpred: Partner-specific prediction of interacting residues from sequence and structure</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Amir</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Minhas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">J</forename><surname>Geiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">B</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Finding correct proteinrotein docking models using proqdock</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Basu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Wallner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="262" to="270" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">The use of the area under the roc curve in the evaluation of machine learning algorithms. Pattern Recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">P</forename><surname>Bradley</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1997" />
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="1145" to="1159" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Receiver operating characteristics curves and related decision measures: A tutorial</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">T</forename><surname>Davis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="page" from="24" to="38" />
+		</imprint>
+		<respStmt>
+			<orgName>Chemometrics and Intelligent Laboratory Systems</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">An r-squared measure of goodness of fit for some common nonlinear regression models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">C</forename><surname>Cameron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><forename type="middle">A</forename><surname>Windmeijer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of econometrics</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="329" to="342" />
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Kalantidis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Feng</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1807.11195</idno>
+		<title level="m">MultiFiber Networks for Video Recognition. arXiv e-prints</title>
+		<imprint>
+			<date type="published" when="2018-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Deep convolutional networks for quality assessment of protein folds</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Derevyanko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Grudinin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Lamoureux</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1801.06252</idno>
+		<imprint>
+			<date type="published" when="2018-01" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Diba</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Fayyaz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Arzani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Yousefzadeh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Gall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1806.07754</idno>
+		<title level="m">Spatio-Temporal Channel Correlation Networks for Action Classification. arXiv e-prints</title>
+		<imprint>
+			<date type="published" when="2018-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Haddock: a proteinprotein docking approach based on biochemical or biophysical information</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Dominguez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Boelens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M J J</forename><surname>Bonvin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Chemical Society</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">12580598</biblScope>
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A probabilistic interpretation of precision, recall and f-score, with implication for evaluation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Goutte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Gaussier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Information Retrieval</title>
+		<editor>D. E. Losada and J. M. Fernández-Luna</editor>
+		<meeting><address><addrLine>Berlin, Heidelberg; Berlin Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2005" />
+			<biblScope unit="page" from="345" to="359" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Can spatiotemporal 3d cnns retrace the history of 2d cnns and imagenet? CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Hara</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Kataoka</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Satoh</surname></persName>
+		</author>
+		<idno>abs/1711.09577</idno>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Support vector machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Hearst</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">T</forename><surname>Dumais</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Osuna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Platt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Scholkopf</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Intelligent Systems and their Applications</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="18" to="28" />
+			<date type="published" when="1998-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<idno>abs/1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">A machine learning-based method to improve docking scoring functions and its application to drug repurposing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">L</forename><surname>Kinnings</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">J</forename><surname>Tonge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">M</forename><surname>Jackson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">E</forename><surname>Bourne</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Model</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="408" to="419" />
+			<date type="published" when="2011-02" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">ZRANK: reranking protein docking predictions with an optimized energy function</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pierce</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Weng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">67</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1078" to="1086" />
+			<date type="published" when="2007-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Simulations meet machine learning in structural biology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Prez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Martinez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>De Fabritiis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current opinion in structural biology</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page" from="139" to="144" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Bipspi: a method for the prediction of partner-specific protein-protein interfaces</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Sanchez-Garcia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">O S</forename><surname>Sorzano</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">M</forename><surname>Carazo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Segura</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="page">647</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Updates to the integrated protein-protein interaction benchmarks: Docking benchmark version 5 and affinity benchmark version 2</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Vreven</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">H</forename><surname>Moal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vangone</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">G</forename><surname>Pierce</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">L</forename><surname>Kastritis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Torchala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Chaleil</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Jiménez-García</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">A</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Fernandez-Recio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Bonvin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Weng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Molecular Biology</title>
+		<imprint>
+			<biblScope unit="volume">427</biblScope>
+			<biblScope unit="issue">19</biblScope>
+			<biblScope unit="page" from="3031" to="3041" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Atomnet: A deep convolutional neural network for bioactivity prediction in structure-based drug discovery</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Wallach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Dzamba</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Heifets</surname></persName>
+		</author>
+		<idno>abs/1510.02855</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">B</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Dollár</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<title level="m">Aggregated residual transformations for deep neural networks</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Corr</surname></persName>
+		</author>
+		<idno>abs/1611.05431</idno>
+		<ptr target="https://tinyurl.com/yc25f9hv" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

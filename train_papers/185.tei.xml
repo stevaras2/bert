@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS 229 Project Report: Text Complexity (Natural Language)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-18">December 18, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Harry</forename><surname>Sha</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tyler</forename><surname>Yep</surname></persName>
+						</author>
+						<title level="a" type="main">CS 229 Project Report: Text Complexity (Natural Language)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-18">December 18, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The goal of our project is to explore text complexity in the context of machine learning. More specifically, we will answer the following questions:</p><p>1. What features of the text are most relevant to this classification?</p><p>2. To what extent can machine learning methods be used to classify the complexity of a document?</p><p>3. How can we build a model to generate or transform text into different levels of complexity? This project's outcomes have the potential of enhancing education immensely. Complexity-classified documents allow students to find papers or conceptual explanations at understandable difficulty level. Generating or transforming text into simpler levels of complexity encourages more widespread knowledge, approachable from different fields and backgrounds. Students gain the power to understand big picture ideas and ramp up the difficulty level as they see fit, ultimately resulting in a more personalized educational experience.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Works</head><p>There has already been some success in using ML for text complexity classification. One paper from the University of Washington <ref type="bibr" target="#b3">[4]</ref> used SVMs in order to assess reading level between texts from 2nd to 5th grade. They found the most success using features like average sentence length and word counts. Specifically for our dataset, papers published by the University of Wolverhampton <ref type="bibr" target="#b5">[6]</ref> found success in using Random Forests on the Weebit corpus, which we intend to experiment with. However, they also pull a substantial amount of outside texts in order to supplement their training, which we do not have, so we may not find as much success using their algorithms. Finally, one study from a German university thesis <ref type="bibr" target="#b0">[1]</ref> used SVMs on the Weebit corpus to varying degrees of success -opting for a simplified model to provide high-level insights. From these past works, we see a great opportunity in trying out newer ML algorithms, like AdaBoost or RNNs, and see how they compare to previously-used ones.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Data: Feature Extraction and Selection</head><p>We are using the Weebit Dataset <ref type="bibr" target="#b4">[5]</ref>, which has 2226 example texts separated into 3 different reading levels. Each text is roughly 1-5 paragraphs, and is already classified into one of the three reading levels. The input of our algorithm is a nonfiction text document of roughly 1-5 paragraphs, and the output is one of the three reading levels as a measure of its complexity. We will try several different machine learning algorithms such as Logistic Regression, AdaBoost, k-NNs, and variations of neural networks to predict our output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Preprocessing</head><p>To preprocess the data, we removed new line characters, set all words to be lowercase and removed any disclaimers. We also split the dataset into training, validation and test sets. For the following section, let x represent one example of a preprocessed text. Word count and Tf-Idf feature extraction were completed using sci-kit learn <ref type="bibr" target="#b2">[3]</ref>.</p><p>Word Count We used a binary and a regular word count feature extractor. We also experimented with changing min df , and max df , which represent the minimum or maximum document frequencies of a word in order to be included as a feature. Empirically, we found that model performance was not very sensitive to the min df and max df parameters. However, the binary word counts option substantially increased accuracy. In our analysis, we set min df = 5, max df = 80%, and tried both binary and non-binary word counts.</p><p>Tf-Idf Tf-Idf extracts the word count weighted by a measure of inverse document frequency (Idf). This diminishes the importance of common words such as 'a', and 'the', and highlights the importance of uncommon words. However, we found that the Tf-Idf features gave worse performance than the word count feature extractor. One possible reason for this is that Tf-Idf creates feature vectors which are more similar in their topic/meaning than in their structure. In our task, the topic/meaning of the text may not be as important as the ordering and structure of the words.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Natural Language Features</head><p>We also added features for the counts of each part of speech using spaCy <ref type="bibr" target="#b1">[2]</ref>. We also added average sentence length, number of sentences, and average word length to our features array. For simplicity, we decided not to include common readability metrics like Flesch-Kincaid score, because we are already using features used to calculate those scores. Empirically, in models like logistic regression, we found that the optimal features were a concatenation of word count with the parameters described above, and the natural language features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Basic Analytics on Natural Language Features</head><p>We first wanted to find which of the natural language features were the most promising candidates for complexity classification. <ref type="figure" target="#fig_0">Figure 1</ref> shows the distributions of several features in each complexity level. We see that average sentence length and document length increased with the complexity classification. Furthermore, we see that document length explains much of the variance for other features as seen by comparing 1c and 1d. Though average sentence length is a valuable feature to use in classification, it is by no means a perfect indicator, as more than 50% of the data lies in the overlapping region between levels shown in <ref type="figure" target="#fig_0">Figure 1a</ref>. Logistic Regression Logistic Regression was very successful, with the highest accuracy on the validation set at 79.9%. The hyperparameters for Logistic Regression were type of regularization (L 1 or L 2 ), and the amount to regularize by, 1/C. We conducted a grid search, trying C using powers of 10 between 0.001 and 100. We found that L 1 regularization generally performed better than L 2 regularization. This is likely because L 1 results in sparse weights, which is advantageous in reducing the effects of less-useful features.</p><p>AdaBoost Another successful classifier was AdaBoost. Given the relatively high results we obtained from using only average sentence length as a feature, we expected an ensemble of basic classifiers to perform much better. After tuning the number of classifiers and the learning rate, AdaBoost achieved 79.7% on the validation set. In <ref type="figure" target="#fig_1">Figure 2</ref>, we have a plot of AdaBoost test accuracy using different learning rates and estimators (using only word count + natural language features).</p><p>Other Other algorithms we tried, such as Naive Bayes or k-Nearest-Neighbors, performed better than our baseline, but did not have as much initial success as AdaBoost and Logistic Regression, and did not seem to fit our problem as well. For example, they made questionable assumptions of independence or modeled complex documents as clusters, which did not fit with our selected features. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Recurrent Neural Networks</head><p>One key drawback in our current representation of the documents is that all sequential information is lost in the feature encoding. In other words, any permutation of a document's words results in the same feature vector. However, sequential relationships likely play a key role in determining the complexity of a text. We did not use sequential encodings originally because models such as Logistic Regression expect fixedlength inputs. Our documents were of different lengths, so using sequential encodings would require us to add padding to all of our documents. However, the high variance in document length made padding difficult.</p><p>To address this problem, we will use a Recurrent Neural Network. The architecture of this neural network allows for arbitrary length inputs, and have been successfully applied in NLP in the past. For this model, we encode each document as a sequence of POS tags instead of word embeddings, with hopes that this will both allow the model to fit the data better and also generalize to unseen texts. Since there are complex and simple texts of any given topic, we hypothesize that a more important factor in determining complexity is the grammatical structure of the sentence, rather than the content.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Model Architecture</head><p>1. Encoding. The encoding we chose was to represent texts as a sequence of POS tags. We also chose to replace the PUNCT tag with the actual punctuation used in the sentence to help distinguish commas and periods, so the algorithm may can learn the difference between a series of simple sentences vs compound sentences. The final vocabulary consists of 46 POS tags and punctuation marks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Embedding Layer</head><p>The first layer of the LSTM is an embedding layer. This is inspired by NLP methods which typically use word2vec or trainable embedding layers to represent each item of the vocabulary. For our case, the embedding layer takes in a element of the vocabulary and maps it to a EM BED DIM dimensional vector, which is trained using the optimization algorithm.</p><p>3. LSTM The embeddings are then put into a LSTM model. The tunable parameters of this step are:</p><p>• N LAYERS, the number of LSTM layers.</p><p>• HIDDEN DIM, the dimension of each LSTM layer.</p><p>• DROPOUT, the percentage of neurons that are deactivated in each LSTM layer.</p><p>The LSTM has an output for each value in the sequence. To get a fixed-length vector for the next linear layer's input, we experimented with either using the output at the final value in the sequence, or using the mean output across all values in the sequence. However, neither seemed to have any noticeable effect on our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Linear</head><p>The output of the LSTM layer is then fed into a linear layer. The purpose of this layer is to transform the output dimension of HIDDEN DIM to 3, as we are trying to predict 3 levels of difficulty.</p><p>5. Softmax Finally, the outputs of the linear layer are fed into a softmax layer, which normalizes the outputs so that they can be interpreted as the probabilities that the text was of each of the levels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Results</head><p>We used the Adam optimizer to train our model and used a randomized grid search to tune our hyperparameters. Some high-level findings were that a learning rate of 0.01 converges much faster, and often does much better than a lower learning rate. We found that increasing hidden layers made the model strongly overfit the data, decreasing performance on the test set. While dropout helped with overfitting, adding more layers still appeared to lower the test set accuracy, even with dropout. Our optimal parameters were: N LAYERS = 1, BATCH SIZE = 16, EM BED DIM = 64, and HIDDEN DIM = 128 with LR = 0.01.</p><p>After hyperparameter tuning, we gained our best result pair of 80.3% on the test set and 86.4% on the train set using the LSTM. Overall, the LSTM did roughly 1% better than both AdaBoost or Logistic Regression on the test set. However, our LSTM notably only used natural language features and was still able to obtain better results than the previous classifiers using both natural language features and word count.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Text Generation</head><p>The final goal of this project was to generate texts of different complexity levels. In this project, we focused on grammar and sentence/document structure as the primary determinant of complexity. We employ a similar LSTM model to before, but for sequence prediction instead of classification. Given the sequence of POS encodings described in the previous section, the model learns p(pos t+1 | pos t , pos t−1 , . . . , pos 1 ). We can sample from this probability distribution to generate sequences of POS tags.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Training</head><p>The hyperparameters we selected for the generation model were N HIDDEN = 100, N LAYERS = 3, EMBED DIM = 64, LR = 0.0001. We found that this model was able to adequately learn in the different difficulty levels without being over-complex (taking very long to train), as the training loss curves are shown in <ref type="figure" target="#fig_2">Figure 3</ref>. Level 3 and 4 loss curves seem to end with a higher loss because there are more level 3 and 4 training examples, and the levels with more varied sentence structure have harder distributions to learn.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Sampling</head><p>Let G be the trained model, V be the vocabulary, D = |V |, and x be a document. We approximate G as:</p><formula xml:id="formula_0">G(x 1 , x 2 , . . . , x t−1 ) ≈      p(x t = V 1 |{x j | j &lt; t}) p(x t = V 2 |{x j | j &lt; t}) . . . p(x t = V D |{x j | j &lt; t})     </formula><p>where x t is the t th POS tag in the document x. To sample a sequence of POS tags, we sample from G to get a vector of probabilities, normalize the vector to sum to 1 using our temperature parameter, and then choose tags from the resulting multinomial distribution. Our temperature parameter controls the rigidness of the sampling. Low values for temperature result in more grammatically correct sentences, and higher values encourage more diverse sentence structures. Finally, we attempted to substitute word values back into our generated sequences. Since we did not have a methodical way to plug words back in, we opted to randomly fill them in with the given text, and then verify their class using our original Logistic Regression classifier (more time-efficient than our LSTM). Using 100 randomly generated POS structures of each level, we took 100 random texts and inserted words of each POS type to train, and then attempted to predict the reading level of 20 more unseen examples. We found that the classification accuracy dropped to 50.6% using our Logistic Regression model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Example Generated Sentence</head><p>One generated level 2 sentence segment using our trained LSTM:</p><p>DET NOUN VERB DET NOUN ADP DET NOUN ADP DET NOUN...</p><p>Below is a sample Level 2 sequence of POS tags that we filled in using a level 4 text:</p><p>The Giants founded the team with the help of the shelter.</p><p>A real level 2 text excerpt, with matched POS tags underlined:</p><p>The Giants founded the dog team with the help of a local animal shelter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion</head><p>Overall, our classification algorithms categorize the different levels of complexity in the Weebit corpus with 80.3% accuracy on an unseen dataset using an LSTM, only requiring structural features with POS tags, which is a significant improvement from our baseline or relying on average sentence length alone. Moving forward, we plan to use more types of texts (fiction, biographical, etc.) and add additional features like individual word complexity in order to better understand the content of a passage for classification.</p><p>Though we succeeded in generating text from learned examples with our second LSTM, our generation model had a major weakness in finding sensical ways of re-inserting words into our generated POS tag sequence. Furthermore, even after generating these nonsensical sentences, our original classification algorithm could not successfully classify the intended sequences with significant accuracy, implying that there is a deeper influence on the actual content of a passage when determining readability. In the future, we would look for better ways of substituting POS tags, or we may try fixing certain POS words to remove ambiguity in filling in parts of speech, thus improving readability. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :Baseline</head><label>1</label><figDesc>Natural Language Features4 Model SelectionBaseline Our baseline model used a Dummy classifier to randomly predict results based on the probability of each complexity of each text appearing. In our dataset, 630/2226 examples were level 2, 789/2226 examples were level 3, and 807/2226 examples were level 4. Our baseline obtained 37.2% accuracy on the test set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Algorithm Accuracy Results &amp; Confusion Matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Training curves for classification LSTM (left) and generation LSTM (right)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>8 Contributions ,</head><label>Contributions</label><figDesc>CodeHarry -Word count, Tf-Idf feature extraction, exploration of natural language features, experiments with Logistic Regression, SVM, Naive Bayes, organizational code. Implementation of LSTM models, and sam- pling method. Training of generation model.Tyler -Natural language feature extraction, AdaBoost, Naive Bayes, baseline results. For the LSTM mod- els: hyperparameter tuning, plotting loss graphs, sampling and substituting for text generation and creating comparison to original model. Code can be found at: https://github.com/TylerYep/complex-text.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Analyzing text complexity and text simplification: Connecting linguistics, processing and educational applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Balakrishna</forename><surname>Sowmya Vajjala</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+		<respStmt>
+			<orgName>Fakultät der Eberhard Karls Universität Tübingen</orgName>
+		</respStmt>
+	</monogr>
+	<note>Dissertation zur Erlangung des akademischen Grades Doktor der Philosophie in der Philosophischen</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">spacy 2: Natural language understanding with bloom embeddings, convolutional neural networks and incremental parsing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Honnibal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ines</forename><surname>Montani</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">A machine learning approach to reading level assessment. University of Washington CSE Technical Report</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sarah</forename><forename type="middle">E</forename><surname>Petersen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mari</forename><surname>Ostendorf</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Readability assessment for text simplification: From analysing documents to identifying sentential simplifications. Recent Advances in Automatic Readability Assessment and Text Simplification ITL</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Vajjalla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Meurers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Applied Linguistics</title>
+		<imprint>
+			<biblScope unit="volume">165</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="194" to="222" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Combining multiple corpora for readability assessment for people with cognitive disabilities</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Evans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Victoria</forename><surname>Yaneva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Constantin</forename><surname>Orasan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Omid</forename><surname>Rohanian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Research Institute in Information and Language Processing</title>
+		<meeting><address><addrLine>UK</addrLine></address></meeting>
+		<imprint/>
+		<respStmt>
+			<orgName>University of Wolverhampton</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

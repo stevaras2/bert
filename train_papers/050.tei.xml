@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS229 Project Final Report Topic Retrieval and Articles Recommendation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Shen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jinzhi</forename><surname>Wang</surname></persName>
+						</author>
+						<title level="a" type="main">CS229 Project Final Report Topic Retrieval and Articles Recommendation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Vector Space Model</term>
+					<term>Text feature</term>
+					<term>tf-idf</term>
+					<term>k-means</term>
+					<term>LDA</term>
+					<term>Topic Distribution</term>
+					<term>Recommendation</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>How to search articles effectively is significantly important to researchers in academia. Currently researchers use search engines like Google Scholar and search by keywords (eg. machine learning, topic modeling, k-means etc.). The typical search results are large amount of articles, which match the keywords exactly but are on many different topics. It is very time and effort consuming to read through the papers manually and select out desirable ones. We propose a solution to search papers by topic. We apply the Vector Space Model and tf-idf to vectorize and model documents. Then we use k-means algorithm and Latent Dirichlet Allocation (LDA) method to train on a large document set and analyze every paper in it to generate its distribution over topics. The algorithm recommend papers to reader by analyzing whatever the reader has read and compare with the distribution of all papers in the training set. The papers with most similar distributions are those recommended to the user. In this way we realize searching in the database by topics rather than keywords. We use 1298 papers from past CS 229 course project reports as data source. Without any title or keywords matching, experimental results have demonstrated that our method can successfully extract the topics beneath the words of an article and recommend closely related ones.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Motivation</head><p>In academia, a proper method to effectively extract topics from papers and search for papers with similar topics have long been desired. Currently, people are familiar with searching by keywords using tools like Google Scholar. However, these searching results are merely based on the matching of input keywords. But we want to search by the semantic contents, which is beyond keyword matching. Even by skimming condensed abstract section, substantial time will be consumed to acquire the topics on literature review. Especially considering the vast volume of literature on Internet, it is almost impossible to retrieve accurate topics and find best matching papers manually.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Objectives and Outline of Our Approach</head><p>The problem we are to address is that given a user input -a paragraph of interest or several journal papers which we call reading list -how to create a recommendation list of papers to help the user decide a clear order of pursuing and provide him/her with abundant information as well.</p><p>As a rough depiction of the framework of our proposed method, we will first need a collection with enough literatures, ideally across many different areas. It would be the best if we have a literature database like ScienceDirect. Then we process on the papers in the collection, including format converting, word trimming, high and low frequency word filtering and non-English word removal to obtain a training set formed by word frequency statistics. Then we will calculate topic distribution for each document, given the number of topics arbitrarily selected. When making recommendations, the algorithm analyze the reading list and compute its topic distribution. Then the algorithm judge the similarity between this distribution and every document's distribution in the training set and recommend the most similar ones.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.3">Project Benefits</head><p>Our method can be used as an effective way of paper recommendation. First, by topic modeling, we will improve both the efficiency and accuracy of paper searching towards a particular topic. Second, by conducting topic search, it is easier to find important literature bridging two different academic fields.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Background and Literature Review</head><p>In our project, we use an advanced topic modeling method to help researchers explore and browse large collection of archives. Historically, topic modeling can be used to improve the accuracy of classification by their contextual information. For example: Guo et al. <ref type="bibr" target="#b0">[1]</ref> studied the geographical location to classify different type of tours. Ka-Wing Ho <ref type="bibr" target="#b1">[2]</ref> tried to solve the problem of genres classification of moves by considering it as a multi-label classification problem. In their work, they both used topic models to organize information.</p><p>In recent years, some research concerning topic modeling focused on how to train the dataset in the environment of twitter <ref type="bibr" target="#b2">[3]</ref>. The authors demonstrated that topic models training quality will be influenced by length of document. Latent Dirichlet Allocation (LDA) model and author-topic(AT) model, which is an extension of LDA are used and compared in this research, and LDA had better performance in their settings. One more interesting paper explores the topic and role of author in a social network <ref type="bibr" target="#b3">[4]</ref>. This paper introduced the author-recipient-topic (ART) model, which is based on LDA and AT models, considering the attribute of topic allocations with factors tuned from sender-recipient perspective. Another paper introduces the relational topic model (RTM), which is a hierarchical model with network structure and node attributes <ref type="bibr" target="#b4">[5]</ref>. Their research focus was on words in each documents and they realized summarization of document network, with predicted links and words amongst them. The RTM model is built upon mixed-membership model, and it also reuses the statistical assumptions behind LDA.</p><p>Previous research and other related works will be served as reference and comparison of our research work. We incorporated some ideas, applications and structures from them as a reference.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Methodologies and Algorithms</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data and preprocessing</head><p>Data source currently used in the research is previous CS229 course project reports. We are using all the project reports from year 2011 to 2015 and the number of articles is 1298. Ideally online open-source research papers are our best source of data but let's restrict the data source to course reports for testing purposes.</p><p>The first step is to convert formatted PDFs to plain TXT files. The articles are published on course website in PDF format, as are most of the other research literatures. They are converted to program-readable plain TXT files with no information lost or distorted using an online tool http:// pdftotext.com/. We then remove all numbers, signs, symbols and non-English letters and convert all English letters to lowercase. Next Porter stemming algorithm is applied to remove the morphological endings of the words in the documents. For example make, makes, making are stemmed to "mak" and surprise, surprises, surprising, surprised, surprisingly to "surpris". The last step of text processing is to remove trivial stop words like the, and, was, we etc. from the data. After all these preprocessing steps, we finally have the non-trivial, and sequential (as in the original article) English words written in plain TXT files.</p><p>Denote the document set by</p><formula xml:id="formula_0">D = {d 1 , d 2 , ·, d m }, the text feature set bt W = {w 1 , w 2 , · · · , w n }.</formula><p>We apply the Vector Space Model on all the documents. Every unique stemmed word in a document is treated as a dimension. The magnitude of vector component in that dimension is the total number of word appearance in that document. Repeat this process for all the documents and we generate the text feature matrix X. The elements of matrix X is</p><formula xml:id="formula_1">X i, j = ∑ word in d i 1{word = w j } (1)</formula><p>Now every column in matrix X represents a feature for learning algorithms to learn later. We then apply threshold on every element of X to filter out words like names, abbreviations, etc.</p><formula xml:id="formula_2">X i, j = X i, j X i, j ≥ threshold 0 X i, j &lt; threshold<label>(2)</label></formula><p>By testing, we find 3 is a good choice for threshold. A thing worth mentioning here is after the thresholding, many columns in matrix X will become all zeros, which means the corresponding feature is considered indiscriminative. We remove all these zeros columns for the sake of both code efficiency and features' meaningness. Before finally send X to learning algorithm, we further process matrix X using the concept of inverse document frequency to account for the intuition that a word appearing in too many incidents should be less discriminative that a word that appears only in few documents, regardless of their actually frequency in the individual documents.</p><formula xml:id="formula_3">X i, j = ln |D| 1 + |{d : w j ∈ d}| ∑ word in d i 1{word = word j} (3)</formula><p>The weight ln |D| 1+|{d:w j ∈d}| emphasized more the words appearing in less documents. 1 is added to avoid zero denominator.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Training Algorithms</head><p>As stated before, the final training set is presented to the training algorithm as the matrix X with rows representing training samples and columns representing the text features.</p><p>In the training part, we applied both k-means and Latent Dirichlet Allocation (LDA) to perform unsupervised learning.</p><p>Unsupervised learning is the natural choice here because the lack of label for each sample, i.e. topic classification of each course report.</p><p>At the end of training process, both k-means and LDA will analyze all reports and calculate weight distributions over topics for each of them. The weight distributions indicate the likelihood of a document belonging to each topic. The similarity between these distributions will be our criterion for recommendation.</p><p>In the following discussion, topic and cluster essentially mean the same thing. We set the topic/cluster number k to be 20.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1">k-means</head><p>In our case, the data sent to k-means algorithm is X with 1298 rows and 39588 columns. We first trained the data using k-means clustering method. We used cosine distance in our algorithm. Denote the row vectors of X by { r 1 , r 2 , · · · , r n }</p><formula xml:id="formula_4">CosDis(d i , d j ) = 1 − r i · r j || r i || · || r j ||<label>(4)</label></formula><p>Where d i , d j are i th and j th document. Cosine distance or cosine similarity measures the cosine of angle between two vector. It can be easily applied to any high dimension space. Unlike Euclidean distance, it measures the difference in orientation rather than magnitude. Cosine distance is suitable for text vectors because scaling a text vectors should not change the topic of this document.</p><p>After convergence, k-means assigns each report to a cluster. The next step is to analyze the weight distribution over all topics for each report. In our vector model for documents, each vector in high dimension represents a document. The intuitive idea is that if a vector is surrounded by many vectors belonging to cluster i, then this vector should have a high weight on cluster i. In practice, we artificially set a threshold ε and define hypercone | r − r i | &lt; ε to be the ε vicinity of r i . We admit there is some arbitrariness in choosing ε. We count the number of vectors assigned to each topic in the vicinity of r i . The number count can be presented as n 1 , n 2 , · · · , n k . After normalization, i.e. divided by the total number n of vectors in the vicinity, we have the weight distribution of document r i over all topics. The distribution is n 1 n , n 2 n , · · · , n k n . Denote the distribution matrix for all vectors by T kmeans .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Latent Dirichlet Allocation (LDA)</head><p>LDA calculate the weight distribution using a different method. We apply the MATLAB LDA programs offered by http:// psiexp.ss.uci.edu/research/programs_data/ toolbox.htm. The LDA algorithm has the exact same input as k-means, i.e. the matrix X (m by n) mentioned above. Each row of X is a sample and each column is a word.</p><p>The algorithm outputs another matrix Z (n by k), with its rows represent words and columns represent topic. Z i, j is a number between 0,1 and it indicates how likely word i (w i ) belongs to topic j ( j ∈ [0, k]). With matrix X and Z, we can calculate the weight distribution over topics for all documents. First we need to normalize X by row and getX. Then T LDA =XZ.</p><p>Denote the rows in matrix T kmeans and T LDA by wd i .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Recommendation Algorithm</head><p>As mentioned in the motivation part, we want to extract reading interest and topic preference from the reports the reader has already read and recommend according to similarity between weight distribution over topics. In practice, given the reading list containing papers the reader has read, we can calculate the word frequency vector r. For k-means algorithm, we put r in the high dimension space and count the number of vectors in each topic in its ε vicinity. The procedure is the same as above. For LDA algorithm, we normalize r by its total number of words and getˆ r, thenˆ rZ is the weight distribution over topics.</p><p>Denote the weight distribution of this new reading list by wd. By comparing the new distribution wd to row vectors wd i in matrix T kmeans and T LDA , we are able to rank the reports in the training set by their similarity to wd and recommend those with highest similarity.</p><p>To judge the similarity between wd and wd i , we use both KL-divergence and cosine distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">k-means clusters visualization</head><p>The actual algorithm used all 1298 reports from 2011-2015 and the cluster number was set to 20. The scale of this set is too large to be clearly presented in the final report, so we run a clustering on 2015 reports. By doing so we can take advantage of the classification available on the course website http:// cs229.stanford.edu/projects2015.html, and compare them with clustering results. Note the course website only provide classification for 2015 reports. After all the preprocessing, matrix X for 2015 reports has 273 rows and 17202 columns. We tried various cluster numbers ranging from 1 to 15. Experiments show that cluster number between 8 to 10 give the best results. We judge the clustering results by extracting the most frequency words in each cluster that are not present in other clusters and manually determining if they are closely related. It turned out that all the 2015 project reports are already classified into 9 groups according to the course website. Thus we clustered the reports into 9 categories and compared the number of samples in each cluster with results on the website. They are shown in <ref type="table" target="#tab_0">Table 1</ref>. The most frequent words in each cluster are shown in <ref type="table" target="#tab_1">Table 2</ref>. As one can see from both <ref type="table" target="#tab_0">Table 1</ref> and  <ref type="table" target="#tab_1">Table 2</ref>, k means algorithm clusters narrow topics well, which usually comes with "landmark" words, like "sale" and "stock" to "Finance and Commerce"; "gene" and "cancer" to "Life Sciences"; "song" and "music" to "Audio &amp; Music", etc. K means can not perform well for the "General Machine Learning" and "Theory &amp; Reinforcement" categories. This is because all the documents are CS229 course projects and every report more or less mention the key words like "svm", "learning", "supervised". When we conduct clustering on this document set, key words to machine learning area will become completely indiscriminative. What we learn here is that we have to provide a training set that contains different examples in some aspects to cluster well.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.1">Clusters</head><p>In general, the training is satisfying and clustering is rather obvious. All 273 samples are automatically labelled by k means algorithm. Labeling can be manually done in future for higher precision.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2">Visualization</head><p>We also plotted the high dimension vectors in 3D space after dimension reduction using PCA algorithm. The clusters in 3D space are shown in <ref type="figure" target="#fig_0">Figure 1a</ref>, where the coordinates are the reduced dimension and each color marks a different cluster. <ref type="figure" target="#fig_0">Figure 1b</ref> is a 2D side view of <ref type="figure" target="#fig_0">Figure 1a</ref>. As one can see, 6 of the 9 clusters are separated well but the rest 3 are not as good.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Recommendation</head><p>We provide recommended papers based on the reading history of users. Two pieces of articles are randomly selected from the dataset as user's reading list (testing data). By using methodology stated in Methodology section, we generated corresponding reading list papers compound distribution for both k-means model and LDA model. <ref type="figure">Figure 2</ref> illustrates the weight distribution over topics for the reading list. The largest few sections relate to topics like image, classification, and supervised machine learning. Consistency between these two method can be observed here.</p><p>The recommendation algorithm returned three papers for both of the models, as shown in <ref type="table" target="#tab_2">Table 3</ref>.</p><p>We can expect, just from the title, that the two input papers are related to image detection or classification using super- vised machine learning approaches. And the returned result from both models share similar topics, indicated by keywords in titles, like "traffic sign classification", "object classification", "pedestrian detection", "SVM", "identification", "images of faces", etc. Noticing that one of the recommended papers is named "Equation to LaTex", this result demonstrated the distinct advantage of our model over regular search engines -it discovers the topic of documents without replying too much on keywords like "image", "machine learning" or "detection". This paper actually describes how to detect equations in PDF documents and convert them to L A T E X codes by machine learning approaches, which is a good reference for the user who intends to inquire topics like image processing with machine learning methods. <ref type="figure">Figure 3</ref> illustrates the comparison between the weight distribution over topics of reading list papers and recommended paper. The red lines are the distribution of the reading list and blue lines represent recommended reports. As shown in the plots, documents recommended by k-means method have a very similar distribution with the reading list's distribution, while distributions of documents recommended by LDA deviate more, which may indicate more variance error. But this does not necessarily mean k-means perform better because the way of counting paper numbers in the vicinity of reading list has an averaging effect and might facilitate the similarity between different document's distribution.</p><p>To conclude, k-means and LDA model respectively on distribution over topics of documents and words. The recommendation algorithm following each of them recommends different results but they all satisfy our expectations. Our algorithms successfully achieve our goal of topic extraction and article recommendation.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Clusters</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .Figure 3 .</head><label>23</label><figDesc>Weight distribution of reading list (a) k-means (b) LDA Figure 3. Weight distribution of reading list and recommend reports</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 .</head><label>1</label><figDesc>Sample Number in clusters</figDesc><table>Cluster 
+Website 
+k-means 
+number 
+number 
+Finance &amp; Commerce 
+42 
+48 
+General Machine Learning 
+42 
+cannot tell 
+Natural Language 
+40 
+45 
+Life Sciences 
+38 
+30 
+Computer Vision 
+33 
+37 
+Audio &amp; Music 
+25 
+24 
+Physical Sciences 
+23 
+51 
+Athletics &amp; Sensing Devices 
+18 
+20 
+Theory &amp; Reinforcement 
+14 
+cannot tell 
+Recommendation 
+N/A 
+24 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 .</head><label>2</label><figDesc>Most</figDesc><table>frequent words in each cluster 
+Finance &amp; 
+Commerce 
+
+sale store price stock market trade 
+company strategy employee return 
+
+Natural 
+Language 
+
+bill document token sentenc 
+answer tf idf question text 
+recip link code comment 
+
+Life 
+Sciences 
+
+gene patient tumor cancer 
+thyroid cell diseas diabet 
+surviv brain tissu 
+
+Computer 
+Vision 
+
+image color pixel cnn face 
+convolut layer descriptor object 
+recognit visual neural webcam 
+Audio &amp; 
+Music 
+
+song music audio sound chord note 
+voic speaker genr melodi frequenc guitar 
+
+Physical 
+Sciences 
+
+Sensor activ packet jet traffic motion 
+damag simul quantum structur 
+memori seismic acceleromet 
+Atheletics 
+&amp; Sensing 
+Devices 
+
+game player team season win 
+nba polici quarterabck hero 
+football borad defens statist injuri 
+Recommend 
+System 
+
+user review busi rate movi restaurant 
+yelp recommend item star factor 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 3 .</head><label>3</label><figDesc>Recommendation</figDesc><table>list 
+Reading List 
+Machine Learning 
+Applied to the 
+Detection of 
+Retinal Blood Vessels 
+
+Supervised 
+DeepLearning 
+For MultiClass 
+Image Classification 
+Top 3 Recommendation List 
+k-means 
+LDA 
+Implementing Machine 
+Learning Algorithms 
+on GPUs for Real-Time 
+Traffic Sign Classification 
+
+Pedestrian Detection 
+Using Structured SVM 
+
+Equation to LaTeX 
+
+FarmX: Leaf based 
+disease identification 
+in farms 
+Object classification 
+for autonomous vehicle 
+navigation of 
+Stanford campus 
+
+Identifying Gender 
+From Images of Faces 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>The three of us would like to thank Professor Duchi for teaching this great class and offering the opportunity of working on a project as a team. We also want to thank all the TAs, who have always been helpful in both the project and homeworks. Last but not least, we thank all our classmates who we have sought help from.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Building a better tour experience with machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alan</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chanh</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Taesung</forename><surname>Park</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Movies genres classification by synopsis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ka-Wing</forename><surname>Ho</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Empirical study of topic modeling in twitter</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Liangjie</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Brian D Davison</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the first workshop on social media analytics</title>
+		<meeting>the first workshop on social media analytics</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="80" to="88" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Topic and role discovery in social networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Mccallum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andres</forename><surname>Corrada-Emmanuel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xuerui</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computer Science Department Faculty Publication Series</title>
+		<imprint>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Hierarchical relational models for document networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Blei</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Applied Statistics</title>
+		<imprint>
+			<biblScope unit="page" from="124" to="150" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

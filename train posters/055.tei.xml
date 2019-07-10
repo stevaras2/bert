@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Finding Your WAY, Courtesy of Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chaitanya</forename><surname>Asawa</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcus</forename><surname>Gomez</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Viraj</forename><surname>Mehta</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Mathematics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Finding Your WAY, Courtesy of Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Given a course description, we would like to predict what WAY(S) it satisfies • This is a multi-label, multi-class problem.</p><p>• Each WAY represents an output class • Each course can satisfy a single or multiple WAY(S), so there are multiple labels</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Direc*ons</head><p>We think an important issue was the dearth of data available to us, and believe that our models can perform better with more data. Hoping to capture nonlinear interactions between the words that our previous models may not have, we used deep learning sequential models, including a:</p><formula xml:id="formula_0">• RNN -Recurrent Neural Net • LSTM -Long Short Term Memory Networks • GRU -Gated Recurrent Unit</formula><p>The inputs were course descriptions converted into a distributed vector representation using GloVe word vectors. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Say you would like to fulfill your Formal Reasoning WAY with "Complex Analysis, Geometry, and Topology." Unfortunately, you can't.Evalua*on Metric: Hamming Error Baseline ModelsComparison of All ModelsPerformance of different neural models Tuning GRU on output size does not have much effect</figDesc><table>Mo*va*on 
+
+Problem Statement 
+
+Dataset 
+
+OneVsRest Support Vector Machines 
+
+Background 
+
+… 
+
+Neural Sequen*al Models 
+
+Generalized Recurrent Model 
+
+• We received access to ExploreCourses data 
+• We lowercased all words, removed stop words, and 
+punctuation, and stemming in some cases 
+• Out of 14336 courses gathered, only 1571 satisfied 
+WAY(S) -very limited data for multiple labels and classes 
+
+Leveraged linear and Gaussian kernels 
+
+ROC curves for linear kernel SVM 
+ROC curves for Gaussian kernel SVM 
+
+Dimensionality Reduc*on with PCA 
+
+Reduced model variance using first n principal components 
+
+Percentage of variance explained by 
+components by number of components 
+used 
+
+Error of linear PCA as a function of 
+number of components used 
+
+Independence 
+BoosTexter 
+
+Mod of AdaBoost for multi-
+class, multi-label problems 
+
+BoosTexter exhibits a classic 
+overfitting curve 
+
+Linearity assumption is likely 
+incorrect 
+
+Covariance of WAYS frequencies 
+
+Linear and Naïve-Bayes OneVsRest classifiers using 
+Word2Vec-style negative case subsampling 
+
+Evalua*on Metric: Hamming Error 
+
+Baseline Models 
+
+Comparison of All Models 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

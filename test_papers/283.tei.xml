@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predict Optimized Treatment for Depression CS229 Project Report</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Minakshi</forename><surname>Mukherjee</surname></persName>
+							<email>:adaboost@stanford.edusuvasismukherjee:suvasism@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predict Optimized Treatment for Depression CS229 Project Report</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. Abstract</head><p>For the past 60 years, the anxiety and depression medications are prescribed to patients based on The Hamilton Depression Rating Scale (HDRS) <ref type="bibr">[6]</ref> and Social and Functioning Assessment Scale(SOFAS) <ref type="bibr">[2]</ref>. The HDRS <ref type="bibr">[6]</ref> does not take into account the neuro biomarkers as it is very expensive to do FMRI on all patients. Goal of this project is to identify whether HDRS score and SOFAS score are representative of the three antidepressants: Sertraline, Venlafaxine, Escitalopram prescribed based on FMRI data of 5 brain attributes based on the small dataset of 128 patients collected from Williams PanLab, Precision Psychiatry and Translational Neuroscience, Stanford Medicine iSPOT-D project. There is a need for markers that are predictive of remission and guide classification and treatment choices in the development of a brain-based taxonomy for major depressive disorder (MDD) that affect millions of Americans.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. Introduction</head><p>Healthcare professional prescribes antidepressant medications to patients based on two scores: HDRS <ref type="bibr">[6]</ref> and SOFAS <ref type="bibr">[2]</ref> that are subjective in nature as it is done solely by interviewing the patients. It is very expensive to collect FMRI brain scan data for individual patients to derive a scientific data driven assesment of the patient's medication. We got motivated by this small dataset of 128 patients which contains antidepressants administered to the patients based on HDRS and SOFAS; it also contains FMRI data for 5 important regions from brain. We analyzed this dataset to understand the association between the antidepressants and 5 brain attributes. We tested several models, the input and output are detailed here: Logistic Regression: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. Related W ork</head><p>The dataset is small, so we looked into relevant papers that discusses prediction techniques for small dataset. The paper "Regression Shrinkage and Selection via the Lasso" by Robert Tibshirani <ref type="bibr" target="#b0">[1]</ref> demonstrated how Lasso enjoys some of the favourable properties of both subset selection and ridge regression and produces interpretable models like subset selection that exhibits the stability of ridge regression. We used this approach to pinpoint the exact brain scan attribute associated to a particular antidepressant. We enhanced the approach by considering Bayesian Linear regression with Laplace prior. "Finite mixture models" by G.J. McLachlan et al. <ref type="bibr" target="#b1">[3]</ref> discusses innovative ideas for Bayesian Approach to Mixture Analysis, Mixtures with Non normal Components. In future, we like to incorporate some of these ideas, but in this project we limited ourselves to Gaussian Mixture Model. The paper "Predicting Inpatient Discharge Prioritization With ElectronicHealth Records" by Anand Avanti et al. <ref type="bibr" target="#b3">[5]</ref> discusses an extensive use of ensemble classifiers, ROC etc, we implemented similar approach in our project. The paper "Countdown Regression: Sharp and Calibrated Survival Predictions" by Anand Avanti et al. <ref type="bibr" target="#b5">[7]</ref> provides ideas about scoring rule as a measure of the quality of a probabilistic forecast. In future, we would like to come up with a scoring mechanism to predict antidepressant based on FMRI data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. Data Set and F eatures</head><p>The small dataset has 128 patient IDs and 13 attributes: .One of three antidepressants taken by them .Age,gender,years of education .HDRS score .SOFAS(Social and Functioning Assessment Scale) score 5 attributes from Amygdala cluster,Insula clusters and Nac clusters.</p><p>Since this is a very small dataset with just 128 patient information, we need to employ a few algorithms that fit small data set better. As part of exploratory data analysis, we will build a few supervised and unsupervised models. Unsupervised model will help to understand the similarity among the brain attributes obtained from MRI images and we can use this prior information to build supervised model in order to associate connections between antidepressants and 5 brain attributes.</p><p>Our medical data is scarce, so we need a method to make sure the model trained on this dataset will predict with similar accuracy on new patients.</p><p>We split the dataset as follows: We kept 20 percent dataset aside for test and 80 percent for training and validation set. We use Kfold cross validation with K=10.</p><p>1. Randomly split dataset S into k disjoint subsets of m k data in each: Mixture Model In order to understand the association between HDRS/SOFAS score and the structure of each of the brain scan data, we deep dive further using Mixture Models.</p><formula xml:id="formula_0">{S 1 , S 2 , .., S k } For each j = 1..k 2. Train model M i on S 1 ∪ ... ∪ S j−1 ∪ S j+1 ... ∪ S k</formula><note type="other">and get hypothesis h ij 3. Test hypothesis h ij on S j and getˆ s j (h ij ) 4. Error E</note><formula xml:id="formula_1">Assumption A distribution f is a mixture of K component distributions f 1 , f 2 , ...f K if f = K i=1 λ k f k . λ k are the mixing weights, λ k &gt; 0, λ k = 1</formula><p>Here we assume, f 1 , f 2 , ...f K follow Gaussian. In the above, f ∈ a complete stochastic model, first we pick a distribution, with probabilities given by the mixing weights, and then generate one observation according to that distribution. Symbolically,</p><formula xml:id="formula_2">Z ∼ M ult(λ 1 , λ 2 , ..., λ K ) X|Z ∼ f Z</formula><p>We ran different Gaussian Mixture models using HDRS/SOFAS baseline score and brain data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Factor Analysis</head><p>Factor Analysis works on small dataset where it helps to captures the correlations in the data. Assumption: dataset x (i) is generated by sampling a k dimension multivariate Gaussian z (i) , a latent random variable; k &lt; 13, where is 13 is the no of features in our dataset. We like to model the dataset with a joint distribution p(</p><formula xml:id="formula_3">x (i) , z (i) ) = p(x (i) |z (i) )p(z (i) ) z ∼ N (0, I) ∼ N (0, Ψ)</formula><p>and z are independent. x = µ + Λz + x (i) has the covariance Ψ noise µ + Λz is the K − dimensional af f ine subspace of R n . 1.Given the guesses for z that the E-step finds, M step estimates the unknown linearity Λ relating the x s and z s. 2.In the final M-step update for Λ, it captures the covariance Σ x (i) |z (i) for the posterior distribution p(x (i) |z (i) ). 3.We declare the convergence when the increase in likelihood l(Λ) in successive iterations is smaller than the tolerance parameter. 4.We choose the maximum of l(Λ), out of all obtained by k-fold CV.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Bayesian Regression with Laplace Prior</head><p>We choose a Laplace prior for the parameter θ. The idea behind choosing Laplace prior is that Laplace distribution is symmetric around zero and it is more strongly peaked as λ grows. Assumption: 1.σ 2 is known 2.All θs are independent with Laplace density.</p><p>3.With this prior, the MAP estimator is the same as the lasso solution, this sparse solution is useful because we have five feature variables for Brain structure, and we would like to establish the functional connectivity between antidepressants and brain structure, so we would like to have some of the θ's zero.</p><formula xml:id="formula_4">Laplace P rior : p(θ) = λ 2 * σ exp(− λ|θ| σ ) Dataset : S = {x (i) , y (i) } m i=1 y (i) = θ T x (i) + (i) epsilon (i) ∼ N (µ, σ 2 )</formula><p>4.We search for a choice of θ that minimizes the objective function</p><formula xml:id="formula_5">J(θ) = 1 2 m i=1 (θ T x (i) − y (i) ) 2</formula><p>5.The output of Bayesian linear regression on a new test point x * is the posterior predictive distribution</p><formula xml:id="formula_6">p(y * |x * , S) = θ p(y * |x * , θ)p(θ|S)dθ P arameter P osterior p(θ|S) = p(θ) i p(y (i) |x (i) ,θ) θ p(θ) i p(y (i) |x (i) ,θ)dθ</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. Results and F indings</head><p>We built several models using several variations of feature variables from our small dataset. Since dataset is small, it is to our advantage that we can iterate several algorithms as well as permutations of several functions of the feature variables to pinpoint which one improve accuracy of the prediction.</p><p>Average test set misclassification error based on validation set is chosen as a metric for logistic regression in order to predict the SOFAS logistic outcome measure(it's a binary classification: 1 or 0). Lowest misclassification error on validation set: 0.3379138 and on test set we get misclassification error of .41. Sensitivity and specificity of the ROC (Receiver Operating Characteristic) curve and AUC (Area under the curve) are used to understand the model performance for logistic regression. In the picture below, left hand side contains the ROC curve with AUC of 67 percent for logistic regression without excluding any of the feature variables and the right hand side contains the RMSE values for different regression that summarizes the different techniques of supervised learning.</p><p>Based on the RMSE values and the plots above for Supervised learning, Ridge regression performs the best. Hence, HDRS and SOFAS scores statistically connect antidepressants to Brain scan data.</p><p>To get more insight, we fit Gaussian mixture model using HDRS score and Amygdala Clus 1/2 brain data as well as HDRS score and Nac Clus 1/2 brain data, however based on the plot below, the representation seems unintelligible and requires further analysis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Factor Analysis output</head><p>In Factor Analysis, we transform the current set of variables into an equal number of variables such that each new variable is a combination of the current ones through some transformation. Here data gets transformed in the direction of each eigenvector and represent all the new variables or factors using the eigenvalues. An eigenvalue more than 1 means that the new factor explains more variance than the original variable. Output of our Factor Loadings shows that all 11 feature variables(3 antidepressants,age,gender,education,5 brain scan attributes) adequately represent the factor categories for this medical data set.</p><p>SVM classifier is tested using three different kernels. Here are the test errors for different types of kernels. Linear kernel : 0.3745 Radial kernel : 0.34125 P olynomial kernel of degree2 : 0.37825 Usage of Kernel depends on the data set. The linear kernel works best if the dataset is linearly separable, but if there is non-linearity then radial or polynomial kernel will produce better results. Radial kernel worked the best among all three kernels. This might seem obvious,because it is very likely to expect non-linearity among HDRS/SOFAS, all social attributes, like age,gender,education and 5 brain attributes in higher dimensions. AUC for Radial kernel:0.4840278</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. F uture Enhancements</head><p>We would like to enhance our Gaussian Mixture Model with regression and sparsity <ref type="bibr" target="#b2">[4]</ref> as follows: instead of estimating the µ k f or k = 1..K, we would estimate only the coefficients of a sparse linear combinations of the X i s for all the data belonging to the same cluster using a sparsity enforcing penalty like l 1 norm of the coefficients. The main difficulty with such an approach might be to choose the right sample vector representing each cluster a priori, we would like to use Lasso <ref type="bibr" target="#b0">[1]</ref> as one of the potential approach to solve that problem. <ref type="bibr" target="#b0">[1]</ref> VIII. Github link The following github repo contains a link of the code and a copy of iSPOT-D dataset obtained from Dr.Adina Fischer,MD,PhD, a resident Stanford Psychiatry physician and a T32-funded postdoctoral fellow under the mentorship of Professor Leanne Williams and Professor Alan Schatzberg, Williams PanLab, Precision Psychiatry and Translational Neuroscience. https://github.com/suvasis/cs229</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>i of Model M i = 1 j jˆ s j (h ij ) 5.Pick model M i with lowest error E i 6. Retrain M i on entire dataset S. 7. Result the hypothesis as the final answer.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>brain scan attributes. input comes from training samples. output: y.pred = if else(prob.pred &gt; 0.5, 1, 0) Similar analysis has been carried out with Dependent variable as SOFAS response and the same set of independent variables. Linear Regression: input Dependent Variable: HDRS baseline(a number less than 100) input Independent Variable: age,gender,education,3 antidepressants(1 or 0 based on which one patient is taking), 5 brain scan attributes. input comes from training samples. output: y.pred = HDRS score for a new x * Similar analysis has been carried out with Dependent variable as SOFAS score and the same set of independent variables and for Ridge regression,Lasso and Elastic Net, which is same as Bayesian Linear Regression with Laplace Prior. SVM: input : y i f (x i ) where y i denotes HDRS</figDesc><table>input Dependent Variable: HDRS response(0 or 1) 
+input Independent Variable: age,gender,education,3 
+antidepressants(1 or 0 based on which one patient 
+is taking), 5 (0 
+or 1) or SOFAS response(0 or 1) and x i denotes 
+age,gender,education,3 antidepressants(1 or 0 based 
+on which one patient is taking), 5 brain scan 
+attributes. input comes from training samples. 
+output: set of weights w (or w i ), one for each 
+feature, whose linear combination predicts the 
+value of y. 
+Factor Analysis: 
+input : All 13 feature variables associated to the 
+patient 
+output: Factor loadings representing the importance 
+of each feature. 
+Gaussian Mixture Model: 
+input : All 13 feature variables associated to the 
+patient and the no of components(=4, in our case) 
+output: Labels of Gaussian Mixture(0,1,2,3 in our case) 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Regression shrinkage and selection via the LASSO</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society, Series B</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">267288</biblScope>
+			<date type="published" when="1996" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">J</forename><surname>Mclachlan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Peel</surname></persName>
+		</author>
+		<title level="m">Finite Mixture Models</title>
+		<imprint>
+			<publisher>Wiley</publisher>
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Variable Selection in Finite Mixture of Regression Models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Khalili</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="issue">479</biblScope>
+			<biblScope unit="page" from="1025" to="1038" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<idno type="arXiv">arXiv:1812.00371</idno>
+		<title level="m">Predicting Inpatient Discharge Prioritization With Electronic Health Records</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anand</forename><surname>Avati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephen</forename><surname>Pfohl</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chris</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thao</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Meng</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Philip</forename><surname>Hwang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jessica</forename><surname>Wetstone</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenneth</forename><surname>Jung</surname></persName>
+		</author>
+		<imprint>
+			<pubPlace>Andrew Ng, Nigam H. Shah</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<idno type="arXiv">arXiv:1806.08324</idno>
+		<title level="m">Sharp and Calibrated Survival Predictions</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anand</forename><surname>Avati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tony</forename><surname>Duan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenneth</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Nigam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Shah</surname></persName>
+		</author>
+		<imprint>
+			<publisher>Andrew Ng</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Structural Damage Image Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Structural Damage Image Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Using a training set provided by the Pacific Earthquake Engineering Research (PEER) Center, we build a classifier to label images of structures as damaged or undamaged using a variety of machine learning techniques: K-nearest neighbors, logistic regression, SVM, and convolutional neural networks (CNN). We find that when compared to classical machine learning techniques, the performance of a CNN is best on our data set. We evaluate the mistakes made by our classifiers, and we tune our models using information gleaned from learning curves. We find that our best performing model, which uses transfer learning using Inceptionv3 trained on ImageNet with an added fully-connected layer and softmax, has a test accuracy of 83%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The Pacific Earthquake Engineering Research (PEER) Center has provided image datasets that can be used to classify structures in terms of damage <ref type="bibr">[1]</ref>. The goal is to solicit image classification models to establish automated monitoring of the health of a structure using computer vision. In particular, it is desirable to quickly assess the seismic risk of a building in a region prone to earthquakes and to gather statistics on the built environment within a geographic region after an earthquake has occurred.</p><p>The input to this project consisted of 5913 images. Of this set of images, 3186 images were labeled as "undamaged" or "0" (54%), and 2727 images were labeled as "damaged" or "1" (46%). Each image includes 224 by 224 eight-bit RGB pixels. We split the images into the following sets: 90% for training: 2870 undamaged and 2451 damaged. (46% are damaged) 10% for validation: 316 undamaged and 276 damaged. (47% are damaged). We decided not to set aside images for testing because of the limited number of samples, although if we were to eventually submit to an academic journal, we would need to be more rigorous in this regard.</p><p>We used several models: three classical machine learning models, several variations of two deep learning models (MobileNet and InceptionV3 convolutional neural networks), and one model which combined classical and deep learning techniques.</p><p>The primary output of our classifier models is the accuracy as determined by the number of correctly predicted images over the total number of predicted images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>There are few references on image classification of damaged buildings. One good survey paper on structural image classification is <ref type="bibr" target="#b0">[2]</ref>. Some of the ideas in this survey paper (such as transfer learning) we used on our dataset as well. However, most of our references are not specific to structural images. For the classical machine learning algorithms and the convolutional neural networks, we began with <ref type="bibr" target="#b1">[3]</ref> and <ref type="bibr" target="#b2">[4]</ref>. The original papers on MobileNet <ref type="bibr" target="#b6">[9]</ref> and Inceptionv3 <ref type="bibr" target="#b7">[10]</ref> were also illuminating. We also observed that on ImageNet <ref type="bibr" target="#b8">[11]</ref>, there are 1190 images of structures out of 14,197,122 images (0.008%), so previously trained models trained on ImageNet did not have weights well-optimized for our data set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>Minnie Ho Intel Corporation minnie.ho@intel.com</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Jorge Troncoso</head><p>Google LLC jatron@google.com A few examples from our dataset are shown in <ref type="figure">Figure 1</ref>. In our dataset, we had images that ranged from close-ups (a small section of a wall) to wide-shots (an entire apartment building). Non-relevant objects were included (e.g., people, curtains, telephone lines, tree branches). The type of damage ranged from cracks to leveled buildings. Some images were difficult to label visually (previously repaired damage, paint or mortar cover-up, blur), and some images were incorrectly labeled.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1: Example Structural Images</head><p>We normalized the images so each of the 224x224 8-bit RGB pixels (x) was in the range [-1,1). This was done by setting each pixel (x) to: = ( 128 ) − 1. For k-nearest neighbors, logistic regression, and support vector machine we also scaled and flattened the pictures before feeding them into the models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>We built six models: three classical machine learning models (K-nearest neighbors with k=5, logistic regression, support vector machine with RBF kernel), two deep learning models (MobileNetv1.0 and InceptionV3 convolutional neural networks), and one model which combined classical and deep learning techniques (support vector machine based on activations earlier in the InceptionV3 network). The performance of each of these models is summarized in the Results section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">K-nearest neighbors</head><p>In K-nearest neighbors, "an unlabeled vector is classified by assigning the label which is most frequent among the k training samples nearest to that query point" <ref type="bibr">[5]</ref>. Due to the suboptimal results achieved with k=5, we did not spend additional time tuning the k parameter.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Logistic Regression</head><p>In logistic regression, we use the sigmoid function to estimate the probability that an image belongs to a certain class. This sigmoid function is parametrized by a vector , which is obtained by maximizing the log-likelihood. Our logistic regression model included L2 regularization with = 1.0. Due to the suboptimal results achieved by this model, we did not spend additional time tuning the regularization parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Support Vector Machine</head><p>During training, support vector machines try to find the "maximum-margin hyperplane" that divides data points with different labels. "Supports vector machines can also efficiently perform non-linear classification using what is called the kernel trick, implicitly mapping the inputs into high-dimensional feature spaces" <ref type="bibr" target="#b3">[6]</ref>.</p><p>Our support vector machine model performed non-linear classification using the radial basis function kernel, which is defined by the formula below.</p><p>( , ′ ) = − ‖ − ′ ‖ 2 We set the penalty parameter C of the error term to 1.0 and the kernel coefficient for the RBF kernel to 0.001. Due to the suboptimal results achieved by this first model, we did not do further tuning of these parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">MobileNetV1 and InceptionV3</head><p>MobileNetV1 and InceptionV3 are two convolutional neural network (CNN) architectures designed for image recognition tasks. MobileNetV1 is a lighter, lower-latency neural network designed for use on mobile devices, while InceptionV3 is a heavier architecture, which tends to achieve better performance.  Since we only had a few thousand images, training these networks from scratch would surely cause overfitting, so instead, we downloaded pre-trained versions of these models using Tensorflow (with weights optimized to classify images in the ImageNet dataset), froze the weights of most of the layers of the pre-trained networks, and trained a new fully connected layer with a sigmoid or softmax activation placed on top of each of the pre-trained networks. This is a common technique used in machine learning known as transfer learning <ref type="bibr" target="#b5">[8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5">Support Vector Machine Based on Activations Earlier in the InceptionV3 Network</head><p>Since our dataset was quite different from the ImageNet dataset, the features extracted at the top of the InceptionV3 network were probably not optimized for our application, so we thought we might be able to achieve better performance by building an SVM classifier based on activations earlier in the InceptionV3 network, which contains more general features.</p><p>This was achieved by feeding the pretrained InceptionV3 network all of our images, computing the output of the 288th later (for reference, the InceptionV3 network has 311 layers), and using these outputs as features for an SVM classifier. Here, we also implemented model selection to find the optimal kernel coefficient gamma of the RBF kernel, as shown in <ref type="figure" target="#fig_1">Figure 3</ref>.</p><p>We used a Google Cloud Deep Learning VM instance for many of our simulation runs, with Tensorflow optimized for an NVDIA P100 GPU and Intel Skylake 8-core CPU (using Intel MKL and NVIDIA CUDA). We discovered an instance optimized for NVDIA was faster on CNNs, but an instance optimized for Intel was faster for sci-py.</p><p>All of the code used in this project (including many experiments whose results we did not include in this report, due to lack of space) is available in our GitHub repository: https://github.com/jatron/structural-damage-recognition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Experimental Results</head><p>The performance achieved by each of our models is summarized in the  It is not surprising that the models based on CNNs performed the best, since the parameters could best take advantage of the spatial information in the images. We note however, that the mixed network (SVM plus Inceptionv3) also did well; after tuning the kernel coefficient gamma of the RBF kernel, we were able to achieve 75% validation accuracy and 95% training accuracy with this model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Bias versus Variance</head><p>As mentioned earlier, we had applied transfer learning in Tensorflow to baseline Inceptionv3 model originally trained using ImageNet, adding a fully-connected and softmax layer, similar to <ref type="bibr" target="#b2">[4]</ref>. Using a gradient descent algorithm with a learning rate of 0.01, we obtain the results shown in <ref type="figure" target="#fig_2">Figure 4</ref> below. Although the final validation accuracy could be higher, we see that bias clearly dominates the performance. As a result, we decided to add more parameters to combat the bias by training additional layers of the Inceptionv3 model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Misclassified Images and Data Augmentation</head><p>We find that by using 4000 images for training 1000 images for testing on the retrained Inceptionv3 model discussed in 5.2, we obtain the following test confusion matrix: [ 448 86 117 349 ]. After performing the prediction, we checked manually through several hundred images to determine patterns in correctly predicted images, false negatives, and false positives. Examples of misclassified images are depicted in <ref type="figure" target="#fig_3">Figure 5</ref>. We hypothesize that patterns can be mistaken as cracks, and vice versa. We augment the data by using horizontal flips, zooms, and shifting of the data. We see that some of these augmentation methods can lead to invalid structural images, as shown in <ref type="figure" target="#fig_4">Figure 6</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Experiments with Inceptionv3</head><p>We retrain the model from 5.2 using Keras, but this time we remove the top layer of the Inceptionv3 network, flatten the output of the penultimate layer, add a fully-connected layer and softmax activation. We find that we are now overfitting <ref type="figure" target="#fig_5">(Figure 7</ref>, left) most likely because the number of trainable parameters has increased significantly to <ref type="bibr" target="#b0">[2,</ref><ref type="bibr">001,</ref><ref type="bibr">000]</ref>. To reduce the variance, we fed in different versions of the training images on each iteration. Since the model never saw the same image more than once, it reduced the overfitting issue <ref type="figure" target="#fig_5">(Figure 7</ref>, middle). Augmenting with valid images <ref type="figure" target="#fig_5">(Figure 7</ref>, right) still leads to overfitting, likely because the augmented images are more similar to the original images, but the validation accuracy is also higher, by 1%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusions and Next Steps</head><p>We conclude that a variation of a convolutional neural network performs best on our dataset. Furthermore, while bias can be managed by training more parameters (layers) of the CNN, we must be careful not to add so many parameters that we overfit. However, overfitting can be also managed by adding random images to data.</p><p>In terms of future work and next steps, more controlled experimentation can be done to manage bias and variance. We could improve validation accuracy by better managing the data (correct mislabeled images, add images similar to the false positives or negatives, cropping irrelevant features, understanding differences in texture or pattern vs. damage, and accommodating wide-angle versus close-up images). Furthermore, other techniques (such as ensemble averaging) could perhaps lead to better performance. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 :</head><label>2</label><figDesc>Inceptionv3 Network</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :</head><label>3</label><figDesc>Tuning of the  parameter for Inceptionv3-SVM</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>Learning curve for retrained Inceptionv3 (left) and example Tensorboard plot (right)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>Misclassified images</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Image Augmentation</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>Inceptionv3 minus top layer, no data augmentation (left), data augmentation with shift &amp; flip (middle), data augmentation with flip and zoom (right)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>A diagram of the InceptionV3 architecture is shown below. To give an idea of the complexity of the 3 network, we note that the top layer [311] of the Inceptionv3 network includes 1000 parameters. Layers [310] includes 102,402 parameters, Layers [301-310] have 512 parameters, and Layer 300 is a convolutional layer with 393,216 parameters. These observations are relevant when managing bias and variance (overfitting).</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>table below .</head><label>below</label><figDesc></figDesc><table>Model 
+Train Accuracy 
+Validation/Test Accuracy 
+K-nearest neighbors (k=5) 
+67.4% 
+53.7%/52.9% 
+Logistic Regression 
+99.4% 
+54.7% 
+SVM with RBF kernel 
+99.7% 
+50.7% 
+MobileNetV1 
+80.0% 
+67.0% 
+InceptionV3 
+81.0% 
+83.0% SVM based on activations from 
+layer 288 of InceptionV3 
+95.0% 
+75.0% 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Summary of Accuracies for Classification Models</figDesc><table></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>We acknowledge Sanjay Govindjee, who alerted us to this problem. The guidance of Fantine Huot and Mark Daoust are also gratefully acknowledged.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Deep Transfer Learning for Image-Based Structural Damage Recognition. Computer-Aided Civil and Infrastructure Engineering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">M</forename><surname>Mosalam</surname></persName>
+		</author>
+		<ptr target="https://www.researchgate.net/publication/324565121_Deep_Transfer_Learning_for_Image-Based_Structural_Damage_Recognition/" />
+		<imprint>
+			<date type="published" when="2018-10-18" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Scikit-Learn</surname></persName>
+		</author>
+		<ptr target="https://scikit-learn.org/" />
+		<imprint>
+			<date type="published" when="2007-11-19" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Poets</forename><surname>Tensorflow For</surname></persName>
+		</author>
+		<ptr target="https://codelabs.developers.google.com/codelabs/tensorflow-for-poets/#0" />
+		<imprint>
+			<date type="published" when="2018-11-19" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Support vector machine</title>
+		<ptr target="https://en.wikipedia.org/wiki/Support_vector_machine" />
+		<imprint>
+			<date type="published" when="2018-12-13" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Advanced Guide to Inception v3 on Cloud TPU</title>
+		<ptr target="https://cloud.google.com/tpu/docs/inception-v3-advanced" />
+		<imprint>
+			<date type="published" when="2018-12-13" />
+		</imprint>
+	</monogr>
+	<note>Accessed</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Transfer Learning</title>
+		<ptr target="http://cs231n.github.io/transfer-learning." />
+		<imprint>
+			<date type="published" when="2018-12-13" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kalenichenko</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Weyand</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Andreetto</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Adam</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.04861</idno>
+		<title level="m">MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications</title>
+		<imprint>
+			<date type="published" when="2017-04" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Rethinking the Inception Architecture for Computer Vision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Wojna</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1512.00567</idno>
+		<imprint>
+			<date type="published" when="2015-12" />
+		</imprint>
+	</monogr>
+	<note>cs.CV</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Image Net</title>
+		<ptr target="http://www.image-net.org/" />
+		<imprint>
+			<date type="published" when="2018-11-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

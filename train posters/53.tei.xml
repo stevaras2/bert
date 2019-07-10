@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">SongNet: Real-time Music Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chen</forename><surname>Chen</surname></persName>
+							<email>chenc2@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chi</forename><surname>Zhang</surname></persName>
+							<email>czhang94@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yue</forename><surname>Zhang Dataset</surname></persName>
+						</author>
+						<title level="a" type="main">SongNet: Real-time Music Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Overview Results &amp; Discussion</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>q Objectives ü Build deep learning (C-RNN) models to automatically classify music genres for real time. ü Improve baseline models accuracy by C-RNN. ü Understand why C-RNN cannot perform well on "Experimental" genre and improve the accuracy of that genre. ü Consider adding music metadata to C-RNN models and further improve the accuracy. ü Implement an user interface to allow users input a music clip and visualize the realtime music classification online.</p><p>q Architecture ü Input: mel-spectrogram ü 3 Convolutional layers § Batch Normalization § ReLU activation § Dropout Regularization ü Recurrent layers ü Output: probability of each genre.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>LibROSA (n.d.). http://librosa.github.io/librosa/</figDesc><table>q Free Music Archive 
+
+ü The dataset contains 8000 tracks of 30 seconds clips, 
+with 8 balanced genres [2] listed below. 
+
+ü 70% training / 20% Validation / 10% Test 
+
+Feature Map 
+
+q Mel-spectrogram 
+
+ü Used librosa [3] package to calculate mel-spectrogram. 
+ü Designed CONV layers to extract features (DEMO) 
+
+[1] Kozakowski, P., &amp; Michalak, B. (2016, October 26). 
+Music Genre Recognition. 
+[2] K. Benzi, M. Defferrard, P. Vandergheynst, and X. 
+Bresson. (2016). FMA: A dataset for music analysis. 
+[3] Models 
+Accuracy 
+Random guess 
+12.5% 
+K nearest neighbors 
+36.38% 
+Logistic regression 
+42.25% 
+Multilayer perceptron 
+44.88% 
+Support vector machine 46.38% 
+C-RNN 
+65.32% 
+
+q Discussion 
+
+ü Genre "Experimental" is hard to be classified correctly. 
+ü Classifications of other genres perform well. 
+ü CONV layers extracted useful genre clips, listen to our demos. 
+ü Recurrent models enable us to do real-time classification. 
+ü C-RNN does not include music metadata, while baseline model does. 
+
+Instrumental 
+Rock 
+Electronic 
+International 
+Pop 
+Experimental 
+Hip-pop 
+Folk 
+
+q Results 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

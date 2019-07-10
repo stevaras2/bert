@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">PUBG: A Guide to Free Chicken Dinner</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yang</forename><surname>Li</surname></persName>
+						</author>
+						<title level="a" type="main">PUBG: A Guide to Free Chicken Dinner</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>(yangli97@stanford.edu), Xin Lu(luxin@stanford.edu), Wenxin Wei(wxwei@stanford.edu) Advised by Professor Andrew Ng Introduction</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>PUBG(Playerunknown's Battlegrounds) is a multiplayer online battle arena video game that has become popular in the past year. The game features the last man standing deathmatch mode, in which one hundred players fight against each other in a battle royale. Given players' statistics within a game, we build ridge regression, lasso regression, lightGBM model, and random forest model to predict their final ranks. After predicting final ranks, we perform an additional step to classify game strategies used by top players.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>We applied a few feature engineer methods to process the data: 1) Added group-statistic data, e.g, mean/sum/max/min of each feature, and the corresponding ranking, to each group as new features, since the final score is same for all members in each group. 2) Normalized feature values based on the amount of players joined in match, and also normalize by mean and variance. 3) Converted feature 'matchType' (16 different match types in total) from a numeric value to a one-hot vector. 4) To better capture information hidden behind group of features, we added combined features, e.g.,'totalDistance' = 'rideDistance' + 'walkDistance' + 'swimDistance' 5) Calculated feature importance and kept only important features:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>Regression models: we tried linear regression (SGD regressor), ridge regression, lasso regression and elasticnet regression. Ridge regression has the best out-of-box result with the help of aforementioned feature engineering, likely because it handles multicollinearity data better. Tree models: we tried random forest and light-GBM (light gradient boosting machine). Light-GBM results in quite good MAE score, which shows significant improvement on linear regression models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Result</head><p>In terms of predicting final ranks, we have achieved minimum MAE (Mean Absolute Error) of 0.0204, and ranks #57 on Kaggle leaderboard as of Dec 10.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Thanks to the effective feature engineering and appropriate model selection, we got some decent results in predicting final ranks. Moreover, we have observed some interesting gaming strategies which we will give out to PUBG players as Free Chicken Dinner! Game prefer fighters Don't stay in one place</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future</head><p>We will train the AI to play PUBG and win. With the results we have arrived at, we will train the bots to maximize the exponentially decayed sum of future rewards with data produced entirely from self-play, that is, the bots are playing against themselves to "learn" to play by the strategies that maximize their chances of winning. By building AI's that succeed in complex and dynamic games like PUBG, we believe it can bring humanity closer to the ultimate goal of making AGI's that function in the messiness of the real world. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>DataOur data comes from Kaggle competition, which contains anonymized PUBG game stats, formatted so that each row contains one player's post-game stats. The columns are features that influences the players' finishing placement, such as number of enemy players killed, total distance traveled on foot/in vehicle/by swimming, number of weapons picked up, etc. We perform fully-covered data cleaning, which excludes NaNs, outliers, and cheaters among the players.</figDesc><table>MAE on 20% validation set 
+Linear Regression 
+Ridge Regression 
+Light-GBM 
+
+Raw features 
+0.09000 
+0.08989 
+0.05654 
+
+Raw + mean 
+0.05736 
+0.05736 
+0.04158 
+
+Raw + mean+sum+max-min 
+0.04845 
+0.04845 
+0.02896 
+
+Everything above +match_mean+size 0.04825 
+0.04825 
+0.02755 
+
+Everything above + cross validation 
+0.04812 
+0.04810 
+0.0204 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

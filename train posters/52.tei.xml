@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Introduction Motivation Improving Robustness of Semantic Segmentation Models with Style Normalization Breakdown of MIoU Scores References Pipeline</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evani</forename><surname>Radiya-Dixit</surname></persName>
+							<email>evanir@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Tierno</surname></persName>
+							<email>atierno@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Felix</forename><surname>Wang</surname></persName>
+							<email>felixw17@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Introduction Motivation Improving Robustness of Semantic Segmentation Models with Style Normalization Breakdown of MIoU Scores References Pipeline</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>One challenge to semantic segmentation models is the data having varying style domains. We define the style domain of an image to be aspects of the image linked to the medium from which it originates. We examine the effects of normalizing style domains to improve the robustness of semantic segmentation models.</p><p>[1] Liang-Chieh Chen, Yukun Zhu, George Papandreou, Florian Schroff, and Hartwig Adam. Encoder-decoder with atrous separable convolution for semantic image segmentation. In ECCV, 2018.</p><p>[2] Ming-Yu Liu, Thomas Breuel, and Jan Kautz. Unsupervised image-to-image translation networks. CoRR, abs/1703.00848, 2017. URL http://arxiv.org/abs/1703.00848.3</p><p>Cityscapes: real world images GTA5 (Grand Theft Auto V): computer generated images</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>• Standardizing class labels (colored GTA5 ground truth images versus grayscale Cityscape ground truth images) • Implementing transforms for GTA5 images similar to those applied to Cityscapes images (used in dataloader)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Preprocessing</head><p>DeepLabv3+ employs a re-purposed ResNet-101 for semantic segmentation by atrous convolution shown in <ref type="figure" target="#fig_0">Figure 3</ref>.</p><p>Figure 1: Shared latent latent space assumption. We assume a pair of corresponding images (x 1 , x 2 ) in two different domains X 1 and X 2 can be mapped to a same latent code z in a shared-latent space Z. E 1 and E 2 are encoding functions, and G 1 and G 2 are generation functions. We drew 987 images of street scenes from each and partitioned them into 80/20 train-test splits. There are evident stylistic differences between the images (efficiency tricks of GTA5's graphical engine, more vibrant palette in the GTA5 images. However, the images share a content domain: cars, trees, buildings, etc. • UNIT-Mapped outperformed baseline on the Cityscapes semantic segmentation task, which suggests that mapping synthetic data onto the real-world domain can improve the robustness of a real-world classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DeepLab for semantic segmentation</head><p>• UNIT-Mapped model's decreased performance on the GTA5 semantic segmentation task likely stems from accrued errors in upsampling (we visually see misalignments) and the inherently probabilistic nature of UNIT's mapping cheme.</p><p>• Style normalization does not improve performance on the combined image segmentation task <ref type="table">Table 1</ref>: MIoU results on our baseline and experimental models evaluated on Cityscapes, GTA5, and a combination of the two.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>UNIT-Mapped Baseline</head><p>• Utilizing UNIT's successor, MUNIT (Multimodal UNIT)</p><p>• Retraining UNIT to produce larger outputs, removing the need to upsample  Unsupervised Image-to-Image Translation (UNIT) converts all inputs to normalized 928 x 512 pixel images. To compare them to our larger ground truth domain images, we used cubic interpolation to upsample our UNIT mapped outputs.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 3 :</head><label>3</label><figDesc>Top row shows sparse feature extraction with standard convolution. Bottom row shows dense feature extraction with atrous convolution.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>•Figure 4 :</head><label>4</label><figDesc>Testing on other synthetic databases such as Foggy Cityscapes and SYNTHIA UNIT model for style normalization Results Figure 4: The training loss and testing loss per epoch evaluated on the combined dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Top</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Autonomous Computer-Vision-Based Human-Following Robot</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Akshay</forename><surname>Gupta</surname></persName>
+							<email>akshaygu@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nick</forename><surname>Gloria</surname></persName>
+							<email>ngloria@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Autonomous Computer-Vision-Based Human-Following Robot</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1023/B:VISI.0000022288.19776.77</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>• For "golf caddy" product: autonomous golf bag carrier • Computer vision directs robot to follow human, navigate terrain • Enhances golfer experience, assists elderly or disabled golfers • Robot has single camera, onboard processor • Terrain classification problem: classifying image into traversable/untraversable terrain (avoiding green, sand traps, etc.) • Target-following problem: identify and track target, maintaining distance </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Steps</head><p>• Generation of larger dataset on golf course images for training the networks • Use edge-detection algorithm to implement pooling layer (i.e. use most common classification to classify identified segment) • Extension of single classification to multiple classification layers (neural network) • Devise efficient means of classifying images (e.g. augmentation by edge detector, stamping) to allow for expansion of training set</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussion</head><p>The results show that with given data, the algorithms implemented can roughly classify the robot images, with some shortcomings and pitfalls. Target-Tracking Output Using CNN</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Dataset collected via onboard camera (Jetson SoC) • Training and test data sets selected from images taken during product testing • Supervised data provided by hand-classified, color-coded images Models Both unsupervised and supervised methods were implemented to this classification problem. Target Tracking: Convolutional Neural Network -MobileNet SSD • Using pre-trained neural network, identified following target with bounding box Image Classification: K-means-based Segment Detection • K means clustering on a test images resulting in color based clusters • Clusters picked for appropriate terrain areas, which generates segments based on norm distance in the color space Image Classification: Felzenszwalb Superpixel Segmentation + Pooling • SciKit based image segmenter, results in boundary generation based on pixel vise difference both locally, and globally after clustering • Draws boundaries after generating clusters segmenting into large regions • The pixel values are averaged in each cluster and repainted onto image Image Classification: Convolutional Layer • Square pixel stencil converts each pixel to a vector of pixels • Linear combination of neighboring pixel vectors gives access to gradient Image Classification: Softmax Regression • Uses key-painted images for training • Classifies each pixel into one category • Classes: green, traversable grass, bunker, target, path, etc.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Convolution + Softmax Regression • Rough accuracy with noise, limited by single-layer classification • Suffers from low number of hand-classified images for training Image Classification: K-means-based Segment Detection • Pixelated images generated with area segmentation and limited closed curves • Cluster selection needs tuning and automation to increase efficiency Image Classification: Felzenszwalb Superpixel Segmentation + Pooling • Good clustering but fails to captures all boundaries, also generates more clusters than required Target Tracking: Convolutional Neural Network -MobileNet SSD • High accuracy and precise detection, unable to detect smaller or thin objects • Needs to be fine tuned on golf course setting, including equipment and obstacles Example Hand-Classified Picture (for supervised training) Example Outputs (Convolutional Softmax Regression) Example Outputs (K-means [left] and Felzenszwalb Superpixel + Pooling [right])</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">F</forename><surname>Felzenszwalb</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Huttenlocher</surname></persName>
+		</author>
+		<idno type="doi">10.1023/B:VISI.0000022288.19776.77</idno>
+		<ptr target="https://doi.org/10.1023/B:VISI.0000022288.19776.77" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page">167</biblScope>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Astro-Ph/0005112] A Determination of the Hubble Constant from Cepheid Distances and a Model of the Local Peculiar Velocity Field</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Howard</surname></persName>
+		</author>
+		<idno>arxiv.org/abs/1704.04861</idno>
+		<imprint>
+			<date type="published" when="2017-04-17" />
+			<publisher>American Physical Society</publisher>
+		</imprint>
+	</monogr>
+	<note>MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

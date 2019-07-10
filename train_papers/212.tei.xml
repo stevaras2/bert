@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Modeling and Optimization of Thin-Film Optical Devices using a Variational Autoencoder</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><surname>Roberts</surname></persName>
+							<email>johnr3@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evan</forename><surname>Wang</surname></persName>
+							<email>wangevan@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Modeling and Optimization of Thin-Film Optical Devices using a Variational Autoencoder</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Optical thin film systems are structures composed of multiple layers of different materials. They find applications in areas such as solar cell design, ellipsometry and metrology, radiative cooling, and dielectric mirrors. The main property of interest is the transmission or reflection spectrum, which exhibits a complicated dependence on the parameters of the thin film stack. An open problem in optical design is finding a device that exhibits a desired transmission spectrum, a process known as inverse design. As a model system, we will use unsupervised learning to analyze the transmission properties of a 5-layer stack of alternating glass and silicon layers across a wavelength range of 1000 -2000 nm. The input features are the layer thicknesses and discretized transmission spectrum. We use a variational autoencoder (VAE) to compress the features down to a latent space and then reconstruct the input.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p>Since optical thin film systems are of great interest to the optics community, there are numerous existing design methodologies. Among them are analytical methods the rely on intuitive descriptions of the underlying physics <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>. While analytical design methods are excellent for understanding the physics of thin film systems, they are fundamentally limited in their design space. For better performance and more complex functionality, we must turn to computational methods. Examples include particle swarm optimization <ref type="bibr" target="#b2">[3]</ref> and genetic optimization <ref type="bibr" target="#b3">[4]</ref>. These methods enable the design of systems with high efficiency, however they can require computationally expensive electromagnetics simulations in more complex systems.</p><p>Recently, the has been a surge of interest in applying machine learning and neural networks to tackling the problem of electromagnetic design. The first demonstration involved the design of spherical nanoparticle, a problem very similar to thin films, using a neural network (NN) <ref type="bibr" target="#b4">[5]</ref>. The network is trained to simulate the spectrum of a given nanoparticle and backpropagate the gradients to update the input parameters towards the target spectrum. This method is simple but frequently lands in local optima. A global design technique was later demonstrated using a two-part neural network, one for forward simulation and one for inverse design <ref type="bibr" target="#b5">[6]</ref>. This tandem network lifts helps alleviate the uniqueness issue -multiple designs can possess similar electromagnetic responses -that often arises when directly training inverse design NNs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>We generate our training data using a transfer matrix model (TMM) of the optical properties of five-layer thin-film stacks. In the transfer matrix model, forward-and backward-propagating plane wave modes in each layer are coupled to the modes in each of the adjacent layers. The layer i has refractive index and thickness . The total transmission through the thin-film stack can be written in terms of the plane wave field amplitudes as The matrices represent the coupling between modes at the interfaces. Whereas, the matrices represent the phase difference after propagation through a layer. They are calculated as</p><formula xml:id="formula_0">= 1 2 ( 1 + 1 − 1 − 1 + ) , = ( exp( ) 1 1 exp(− ) )</formula><p>where = +1 , = and = . The procedure is shown schematically in <ref type="figure" target="#fig_1">Figure 1a</ref>.</p><p>For this study, we limit the devices to five-layer glass/silicon/glass/silicon/glass stacks in air. Using the transfer matrix code, we simulate 100,000 random devices for the training set and another 1000 random devices for the test set. The thickness of each layer can take values between 0 and 300 nm. We calculated the transmission at 101 points between = 1000-2000 nm. In this range the refractive indices are approximately constant, around ≈ 3.5 and ≈ 1.5. <ref type="figure" target="#fig_1">Figure 1b</ref> shows an example of a discretized transmission spectrum for a representative device.</p><p>The combined input feature vectors consist of 5 normalized thickness values and 101 transmission values for a total of 106 input features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>In order to study the interesting aspects of our data, we train a variational autoencoder, an unsupervised learning algorithm that allows us to compress the input data onto an underlying latent space. However, as a baseline, we first attempt to apply principle component analysis (PCA) in an attempt to achieve the same purpose. In PCA, we compute the principal eigenvectors of the covariance matrix, which is given by</p><formula xml:id="formula_1">Σ = 1 ∑ ( ) ( ) =1</formula><p>Taking the n largest eigenvectors, ranked by eigenvalue, allows us to reduce the dimensionality of the data from 106 to n. This compression is strictly linear, which means it is likely a poor model for the difficult to capture the behavior of thin film systems.</p><p>For that, we turn to VAEs; <ref type="figure" target="#fig_2">Figure 2</ref> shows the structure of a VAE. In a VAE, the input data is compressed to a latent space using an encoder neural network and then reconstructed with a complementary decoder neural network <ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref>. The entire network is trained at the same time. In a variational autoencoder, rather than encoding to a specific point, we encode each input sample to a Gaussian distribution within the latent space with mean and variance 2 . During training, this distribution is randomly sampled with the result being passed through the decoder. This step forces the VAE to represent similar input vectors near each other and creates high information density in the latent space.</p><p>The loss function for a VAE consists of a traditional loss function, in this case the weighted mean square error for reconstruction, as well as a Kullback-Leibler divergence regularization term.</p><formula xml:id="formula_2">( , ) = 1 ( ( ) −̂( ) ) 2 + ( ( | ( ) )|| ( ))</formula><p>Where ( ) is the input, ̂( ) is the reconstructed output, are the network weights, is the latent variable, is the encoded distribution, and ( ) is the standard normal distribution <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b8">9]</ref>. The KL divergence ensures that the generated latent space distribution is Gaussian. The KL divergences gives the differences between the predicted distributions and the standard normal distribution. The MSE loss, or reconstruction loss, is given by the weighted MSE between the input and reconstructed vectors. The weights are assigned such that the 5 thicknesses have the same total weight as the 101 transmission points.</p><p>The VAE implementation we use is based on a PyTorch example by Diederik Kingma and Charl Botha <ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussion</head><p>In addition to the reconstruction loss, there is another metric of interest in this problem. When the decoder reconstructs a device and corresponding spectrum from the latent space, we need to ensure that the reconstructed device's real spectrum, as computed with the transfer matrix method, and the VAE's predicted spectrum match. The figure of merit for the accuracy of a batch with m samples is given by <ref type="bibr" target="#b1">2</ref> To ensure that the VAE remains consistent with the physics of thin films, we evaluate our model's hyperparameters by checking the accuracy of randomly sampled points in the latent space (instead of using a validation set). <ref type="figure" target="#fig_3">Figure 3</ref> demonstrates the procedure for computing the model accuracy. We first sample 100 random points in the latent space and decode them into a device and a spectrum. We compute the actual spectrum of the generated device using the transfer matrix model and compare it to the generated spectrum.</p><formula xml:id="formula_3">( ) = 1 ∑( , ( ) − ,<label>( ) )</label></formula><p>Since the transfer matrix method allows us to fully describe the spectrum with only the five thicknesses as input, we wanted to see if compression to an even smaller dimension was possible, thus we optimized the network for three latent dimensions. We compared the accuracy MSE for different numbers of hidden neurons and mini-batch sizes. <ref type="table" target="#tab_0">Table 1</ref> shows the results of the tests which resulted in our final architecture of one hidden layer for the encoder and one for the decoder, each with 80 neurons. The encoder uses a ReLU activation function and the decoder uses a sigmoid activation function to ensure that the normalized device thicknesses and transmission spectra are in the range [0, 1]. We trained the VAE with a mini-batch size of 100 samples.  After training the VAE, we plot some of the devices and spectra that are generated for a qualitative assessment of the reconstruction and accuracy. <ref type="figure" target="#fig_4">Figure 4</ref> shows reconstructed spectra from the test set. The spectrum on the left is poorly reconstructed and the reconstruction has poor accuracy. The spectrum on the right shows both good reconstruction and accuracy. Overall, it would be desirable to achieve greater accuracy in the model, so that the model prediction captures the physics of thin films. Our accuracy is likely limited by the latent space dimensionality.</p><p>To understand the properties of the encoded latent space, we systematically sampled the latent space on a threedimensional grid and decoded the sampled points. The decoded spectra vary smoothly across the latent space. The latent space variables appear to be strongly correlated with layer thicknesses <ref type="figure" target="#fig_5">(Figure 5</ref>), implying that the VAE learns to encode the data using the thickness parameters that generated the spectra. Significantly, two of the three latent space variables are always strongly correlated with the thicknesses of the two silicon layers <ref type="table">(Table 2)</ref>. Variations in these layers cause larger changes than variations in the glass layers because of silicon's significantly larger refractive index ( ≈ 3.5, ≈ 1.5). This result demonstrates that when the latent space is lowdimensional enough that it cannot completely represent the degrees of freedom of the problem, the VAE learns to encode the more physically important features. This suggests that VAEs can be used to approximately simulate the physics of thin films, and potentially other, more complex devices, using a less complex representation.   Finally, with our trained VAE, we attempt to use the model for inverse design, the process of generating devices that exhibit a desired spectrum. Our approach utilizes the property that VAEs are robust to input noise. Because the input data is compressed to a very small latent space, small perturbations in the often lead to the same point in latent space. <ref type="figure" target="#fig_6">Figure 6</ref> illustrates the method. We pair our target spectrum with random thickness values and input them into the VAE. After the input is encoded and decoded in the VAE, we examine the output device. In principle, if the randomly generated device is close in latent space to a device that actually exhibits the target spectrum, our output should be close to that device.</p><p>We perform this for a batch of 100 random devices for a target spectrum. Some outputs are shown on the right of <ref type="figure" target="#fig_6">Figure 6</ref>. In this case we can see that at least one out of the 100 random inputs generated a device that exhibits the target spectrum. There is a flaw to this method: because of the symmetry between the devices and spectra, we are just as likely to receive the output spectrum for the random device as we are to receive the output device for the target spectrum. Thus, while this type of method shows promise in theory, some modifications are required for a successful implementation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion and Future Work</head><p>We use a variational autoencoder to represent optical thin-film stacks and their transmission spectra in a lowdimensional latent space. We show that it is possible to represent thin-film devices in a latent space distribution, and to generate new devices and their approximate spectra by sampling from the latent space. When the latent space is lower-dimensional than the degrees of freedom of the thin-film stack, the latent space variables are strongly correlated with the more physically important parameters.</p><p>In the future, a modified network architecture may be required to perform efficient inverse design. In addition, the accuracy of our model is likely limited because the latent space is lower-dimensional than the problem. While this reveals interesting behavior of the VAE, a more accurate model for the purpose of inverse design could be implemented by increasing the number of latent space dimensions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>Our code is available at: https://drive.google.com/drive/folders/1knAhigCB4OEyxg_z8TPT1KT4notkD3DS?usp=sharing  <ref type="table">Table 2</ref>: Correlation between latent variables and decoded layer thicknesses based on a grid sampling of the latent space. Each entry is a correlation cor( , ℎ ). The layer thicknesses ℎ 2 and ℎ 4 correspond to the high-index silicon layers, which have a larger effect on the spectrum than the three glass layers. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>initial and final media are the same. Then the transmission of the total stack can be computed by</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>a) Schematic of transfer matrix method. b) Representative example of a discretized transmission spectrum</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Left: Schematic of variational autoencoder showing input and output vectors, encoder and decoder portions and latent space. Right: Loss function during training.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Procedure for assessing accuracy of VAE model by generating random examples. Random points are sampled from the latent space and decoded. The accuracy is defined as the MSE between the reconstructed spectrum and the real spectrum of the reconstructed device.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Example spectra sampled from the test set showing a comparison between the input, reconstructed and actual output spectra.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc>(Left) Latent space representation of the test set. (Right) Decoded thickness parameter ℎ 2 (thickness of the first silicon layer) after sampling on a grid in the latent space with the trained VAE. The latent parameter 2 appears to be strongly correlated with ℎ 2 .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 :</head><label>6</label><figDesc>Application of VAE for inverse design. A random device is input with the target spectrum. Example outputs are shown on the right.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>VAE Hyperparameter Tuning</figDesc><table>Mini-Batch 
+Size 
+
+Hidden 
+Neurons 
+
+Accuracy 
+(MSE) 
+100 
+20 
+1.86 
+100 
+50 
+1.43 
+100 
+80 
+1.17 
+100 
+200 
+1.7 
+1000 
+80 
+1.255 
+
+PCA Baseline 
+17.81 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>John wrote the transfer matrix code. Evan ran the dataset generation. John set up the framework for the VAE code. Evan ran the training and sample generation. John mapped the latent space. Evan implemented the inverse design.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Multilayer Thin-Film Structures with High Spatial Dispersion</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Gerken</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Appl. Opt</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="1330" to="1345" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Ye</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Celanovic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">G</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Joannopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Soljacič</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Optical Broadband Angular Selectivity. Science</title>
+		<imprint>
+			<biblScope unit="volume">343</biblScope>
+			<biblScope unit="page" from="1499" to="1501" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Global Optimal Design of Optical Multilayer Thin-Film Filters Using Particle Swarm Optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">I</forename><surname>Rabady</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ababneh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Optik</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="page" from="548" to="553" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Optimization of Multilayer Optical Films with a Memetic Algorithm and Mixed Integer Programming</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Raman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Fan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACS Photonics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="684" to="691" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">E</forename><surname>Peurifoy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Cano-Renteria</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Joannopoulos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Tegmark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Soljacic</surname></persName>
+		</author>
+		<title level="m">Nanophotonic Inverse Design Using Artificial Neural Network. Science Advances</title>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="page">4206</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Training Deep Neural Networks for the Inverse Design of Nanophotonic Structures</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Tan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Khoram</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACS Photonics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="1365" to="1369" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Doersch</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1606.05908v2</idno>
+		<title level="m">Tutorial on Variational Autoencoders</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+	<note>stat.ML</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Automatic Chemical Design Using a Data-Driven Continuous Representation of Molecules</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Gómez-Bombarelli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACS Central Science</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="268" to="276" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Tutorial -What is a variational autoencoder?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Altosaar</surname></persName>
+		</author>
+		<ptr target="https://jaan.io/what-is-variational-autoencoder-vae-tutorial/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Variational Autoencoder in PyTorch, commented and annotated</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Botha</surname></persName>
+		</author>
+		<ptr target="https://vxlabs.com/2017/12/08/variational-autoencoder-in-pytorch-commented-and-annotated/" />
+		<imprint>
+			<date type="published" when="2018-11-20" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vae</forename><surname>Basic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Example</surname></persName>
+		</author>
+		<ptr target="https://github.com/pytorch/examples/tree/master/vae" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pytorch</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Scikitlearn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">U-N.o.1T: A U-Net exploration, in Depth</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-18">December 18, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">Luke</forename><surname>Chuter</surname></persName>
+							<email>jchuter@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">Boris</forename><surname>Boullanger</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manuel</forename><surname>Nieves Saez</surname></persName>
+						</author>
+						<title level="a" type="main">U-N.o.1T: A U-Net exploration, in Depth</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-18">December 18, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this paper, we are exploring the generation of depthmaps from a sequence of images. Compared to similar projects in the field, we have decided to incorporate both spatial (CNN) and temporal (LSTM) aspects in our model, by creating convLSTM cells. These are used in a U-Net encoder-decoder architecture. The results indicate some potential in such an approach.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>Hardware progress has enabled solutions which were historically computationally intractable. This is particularly true in video analysis. This technological advance has opened a new frontier of problems. Within this expanse, we have chosen the classic problem of depth inference from images. Specifically, given a sequence of images captured over time, we output depth maps corresponding one-to-one with the input sequence. As a spatiotemporal problem, we were motivated to model it with convolutions (spatial) and LSTMs (temporal).</p><p>The input to our algorithm is a sequence of images. We then use a neural network U-Net encoder-decoder architecture, with bi-ConvLSTM cells for encoding and convolutions and transconvolutions to decode, to output a predicted depth map sequence. As we deal with sequences of images, this process is many-to-many, where for each input image we output one depth map. Solutions to the above problem would enable 3D world generation from simple video input with applications from VR to robotics. While there are hardware approaches to depth-determination problems, such as LIDAR or multiple lenses, software solutions provide flexibility in their application.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1.">In Depth</head><p>After researching this initial problem in depth, we became familiar with literature on depth maps, their algorithms and datasets. This presented itself as a sensible path forward, as it seemed simpler and better scoped. This area is a classic one, with not only history but ongoing and recent progress. Concerning depth maps, there are various families of problems; single image to depth map, depth map alignments, from sparse to dense -but given the background research we'd done on the image+depth map sequence, we were naturally drawn to the most similar problem: from a sequence of images, generate a sequence of depth maps.</p><p>There are many reasons to be excited about such a problem, especially as the interest for spatiotemporal models is booming. For us, however, we wanted to learn about RNNs and CNNs, and as space-time lends itself to natural conceptions of convolutions and recurrent networks, we proceeded down that path.</p><p>Quite excited to apply modern RNN and CNN techniques, we were both disappointed and relieved to find extremely relevant literature: 'DepthNet' <ref type="bibr" target="#b2">[3]</ref>, 'Spatiotemporal Modeling for Crowd Counting in Videos' <ref type="bibr" target="#b18">[19]</ref>, 'Bidirectional Recurrent Convolutional Networks for Multi-Frame Super-Resolution' <ref type="bibr" target="#b8">[9]</ref>, 'Cross-scene Crowd Counting via Deep Convolutional Neural Networks' <ref type="bibr" target="#b19">[20]</ref>, and 'Pyramid Dilated Deeper ConvLSTM for Video Salient Object Detection' <ref type="bibr" target="#b15">[16]</ref>. All these papers address spatiotemporal problems with RNNs and convolutions.</p><p>While there some people praise CNN to the detriment of RNN, we wanted to explore this avenue further. In pursuit of this approach we have our own opinion, as will be discussed at the end.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>It is fitting to begin with paper that introduced the core unit of our model, "Convolutional LSTM: A Machine Learning Approach for Precipitation Nowcasting" <ref type="bibr" target="#b14">[15]</ref>. This paper details the convolutional LSTM cell, wherein a typical LSTM cell performs a convolution at its gates. This enables encoding of spatial information (from the convolution) while benefiting from the LSTM. The authors then detail stacking of such convLSTM layers, to create a deep convLSTM network for encoding. The next notable paper, "DepthNet" <ref type="bibr" target="#b2">[3]</ref> presents the most similar model to our own. Specifically, they explore the combination of U-Net architecture with convLSTM layers in an encoder-decoder framework for purposes of depth estimation. Our variations from there explore how to implement bi-directionality, as a natural and common expansion to most LSTM models, which we detail in the following Model section. "Spatiotemporal Modeling for Crowd Counting in Videos" <ref type="bibr" target="#b18">[19]</ref> demonstrates one method of implementing bidirectionality in a spatiotemporal setting. "Pyramid Dilated Deeper Con-vLSTM for Video Salient Object Detection" <ref type="bibr" target="#b15">[16]</ref> combines multiple advanced techniques, but tackles a highly different problem. In this realm, there were several closely related problems:</p><p>We chose DepthNet <ref type="bibr" target="#b2">[3]</ref> as a baseline model to iterate from. First, a brief description of this baseline: 8 convL-STM layers are stacked in the encoding phase of U-Net encoder-decoder network. These provide connections and skip connections to the decoding phase, which is made of 4 convolutional and trans-convolutional pairs. For details we cannot do justice to here, refer to the DepthNet paper. The DepthNet authors themselves propose several possibilities for alteration, and we came up with a few ourselves. Alternative models include: Implement an explainability mask to better predict depth maps for individual objects, Attention mechanism, or Bi-directionality. It was this third option we chose to explore, as in a network like this there are surprisingly many ways to try to incorporate the forward and backward passes. While this remains an object of experimentation, there are three principle categories of variation: Full-communication, Sparse-communication, Mediation. We chose full-communication between a left and right pass over the input image sequence.</p><p>There are many great people and great ideas, <ref type="bibr" target="#b21">[22]</ref>  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Descriptive Overview</head><p>In the search for a dataset with both picture and depth map, we have decided to use the KITTI dataset <ref type="bibr" target="#b5">[6]</ref>, which was originally created from a Volkswagen station wagon for use in mobile robotics and autonomous driving research. A few hours of traffic scenarios have been recorded, using various sensors like a high resolution color camera or a Velodyne 3D laser scanner. Even if our project is on a different subject compared to the dataset's target audience, we were attracted by the large amount of recordings of paired video/depth map that the KITTI dataset offered. We are not using the other measurements provided by KITTI -e.g GPS, timestamp, etc. The features for an image and depthmap pair are the pixels therein; i.e. the RGB values and depth values. These depthmap groundtruths are generated with LIDAR. We are using the full raw dataset from KITTI containing 180GB worth of data, divided into categories: Road, City, Residential, Campus and Person. As we are conscious it would be impractical on either of the two machines we are using for training, we had to reduce the amount of data we would use. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Preprocessing</head><p>First, we organized the data and store image sequences in subfolders as it seems to simplify and speed up the training <ref type="bibr" target="#b21">[22]</ref>. Second, we reduced the quality of the images so that we could run the best model on our GPUs without needing extremely small batch sizes (i.e. 64x18px). Finally, we split our dataset into train, valid and test sub-datasets. These train (c. 35,000 images), valid/test (c. 10,000 images) sets are optimally preselected by KITTI and allow comparability to various models applied to this dataset. The two first were used to try different versions of models and calibrate the hyper-parameters for the most successful model, while the test set will only be used once, at the end, in order to report the performance of our best model on the final report. We created a bespoke data loader due to the unusual nature of our dataset (i.e. images stored by sequences in subfolders and depth maps linked to the sequence). This dataloader includes preprocessing such as Unity Normalization transformation, to quicken training. We experimented with cropping and random flipping, but such data augmentation techniques proved counterproductive, as we have a surplus of data for our computational means, and actively made a sequence of data inconsistent through time, working against the LSTM. Now on to the methods of what was to be trained, and how.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">ConvLSTM, bi-ConvLSTM</head><p>ConvLSTMs are more than a convolutional layer into an LSTM layer; they convolve on the hidden state and the input together. This functional difference has led to some speculation as to the merits of one over the other, where convLSTMs sometimes prove more effective (as in Very Deep Convolutional Networks for End-to-End Speech Recognition <ref type="bibr" target="#b20">[21]</ref>. We were curious to explore the more recent development of convLSTMS. Additionally, DepthNet achieved good results with convLSTMs, which indicated potential.</p><p>The specific math for a ConvLSTM is:</p><formula xml:id="formula_0">i t = σ(ReLU (W xi * X t + W hi * H t1 + W ci • C t1 + b i )) f t = σ(ReLU (W xf * X t + W hf * H t1 + W cf • C t1 + b f )) g t = tanh(ReLU ((W xg * X t + W hg * H t1 + b g )) C t = f t • C t1 + i t • g t o t = σ(ReLU (W xo * X t + W ho * H t1 + W co • C t + b o )) H t = o t • tanh(C t )</formula><p>where * refers to a convolution operation and • to the Hadamard product.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Architecture -U-Net Encoder-Decoder</head><p>We picked this model to optimize for simplicity of approach, while maintain sophistication of the model's capacity. The U-Net structure is symmetrical and conceptually simple, and the main complexity is within its subcomponent bi-ConvLSTM. This subcomponent could be tinkered without alteration to the whole. The inputs to our network are 5D tensors, (B, N, C, H, W), where B refers to batch size, N to sequence length, C to channels, H to height and W to width. Per layer, the number of filters, and therefore output channels of that layer increase during the encoding phase (starting from 3; RGB), and decrease during the decoding phase (finishing at 1; depth). We use relu activation functions for each encoding layer, and at the last step of the decoding phase. Skip connections in the U-Net structure pass forward outputs to later layers, concatenating with the output of the directly previous layer. See figures 2,3 for greater details.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Experiments/Results/Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">Experiments</head><p>For this project, we are using two separate machines with both a recent NVidia GPU (1080Ti and P100). Our current implementation of the model uses Pytorch 0.4.1 <ref type="bibr" target="#b12">[13]</ref> and Cuda 9.1. We have run various models for nontrivial hours, to test different sequence lengths <ref type="figure" target="#fig_0">(1,3,6</ref>), different image sizes (from 416x128 pixels, then 128x36, to 64x18). The final model was trained for 10 hours on 64x18 images.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">Metrics</head><p>We used multiple metrics for training and evaluation purposes, based on properties distinct to each function. Specifically, RMSE, iRMSE, MAE, iMAE, and a custom scale invariant loss. RMSE</p><formula xml:id="formula_1">L(y, y * ) = n t=1 (y − y * ) 2 n MAE L(y, y * ) = 1 N N t=1 |y * i − y i | Custom Loss L(y, y * ) = 1 n i d 2 i − λ n 2 i d i 2</formula><p>where d i = log(y i ) log(y * i ) for the i'th pixel, n the number of pixels, and λ = 0.5.</p><p>Succinctly, RMSE is standard and easy to implement, while providing comparison against other models. It is distinct from MAE, in that RMSE significantly larger than MAE indicates large variance of error distribution frequency.</p><p>Finally, A1, A2, and A3 metrics are accuracies that represent the percent of pixels that fall within a threshold ratio of inferred depth value, and ground truth depth value. a refers to a base, and 1,2,3 refer to powers of that base; ie A3 is the most lenient and A1 the strictest. These accuracies are independent of image size, and therefore ideal for baseline comparison. Also, whereas losses provide an unintuitive metric of "goodness" and progress, accuracy is more comprehensible. Multiple a-values indicate the distribution of inferences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">Baseline Measures</head><p>We are comparing ourselves most directly to DepthNet and other KITTI competitors, with the corresponding loss measures. The current two leaders are DL-61(DORN) and DL-SORD-SQ : </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.5.">Discussion</head><p>Comparing sequences of length 1 to 6, we see that the 6 outperformed the 1 on every metric. This implies that the LSTM does provide utility to analysis, and that over-time information holds clues to depth. This somewhat justifies the theory behind the model, and is consistent with the results of previous teams, such as DepthNet.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion and Future Work</head><p>We presented a different approach to image to depthmap implementation. Using jointly a U-Net architecture and convLSTM cells, we tried to incorporate both spacial  and temporal elements to insure consistency when generating depth-maps for sequences of images -i.e. video.</p><p>There are several areas to continue our work here. We'd first like to train for an extra week and see if we continue to progress towards convergence. First, increasing sequence length. While we limited ourselves to a length of 6, we are curious as to the impact a sequence of 600 would compare. Second, data processing. There are many transformation alternatives to be played with. We especially would like to train on bigger image sizes, if we had more time and compute. There are also multiple ways to iterate over the data As for loss functions, we used many of them for evaluation, and it'd be interesting to explore if any of those is better than our custom loss for guiding the gradient and training. Beyond that, we would like to play with kernel size, and the number of filters per layer, as there are interesting questions in the optimal number per layer. Expanding in creativity, how would increasing the number of encodingdecoding layers affect performance? We did not nearly approach overfitting problems. More dramatically, what are the effects of U-Net? If we were to remove the skip connections, how would we perform? Other advanced techniques invite exploration. Pyramids for convolutions, attention for LSTM; drop the RNN and just use a 3D convolution; perhaps use a 3D convolution inside a convLSTM (multiple timesteps to each lstm "timestep"). There are many possibilities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Appendices Contributions</head><p>While everyone has done some of everything, the largest contributions from each to any particulars may be described as follows. John has researched the literature, designed the models, and assisted Manuel with several of the models and metrics. Manuel implemented the final model and metrics, and ran multiple training runs. Geoffrey has set up the infrastructure for preprocessing data with various transforms, saving and loading models, and worked on metrics. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>a. Conv-LSTM b. bi-ConvLSTM Cell</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>UNoIT Detail</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 Figure 4 .Figure 5 .</head><label>345</label><figDesc>Sequence-1: SILog, RMSE, a1, a2, a3 (from top to bot- tom)Figure 5. Sequence-6: SILog, RMSE (from top to bottom)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 .</head><label>6</label><figDesc>U-Net Encoder-Decoder</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>[9] [4] [2] [11] [10] [14] [7] [18] [8] [1] [17] [12] [5] but we have continued to develop our own.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">An empirical evaluation of generic convolutional and recurrent networks for sequence modeling</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">Z</forename><surname>Kolter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Koltun</surname></persName>
+		</author>
+		<idno>abs/1803.01271</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">The fast bilateral solver</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">T</forename><surname>Barron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Poole</surname></persName>
+		</author>
+		<idno>abs/1511.03296</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Depthnet: A recurrent neural network architecture for monocular depth prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Bhandarkar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Prasad</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops</title>
+		<imprint>
+			<date type="published" when="2018-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Depth map prediction from a single image using a multi-scale deep network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Eigen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Puhrsch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Fergus</surname></persName>
+		</author>
+		<idno>abs/1406.2283</idno>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Pervasive Attention: 2D Convolutional Neural Networks for Sequence-toSequence Prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Elbayad</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Besacier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Verbeek</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-08" />
+		</imprint>
+	</monogr>
+	<note>ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Vision meets robotics: The kitti dataset</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Geiger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Lenz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Stiller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Urtasun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Robotics Research</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Unsupervised monocular depth estimation with left-right consistency</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Godard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><forename type="middle">Mac</forename><surname>Aodha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">J</forename><surname>Brostow</surname></persName>
+		</author>
+		<idno>abs/1609.03677</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Learning depth from single images with deep neural network embedding focal length</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Hu</surname></persName>
+		</author>
+		<idno>abs/1803.10039</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Bidirectional recurrent convolutional networks for multi-frame super-resolution</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<editor>C. Cortes, N. D. Lawrence, D. D. Lee, M. Sugiyama, and R. Garnett</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="235" to="243" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Deeper depth prediction with fully convolutional residual networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Laina</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Rupprecht</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Belagiannis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Tombari</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Navab</surname></persName>
+		</author>
+		<idno>abs/1606.00373</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Deep predictive coding networks for video prediction and unsupervised learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Lotter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Kreiman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">D</forename><surname>Cox</surname></persName>
+		</author>
+		<idno>abs/1605.08104</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Selfsupervised Sparse-to-Dense: Self-supervised Depth Completion from LiDAR and Monocular Camera</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Venturelli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Cavalheiro</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Karaman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-07" />
+		</imprint>
+	</monogr>
+	<note>ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Desmaison</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Antiga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lerer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Atgv-net: Accurate depth super-resolution</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Riegler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Rüther</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Bischof</surname></persName>
+		</author>
+		<idno>abs/1607.07988</idno>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Convolutional LSTM network: A machine learning approach for precipitation nowcasting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Yeung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Woo</surname></persName>
+		</author>
+		<idno>abs/1506.04214</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Pyramid dilated deeper convlstm for video salient object detection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K.-M</forename><surname>Lam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The European Conference on Computer Vision (ECCV)</title>
+		<imprint>
+			<date type="published" when="2018-09" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Recurrent neural network for learning densedepth and ego-motion from video</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Frahm</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Pizer</surname></persName>
+		</author>
+		<idno>abs/1805.06558</idno>
+		<imprint>
+			<date type="published" when="2018" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Deepvo: Towards end-to-end visual odometry with deep recurrent convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Trigoni</surname></persName>
+		</author>
+		<idno>abs/1709.08429</idno>
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Spatiotemporal modeling for crowd counting in videos</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Yeung</surname></persName>
+		</author>
+		<idno>abs/1707.07890</idno>
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Cross-scene crowd counting via deep convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2015 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<imprint>
+			<date type="published" when="2015-06" />
+			<biblScope unit="page" from="833" to="841" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Very deep convolutional networks for end-to-end speech recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Jaitly</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Unsupervised learning of depth and ego-motion from video</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Snavely</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">G</forename><surname>Lowe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CVPR</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

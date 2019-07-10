@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">LendingClub Loan Default and Profitability Prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peiqian</forename><surname>Li</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Computer Science</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gao</forename><surname>Han</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Computer Science</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">LendingClub Loan Default and Profitability Prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1 peiqian@stanford.edu, Computer Science, Stanford University 2 gh352@stanford.edu, Stanford University</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract &amp; Motivation Dataset &amp; Features Annualized Return Regressor Loan Default Classifier</head><p>Credit risk is the risk of default as a result of borrowers failing to make required payments, leading to loss of principal and interest. In the context of peer-to-peer lending, investors wish to independently evaluate the credit risk of listed loans, and select loans with lower perceived risks to invest in. This motivates us to build machine learning models that can quantify the credit risk with LendingClub historical loan data.</p><p>We built classifiers that predict whether a given loan will be paid back in full, using logistic regression, multilayer perceptron neural network, and random forest. All three models achieve an weighted average F1 score of around 0.89.</p><p>We then built regression models that predict the net annualized return of a given loan with linear regression, multilayer perceptron neural network, and random forest. The best performing model is the random forest regressor which achieves a coefficient of determination of 0.315. Picking loans with model prediction above 0.132 yields an excellent loan selection strategy. Simulated on the test set, this strategy achieves an average annualized return of 15% with investment in 1.76% of available loans.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Loan Selection Strategy</head><p>Our dataset consists of LendingClub historical loans initiated from 2012~2015. Loans are either 36 or 60-month terms, so we filtered out loans whose status are not yet final. We treat "Paid Off" as our positive label, and "Default" or "Charged Off" as negative. The dataset consists of 80% positive and 20% negative examples.</p><p>Categorical features are transformed into one-hot representations. For partially missing values, they are replaced with either mean, zero or the max of their respective columns to avoid unnecessary penalty or reward when training the model. For columns with same values across all examples (including empty value), they are dropped. Finally, all features are standardized so they have 0 mean and 1 variance. The size of our final feature set is 1097. We then ran PCA on the dataset with the hope to further reduce feature set size. With 95% variance threshold, about 900 features were returned, which is close to the total number of features and hence no significant reduction in the feature space for correlation between features). Therefore, we decided to keep all of the features. Dataset is split using 0.7 training and 0.3 test.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion &amp; Future Works</head><p>For classification model, both Default and Charged Off are assigned label 0 and Fully Paid is assigned label 1. For regression model, we use annualized return rate calculated from loan amount, total payment made by the borrower, and the time interval between loan initiation and the date of last payment.</p><p>Random Forest achieves the best result with 0.70 negative f1-score and 0.94 positive f1-score. Random Forest model is trained with 200 trees and with at most 50 features to select randomly at each split. Gini loss is chosen as the objective to optimize.</p><p>After training, we arrived at the following result for both training and test set. The ROC curve for Random Forest shows that as threshold is varied, false positive rate starts to increase sharply once true positive rate crosses 0.8. Any attempt to increase true positive rate will be at the expense of increasing false positive rate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>In additional to Random Forest, we also explored Logistic Regression and Neural Network, which did not achieve results as good as Random Forest.</p><p>Both classification and regression models perform better than naive models that randomly predicts with 50-50 chance or blindly predict the majority class. Comparing our models with those from related work, ours have better precision / recall and are more practical in terms of enabling implementable investment strategies in the sense that the return rate is higher than S&amp;P 500's 10% annualized return for the past 90 years.</p><p>If more time is permitted, we would test models on finalized loan data between 2016 -2018 to see if they generalize well. Furthermore, we could inject declined loan data from LendingClub to combat class imbalance problem better. The idea of performing freeform text analysis to utilize features like loan descriptions entered by applicants is also worth entertaining. In order to make better informed credit risk evaluations with more fine-grained prediction than the probability of loan default provided by classification models, we build regression models to predict the annualized investment return if we were to invest in a specific loan. Our label is the net annualized return (NAR) defined as where x TP is the total payment made by the borrower, x LA is the loan amount, and D is the number of days between loan initiation and the date of last payment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Test Predicted 0 Predicted 1 F1-score</head><p>Linear Regression with no regularizations overfits the training data significantly. Ridge regression alleviates this problem with L2 regularization. Fully-connected neural network (20, 10,<ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b2">3)</ref> with ReLU activation function minimizing the squared loss achieves a better mean squared error (MSE) than the linear models. The above two figures represent the relationship of how NAR varies as more investment is made on training (left) and test (right) set, investing in at least 100 loans, $25 each. On the training set, a prediction threshold of 13.2% NAR achieves 15% actual NAR. The same prediction threshold when simulated on the test set also delivers 15% actual NAR with 1.76% of loans selected.</p><p>Random Forest regression model achieves even better metrics (smaller MSE and larger coefficient of determination R 2 ). To speed up training and reduce overfitting, we limit the depth of the decision trees to 4, 8, and 10. As the depth limit increases, we see that bias decreases and variance increases.</p><p>Our best model, RF 10, gives rise to a simple yet very effective loan selection strategy: invest in loans with predicted NAR greater than 15%.</p><p>Heatmap showing correlation among select numerical features.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Credit risk is the risk of default as a result of borrowers failing to make required payments, leading to loss of principal and interest. In the context of peer-to-peer lending, investors wish to independently evaluate the credit risk of listed loans, and select loans with lower perceived risks to invest in. This motivates us to build machine learning models that can quantify the credit risk with LendingClub historical loan data.</p><p>We built classifiers that predict whether a given loan will be paid back in full, using logistic regression, multilayer perceptron neural network, and random forest. All three models achieve an weighted average F1 score of around 0.89.</p><p>We then built regression models that predict the net annualized return of a given loan with linear regression, multilayer perceptron neural network, and random forest. The best performing model is the random forest regressor which achieves a coefficient of determination of 0.315. Picking loans with model prediction above 0.132 yields an excellent loan selection strategy. Simulated on the test set, this strategy achieves an average annualized return of 15% with investment in 1.76% of available loans.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Loan Selection Strategy</head><p>Our dataset consists of LendingClub historical loans initiated from 2012~2015. Loans are either 36 or 60-month terms, so we filtered out loans whose status are not yet final. We treat "Paid Off" as our positive label, and "Default" or "Charged Off" as negative. The dataset consists of 80% positive and 20% negative examples.</p><p>Categorical features are transformed into one-hot representations. For partially missing values, they are replaced with either mean, zero or the max of their respective columns to avoid unnecessary penalty or reward when training the model. For columns with same values across all examples (including empty value), they are dropped. Finally, all features are standardized so they have 0 mean and 1 variance. The size of our final feature set is 1097. We then ran PCA on the dataset with the hope to further reduce feature set size. With 95% variance threshold, about 900 features were returned, which is close to the total number of features and hence no significant reduction in the feature space for correlation between features). Therefore, we decided to keep all of the features. Dataset is split using 0.7 training and 0.3 test.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion &amp; Future Works</head><p>For classification model, both Default and Charged Off are assigned label 0 and Fully Paid is assigned label 1. For regression model, we use annualized return rate calculated from loan amount, total payment made by the borrower, and the time interval between loan initiation and the date of last payment.</p><p>Random Forest achieves the best result with 0.70 negative f1-score and 0.94 positive f1-score. Random Forest model is trained with 200 trees and with at most 50 features to select randomly at each split. Gini loss is chosen as the objective to optimize.</p><p>After training, we arrived at the following result for both training and test set. The ROC curve for Random Forest shows that as threshold is varied, false positive rate starts to increase sharply once true positive rate crosses 0.8. Any attempt to increase true positive rate will be at the expense of increasing false positive rate.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>In additional to Random Forest, we also explored Logistic Regression and Neural Network, which did not achieve results as good as Random Forest.</p><p>Both classification and regression models perform better than naive models that randomly predicts with 50-50 chance or blindly predict the majority class. Comparing our models with those from related work, ours have better precision / recall and are more practical in terms of enabling implementable investment strategies in the sense that the return rate is higher than S&amp;P 500's 10% annualized return for the past 90 years.</p><p>If more time is permitted, we would test models on finalized loan data between 2016 -2018 to see if they generalize well. Furthermore, we could inject declined loan data from LendingClub to combat class imbalance problem better. The idea of performing freeform text analysis to utilize features like loan descriptions entered by applicants is also worth entertaining. In order to make better informed credit risk evaluations with more fine-grained prediction than the probability of loan default provided by classification models, we build regression models to predict the annualized investment return if we were to invest in a specific loan. Our label is the net annualized return (NAR) defined as where x TP is the total payment made by the borrower, x LA is the loan amount, and D is the number of days between loan initiation and the date of last payment.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Test Predicted 0 Predicted 1 F1-score</head><p>Linear Regression with no regularizations overfits the training data significantly. Ridge regression alleviates this problem with L2 regularization. Fully-connected neural network (20, 10, 5, 3) with ReLU activation function minimizing the squared loss achieves a better mean squared error (MSE) than the linear models.</p><p>The above two figures represent the relationship of how NAR varies as more investment is made on training (left) and test (right) set, investing in at least 100 loans, $25 each. On the training set, a prediction threshold of 13.2% NAR achieves 15% actual NAR. The same prediction threshold when simulated on the test set also delivers 15% actual NAR with 1.76% of loans selected.</p><p>Random Forest regression model achieves even better metrics (smaller MSE and larger coefficient of determination R 2 ). To speed up training and reduce overfitting, we limit the depth of the decision trees to 4, 8, and 10. As the depth limit increases, we see that bias decreases and variance increases.</p><p>Our best model, RF 10, gives rise to a simple yet very effective loan selection strategy: invest in loans with predicted NAR greater than 15%.</p><p>Heatmap showing correlation among select numerical features.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Predicting default risk of lending club loans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">D</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Kondo</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Peer lending risk predictor</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ramiah</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CS229 Autumn</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Optimizing investment strategy in peer to peer lending</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gutierrez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Mathieson</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page">2017</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Demystifying the workings of lending club</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pujun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Nick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Max</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">How we measure net annualized return -lendingclub</title>
+		<ptr target="https://www.lendingclub.com/public/lendersPerformanceHelpPop.action" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

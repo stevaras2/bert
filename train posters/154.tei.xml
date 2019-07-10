@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Efficient Estimation of Word Representations in Vector Space</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2013-01">Jan-2013. Jan. 2000</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Chen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Corrado</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dean</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Stanford</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Efficient Estimation of Word Representations in Vector Space</title>
+					</analytic>
+					<monogr>
+						<title level="j" type="main">arXiv.org, vol. cs.CL</title>
+						<imprint>
+							<biblScope unit="volume">16</biblScope>
+							<biblScope unit="issue">1</biblScope>
+							<biblScope unit="page" from="235" to="242"/>
+							<date type="published" when="2013-01">Jan-2013. Jan. 2000</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions/Future Directions References</head><p>The twenty naturally-occurring amino acid residues are the building blocks of all proteins. These residues confer distinct physicochemical properties to proteins based on their chemical composition, size, charge, and other properties. Here, inspired by recent work in the field of natural language processing [1], we propose a vector embedding model for amino acids based on their neighbors in 3-dimensional space within folded, active protein structures. We then test the utility of such a model by using the embedded vectors to predict the effect of mutation on protein activity.</p><p>The data for this project were acquired from the RCSB PDB [2] and split in training, validation, and test datasets using the methodology described by ProteinNet (https://github.com/aqlaboratory/proteinnet). The number of example proteins by sequence similarity/dataset is shown in the table to the right. Note that each protein is composed of hundreds of amino acids.</p><p>To provide a uniform coordinate basis for each focus residue, we centered the coordinate system at the alpha carbon of the residue of interest and transformed the coordinates such as to adhere to the coordinate system outlined below. This change of basis allowed us to implicitly correct for rotational invariance.</p><p>Many different model architectures were trained, but we ultimately decided on an architecture with 20 hidden units and a fully-connected coordinate combination layer. This model was trained on the 30% sequence similarity dataset and ultimately achieved a training set average loss of 2.12, a validation set average loss of 2.14, and a validation set accuracy of 8.7%. On the test set, the model had an accuracy of 8.9%.</p><p>We assessed the performance of the embeddings by training an SVM to predict the effect of mutation on the T4 lysozyme protein [3]. We compared the performance of our embeddings to one-hot encoding vectors and BLOSUM empirical substitution matrices [4].</p><p>[1] T. Mikolov, K. Chen, G. Corrado, and J. Dean, "Efficient Estimation of Word Representations in Vector Space," arXiv.org, vol. cs.CL. 16-Jan-2013.       O N The vector embeddings we created capture a sizable portion of the variation in amino acid properties. We applied these embeddings to predict the (categorical) effect of mutations on the T4 lysozyme protein and our embeddings matched performance of the current standard in the field, BLOSUM empirical substitution matrices, without the same need for computationally expensive sequence alignment. Given further time to improve model performance we would implement the following changes:</p><p>To improve training: -Incorporate information about angles of context amino acid side chains -Use distance to any atom in side chain as the context distance metric To evaluate utility: -Train a regression model for mutation effect prediction in addition to the SVM described in the Discussion section above</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V_dot</head><p>Figure 7: SVM model accuracy for T4 lysozyme mutation effect prediction is shown. Four-fold cross validation was employed and mean accuracy is shown. The formulae for the V_dot and V_freq scores (adapted from [3]) are shown at right.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V_freq</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>The twenty naturally-occurring amino acid residues are the building blocks of all proteins. These residues confer distinct physicochemical properties to proteins based on their chemical composition, size, charge, and other properties. Here, inspired by recent work in the field of natural language processing [1], we propose a vector embedding model for amino acids based on their neighbors in 3-dimensional space within folded, active protein structures. We then test the utility of such a model by using the embedded vectors to predict the effect of mutation on protein activity.</p><p>The data for this project were acquired from the RCSB PDB [2] and split in training, validation, and test datasets using the methodology described by ProteinNet (https://github.com/aqlaboratory/proteinnet). The number of example proteins by sequence similarity/dataset is shown in the table to the right. Note that each protein is composed of hundreds of amino acids.</p><p>To provide a uniform coordinate basis for each focus residue, we centered the coordinate system at the alpha carbon of the residue of interest and transformed the coordinates such as to adhere to the coordinate system outlined below. This change of basis allowed us to implicitly correct for rotational invariance.</p><p>Many different model architectures were trained, but we ultimately decided on an architecture with 20 hidden units and a fully-connected coordinate combination layer. This model was trained on the 30% sequence similarity dataset and ultimately achieved a training set average loss of 2.12, a validation set average loss of 2.14, and a validation set accuracy of 8.7%. On the test set, the model had an accuracy of 8.9%.</p><p>We assessed the performance of the embeddings by training an SVM to predict the effect of mutation on the T4 lysozyme protein <ref type="bibr">[3]</ref>. We compared the performance of our embeddings to one-hot encoding vectors and BLOSUM empirical substitution matrices [4].</p><p>[1] T. Mikolov, K. Chen, G. Corrado, and J. Dean, "Efficient Estimation of Word Representations in Vector Space," arXiv.org, vol. cs.CL. 16-Jan-2013.       O N The vector embeddings we created capture a sizable portion of the variation in amino acid properties. We applied these embeddings to predict the (categorical) effect of mutations on the T4 lysozyme protein and our embeddings matched performance of the current standard in the field, BLOSUM empirical substitution matrices, without the same need for computationally expensive sequence alignment. Given further time to improve model performance we would implement the following changes:</p><p>To improve training: -Incorporate information about angles of context amino acid side chains -Use distance to any atom in side chain as the context distance metric To evaluate utility: -Train a regression model for mutation effect prediction in addition to the SVM described in the Discussion section above</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V_dot</head><p>Figure 7: SVM model accuracy for T4 lysozyme mutation effect prediction is shown. Four-fold cross validation was employed and mean accuracy is shown. The formulae for the V_dot and V_freq scores (adapted from <ref type="bibr">[3]</ref>) are shown at right.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V_freq</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 2 ]</head><label>2</label><figDesc>H. M. Berman, J. Westbrook, Z. Feng, G. Gilliland, T. N. Bhat, H. Weissig, I. N. Shindyalov, and P. E. Bourne, "The Protein Data Bank," Nucl. AcidsRes., vol. 28, no. 1, pp. 235-242, Jan.  2000.    [3] W. Torng and R. B. Altman, "3D deep convolutional neural networks for amino acid environment similarity analysis," BMC bioinformatics, vol. 18, no. 1, p. 302, Dec. 2017.[4] S. Henikoff and J. G. Henikoff, "Amino acid substitution matrices from protein blocks," PNAS, vol. 89, no. 22, pp. 10915-10919, Nov. 1992.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>The transformed coordinate system shown with respect to the target amino acid. The red arrow indicates the positive direction of the x-axis and the green arrow denotes the positive direction of the y- axis, both in the plane of the page. The blue circle indicates an arrow in the positive direction along the z- axis perpendicular to the plane of the page.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>The transformed coordinate system shown in place at a specific focus residue. The x, y, and z axes are shown in red, green, and blue, respectively, and a line is drawn between the alpha carbon of the focus residue and the alpha carbon of each of the 10 closest residues. Original PDB coordinate system shown in upper left.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>The first 2 principal components of the embedding vectors for each residue are shown (44.5% and 9.4% V.E., respectively). Residues are identified by single letter code and colored by predominant chemical property.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>The confusion matrix of the training (top) and held-out test set (bottom).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 :</head><label>4</label><figDesc>Train</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 3 :</head><label>3</label><figDesc>A diagram of the model architecture. The following vector is used to weight the 10 context residues to generate "x":ReLU(linear(ReLU(linear(coords))))</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

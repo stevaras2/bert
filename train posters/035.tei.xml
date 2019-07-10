@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Modeling Political Identity What Makes Independents Tick?</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Katharina</forename><surname>Roesler</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Sociology and Computer Science</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ben</forename><surname>Krausz</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Stanford Sociology and Computer Science</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Modeling Political Identity What Makes Independents Tick?</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>We use data from the 2012 American National Election Studies (ANES), which surveyed Americans&apos; political attitudes. We trained our models on approximately 3,000 observations.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>1. Independents' as a group cannot be easily distinguished from partisans.</p><p>2. Independents have a diversity of opinion and are captured by at least three "types."</p><p>3. Geographical location most distinguishes Independents from partisans. S t a t e I n t e r e s t i n P r e s . E l e c t i o n S o c i a l C l a s s W a r m t h t o P r e s . </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>G o v . P a y s A t t e n t i o n t o P e o p l e D i s c u s s e s P o l i t i c s O f t e n W a r m t h t o C o n g r e s s D i s c u s s e s P o l i t i c s V o t e d i n N a t . E l e c t i o n s</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>if US Unconcerned with Rest of World By Law When Should Abortion Be Allowed Better or Worse Economy In Past Year Better or Worse Economy In Next Year Should Gays/Lesbians Be Able to Adopt Children Increase or Decrease Number of Immigrants to US Fed. Spending Poor People Fed. Spending Child Care Fed. Spending Dealing with Crime Fed. Spending Public Schools Fed. Spending Welfare Programs Fed. Spending Environment Fed. Spending Space / Science Technology Fed.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>A p p r o v e o f P r e s . Feature Relative Influence Most Influential Features Predicting Political Independence Exponential Loss Findings About 35 percent of Democrats, 26 percent of Republicans, and 47 percent of Independents fall into at least one of the following three groups:</figDesc><table>Feature 
+
+Relative Influence 
+
+Most Influential Features Predicting Political Independence 
+Exponential Loss 
+
+1. Libertarians 
+2. Pessimists 
+3. Moderates </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

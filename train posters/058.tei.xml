@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><formula xml:id="formula_0">[...(`will', 'O'), (`have', 'O'), (`ani', 'O'), (`legal', 'O'), (`effect', 'O')] [(`within', 'D'), (`ten', 'D') (`days', 'D'), (`promptli', 'I'), (`after', 'O'), (`being', 'O'), (`so', 'O'), (`requested', 'O'),</formula><p>Tokens were created with the Punkt's sentence tokenizer, a regular expressions word tokenizer, and Porter's stemmer</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Processing Steps</head><p>Three models that are commonly used to tag text sequences in NLP were evaluated on their ability to correctly label tokens from the edited NDAs</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Set</head><p>Data set contained 105 NDA documents from a single investment firm from Summer 2010 </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>...]</figDesc><table>Initial Steps Towards Automating 
+Legal Document Editing 
+
+Lauren Blake (lblake@stanford.edu) 
+Summary 
+Data Processing 
+Adjustments for Unbalanced Data 
+
+Background on NDAs 
+Methodology 
+
+Objective: Determine feasibility of using 
+machine learning to improve the costly legal 
+document drafting process 
+
+Research Conducted: Apply supervised 
+learning models to predict initial edits to Non-
+Disclosure Agreements ("NDAs") 
+
+Key Results: Classification results are promising 
+yet also highlight the challenges from relying on 
+unbalanced and sparse data from legal 
+document text 
+
+NDAs are a type of private contract that 
+determines how the participants can use 
+sensitive information 
+
+How Companies Use NDAs 
+
+1 
+
+2 
+
+3 
+
+4 
+
+5 
+
+Original Draft 
+
+Edited Draft ("Blackline") 
+
+Original and initial edited drafts 
+of each NDA were compared to 
+determine what changes were 
+made and label the tokens 
+
+• Original tokens ("O"): 87% 
+• Inserted tokens ("I"): 7% 
+• Deleted tokens ("D"): 6% 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Note: Red shading indicates the most frequently predicted label for each type of actual token. Adjustments are not made to precision and recall calculations for boundary errors.</figDesc><table>• Sentences: ~4,000 
+• Total Tokens: ~202,000 
+• Unique Tokens: ~2,400 
+
+Classification Results For Training On All Sentences 
+
+Different modifications to the training data set 
+were considered to mitigate the bias towards 
+"Original" labels 
+
+Models in Actions 
+
+Model 
+Overview 
+
+High-level Approach 
+
+Discriminative 
+vs. Generative 
+
+Independence 
+Assumptions 
+Additional Features 
+
+Hidden Markov 
+Model 
+
+MLE for transition and output 
+probabilities 
+Generative 
+Markov 
+Property 
+No (only considers states) 
+
+Structured 
+Averaged 
+Perceptron 
+
+Online learning for weights 
+and a bias 
+Discriminative 
+No 
+Includes prior and next words, 
+suffixes, prefixes, etc. </table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conditional</head><p>&lt;del&gt;Within ten days&lt;/del&gt; &lt;ins&gt;Promptly,&lt;/ins&gt; after being so requested by the Company or [NAME] &lt;del&gt;[NAME]&lt;/del&gt; &lt;ins&gt;[NAME] in writing,&lt;/ins&gt; except to the extent you are advised by legal counsel that complying with such request would be prohibited by law or regulatory authority, you will return or destroy at your cost all Evaluation &lt;del&gt;Material at the option&lt;/del&gt; &lt;ins&gt;Material.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Structured Averaged Perceptron:</head><p>&lt;del&gt;Within ten days&lt;/del&gt; &lt;ins&gt;Promptly,&lt;/ins&gt; after being so requested by the Company or [NAME] &lt;del&gt;[NAME]&lt;/del&gt; &lt;ins&gt;[NAME] in writing,&lt;/ins&gt; except to the extent you are advised by legal counsel that complying with such request would be prohibited by law or regulatory authority, you will return or destroy at your cost all Evaluation &lt;del&gt;Material at the option&lt;/del&gt; &lt;ins&gt;Material.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conditional Random Field:</head><p>&lt;del&gt;Within ten days&lt;/del&gt; &lt;ins&gt;Promptly,&lt;/ins&gt; after being so requested by the Company or [NAME] &lt;del&gt;[NAME]&lt;/del&gt; &lt;ins&gt;[NAME] in writing,&lt;/ins&gt; except to the extent you are advised by legal counsel that complying with such request would be prohibited by law or regulatory authority, you will return or destroy at your cost all Evaluation &lt;del&gt;Material at the option&lt;/del&gt; &lt;ins&gt;Material. </p></div>			</div>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

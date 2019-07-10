@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS 229 Final Report</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Avoy</forename><surname>Datta</surname></persName>
+							<email>avoy.datta@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of EE Stanford University</orgName>
+								<orgName type="department" key="dep2">Department of EE</orgName>
+								<orgName type="department" key="dep3">Department of CS</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dian</forename><forename type="middle">Ang</forename><surname>Yap</surname></persName>
+							<email>dayap@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of EE Stanford University</orgName>
+								<orgName type="department" key="dep2">Department of EE</orgName>
+								<orgName type="department" key="dep3">Department of CS</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zheng</forename><surname>Yan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of EE Stanford University</orgName>
+								<orgName type="department" key="dep2">Department of EE</orgName>
+								<orgName type="department" key="dep3">Department of CS</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">CS 229 Final Report</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Office hours at Stanford are typically subject to significant variance in student demand. To tackle this problem, we predict student demand at any office hours on an hourly basis using data scraped from Queuestatus, Carta, and course syllabi. We conducted experiments using regression on fully connected NNs, univariate and multivariate LSTMs, and compared with an ensemble of multimodal classification models such as random forests and SVMs. We compared different losses such as MSE, MAE, Huber, and our own sqHuber against normalized inputs, and evaluate on student demand with and without smoothing. Results show that our models predict demand well on held-out test quarters both in seen and unseen courses. Our model could thus be a useful reference for both new and existing courses.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Among CS students at Stanford, the experience of queueing at office hours (OHs) is practically universal. Office hours is an important part of any class, allowing students to get valuable one-on-one help. Unfortunately, student demand is prone to high variance, resulting in sometimes students waiting hours before receiving help, or conversely, teaching assistants (TAs) waiting hours before any students arrive. In particular, periods of overcrowding are a source of stress for both students and TAs, and are among the most commonly cited sources of negative experience on Carta. Thus, improvements in OH scheduling could significantly improve overall course experience for all parties.</p><p>However, as with all logistical decision making at universities, there are significant complexities in the process. Our project addresses the arguably most variable component of the input -predicting peaks of student demand. Using hourly OH data scraped from Queuestatus, course information from Carta, and major dates from class syllabi, we trained a fully connected neural network model that predicts the hourly load influx for any given course and quarter. We define the load influx as the average serve time for the day times the number of student signups. Conceptually, this is the aggregate TA time needed to satisfy all student demand over some period. Note: In terms of dataset and big-picture goals, this is a shared project between CS229 and CS221. For CS229, we focused on a more theoretical approach in predicting load influx by designing and evaluating new loss functions catered towards data with high variance and fluctuations. We also combine an ensemble of approaches to fine tune our prediction by using signal processing practices, as well as experiment with multimodal classification using SVMs and random forest models. For CS221, we focus on assigning TAs to the surge timings using modified Gibbs Sampling and EM algorithms, as well as LSTM prediction models.</p><p>approaches of a CS229 project that had a similar goal. Troccoli et. al used custom feature extractors to predict wait times at the LaIR (CS106 office hours) <ref type="bibr">[1]</ref>. Interestingly, multimodal classification with equi-depth buckets outperformed regression approaches for them, indicating that a classification problem might be fruitful for our project as well. Fortunately for us, QueueStatus eclipses the LaIR framework in number of courses served and thus data collected, which allows us to build more generalizable models. Chatfield's work on statistical approaches to time series data also served as a useful source <ref type="bibr">[2]</ref>. Chatfield recommended several transformations for time series data, included logarithmic transformations to stabilize variance and convolution as a smoothing method. We also noticed that our dataset contains significant outliers, and thus may be prone to overfitting them. To deal with this, we expanded the work by Huber who derived Huber loss used in robust estimation, where outliers are penalized less heavily than mean squared error loss <ref type="bibr">[3]</ref>. However, the Huber loss is not differentiable everywhere, which could introduce complexities during backpropagation. Hanning's published self-convolution windows were also used effectively to smooth out harmonic data, which we referred to as another solution <ref type="bibr" target="#b6">[4]</ref>. We also refer to Hagan's work on neural network architecture as a starting point for the relative number of neurons in our own models <ref type="bibr" target="#b8">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Datasets and Features</head><p>To obtain data, we set up a pipeline that scrapes hourly office hours from Queuestatus. Through customized JSON parsing, we were able to obtain a combined 17 quarters' of data across 7 prominent CS classes. After preprocessing to remove all entries with zero serves and signups, we ended with 4672 hours', or just under 200 straight days' worth of OH data. A summary is shown below. We experimented with a plethora of features to augment our dataset with, and decided on the following predictors based on a combination of logic and significant correlation with load influx. On a per-class basis, we used: number of enrolled students, instructor rating, and proportion of freshman/graduate/PhD students enrolled. On a per-hour/day basis, we used: days until next assignment due, days after previous assignment due, days until an exam, hour of day, weekdays. For the hourly/daily features, validation testing found that one-hot bucket encodings were more effective for predictions. Day differences were bucketed in ranges of 10 to 5, 4 to 3, 2 to 1, and 0. Hour of day was evenly bucketed into morning, noon, afternoon, and evening. Each entry corresponds to one hour of OH, and every entry in the same course/quarter shares the same course/quarter features. As discussed later, we also experimented with log-transformations.</p><p>As our ultimate goal is to predict entire unseen quarters, we separated our training/validation/test sets by entire quarters. Due to our limited sample size, we use K-fold cross validation to tune hyperparameters, where K is our number of quarters. Our test set consisted of 4 total classes: CS110 Spring 2018 and CS107 Spring 2017 as unseen quarters of classes we trained on, and CS224N Winter 2018 and CS231N Spring 2018 as entirely unseen courses. Our training set thus consisted of the remaining classes, totaling 13 quarters' of data between 5 unique classes.</p><p>We note that after training models to predict load influx on these datasets, we do not predict hourly student demand for TAs, as is ideal. Rather, we predict hourly student demand for TAs given that office hours is held. We determined that current TA assignments are uncorrelated with time of day (p = 0.63, cor.test in R) and typically scheduled throughout active hours. Therefore, we assume that the status quo scheduling of office hours is frequent and unbiased enough such that real student demand is proportional to the student demand given office hours is held.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Multimodal classification</head><p>We first implemented multimodal classification models as baselines, where instead of using equidepth buckets, we divided the minimum and maximum load influx into 7 logarithmic time buckets. Using SVMs with radial kernel and random forests with 1000 estimators, we obtained an initial baseline with accuracy 0.422 and 0.359 respectively, with the confusion matrix as shown below.  We see that even with fine-tuning of hyperparameters, the classification models have decent performance but with large skew and variance in predicting high load influxes, which could be possibly due to class imbalance in different buckets when on a log scale. We thus choose to focus on regression next to predict the spikes of load influx in different hours.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Regression: FCN, Huber and sqHuber loss</head><p>We also set up baselines by training fully connected networks and LSTMs for regression tasks. The FCN, which approximates functions with non-linearities and multiple layers that activate depending on weights mapped to higher dimension across stacked layers, has input size 30 (with our 30 features) with 2 hidden layers of size 15 and 4 respectively, followed by a single output final layer. Each hidden layer uses a ReLU activation function, with a linear activation for the output layer. We also experimented with 3/4 hidden layers which led to overfitting, even with normalization techniques that performed worse on the validation set.</p><p>LSTMs (Long short-term memory) is a form of recurrent neural network focused in 221 report). It addresses vanishing gradients while factoring in previous states with a recurrence formula at each time step, which makes it suitable for temporal data. We used two LSTM cells in autoregressive LSTM with window size of 16, and each output was fed back as part of the next window. All input features were normalized in a range [0, 1] for every experiment, and all baseline models were compiled with Adam optimizer with early stopping to prevent overfitting. Due to insufficient data, we face high variance in training LSTMs with the initial baselines reported below.</p><p>Therefore, we choose to continue work on the fully-connected network (FCN). However, in our FCN, we notice our predictions for load influx throughout the quarter suffer from a consistent offset from the mean of the distribution. Upon inspection, we suspect that the large amount of outliers may have caused the bias due to their huge penalties while minimizing the L2-norm loss function. Thus, we seek a new loss function that doesn't penalize outliers as heavily. The Huber loss is particularly useful for this since it scales linearly outside a specified domain:</p><formula xml:id="formula_0">L(y,ŷ) = 1 2 (y −ŷ) 2 , if y −ŷ &lt;= δ δ(|y −ŷ| − 1 2 δ) , if y −ŷ &gt; δ</formula><p>We compare this traditional loss function with a novel loss function we designed for the purposes of experimentation-the sqHuber Loss. The sqHuber loss is defined as:</p><formula xml:id="formula_1">L(y,ŷ) = 1 2 (y −ŷ) 2 , if y −ŷ &lt;= δ δ(|y −ŷ| − 1 2 δ) + ( 1 2 δ 2 − 1 √ 2 δ) , if y −ŷ &gt; δ</formula><p>The sqHuber loss is piece-wise continuous, and scales proportional to the square root of the residual for values above a specified domain. Thus, it is even more robust to significant amounts of outliers. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Transforming the load influx data</head><p>The load influx is an erratic function. Large fluctuations, or 'spikes', in the load are difficult to predict without overfitting the model, thus transforming the training labels (actual load influx before training may be fruitful. We attempted two methods to transform our data for better predictions:</p><p>1. Hanning window: A 1-D convolution with a Hanning window. This reduces spikes and thus potential to overfit. <ref type="bibr" target="#b6">[4]</ref> 2. Logarithmically scaling the load influx values in the training set, as student demand may be better represented as a geometric function of the inputs and this helps stabilize the variance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">k-fold cross-validation</head><p>During validation tests, we find the root-mean-squared-error (RMSE) to be heavily dependent on the course and quarter used. Thus, to reduce variance in RMSE obtained from validation tests, we used leave-one-out cross-validation for our validation studies, where we stochastically choose a (course, quarter) pair as the validation set, and use the remainder of the joint training &amp; validation sets for training. This process is repeated for k = 8 iterations, with the validation RMSE the mean of the results. Note that for each of the k iterations, the validation set was stochastically chosen and isolated from the training data, with the parameters of the model reset between iterations. The results for cross-validation between models are tabulated in <ref type="table" target="#tab_0">Table 1</ref>, which was done preliminarily to select a model. Cross-validation results between data transformation methods is shown below. Based on the analysis of our tests, we see the two best performing datasets are the sqHuber loss paired with windowing, and the MAE paired with log transforms. We performed validation on 8 quarters of data for each. For comparison, we arbitrarily picked out a dataset shared between the two. Even though the sqHuber loss does marginally better (RMSE-wise) than the MAE with smoothing applied, training on log transformed influx allows the model to predict the general trends of student demand much better. Smoothing with a Hann window tends to even out our predictions, which although leads to lower error, removes much information desirable to instructors. Thus, we choose to proceed forward with the mean absolute error loss, with log transformation applied during training.</p><p>Final evaluation on test set. We obtained an avg. RMSE of 124.466 for our set of seen courses in an unseen quarter, and 106.478 for our set of unseen courses in unseen quarters. Furthermore, similar to <ref type="figure">Figure 4a</ref>), the relative locations of spikes were well captured in all four classes; however, in our unseen courses set, the magnitudes of the spikes were almost double in size of the spikes of the ground truth. From this, we see that our model remains relatively robust between both seen and unseen courses in terms of spike location and overall accuracy, but not spike magnitude.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion and Future Works</head><p>Overall, our project provides the first general-use model for predicting student demand at Stanford CS office hours. Using hourly Queuestatus data and course information, we were able to generate realistic predictions for office hours load in a wide range of CS classes. Ultimately, out of several tried, our best model was our fully-connected neural network, using mean absolute error and trained on log-transformed load influx. Although a slightly different model using our custom sqHuber loss gave marginally lower RMSE, it failed to retain spike information due to perhaps too much outlier penalty. Our RMSE indicates that the model is off by an average of 2 hours * students in testing. Empirically, we see this is a mostly a result of slightly misplaced and/or incorrectly heighted spikes.</p><p>Since our final log model makes predictions that are then exponentiated, it often predicts the locations of spikes correctly, but fails to capture exact magnitude. Thus, although our system may not be able to predict exact student demand, it can still serve as a valuable guideline regarding when to expect relative peaks. Furthermore, we constructed a basic GUI in R that, given basic course information, generates OH hourly load influx for the whole quarter within a minute (demoed during poster session). So far, Chris Piech has expressed interest in using our model next spring. Given more time, we would like to extend our predictions to more classes, and perhaps even other universities using Queuestatus.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Full dataset. White: Train. Yellow: Test(Seen courses). Green: Test(Unseen courses)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>confusion matrix of radial kernel SVM, c = 1 (b) Normalized confusion matrix of random forest.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Plot of confusion matrix of two classification models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3</head><label>3</label><figDesc>Figure 3: sqHuber Loss</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>( a )Figure 4 :</head><label>a4</label><figDesc>Trained on logarithmic scale of data with MAE (b) Hann-smoothed with sqHuber Figure 4: Prediction vs. ground truths for CS107 Autumn 2018.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Evaluation of initial baselines and model choices.</figDesc><table>Baseline Model 
+RMSE 
+
+FCN (Fully Connected Network) 109.28 
+FCN with Dropout 
+111.3 
+FCN with Batchnorm 
+125.7 
+Autoregressive LSTM 
+128.1 
+seq2seq LSTM 
+109.5 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2 :</head><label>2</label><figDesc>Comparison of mean validation set RMSE for different loss functions and transformations</figDesc><table>Type of smoothing or 
+loss function used 
+
+Huber 
+sqHuber 
+Mean squared 
+error 
+
+Mean absolute 
+error 
+No transform 
+109.47 
+126.20 
+109.28 
+110.55 
+Log transform 
+118.32 
+126.07 
+120.07 
+106.11 
+Hanning smoothing 
+107.43 
+102.96 
+122.78 
+119.70 
+
+5.2 Analysis of validation experiments, final model selection, and test results 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">All the dataset had to be manually scraped and combined from Queuestatus, Carta and syllabus pages of different class and Zheng was responsible for all the working data. Also worked on modified Gibbs sampling for 221 and responsible for feeding team members with good food</title>
+		<imprint/>
+	</monogr>
+	<note>Zheng focused on feature engineering and creating baselines for multimodal classification</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Dian Ang worked on an initial proposal of sqHuber loss with less interesting results due to shift offsets and discontinuities. Also worked with an ensemble of methods to prevent model from overfitting, along with fine tuning of hyperparameters</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Avoy coined an improved version of sqHuber loss that addresses the shift offset. Besides building the multivariate LSTM, Avoy worked on k-fold validations, logarithmic scaling and Hann window smoothing. Also worked on modified Gibbs sampling for 221</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Predicting CS106 Office Hours Queueing Times</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Troccoli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Capoor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Troute</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+	<note>Past CS229 Project</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">The analysis of time series: an introduction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Chatfield</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CRC press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Robust Estimation of a Location Parameter</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><forename type="middle">J</forename><surname>Huber</surname></persName>
+		</author>
+		<idno type="doi">10.1214/aoms/1177703732</idno>
+		<ptr target="https://projecteuclid.org/euclid.aoms/1177703732" />
+	</analytic>
+	<monogr>
+		<title level="j">Ann. Math. Statist</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="73" to="101" />
+			<date type="published" when="1964" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Hanning self-convolution window and its application to harmonic analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Guo</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<idno type="doi">10.1007/s11431-008-0356-6</idno>
+		<ptr target="https://doi.org/10.1007/s11431-008-0356-6" />
+	</analytic>
+	<monogr>
+		<title level="j">Sci. China Ser. E-Technol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page">467</biblScope>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">T</forename><surname>Hagan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">B</forename><surname>Demuth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">H</forename><surname>Beale</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>De Jesús</surname></persName>
+		</author>
+		<title level="m">Neural network design</title>
+		<meeting><address><addrLine>Boston</addrLine></address></meeting>
+		<imprint>
+			<publisher>Pws Pub</publisher>
+			<date type="published" when="1996" />
+			<biblScope unit="volume">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

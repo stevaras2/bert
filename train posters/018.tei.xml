@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Non-stationary autoregressive filters for prediction of subsurface geological structure Mathematical formulation:  Regression equations formed for every cell and whole system optimized in a least squares sense Realization 1 Realization 2 Realization 1 Realization 2 Data: Multiple TIs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anshuman</forename><surname>Pradhan</surname></persName>
+							<email>pradhan1@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first"></forename><surname>1d</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tis -&amp;gt;</forename></persName>
+						</author>
+						<title level="a" type="main">Non-stationary autoregressive filters for prediction of subsurface geological structure Mathematical formulation:  Regression equations formed for every cell and whole system optimized in a least squares sense Realization 1 Realization 2 Realization 1 Realization 2 Data: Multiple TIs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note type="submission">filter for every grid cell location. Filter for 3 rd cell -&gt; 1, 13 , 23  System of equations for 3 rd grid cell: ≈ =</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Geology's non-stationary issues</head><p>Accurate decision-making in the petroleum industry is highly contingent on building a reliable model that reasonably follows subsurface geological structure. A major challenge:</p><p> Geology -&gt; Highly heterogeneous How can non-stationary prior information be incorporated for effectively predicting geology? </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Learn and regularize</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Non-stationary filters for non-stationary geology</head><p>Autoregressive filters can learn on prior information in the form of a training image (TI) for geology (Claerbout, 1999). To handle nonstationarity, a non-stationary approach is adopted -&gt; multiple filters learn over the grid of a TI. To make the system of equations overdetermined, I assumed access to multiple TIs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mathematical formulation:</head><p> 1D TIs -&gt; = { 1 , 2 , 3 }, = 1, . . ,  3 × 1 filter for every grid cell location. Filter for 3 rd cell -&gt; 1, 13  , 23  System of equations for 3 rd grid cell: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data: Multiple TIs</head><p>Geostatistical simulations generate probable realizations of desired parameters. These serve as multiple TIs of the geological structure in my approach. I used Direct Sampling to generate TIs for two scenarios:  A complex system of channel structures, commonly encountered in deltaic reservoirs.</p><p> A stonewall. Though not a geological scenario, the structure is highly non-stationary to be representative of geology.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2D spatial features</head><p>To effectively capture the spatial geological patterns, I use 2D filters (as shown alongside, a 3 × 3 filter for ℎ cell). Thus, the features used in the regression equations are the spatially neighboring points. This helps capture the geological patterns effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>2 × 2 Non-stationary filters were optimized in least squares sense using a conjugate gradient scheme. 100 TIs were used for each scenario. It is noted that autoregressive filters ideally have white output. Subsequently, for prediction, the grid was initialized with random numbers and the system was optimized in a reverse sense, i.e. model parameters were optimized. The results are depicted below:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>The non-stationary autoregressive filters were successful in capturing the highly heterogeneous geological patterns. When used as regularization operators, these filters are expected to guide inverse problems towards the desired geological solution, thus increasing confidence on high-stakes decisions involving drilling of wells.</p><p>Future work: Applying filters in 2D patches over the grid to minimize risk of overfitting. Reference: Claerbout, J., 1999, Geophysical estimation by example: Environmental soundings image enhancement: SEP</p></div>
+			</abstract>
+		</profileDesc>
+		<revisionDesc>
+				<date type="submission" when="-1" />
+		</revisionDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Learn and regularize</head><p>Goal: Use machine learning to design a regularization operator which can learn non-stationary prior information</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Non-stationary filters for non-stationary geology</head><p>Autoregressive filters can learn on prior information in the form of a training image (TI) for geology <ref type="bibr">(Claerbout, 1999)</ref>. To handle nonstationarity, a non-stationary approach is adopted -&gt; multiple filters learn over the grid of a TI. To make the system of equations overdetermined, I assumed access to multiple TIs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mathematical formulation:</head><p> 1D TIs -&gt; = { 1 , 2 , 3 }, = 1, . . ,  3 × 1 filter for every grid cell location. Filter for 3 rd cell -&gt; 1, <ref type="bibr">13</ref> , 23  System of equations for 3 rd grid cell: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data: Multiple TIs</head><p>Geostatistical simulations generate probable realizations of desired parameters. These serve as multiple TIs of the geological structure in my approach. I used Direct Sampling to generate TIs for two scenarios:  A complex system of channel structures, commonly encountered in deltaic reservoirs.</p><p> A stonewall. Though not a geological scenario, the structure is highly non-stationary to be representative of geology.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2D spatial features</head><p>To effectively capture the spatial geological patterns, I use 2D filters (as shown alongside, a 3 × 3 filter for ℎ cell). Thus, the features used in the regression equations are the spatially neighboring points. This helps capture the geological patterns effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>2 × 2 Non-stationary filters were optimized in least squares sense using a conjugate gradient scheme. 100 TIs were used for each scenario. It is noted that autoregressive filters ideally have white output. Subsequently, for prediction, the grid was initialized with random numbers and the system was optimized in a reverse sense, i.e. model parameters were optimized. The results are depicted below:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>The non-stationary autoregressive filters were successful in capturing the highly heterogeneous geological patterns. When used as regularization operators, these filters are expected to guide inverse problems towards the desired geological solution, thus increasing confidence on high-stakes decisions involving drilling of wells.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>:</head><label></label><figDesc>Physical model, : Model parameters, d: Data, : Regularization operator, &amp; : Residuals</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Regression equations formed for every cell and whole system optimized in a least</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

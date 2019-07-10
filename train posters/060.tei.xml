@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Evaluation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Evaluation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Learning Curves</head><p>• The learning curves from Q-learning (figure1) and SARSA(figure 2) are shown above respectively.</p><p>• Finding: Q-learning improves performance with fewer number of trials, but in long-run the performance are not guaranteed to b improving.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Performance Comparison</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure3 Figure4</head><p>• <ref type="figure">Figure  3  &amp;  Figure  4</ref> displayed the average scores achieved in 1-minute time limit by agent with Optimization Algorithm, agent trained in SARSA and agent trained in Q-Learning respectively.</p><p>• Finding: Agent trained in SARSA performed better than the one with Q-Learning significantly. After 1e+06 iteration, the former could achieve 80 percent of performance of Optimization Agent. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Observations &amp; Analysis</head><p>• Using quadrant mapping of the state space, the size of state space is tremendously reduced and learning rate has been accelerated.</p><p>• SARSA seems to outperform Q-Learning in long run, but also reveals a sluggish learning curve.</p><p>• Q-Learning would reinforce its self-righteous Qvalue even with small learning rate, and thus leads to considerably volatile performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>• Even with decreasing exploration probability, the Q-Learning is not stable.</p><p>• Other approximation of the state space should be explored for better performance.</p><p>• Various turning parameters should be implemented to improve the probability of convergence for Q-Learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Mathematical Analysis</head><p>• Snake Game is to find a self-avoiding walk(SAW) in R 2 • Picking the shortest SAW for each step is a NP-HARD problem</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Approximated Optimal Solution</head><p>• Find the shortest path from head to food • Guarantee the existence of path from head to tail after absorbing the food.</p><p>• Otherwise follow the longest path from head to tail</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Q-learning</head><p>• Train agent to learn optimal policy from history of interaction with environment. History is a sequence of state-action-rewards • On-policy Learning: Along exploration, the agent iteratively approximates the value of a policy, and takes action follow that policy. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Reinforcement learning is an essential way to address problems where there's no single correct solution. In this project, We combined convolutional neural network and reinforcement learning to train an agent to play the game Snake. The challenge is that the size of state space is extremely huge due to the fact that position of the snake affects the training results directly while it's changing all the time. By training the agent in a reduced state space, we showed the comparisons among different reinforcement learning algorithms and approximation optimal solution.</p><p>State eat food hit wall hit snake else reward +500 -100 -100 -10</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 Figure 2</head><label>12</label><figDesc>Figure 1 Figure 2</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>•</head><label></label><figDesc>Off-policy Learning: Use Bellman equation as an iterative update • Use neural network to approximate value of Q-function by using Exploration of Reinforcement Learning to SNAKE Bowei Ma, Meng Tang, Jun Zhang CS229 Machine Learning, Stanford University Related Work 4. SARSA (State-Action-Reward-State-Action)</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

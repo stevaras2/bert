@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Attribute extraction from eCommerce product descriptions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mikhail</forename><surname>Sidorov</surname></persName>
+						</author>
+						<title level="a" type="main">Attribute extraction from eCommerce product descriptions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Dataset description</head><p>We use BestBuy eCommerce dataset provided for NER problem. Exposed data set has about 4000 records annotated by experts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Feature extraction pipeline</head><p>Feature extraction pipeline responsible for flexible extraction approach suggested <ref type="bibr" target="#b0">[1]</ref> 4. NER using Classification</p><p>Multinomial classification approach to classify the tokens which are represented as feature vectors. Classification has been implemented using sklearn library SVM <ref type="bibr" target="#b1">[2]</ref> and GradientBoostingClassifier. For result esimation we use P recission, Recall and F 1 metrics. The definition are:</p><formula xml:id="formula_0">P recision = T P T P + F P ; Recall = T P T P + F N ; F 1 = P recision × Recall P recision + Recall</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Probabilistic model (Conditional random field)</head><p>We also used probabilistic approach and train the model using CRF <ref type="bibr" target="#b2">[3]</ref> </p><formula xml:id="formula_1">p(y|x) = 1 Z(x) T t=1 exp K k=1 θ k f k (y t , y t−1 , x t )</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusions</head><p>Following methods are using for NER:</p><p>• rule-based</p><formula xml:id="formula_2">• classification-based • probabilistic (HMM/MEMM/CRF)</formula><p>• based on neural networks</p><p>In current project we applied 2 of them (probabilistic and classification). CRF demonstrated better results. We didn't use gazetteers as a source for additional features. which definitely should be a strong signal. Also we had very limited data set and didn't use pretrained word embedding, which could compensate small data set. We can see that under these conditions probabilistic model demonstrated better results and less affected by overfitting. We consider to try neural architectures for NER as a continuation of this work.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Attribute extraction from product titles in ecommerce. WalmartLabs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ajinkya</forename><surname>More</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Named entity recognition using support vector machine: A language independent approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Asif</forename><surname>Sivaji Bandyopadhyay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ekbal</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dan</forename><surname>Jurafsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><forename type="middle">H</forename><surname>Martin</surname></persName>
+		</author>
+		<title level="m">Speech and language processing</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>3rd ed. draft</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

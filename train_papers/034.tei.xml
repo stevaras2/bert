@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning online dating preferences from neuroimaging data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mira</forename><surname>Nencheva</surname></persName>
+						</author>
+						<title level="a" type="main">Learning online dating preferences from neuroimaging data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION A. Why study online dating?</head><p>What is it about a person that makes you want to approach them? With the rise of online dating websites, for many the 'approach' has changed from walking across a crowded bar to sliding one's finger across a cell phone screen to indicate one's interest in dating. The initial question about how we make these split-second judgments about the desirability of a partner has changed as well, as our judgments are often solely based on photographs with minimal additional information. While studies have shown that our judgments 'on paper' (from merely looking at the online dating profile of an individual) more often than not fail to predict how much we like them in person <ref type="bibr" target="#b7">(Finkel et al., 2012)</ref>, millions of online dating users are doing the initial selection of who to contact precisely in this rapid fashion. Since 2000, the population of online dating users has grown significantly. According to unofficial reports, Tinder, a popular dating app, has over 50 million users. Tinder reports that since their launch in 2012 their app has matched more than 12 million people and that theirs users make billions of decisions every day about whether they are interested in potentially meeting someone by swiping right or left. Online dating is changing the dating world, and it is becoming more and more important to understand the specific mechanisms of mate selection that are in place in the unique social environment of online dating websites.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Goal: Predicting choice in online dating from target features and individual differences</head><p>The choice to contact a partner in online dating involves two sets of factors: those relating to the individual making the decisions (or individual variations in preferences) and those characterizing the 'target' of the decision (or target features). One interest is in developing better algorithms for online dating websites to recommend potential matches to their users. If we understand how to accurately predict a given user's ideal partner choices, we could help them find someone they like much faster. In this study, I aim to use both target features and individual differences to predict users' choices to contact a given partner in online dating or not.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Why is asking users what the are looking for not enough?</head><p>How does one measure a user's partner preferences? One way is to simply ask a user what qualities they would want their ideal partner to have (ideal partner preferences), or to state how important different traits of a potential partner are for their decision (I will refer to this as stated preferences). <ref type="bibr" target="#b19">Wood &amp; Brumbaugh (2009)</ref> for example asked participants to indicate how important a set of characteristics were in how attractive they found people (they labeled this as 'direct preference measure' ). Then they asked participants how attractive they found 98 people based on their photos (they labeled this as 'revealed preferences'). They found that across all groups of participants (which included participants of different genders, sexual orientations and ethnicities) revealed preferences were not strongly correlated with direct preference measures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Neural activation as a measure of individual preferences</head><p>Neuroscience may offer another individual differences measure, namely, how the brain responds to the photographs of different potential partners. For many years scientists have been interested in neural processes that help us make decisions. Over the past few decades, a large body of studies using methods such as functional magnetic resonance imaging (FMRI) in humans, as well as electrophysiological recording, electrical and optogenetic stimulation, and pharmacological inhibition in animal models, has implicated the dopaminergic system of the brain as essential for estimating the expected value of a choice in diverse decision tasks. Specifically, research suggests that ventral striatal activity (and nucleus accumbens or NAcc activity in particular) correlates with the value of anticipated rewards (see <ref type="figure" target="#fig_1">Fig.1</ref>) (similar to the economic notion of expected value; Breiter et al. <ref type="bibr">2001</ref>, <ref type="bibr" target="#b12">Knutson et al. 2001)</ref>, and can predict choice (e.g., <ref type="bibr" target="#b14">Knutson &amp; Greer, 2008)</ref>.</p><p>Consistent with the notion that the dopaminergic system plays a critical role in initiating motivated behavior, multiple studies have shown activity in dopamine projection areas such as the striatum and ventral tegmental area related to love <ref type="bibr">(Aron et</ref>  While there is a large body of research on attraction and early stage romantic love, how people initially select a romantic partner remains an open question. <ref type="bibr" target="#b3">Cooper et. al (2012)</ref> attempted to answer this question in the context of speed dating. Prior to attending a series of speed dating events, participants were asked to rate the attractiveness of and their dating interest towards a group of potential partners (some of which they would meet during the speed dating events) while in a MRI scanner. After 3 speed dating events, participants submitted their final choices. The investigators found that activity in the anterior cingulate cortex, medial prefrontal cortex (MPFC), and cerebellum scaled with consensus judgments of attractiveness (based on average desirability of a person), whereas activity in the dorsolateral prefrontal cortex (DMPFC) tracked individual preferences and predicted choice to date targets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. DATA COLLECTION AND PROCESSING</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Stimuli</head><p>We recruited 36 Caucasian 1 females between the ages of 21 and 25 via social media and mailing lists to submit each two identical photos of themselves ('selfies'), such that their face was fully visible. On one of the photos they were instructed to smile and one the other one they were instructed to keep a neutral facial expression. The 72 photos (2 per female for the 36 females) were cropped to ensure that the size of the face, size of the photo and the resolution of the photo were the same across photos. The photos were cropped to a square, so that only the face and part of the hair was in the photo. We also ensured that the photos were comparable in brightness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Target ratings</head><p>On the Qualtrics survey site, we recruited a panel of 50 Caucasian males between the ages of 18 and 28 who were romantically interested in females and not in a committed relationship at the time. Participants were asked to rate how 'physically attractive', and how 'happy' each target appeared. The ratings were on a 4-point scale: To a very small extent, To a small extent, To a moderate extent, To a large extent. Each participant only saw one photo per female (therefore, each photo was rated by 25 participants). The order of the photos was randomized for each participant. • lower lip width: distance between the top of the lower lip and the bottom of the lower lip In addition to these features I also manually scored each photo on three additional sets of features: hair color, hair texture, and hairstyle. The hair color feature has three variations: blond, brown and red. Each target received a 1 for the heir color she had in the photo and 0 for the other two colors. Similarly, the hair texture feature had two variations: straight and curly, and the hairstyle feature had two features: hair up (in a ponytail or a bun) or hair down.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Task</head><p>The online dating task was designed to re-create the experience of choosing to contact a partner on an online dating mobile application, such as Tinder while subjects underwent scanning. During each trial of the task, subjects first saw a photograph of a female target (2 s; the 'cue period'). Subjects then indicated whether they wanted to contact that target or not (4 s) (see <ref type="figure" target="#fig_1">Fig. 1</ref>; the choice period). In data analyses, negative responses ('Definitely not contact', 'Probably not contact') were combined into one category ('Not contact'), and positive responses ('Definitely contact' and 'Probably contact') were combined into a second category ('Contact'). Finally, subjects fixated on a cross for a variable intertrial interval (26 s).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Participants</head><p>We recruited participants for a study on stock markets that was run prior to the online dating task. Twenty-three males, romantically interested in females and between the ages of 21 and 31 (average age 26) also agreed to participate in the online dating task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>F. Neuroimaging data and regions of interest</head><p>Magnetic resonance imaging (MRI) data was acquired with a 3.0-T General Electric MRI scanner. I acquired the standardized (using z-scores) MR signal from 6 regions of interest: nucleus accumbens, which has been associated with predicting choice <ref type="bibr" target="#b14">(Knutson &amp; Greer, 2008</ref> </p><formula xml:id="formula_0">K(x, z) = exp(− 1 2τ ||x − z|| 2 2 )</formula><p>The prediction for each example was given by the equation:</p><formula xml:id="formula_1">sign( m i=1 exp(− 1 2τ ||x (i) − x|| 2 2 )α i )</formula><p>Where the x (i) s are given by the inputs of the training examples and the x was given by the input of the example we are attempting to predict. In the case of the neural model the input was the signal change from the beginning of the trial to 6 s after the onset of the trial. In the case of the target model, the input was the average attractiveness and happiness rating that the photo received from the Raters group. In the combined model the input was the combination of the inputs of the neural and the target models. The term x (i) − x 2 2 measures how similar the input of the example we are trying to predict to the i-th training example. The term α was determined using stochastic gradient descent on the training examples. The algorithm outputs -1 for trials when it predicts that the subject chose not to contact the female and +1 on trials when it predicts the subject chose to contact the target.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Finding the optimal bandwidth</head><p>I ran the three SVM algorithms (neural, target and combined) with different bandwidth values (τ <ref type="figure" target="#fig_1">=  {1, 2, 3, 5, 8, 10, 12, 15, 18, 20, 25})</ref>. Interestingly the target model was not significantly affected by the choice of bandwidth, whereas for the neural model the choice of bandwidth made a dramatic difference (see <ref type="figure" target="#fig_3">Fig. 2</ref>). This is likely because the neural data is noisier and needs more smoothing. This is in part because biological signals tend to be noisy, and in part because the behavioral data comes from average ratings from 52 raters. The optimal bandwidth for the neural model was τ = 12. At the optimal bandwidth for the neural model there was no significant difference between the models, however, the neural model was slightly better (average testing error neural model: 33.6697%, average testing error target model: 34.8624%, average testing error combined model: 34.5872%). The lack of a notable difference between the combined model and the other two models could suggest that activity in the 6 regions of interest is simply a neural representation of the two features of the target model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Removing features from the neural model</head><p>In order to see if there is a single region in the brain (out of the 6 ones discussed above) that provides especially important information for predicting choice, I tested the neural model at bandwidth 12 while removing each of the regions of interest. Removing any one of the regions of interest did not seem to have a significant effect on the accuracy of the model (see <ref type="figure" target="#fig_4">Fig. 3</ref>). This is possibly due to the fact that activity in some of the regions is correlated, and thus removing a single one of them would be compensated by the presence of the remaining regions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Effect of number of features on test error</head><p>In order to see whether adding more features to the model would increase the accuracy of prediction, I sequentially added one feature at a time in two different orders. The first order started with the target ratings, followed by the facial features (see section C in methods) and finally adding the neural features. The second order started with the neural features, was then followed by the target ratings and the facial features last. (see <ref type="figure" target="#fig_5">Fig. 4</ref>). Adding more facial features appeared to increase the error (features 3-17 for the teal line and features 9-23 for the pink line). This pattern is interesting and somewhat intuitive. While it might seem that knowing the exact length of the nose or the size of the eyes of a target would help us predict the user's choice better, including these characteristics might lead the model to over-fit to the target and discount the valuable information about the individual preferences of each user. In contract, the neural response and the attractiveness ratings would not help us to identify which target the user is making decisions about, however they give us more information about the preference for that target (of the individual and of the group). Information, which is arguably more closely linked to choice. Including the neural features with attractiveness and happiness ratings lead to a smaller testing error (32.4771%) compared to adding the neural features last.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Predicting choice: conclusions</head><p>While being able to predict a binary outcome with about 68% accuracy might seem far from perfect, it is important  to note that we are predicting human decisions about other humans. Quite a few studies of economic decision-making, where it is possible (and in fact quite easy) to come up with an estimation for the value of each choice, report similar success rates. Therefore, for a social psychology experiment, where the value of each choice is noisy, and affected by a large set of unknown individual differences and external factors, 68% accuracy is quite high, and perhaps as far as we can go given the data set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. PREDICTING NEURAL SIGNAL IN RESPONSE TO TARGET</head><p>For the second part of my project I attempted to predict the signal change in response to seeing a given target photo using a locally weighted linear regression. I defined my weights in two ways. In the first model the weights were only based on the photo features (average ratings on happiness and attractiveness as well as facial features), whereas in the second model the weights were also based on the average pattern of neural response for the 6 regions of interest for the participant the training example came from. To determine the similarity between the features I used the formula from the lecture notes, where the weight of the i-th training example was given by:</p><formula xml:id="formula_2">w (i) = exp( (x (i) − x) 2 2τ 2 )</formula><p>As in the case of SVM, the model consisting only of photo features did best under small bandwidth values, and had similar performance for larger bandwidth values (see <ref type="figure" target="#fig_6">Fig.  5</ref>). Again, this is likely due to the fact that photo features are subject to less noise than the biological signals from the brain. The model that included neural data for the prediction did best for a bandwidth value of 5 for most regions (with the exception of the DLPFC and the Nucleus Accumbens, for which the prediction was most accurate at bandwidth 1).Overall, the predictions for the model accounting for the similarity in the average neural response performed slightly better (see <ref type="figure" target="#fig_7">Fig. 6</ref>).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CONCLUSION</head><p>Using neural data in predicting choice in online dating allowed for slightly more accurate predictions than merely using photo features as previous prediction algorithms had done. By doing so I was able to account for participant's individual preferences. In addition, introducing similarity in the average pattern of neural response when predicting signal in the 6 regions of interest increased our accuracy of prediction slightly.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>al. 2005, Cacioppo et al. 2008, Ortigue et al. 2010, Fisher et al. 2005 ) and sexual desire (Buhler et al. 2008, Cacioppo et al. 2012, Hamann et al. 2004, Hanes et al. 2004). Both Cacioppo et al. (2012) in a large meta analysis of neuroimaging studies on love and desire, and Aron et al. (2005)suggested that in addition to striatal regions, the insula was commonly tracked feelings of love and desire.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 1 .</head><label>1</label><figDesc>used the Microsoft Cognitive Services Face API to obtain the coordinates of several important points on the face of each target. I then estimated 6 features of the face as follows: • nose width: distance between the coordinated of the left and right side of the root of the nose • nose length: distance between the root of the nose and the tip of the nose • eye length: distance between the inner and outer end of the eye (calculated for the left eye) • eye width: distance between the top lid and bottom lid of the eye (calculated for the left eye) • eye distance: distance between the inner side of the two eyes • upper lip width: distance between the top of the upper lip and the bottom of the upper lip 1 We chose to only include Caucasian females as targets, because of strong effects of race on preferences documented in previous research (Hitsh et al. 2010, Robnett &amp;Feliciano. 2011).Including the effects of race would have required a much larger database of photos and could have introduced additional variability that might obfuscate the effects of smiling, which were the initial focus of the study. We hope to replicate the study in the future with other combinations of gender, race, and sexual orientation.Fig. 1. Structure of the online dating task for the neuroimaging study.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>), early stage romantic love (Aron et al. 2005, Cacioppo et al. 2008, Ortigue et al. 2010, Fisher et al. 2005 ) and sexual desire (Buhler et al. 2008, Cacioppo et al. 2012, Hamann et al. 2004, Hanes et al. 2004), anterior insula, which has also been observed to track feelings of love and desire (Cacioppo et al., 2012, Aron et al., 2005), medial prefrontal cortex (MPFC), anterior cingulate cortex, and dorsolateral prefrontal cortex (DLPFC), which were associated in partner choice in a speed dating study (Cooper et. al 2012), and the fusiform gyrus, which is involved in perceiving faces (McCarthy et. al 1997). The coordinates of the ROIs were determined based on previous meta analyses (Knutson &amp; Greer, 2008). G. Selecting training and testing examples I removed all trials in which the participant failed to respond, as well as trials in which the MR signal in any of the regions of interest was above 4 standard deviations from the average. In order to accurately estimate the testing error for each model, I performed 20 iterations, at each randomly choosing 3*36 trials as testing examples, and the remaining 20*36 trials as testing examples. I then report the average error in classifying the testing examples as 'Contact' or 'Not Contact' based on the input. III. PREDICTING CHOICE FROM NEURAL ACTIVITY AND TARGET RATINGS A. Support Vector Machine: three models I trained a kernelized Support Vector Machine (SVM) on three sets of inputs one including only neural data (neural model), one including only average happiness and attrac- tiveness ratings of the 72 target photos (target model) and one including both neural data and target ratings (combined model). The SVM algorithm was adapted from John Duchi, Machine Learning (CS 229) Supplemental Lecture Notes. I used a Gaussian kernel function:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 2 .</head><label>2</label><figDesc>Comparing the effects of bandwidth on the neural, target and combined models.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 3 .</head><label>3</label><figDesc>Eliminating features from the neural model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 4 .</head><label>4</label><figDesc>Effect of adding photo features to the model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 5 .</head><label>5</label><figDesc>Weighted linear regression based on photo features.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 6 .</head><label>6</label><figDesc>Weighted linear regression based on photo features and average pattern of neural response.</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">We chose to only include Caucasian females as targets, because of strong effects of race on preferences documented in previous research (Hitsh et al. 2010, Robnett &amp;Feliciano. 2011). Including the effects of race would have required a much larger database of photos and could have introduced additional variability that might obfuscate the effects of smiling, which were the initial focus of the study. We hope to replicate the study in the future with other combinations of gender, race, and sexual orientation.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Reward, motivation, and emotion systems associated with early-stage intense romantic love</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Aron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">J</forename><surname>Mashek</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Strong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">L</forename><surname>Brown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of neurophysiology</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">32737</biblScope>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Does erotic stimulus presentation design affect brain activation patterns? Event-related vs. blocked fMRI designs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Bhler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Vollstdt-Klein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Klemen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Smolka</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Behavioral and Brain Functions</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">30</biblScope>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Are attractive people rewarding? Sex differences in the neural substrates of facial attractiveness</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Cloutier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">F</forename><surname>Heatherton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">J</forename><surname>Whalen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">M</forename><surname>Kelley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Cognitive Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="941" to="951" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Cooper</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Dunne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Furey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Doherty</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Dorsomedial prefrontal cortex mediates rapid evaluations predicting the outcome of romantic interactions</title>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">45</biblScope>
+			<biblScope unit="page" from="15647" to="15656" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The Common Neural Bases Between Sexual Desire and Love: A Multilevel Kernel Density fMRI Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Cacioppo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Bianchi-Demicheli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Frum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pfaus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Lewis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Sexual Medicine</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">1048</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Sex differences in mate preferences revisited: do people know what they initially desire in a romantic partner</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">W</forename><surname>Eastwick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">J</forename><surname>Finkel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of personality and social psychology</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">245</biblScope>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Online Dating A Critical Analysis From the Perspective of Psychological Science</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">J</forename><surname>Finkel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">W</forename><surname>Eastwick</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">R</forename><surname>Karney</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">T</forename><surname>Reis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Sprecher</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Psychological Science in the Public Interest</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="3" to="66" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Homophily in online dating: when do you like someone like yourself</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">T</forename><surname>Fiore</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">S</forename><surname>Donath</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">CHI&apos;05 Extended Abstracts on Human Factors in Computing Systems</title>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2005-04" />
+			<biblScope unit="page" from="1371" to="1374" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Romantic love: An fMRI study of a neural mechanism for mate choice</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Aron</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Brown</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Comparative Neurology</title>
+		<imprint>
+			<biblScope unit="volume">493</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">58</biblScope>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Men and women differ in amygdala response to visual sexual stimuli</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hamann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">A</forename><surname>Herman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">L</forename><surname>Nolan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Wallen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">411416</biblScope>
+			<date type="published" when="2004" />
+			<publisher>Nature Publishing Group</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">What makes you click?Mate preferences in online dating</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">J</forename><surname>Hitsch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Hortasu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Ariely</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Quantitative marketing and Economics</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="393" to="427" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Anticipation of increasing monetary reward selectively recruits nucleus accumbens</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Knutson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">M</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">W</forename><surname>Fong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Hommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">16</biblScope>
+			<biblScope unit="page">159</biblScope>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A region of mesial prefrontal cortex tracks monetarily rewarding outcomes: characterization with rapid event-related fMRI</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Knutson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">W</forename><surname>Fong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Bennett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">M</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Hommer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuroimage</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="263" to="272" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Anticipatory affect: neural correlates and consequences for choice</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Knutson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Greer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Philosophical Transactions of the Royal Society of London B: Biological Sciences</title>
+		<imprint>
+			<date type="published" when="1511" />
+			<biblScope unit="volume">363</biblScope>
+			<biblScope unit="page" from="3771" to="3786" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Facespecific processing in the human fusiform gyrus</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Mccarthy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Puce</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">C</forename><surname>Gore</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Allison</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of cognitive neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="605" to="610" />
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Beauty in a smile: the role of medial orbitofrontal cortex in facial attractiveness</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>O&amp;apos;doherty</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Winston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Critchley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Perrett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">M</forename><surname>Burt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neuropsychologia</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="147" to="155" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Neuroimaging of love: fMRI metaanalysis evidence toward new perspectives in sexual medicine. The journal of sexual medicine</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ortigue</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Bianchidemicheli</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Frum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">W</forename><surname>Lewis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="3541" to="3552" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Patterns of racial-ethnic exclusion by internet daters</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Robnett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Feliciano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Forces</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="807" to="828" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Using revealed mate preferences to evaluate market force and differential preference explanations for mate selection</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Wood</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">C</forename><surname>Brumbaugh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of personality and social psychology</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">1226</biblScope>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

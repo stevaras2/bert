@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Correctness of Protein Binding Orientations</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Predicting Correctness of Protein Binding Orientations</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Determine the efficacy of our model on the original, unbalanced dataset (more negative than positive simulated examples) with precision, recall, and the average rank of the top true positive • Add more attributes (atom charge and specific atom type) and make a multichannel 3D CNN</p><p>• First we formulated the problem of predicting the correctness of a protein binding orientation as a regression task (predicting RMSD values) which did not perform well.</p><p>• In order to improve performance, we reframed the problem as a classification task, which achieved more promising results as expected.</p><p>• We then used a ResNeXt 3D CNN that accepts 3D cubes of atom position data from the protein interface region and computed a weighted average over all cubes in the protein.</p><p>• Our best model is a ResNeXt50, which has a F1 score of 0.929 and, as expected, outperforms our SVM results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models Data and Features</head><p>• Equation parameterized with w, b</p><p>• Radial Basis Function (RBF) Kernel • Grid search over optimal 2 -15 &lt;= C &lt;= 2 10 and 2 -10 &lt;= γ &lt;= 2 10 • Optimizing problem:</p><formula xml:id="formula_0">ResNeXt 3D CNN:</formula><p>Support Vector Machine (SVM):   </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Aggregated model output decisions for each docking • Used ADAM optimizer, learning rate reduced on plateau, and binary cross entropy with logits loss function:• Train has 7812 samples and Test has 1472 samples • bs = batch size, lr = learning rate</figDesc><table>. 
+. 
+. 
+. 
+. 
+. 
+
+For each cluster, make 
+cubes with 1 cubic 
+angstrom voxels that 
+are 0 if no atom and 
+number for atom type 
+otherwise 
+
+Make cubic inputs for 3D CNN 
+
+• Experimented with various learning rates, batch sizes, and ResNeXt model 
+depths 
+• Model 
+Hyperparameter 
+values 
+
+Train F1 
+Score 
+
+Test F1 
+Score 
+
+Train 
+ROC-AUC 
+
+Test 
+ROC-AUC 
+
+Train R 2 
+(5-fold cross 
+validation) 
+
+Test R 2 
+
+SVM Regression 
+C=4, γ=32 
+0.445 
+0.171 
+
+SVM Classification 
+C=2, γ=32 
+0.888 
+0.870 
+0.950 
+0.501 
+
+3D CNN 
+ResNeXt101 
+
+lr = 0.5e-2, 
+bs = 32 
+0.851 
+0.825 
+0.903 
+0.864 
+
+3D CNN 
+ResNeXt50 
+
+lr = 0.5e-2, 
+bs = 32 
+0.956 
+0.929 
+0.981 
+0.954 </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

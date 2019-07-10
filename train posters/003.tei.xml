@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Playing Chinese Checkers with Reinforcement Learning Procedure of alpha-beta pruning Performance of alpha-beta pruning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sijun</forename><surname>He</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wenjie</forename><surname>Hu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hao</forename><surname>Yin</surname></persName>
+						</author>
+						<title level="a" type="main">Playing Chinese Checkers with Reinforcement Learning Procedure of alpha-beta pruning Performance of alpha-beta pruning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A i : total distance to the destination corner of player i B i : total distance to the vertical central line of player i C i : Sum of vertical advances for all pieces of player i</p><p>We built an AI for Chinese Checkers using Reinforcement Learning. The value of each board state is determined via minimaxation of a tree of depth k, while the value of each leaf is approximated by weights and features extracted from the board. Weights are tuned via value approximation. The performance of our modified minimax strategy with tuned weights stands out among all the other strategies.</p><p>The AI implementation is a shallow depth-k minimax game tree. The "value" of each leaf board state is approximated by a linear evaluation function based on the features of pieces positions:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weights Tuning</head><p>• Idea: to make the raw value consistent with the minimax value.</p><p>• Method: value approximation via stochastic gradient descent with diminishing step sizes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational requirement</head><p>The worst-case time complexity of a minimax tree of depth 4 is approximately 10 6 without pruning, while with alpha-beta pruning, it can be reduced to approximately 10 3 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Convergence of weights tuning</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Benchmarking</head><p>We benchmarked the performance of algorithms by simulating 200 games against a random look-ahead greedy algorithm. The result is measured by winning steps, which is the number of steps needed for the losing player to finish the game.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Effect of weights</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Effect of search depth</head><p>The simulation with search depth 4 is underway on AWS. </p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We built an AI for Chinese Checkers using Reinforcement Learning. The value of each board state is determined via minimaxation of a tree of depth k, while the value of each leaf is approximated by weights and features extracted from the board. Weights are tuned via value approximation. The performance of our modified minimax strategy with tuned weights stands out among all the other strategies.</p><p>The AI implementation is a shallow depth-k minimax game tree. The "value" of each leaf board state is approximated by a linear evaluation function based on the features of pieces positions:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weights Tuning</head><p>• Idea: to make the raw value consistent with the minimax value.</p><p>• Method: value approximation via stochastic gradient descent with diminishing step sizes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational requirement</head><p>The worst-case time complexity of a minimax tree of depth 4 is approximately 10 6 without pruning, while with alpha-beta pruning, it can be reduced to approximately 10 3 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Convergence of weights tuning</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Benchmarking</head><p>We benchmarked the performance of algorithms by simulating 200 games against a random look-ahead greedy algorithm. The result is measured by winning steps, which is the number of steps needed for the losing player to finish the game.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

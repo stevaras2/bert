@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Conference Paper Acceptance</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><surname>Jen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shichang</forename><surname>Zhang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Muyun</forename><surname>Chen</surname></persName>
+						</author>
+						<title level="a" type="main">Predicting Conference Paper Acceptance</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this paper, we examine the possibility of building a model to classify whether a conference paper can be accepted or rejected to a certain conference. We used the PeerRead dataset to build models to classify paper acceptance to ICLR, using 18 features including but not limited to number of authors and figures, abstract bag of words, and whether the abstract contains words like 'deep' or 'neural'. Using accepted and rejected papers from ICLR 2017, we trained the following models on the 172 accepted and 255 rejected papers from ICLR 2017: logistic regression with L2/L1 regression, SVM with the RBF kernel, random forest, AdaBoost, and a fully-connected neural network. We found that the SVM with the RBF kernel performed the best with an accuracy of 71%, an improvement over prior research's best of 65.3%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In recent years, there has been an explosion in scientific research applying machine learning onto ever-growing datasets, thanks to recent advances in computational power. In 2017 alone, 3,120 papers were submitted to the Neural Information Processing Systems (NIPS) conference, but only a mere 679 papers were accepted. While the peer review process is the most important way to judge the quality of research work, the scientific community has identified potential issues with the process, ranging from consistency to bias issues. One clear way to avoid these issues is to use a computer to evaluate submissions directly. The goal of this paper is to predict the acceptance of a given academic paper.</p><p>We receive raw pdfs and their reviews and labels (accept/reject) as our input, transform them into JSON files using science-parse, a library created from Kang, et. al <ref type="bibr" target="#b1">[2]</ref>, and then try a variety of models such as logistic regression with L2/L1 regularization, SVM, Random Forests, AdaBoost, and fully-connected neural networks to classify whether a paper will be accepted or rejected. We then look at each model's accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Kang, et. al. <ref type="bibr" target="#b1">[2]</ref> published initial work on this topic in April 2018 with the public release of PeerRead, a structured dataset that collects several research papers from several ML/AI conferences, such as NIPS, ICML, ICLR, and more. Further, they also developed a Java tool called science-parse to extract useful features from research papers in pdf form, such as specific paper sections, number of figures, equations, and more. These papers are also accompanied by reviewer comments with numerical ratings for the paper as well as confidence ratings for those ratings. The full feature set can be found in Kang, et. al <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>We took the 427 papers submitted to ICLR 2017, including 172 accepted and 255 rejected papers. For each paper, we extracted 18 features. To simplify the model, all of our features are numerical or Boolean. Some coarse features include length of the title, the publication year, whether the fancy terms like 'deep' or 'neural' appear in the abstract. There are also more sophisticated lexical features extracted from the abstract of each paper. We used word2vec techniques to capture the information of the abstract. We reconstructed the linguistic contexts of words. In this case, we get a 300-dimensional vector space. All of the words in the abstract get mapped to a vector in this space. Thus, it is much easier for us to measure the similarity between word vectors. We can also get a visualization of the words by dimension reduction technique, e.g. principal component analysis (PCA), linear discriminant analysis (LDA), or t-distributed stochastic neighbor embedding (t-SNE). When we actually put this feature into the model, we only take the word counts to make this feature numerical and be consistent with other features we have. The full feature list can be found in the appendix. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>Kang, et. al. <ref type="bibr" target="#b1">[2]</ref> trained and tested a logistic regression, SVM, boosting, and a single layer fullyconnected neural network based on the extracted features. We first reimplemented their models, and then examined them more in-depth by tuning each model's hyperparameters. We then opted to train a random forest to observe its performance on the classification problem.</p><p>Here are all the models that we explored: In logistic regression, we classify a training example as positive if h(θ T x) &gt; 0.5, negative otherwise. Regularization helps prevent model overfitting.</p><formula xml:id="formula_0">•</formula><formula xml:id="formula_1">min θ m i=1 y (i) − h θ T x (i) 2 + λ θ 2 h(θ T x) ≡ 1 1 + exp (−θ T x)</formula><p>• Random Forest: We varied the number of trees as well as overall depth to prevent overfitting.</p><p>Random forests are an ensemble method where each tree is fit to a set of bootstrapped training samples. Each tree has high variance, but random forests reduce the overall variance by averaging across all trees in the random forest.</p><p>• SVM with L2 regularization using a RBF kernel as defined below:</p><formula xml:id="formula_2">min w,b 1 2 ||w|| 2 subject to y (i) (w T x (i) + b) ≥ 1 ∀i = 1, . . . , m K(x,x) = exp − ||x −x|| 2 σ 2</formula><p>• AdaBoost: We used 50 weak classifiers as shown in <ref type="figure" target="#fig_2">Figure 2</ref>. The main idea behind Adaboost is to take a poorly-performing classifier (one that performs above, but close to 50% accuracy), and then feed the mispredictions to another weak classifier. Each subsequent classifier "fixes" the mispredictions of the previous classifiers through a penalty for mispredictions from the previous classifiers. With a long enough chain, this will eventually result in an accurate end prediction. • Fully Connected Neural Network <ref type="figure" target="#fig_2">(Figure 2</ref>): We used ReLU (max(0, x)) as our activation function. Kang et. al tried only a single layer with 10 neurons, so we varied the number of neurons from 10 to 100 neurons with a step size of 10, and also repeated with a two layer neural network.</p><p>Although a CNN was recommended, we determined it inappropriate based on our features. Typically, convolutional layers are useful for temporal or spatial relationships, such as those that can be found in time series or images. However, our feature set does not include any of these. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results and Discussion</head><p>We used sklearn <ref type="bibr" target="#b2">[3]</ref> to implement each model, and used five-fold cross-validation for each model. The result we show in the <ref type="table" target="#tab_0">Table 1</ref> are the models with the best hyperparameter for each model category. For the ICLR 2017 dataset, Kang et. al reports an test accuracy of 65.3% with a 7% standard deviation, but does not report which method.</p><p>In our case, we performed the highest performing model was the SVM model with RBF kernel, but we expected the neural network to perform better. One reason for this is that our dataset is relatively small with only 427 samples. Typically, neural networks require at least an order of magnitude larger dataset for good accuracy.</p><p>We also note that the AdaBoost and Random Forest models are significantly overfit. Indeed, our experiments showed that Adaboost with 50 weak classifiers is no better than random guessing! For the random forest model, even when we limiting tree depth and number of trees, we still observed some overfitting with even poorer accuracy.</p><p>We also used PCA to visualize to the ICLR dataset given our feature set in an attempt to understand the relatively poor classification accuracies that we observed. In <ref type="figure" target="#fig_3">Figure 3</ref>, we see that our current feature set does not effectively distinguish between accepted and rejected papers. From this, it does make sense why model classification accuracies are not much better than random guessing. This is good news -this implies that a conference paper's contents are the driving factor for acceptance or rejection, exactly how the peer review process should function. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Future Work</head><p>Our work focused on the ICLR dataset, which has limited examples. Similar studies can be done on other conferences with more submissions, like NIPS, or for the same conference but with submissions across years. One interesting experiment we could try is to use our trained model from one conference to predict the acceptance of a paper for another conference. This will tell us the preference of different conferences. If two conferences are looking for similar values, the model should provide an equally well prediction result. However, it could also be the case that the model performs poorly, from which we can conclude that two conferences prefer different styles of papers.</p><p>To improve classification accuracy on the current ICLR 2017 dataset, we need to employ NLP techniques to extract features to represent the core paper content. We can also extract additional features, such as figure and table content, but this will require additional modifications to the scienceparser tool.</p><p>A significant issue that we ran into was the lack of labels for papers. Kang et.al artificially expanded their training set through a set of heuristics using review comments as well as looking for references to an unlabelled paper from a known, published paper. We believe that a semi-supervised algorithm (e.g. semi-supervised EM) can potentially use these unlabelled papers to improve predictions.</p><p>• William (wjen) worked through the public PeerRead dataset and code and set up the necessary infrastructure to process the raw dataset. He also verified Kang, et. al.'s results on their prediction methods, and helped implement the models.</p><p>• Shichang (shichang) examined the data in depth, performed PCA visualizations to better understand the data, and gave recommendations based on the data. He also provided insight into feature extraction, as well as background on the AdaBoost algorithm, which was not covered in depth during class.</p><p>• Muyun (muyunc) worked on feature extraction, and worked with GloVe to gain a better understanding of the framework. She also implemented the various models when we met in person on Shichang's laptop.</p><p>Finally, all members collaborated in writing the final report. The repository can be found here: https://github.com/collielimabean/PeerRead</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>PCA visualization of word2vec: Closer words should appear closer together.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Logistic regression with L2/L1 regularization with the regularization hyperparameter λ varied linearly from [0, 1] over steps of 0.1. Kang et. al only examined the set [0.1, 0.25, 1].</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>AdaBoost algorithm visualized<ref type="bibr" target="#b0">[1]</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Fully connected neural network diagram<ref type="bibr" target="#b0">[1]</ref> </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>2D visualization of the ICLR 2017 dataset, where blue dots are accepted papers and red x's are rejected papers.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Extracted features from conference papers Feature Name Description Type Abstract contains ML keyword Whether abstract contains 'deep', 'neural', etc. boolean Title Length # of characters in title integer Authors Number of authors integer Most Recent Reference Year Latest year that a reference was published integer Number of References How many references this paper uses integer Number of Cited References How many cited references this paper uses integer Avg. Length of Mentioned References How long each reference was talked about (in words) integer Number of Recent References # of recent references (i.e. this year) integer Number of Figure/Table/Eqn References # of references to tables, figures, and equations integer Number of Unique Words How many unique words this paper uses integer Number of Sections How many sections this paper uses (as det. by science-parse) integer Average Sentence Length Avg. length of sentence, in characters float Contains Appendix Does this paper have an appendix? boolean Proportion of Frequent Words Proportion of frequent words float Abstract's Bag of Words Bag of words in abstract integer TFIDF-weighted Abstract's Bag of Words TFIDF-weighted bag of words for importance scaling float GloVe Average GloVe vector embedding of abstract float GloVe + TFIDF Abstract Bag of Words with TFIDF weighting float</figDesc><table>Feature Name 
+Description 
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2 :</head><label>2</label><figDesc>Train and test accuracies for the various models used.</figDesc><table>Model 
+Train Accuracy(%) Test Accuracy(%) 
+
+Majority 
+60.17 
+60.53 
+Logistic L2 
+42.41 
+42.10 
+Logistic L1 
+68.48 
+68.42 
+SVM RBF 
+72.49 
+71.05 
+Random Forest 
+99.43 
+63.16 
+AdaBoost 
+96.56 
+50.00 
+Neural Network 63.04 
+60.53 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">The Elements of Statistical Learning. Springer Series in Statistics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Robert</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jerome</forename><surname>Friedman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+			<publisher>Springer New York Inc</publisher>
+			<pubPlace>New York, NY, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A dataset of peer reviews (peerread): Collection, insights and nlp applications</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dongyeop</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Waleed</forename><surname>Ammar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bhavana</forename><surname>Dalvi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Madeleine</forename><surname>Van Zuylen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sebastian</forename><surname>Kohlmeier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eduard</forename><surname>Hovy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Roy</forename><surname>Schwartz</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/abs/1804.09635" />
+	</analytic>
+	<monogr>
+		<title level="m">Meeting of the North American Chapter of the Association for Computational Linguistics (NAACL)</title>
+		<meeting><address><addrLine>New Orleans, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2018-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

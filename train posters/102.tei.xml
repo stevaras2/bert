@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">How Real is Real? Quantitative and Qualitative comparison of GANs and supervised-learning classifiers</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Riccardo</forename><surname>Verzeni</surname></persName>
+							<email>rverzeni@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jacqueline</forename><surname>Yau</surname></persName>
+							<email>jyau@stanford.edu</email>
+						</author>
+						<title level="a" type="main">How Real is Real? Quantitative and Qualitative comparison of GANs and supervised-learning classifiers</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>• Convolutional Neural Network 5l (cnn-5l) ○ Same as cnn-4l but with an additional convolution layer (64 filters)</p><p>• Semi-Supervised modified GANs discriminator (semi-gan) ○ Same as (cnn-5l) but with two output layers: (1 neuron Sigmoid), (10+1 neurons Softmax)</p><p>How Real is Real?</p><p>Quantitative and Qualitative comparison of GANs and supervised-learning classifiers.</p><p>Riccardo Verzeni (rverzeni@stanford.edu), Jacqueline Yau (jyau@stanford.edu)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predictions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• Motivation</head><p>○ Investigate how well supervised learning classifiers, trained on real MNIST images, generalize on GANs synthetic images.</p><p>○ Investigate how well a modified GANs semi-supervised learning classifier would perform over real MNIST images.</p><p>• Approach ○ We built four supervised learning classifiers of increasing complexity; we trained them over real MNIST images and compare their results against real and synthetic test datasets.</p><p>○ We built a semi-supervised learning classifier modifying a GANs discriminator and trained it using a combination of unlabeled synthetic and labeled real MNIST images.</p><p>[1]</p><p>• Results ○ The various supervised classifier seemed to generalize reasonably well on GANs synthetic MNIST images.</p><p>○ The semi-supervised learning classifier appeared to perform worse when training on an equally split labeled real / unlabeled synthetic MNIST images dataset than when training on a fully labeled real MNIST images dataset (given an identical number of labeled real samples in both datasets).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>• The test accuracy obtained by the various supervised learning classifiers over synthetic images was overall slightly worse but comparable with the real images, where the most complex convolutional NN (cnn-5l) performed best.</p><p>• The test accuracy obtained by training the semi-supervised learning classifier on the combined labeled real / unlabeled synthetic dataset was worse than the one obtained by training it on the fully labeled real dataset.</p><p>• We expected the CNN to perform better than any other classifier since it is considered state-of-the-art for the MNIST digit classification problem <ref type="bibr" target="#b3">[4]</ref>. That has been indeed the case.</p><p>• The CNN performed well because the convolution was able to extract meaningful features that were effective in identifying and then classifying the number in the MNIST image, and the 5-layer CNN performed better than the 4-layer one since the extra convolution layer with 64 filters was able to find additional features that the first 32 filter convolution layer could not.</p><p>• For the semi-supervised learning classifier, we expected that the addition of the unlabeled synthetic data would have improved the label classifier accuracy on real MNIST images.</p><p>• Contrary to expectation, the semi-supervised learning classifier did not perform well. This is probably because, due to time constraints, we used previously generated synthetic images as unlabeled data, instead of building also a generator and training it along with the modified discriminator as shown by Tim S. and All <ref type="bibr" target="#b0">[1]</ref>. As a result the features extracted by the unlabeled data might not have been as relevant as they would have been if coming from the same distribution of the real data that the generator would have reproduced.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future work</head><p>• Since overfitting seems to occur for the CNN, one thing to do would be to add some regularization, such as a dropout layer.</p><p>• Another idea we would like to try is implementing a ResNet to see if it could perform even better than CNN.</p><p>• It would be interesting to build a complete semi-supervised learning GANs classifier, such as the one suggested[1] and see if that would improve the results obtained in our partial attempt.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>• Input features are the pixels that make up the MNIST grayscale image.</p><p>• The neural networks derive new features in the hidden layers, and the convolutional ones extract additional features in the convolutions.</p><p>• Attention visualization shows where the CNN focused.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>MNIST grayscale images (28 pixels x 28 pixels, 1 channel)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• The real MNIST images</head><p>The dataset has been downloaded using Keras APIs (60000 training examples, 10000 test examples)[2].</p><p>• The synthetic MNIST images The dataset (6336 unlabeled examples) has been generated using a Deep Convolutional Generative Adversarial Networks[3], which has been previously trained separately.</p><p>○ We manually labeled 1000 of the synthetic images acting as ground truth creating a synthetic test dataset for the quantitative accuracy comparison. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>○ Investigate how well a modified GANs semi-supervised learning classifier would perform over real MNIST images.</p><p>• Approach ○ We built four supervised learning classifiers of increasing complexity; we trained them over real MNIST images and compare their results against real and synthetic test datasets.</p><p>○ We built a semi-supervised learning classifier modifying a GANs discriminator and trained it using a combination of unlabeled synthetic and labeled real MNIST images.</p><p>[1]</p><p>• Results ○ The various supervised classifier seemed to generalize reasonably well on GANs synthetic MNIST images.</p><p>○ The semi-supervised learning classifier appeared to perform worse when training on an equally split labeled real / unlabeled synthetic MNIST images dataset than when training on a fully labeled real MNIST images dataset (given an identical number of labeled real samples in both datasets).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>• The test accuracy obtained by the various supervised learning classifiers over synthetic images was overall slightly worse but comparable with the real images, where the most complex convolutional NN (cnn-5l) performed best.</p><p>• The test accuracy obtained by training the semi-supervised learning classifier on the combined labeled real / unlabeled synthetic dataset was worse than the one obtained by training it on the fully labeled real dataset.</p><p>• We expected the CNN to perform better than any other classifier since it is considered state-of-the-art for the MNIST digit classification problem <ref type="bibr" target="#b3">[4]</ref>. That has been indeed the case.</p><p>• The CNN performed well because the convolution was able to extract meaningful features that were effective in identifying and then classifying the number in the MNIST image, and the 5-layer CNN performed better than the 4-layer one since the extra convolution layer with 64 filters was able to find additional features that the first 32 filter convolution layer could not.</p><p>• For the semi-supervised learning classifier, we expected that the addition of the unlabeled synthetic data would have improved the label classifier accuracy on real MNIST images.</p><p>• Contrary to expectation, the semi-supervised learning classifier did not perform well. This is probably because, due to time constraints, we used previously generated synthetic images as unlabeled data, instead of building also a generator and training it along with the modified discriminator as shown by Tim S. and All <ref type="bibr" target="#b0">[1]</ref>. As a result the features extracted by the unlabeled data might not have been as relevant as they would have been if coming from the same distribution of the real data that the generator would have reproduced.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future work</head><p>• Since overfitting seems to occur for the CNN, one thing to do would be to add some regularization, such as a dropout layer.</p><p>• Another idea we would like to try is implementing a ResNet to see if it could perform even better than CNN.</p><p>• It would be interesting to build a complete semi-supervised learning GANs classifier, such as the one suggested <ref type="bibr" target="#b0">[1]</ref> and see if that would improve the results obtained in our partial attempt.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>• Input features are the pixels that make up the MNIST grayscale image.</p><p>• The neural networks derive new features in the hidden layers, and the convolutional ones extract additional features in the convolutions.</p><p>• Attention visualization shows where the CNN focused.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>MNIST grayscale images (28 pixels x 28 pixels, 1 channel)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• The real MNIST images</head><p>The dataset has been downloaded using Keras APIs (60000 training examples, 10000 test examples) <ref type="bibr" target="#b1">[2]</ref>.</p><p>• The synthetic MNIST images The dataset (6336 unlabeled examples) has been generated using a Deep Convolutional Generative Adversarial Networks <ref type="bibr" target="#b2">[3]</ref>, which has been previously trained separately.</p><p>○ We manually labeled 1000 of the synthetic images acting as ground truth creating a synthetic test dataset for the quantitative accuracy comparison.  • *Training accuracy / test accuracy (discriminator layer ; label classifier layer) results against the combination of 5400 labeled real and 0 unlabeled synthetic sample training dataset and 1000 real MNIST images test dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>• **Training accuracy / test accuracy (discriminator layer ; label classifier layer) results against the combination of 5400 labeled real and 5400 unlabeled synthetic sample training dataset and 1000 real MNIST images test dataset. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 1</head><label>1</label><figDesc>Class Activation attention for cnn-5l.Fig.2Saliency attention for cnn-5l.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Training accuracy / test accuracy results against 54000 sample training dataset (6000 validation) and 1000 real and 1000 synthetic MNIST images test datasets.</figDesc><table>1.000 / 1.000; 
+0.9954 / 0.973 
+n/a 
+1.000 / 1.000 ; 
+1.000 / 0.979 
+n/a 
+1.000 / 1.000; 
+1.000 / 0.977 
+n/a 
+
+semi-gan** 
+
+0.966 / 0.889; 
+0.974 / 0.857 
+n/a 
+1.000 / 0.962 ; 
+1.000 / 0.932 
+n/a 
+1.000 / 0.968; 
+1.000 / 0.933 
+n/a 
+
+model 
+
+• 
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Original table without digits being normalised for Reference</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Improved techniques for training gans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tim</forename><forename type="middle">S</forename><surname>Ian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Wojciech</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Vicki</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Alec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Xi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1606.03498.pdf" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Tensorflow keras high-level apis</title>
+		<ptr target="https://www.tensorflow.org/guide/keras" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Deep Convolutional Generative Adversarial Networks</title>
+		<ptr target="https://github.com/carpedm20/DCGAN-tensorflow" />
+		<imprint/>
+	</monogr>
+	<note>A tensorflow implementation of</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Xuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Jing</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mdig</surname></persName>
+		</author>
+		<title level="m">Multi-digit Recognition using Convolutional Neural Network on Mobile</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

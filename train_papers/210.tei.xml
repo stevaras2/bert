@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Satellite-Based Prediction of Fire Risk in Northern California Final Report</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-12">December 12, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Caroline</forename><surname>Famiglietti</surname></persName>
+						</author>
+						<title level="a" type="main">Satellite-Based Prediction of Fire Risk in Northern California Final Report</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-12">December 12, 2018</date>
+						</imprint>
+					</monogr>
+					<note>(SUID: 06272576; CS229), Natan Holtzman (SUID: 06273767; CS229), &amp; Jake Campolo (SUID: 06165559; CS229A)</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In recent decades, climate change has drastically influenced key characteristics and patterns of wildfire across the global land surface <ref type="bibr" target="#b0">1</ref> . In California, wildfires are increasing in magnitude, scale, frequency, and duration, thus heightening risks to human populations and ecosystems 2 . As temperature rises and water availability shifts with climate change, such effects are only expected to intensify. Vast sectors of the state encompassing dense population centers, key agricultural regions, and biodiversity hotspots are left in critical positions. A clearer understanding of the patterns of fire development and spread in California, including the spatial distribution of vulnerability to disturbance, is vital in adaptively managing land and resources. The danger and high economic and social cost of uncontrolled wildfires motivated us to pursue a strategy of fire risk assessment, rather than post-fire classification <ref type="bibr" target="#b2">3</ref> , which could potentially be used to aid fire prevention policy. Our goal in this project was to develop a regionally flexible and scale-able method to predict fire risk based on local climate and land surface conditions. Specifically, we input remotely-sensed measures of precipitation, temperature, soil moisture, evapotranspiration, drought, wind speed, land cover type, and vegetation characteristics to three models: logistic regression, gradientboosted decision trees, and a multilayer perceptron. The output of interest is a probability of fire ranging from 0 to 1, which we interpret as fire risk from 0 to 100%. While we were able to predict non-fire more accurately than fire, predictions for the latter retained 75-80% overall accuracy. Our work demonstrates the strong potential of using remote sensing assets to preemptively identify fire risk and inform prevention efforts in the coming years and decades.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>Much of the prior work in this field has focused on mapping burned area and fire severity after a fire has already occurred 3,4,5 . <ref type="bibr" target="#b3">Eidenshink et al. (2007)</ref> mapped burn severity, a measure of fire intensity and residence time, using differences in the Normalized Difference Burn Ratio (dNBR) index calculated from the Landsat Thematic Mapper at 30m resolution; this index approximates vegetation growth if negative and mortality if positive. GIS analysts then manually classified fire severity by comparing differences in dNBR to a synthesized database of historical fires in the United States. <ref type="bibr" target="#b2">Hawbaker et al. (2017)</ref> improved upon this method by incorporating raw reflectance bands (red, blue, green, infrared, etc.) as well as additional reflectance indices (normalized difference vegetation index, wetness index, moisture index, tasseled cap greenness) in their analysis, and using a gradient boosted regression model for automated classification rather than manually estimating fire severity. They mapped 116% more burned area than in Eidenshink et al., and their method is more easily adaptable to other regions, while still being implemented wholly with Landsat data. <ref type="bibr" target="#b4">Parks et al. (2016)</ref> modeled fire severity using boosted regression trees with the following fire-related climate variables as input data: evapotranspiration, water deficit, annual precipitation, soil moisture, and snow water equivalent. However, their analysis was aggregated to the level of contemporary fire severity  and used to estimate mid-21st century (2040-2069) fire severity based on simulated global climate models rather than predict daily fire risk. For our project, we adapted and combined some of the best aspects of these works. We used fire classifications derived from pre-and post-fire dNBR, following the method pioneered by Eidenshink et al., as the target variable in our model training. We compiled a comprehensive dataset of potential predictors of fire risk based on the remotely-sensed reflectance and climate variables used by Hawbaker et al. and Parks et al., respectively, so that we have a greater chance of capturing the causes of fire risk while still being regionally adaptable. Additionally, we followed similar methods of these latter two studies by using machine learning to automate prediction, but adapted them to our goal of daily fire risk prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset</head><p>Our dataset was assembled in the Google Earth Engine platform 6 , which allows for parallelized cloud computing on its large collection of geospatial data. The primary data sources used were the Moderate Resolution Imaging Spectroradiometer (MODIS) aboard NASA's Terra/Aqua satellites, the Global Land Data Assimilation System product (GLDAS), and the Climate Hazards Group InfraRed Precipitation with Station data (CHIRPS). Using remote sensing data ensures that our model can be easily be extended to other regions and times (as long as similar remote sensing instruments are in operation at those times). We computed a collection of fire-relevant variables describing ecological, hydrological, and meteorological conditions from these gridded datasets for our study region of Northern California and for the time period of 2001-2017. These choices were informed by our review of the related literature. For the purposes of training and validation, we used a MODIS fire severity classification product developed from post-fire spectral signals to engineer a binary "fire/no fire" target variable. <ref type="table" target="#tab_0">Table 1</ref> contains the full list of variables fed to our models, including their sources and spatial &amp; temporal resolutions; <ref type="figure" target="#fig_0">Figure  1</ref> depicts an example input variable. Because we wanted to characterize short-term conditions preceding ignition days, we calculated a maximum of 4 variations (or 'lag periods') relative to the day of fire data for each variable: a 1-day lag, 1-week lagged average, 1-month lagged average, and 3-month lagged average. The number of lag periods calculated was dependent on temporal resolution of the data record for that variable. Each lag period was calculated for the current year as well as calculated and averaged over the years 1985 to 2005, in order to develop a 20-year climatology of the variable and thus differentiate anomalies from historical means. Finally, our sampling sampling strategy consisted of iterating through daily time steps and extracting each variable at every "fire" pixel, along with an approximately equal number of randomly selected "non-fire" pixels, into a tabular dataset. The resulting dataset had dimension 903, 921 × 112 given all pixel-days and features considered. For post-processing, we omitted records of already-burning fires, keeping only the first fire occurrence in any given year at each pixel. Had we not omitted these records, the associated lag variables would be "contaminated" by the ongoing fire. These data points are essentially duplicates of the initial day of fire at that pixel and thus add no new information to the data. More seriously, including these points in our training data might yield models trained to detect persistent burning rather than to learn likelihoods of ignition based on pre-fire conditions. The former is not our goal in this project. After removing already-burning fires, we were left with 561,662 examples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Algorithms</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Logistic regression with forward stepwise selection</head><p>Logistic regression is a linear classifier that outputs a probabilistic prediction h(x) = g(θ T x) where g is the logistic function g(z) = 1/(1 + e −z ). The model is trained to maximize the likelihood assuming that y ∼ Bernoulli(p = h(x)). We used the glm function in R, which uses the Newton-Raphson method for optimization <ref type="bibr" target="#b5">7</ref> . We fit the model using all variables, but also experimented with forward stepwise feature selection, where one feature was added to the model at a time according to which added feature lowered the cross-entropy loss the most. We added 10 features one by one and then used the number of of features that maximized accuracy on a validation set as a final model. We used years 2001-2015 for training, 2016 for validation, and 2017 for testing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Decision trees with gradient boosting</head><p>In gradient boosting, the n th model in the ensemble is fitted on the residual of the previous n − 1 models. The splits on each model are chosen to minimize the cross-entropy loss −(y log p + (1 − y) log(1 − p)) at every split. We used the XGBoost R package 8 to fit 100 gradient boosted trees with a maximum depth of 2. To avoid overfitting, we chose the number of trees to use in our final model based on which number of trees gave the highest validation accuracy (32 trees when both climate and reflectance subsets were included). We again used years 2001-2015 for training, 2016 for validation, and 2017 for testing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Multilayer perceptron</head><p>A multilayer perceptron (MLP) is a feedforward neural network composed of an input layer receiving the signal, an output layer making a prediction about the input (in our case, assigning a 'fire' or 'no fire' label), and any number of hidden layers with non-linear activation functions. Our MLP uses the ReLU activation function (f (x) = max(0, x)) and stochastic gradient descent for optimization, which we implemented using the scikit-learn Python library 9 . For classification, it minimizes the cross-entropy loss function. The model consists of two hidden layers with 10 and 2 neurons, respectively. We used the years 2001-2016 for training and 2017 for testing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments, Results &amp; Discussion</head><p>We built machine learning models to predict the probability that a fire will ignite on any pixel on any given day, given prior climate and land surface conditions derived from remote sensing data. As described in section 4, the three models considered perform binary classification with cross-entropy loss. We used models that output a probability, excluding methods such as support vector machines. We trained each model on three distinct sets of features: climate variables only, reflectance variables only, and both subsets.</p><p>We first considered logistic regression. Because the logistic regression models trained on each set of data had test accuracies of between 0.76 and 0.78, we found it more informative to compare their values of AUC (area under the Receiver Operating Characteristic curve, which plots true positive rate against false positive rate as the threshold for being predicted as a positive example is changed). Forward feature selection did not improve test performance; we achieved an AUC of 0.74 with all features, but 0.68 with the four selected features. This contrast suggests that the conditions that contribute to fire are too complex to be described with only a small number of variables. However, feature selection provides some insight into which specific variables are important. In particular, land cover classification, 1-week GCVI, 3-month SWIR2, and 1-week ET were selected. The fact that remote sensing indicators were chosen before climate variables suggests their abilities to capture the fire vulnerability state of the land system in a way that is not easily obtained from knowledge of the climate forcing. This finding is confirmed by comparing the AUCs of logistic regression models trained on the two types of variables: 0.68 and 0.72 for the climate and reflectance subsets, respectively. Reflectance alone can predict fire more accurately than climate alone, but we achieve the best results (AUC of 0.74) when including both sets of variables. <ref type="table">Table 2</ref>: Percent errors by model for training and testing. Model labels (C), (R), and (C, R) indicate which subset of data was used (climate, reflectance, or both). The baseline error achieved by classifying all test examples as "no fire" was 27.19%. Both the gradient boosted decision trees and the MLP showed similar results to those of logistic regression <ref type="table" target="#tab_3">(Tables 2-4</ref>). In particular, the boosted trees yielded AUCs of 0.70, 0.72, and 0.75 for climate, reflectance, and both respectively. Notably, the minimum test error was found with the MLP (C, R), but overall variations in test error are small across all models and subsets <ref type="table">(Table 2)</ref>. Additionally, all models on all subsets surpass baseline performance of 27.19% error. Because two nonlinear algorithms, trees and neural networks, had only slightly higher accuracy than logistic regression with no interaction terms, we are led to believe that there is minimal nonlinearity in the processes that influence fire risk. The most important features found in in the boosted trees were land cover, climatological 1-month precipitation, 3-month LST, and climatological 3-month wind speed. The fact that these are different from the variables found in logistic regression feature selection except for land cover may be due to many features being collinear, which made forward selection sensitive to noise.   Finally, using the coefficients from (C, R) logistic regression with feature selection, we have mapped fire risk across our domain for the summer of 2017 <ref type="figure" target="#fig_3">(Figure 2)</ref>. The fact that the Central Valley, an area dominated by cropland, stands out as most vulnerable to fire points to a key limitation of our dataset: wildfires are not distinguished from anthropogenically caused fires (e.g. crop residue burning, with which we expect many observed fires in the Central Valley are associated). This result echoes that of our feature importance determination; land cover was the single most important feature for both logistic regression and the boosted trees. In particular, whether or not a given pixel was located in cropland was crucial. Thus while our models have indeed identified fires, they have not differentiated between fire sources. A remedy to this problem could involve filtering out cropland pixels. However, for the purposes of this project, such filtering was not performed. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Train Error (%) Test Error (%)</head><note type="other">Logistic regression</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusions &amp; Future Work</head><p>Our work demonstrates the vast potential for using machine learning techniques to better understand vulnerabilities to fire based on features of climate and the land surface. We applied logistic regression with forward stepwise selection, decision trees with gradient boosting, and a multilayer perceptron to a robust dataset of ecological, hydrological, and meteorological variables derived largely from remote sensing. Performance across models was similar, though the multilayer perceptron using the full dataset (both climate and reflectance subsets) provided the overall minimum test error. In general, while we were able to predict non-fire conditions more accurately than fire conditions, predictions for the latter retained 75-80% overall test accuracy, measurably better than the 73% that would be achieved with random guessing. We believe that by coupling remote sensing assets with learning algorithms, preemptive identification of fire risk with the goal of adaptive resource management is possible.</p><p>Two future directions are particularly appealing to us. We are first interested in using projections of future climate to infer expected wildfire dynamics in the region in the coming decades. To address this, we could leverage climate model outputs under the RCP 4.5 or 8.5 emissions scenarios (which forecast climate change from the present to 2100), and modify our input variables to reflect these probable shifts. We could then apply our models to the predicted data to assess future changes in fire risk over the next century. The second future direction of interest to us involves predicting post-disturbance effects (in particular, economic impacts or costs of damages) on burned areas. We could compile spatially-explicit population, infrastructure, and economic data in order to extrapolate potential costs and damages from fires predicted by our model, which would be useful for policymakers in conducting cost benefit analysis of fire prevention.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>All team members contributed to the planning of experiments, determination of project foci, and writing of the report. Additionally, all team members collaborated in determining dataset structure (e.g. relevant variables and data sources), analyzing data, and creating the poster. Jake Campolo prepared data and created map-based visualizations; Caroline Famiglietti implemented the multilayer perceptron, tabulated outputs, and led overall design choices; Natan Holtzman implemented the logistic regression and boosted trees, and analyzed, interpreted, and visualized project results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>Our code for this project is available at https://github.com/cfamigli/229.git.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Example input variable. GreenChlorophyll Vegetation Index (GCVI) at 1 km res- olution ranges from 0 to 6 (dark to light green). Shown for July 15, 2018.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Table 3 :</head><label>3</label><figDesc>Confusion matrices for (a) logistic regression (C, R), (b) boosted trees (C, R), and (c) MLP (C, R).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>(</head><label></label><figDesc></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :</head><label>2</label><figDesc>Map of average fire risk for the period June-August 2017. Risk was derived using coefficients from logistic regression (C, R).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Variables used for fire prediction. Climate variables are italicized; reflectance variables are not italicized.</figDesc><table>Variable 
+Source 
+Spatial Res. Temporal Res. 
+Evapotranspiration (ET) 
+GLDAS 
+27.5 km 
+3-hourly 
+Precipitation 
+CHIRPS 
+5.5 km 
+Daily 
+Palmer Drought Severity Index (PDSI) U of Idaho 
+4.6 km 
+10-day 
+Soil moisture, 0-10cm 
+GLDAS 
+27.5 km 
+3-hourly 
+Soil moisture, 10-40cm 
+GLDAS 
+27.5 km 
+3-hourly 
+Soil moisture, 40-100cm 
+GLDAS 
+27.5 km 
+3-hourly 
+Soil moisture, 100-200cm 
+GLDAS 
+27.5 km 
+3-hourly 
+Wind speed (WS) 
+GLDAS 
+27.5 km 
+3-hourly 
+Land surface temperature (LST) 
+MODIS 
+1 km 
+Yearly 
+Reflectance (Red) 
+MODIS 
+1 km 
+Daily 
+Reflectance (Green) 
+MODIS 
+1 km 
+Daily 
+Reflectance (Blue) 
+MODIS 
+1 km 
+Daily 
+Reflectance (Near-infrared) 
+MODIS 
+1 km 
+Daily 
+Reflectance (Shortwave infrared 1) 
+MODIS 
+1 km 
+Daily 
+Reflectance (Shortwave infrared 2) 
+MODIS 
+1 km 
+Daily 
+Normalized difference vegetation index (NDVI) 
+MODIS 
+1 km 
+Daily 
+Green chlorophyll vegetation index (GCVI) 
+MODIS 
+1 km 
+Daily 
+Normalized difference moisture index (NDMI) 
+MODIS 
+1 km 
+Daily 
+Normalized difference wetness index (NDWI) 
+MODIS 
+1 km 
+Daily 
+Tasseled cap greenness (TCG) 
+MODIS 
+1 km 
+Daily 
+Tasseled cap wetness (TCW) 
+MODIS 
+1 km 
+Daily 
+Normalized burn ratio 1 (NBR1) 
+MODIS 
+1 km 
+Daily 
+Normalized burn ratio 2 (NBR2) 
+MODIS 
+1 km 
+Daily 
+Land cover classification (LC) 
+MODIS 
+1 km 
+Daily 
+Presence of fire 
+MODIS 
+1 km 
+Daily 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="true"><head>Table 4 :</head><label>4</label><figDesc>Additional statistics for the three models (C, R).</figDesc><table>Precision Recall 
+F1 
+No Fire (Logistic regression) 
+0.80 
+0.95 
+0.33 
+Fire (Logistic regression) 
+0.61 
+0.23 
+0.86 
+No Fire (Boosted trees) 
+0.80 
+0.93 
+0.86 
+Fire (Boosted trees) 
+0.59 
+0.30 
+0.40 
+No Fire (MLP) 
+0.80 
+0.94 
+0.86 
+Fire (MLP) 
+0.61 
+0.28 
+0.38 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Driving forces of global wildfires over the past millennium and the forthcoming century</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Pechony</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">T</forename><surname>Shindell</surname></persName>
+		</author>
+		<ptr target="http://www.pnas.org/content/107/45/19167" />
+		<imprint>
+			<date type="published" when="2010" />
+			<publisher>PNAS</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Warming and Earlier Spring Increase Western</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">L</forename><surname>Westerling</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">G</forename><surname>Hidalgo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">R</forename><surname>Cayan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">W</forename><surname>Swetnam</surname></persName>
+		</author>
+		<ptr target="http://science.sciencemag.org/content/313/5789/940.full" />
+	</analytic>
+	<monogr>
+		<title level="j">Forest Wildfire Activity. Science</title>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Mapping burned areas using dense time-series of Landsat data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">J</forename><surname>Hawbaker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">K</forename><surname>Vanderhoof</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y-J</forename><surname>Beal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Takacs</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">L</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">T</forename><surname>Falgout</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">M</forename><surname>Fairaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">K</forename><surname>Caldwell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">J</forename><surname>Picotte</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Stitt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Dwyer</surname></persName>
+		</author>
+		<idno type="doi">10.1016/j.rse.2017.06.027</idno>
+		<ptr target="https://doi.org/10.1016/j.rse.2017.06.027" />
+	</analytic>
+	<monogr>
+		<title level="j">Remote Sensing of Environment</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Project for Monitoring Trends in Burn Severity</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Eidenshink</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Schwind</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Brewer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Quayle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Howard</surname></persName>
+		</author>
+		<idno type="doi">10.4996/fireecology.0301003</idno>
+		<ptr target="https://doi.org/10.4996/fireecology.0301003" />
+	</analytic>
+	<monogr>
+		<title level="j">Fire Ecology</title>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">How will climate change affect wildland fire severity in the western US?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">A</forename><surname>Parks</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">T</forename><surname>Abatzoglou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">M</forename><surname>Holsinger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">A</forename><surname>Parisien</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">Z</forename><surname>Dobrowski</surname></persName>
+		</author>
+		<idno type="doi">10.1088/1748-9326/11/3/035002</idno>
+		<ptr target="https://doi.org/10.1088/1748-9326/11/3/035002" />
+	</analytic>
+	<monogr>
+		<title level="j">Environmental Research Letters</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">R: A Language and Environment for Statistical Computing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>R Core Team</surname></persName>
+		</author>
+		<ptr target="https://www.R-project.org" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">xgboost: Extreme Gradient Boosting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Chen</surname></persName>
+		</author>
+		<ptr target="https://cran.r-project.org/web/packages/xgboost/index.html" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>R package version 0.71.2.</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine Learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

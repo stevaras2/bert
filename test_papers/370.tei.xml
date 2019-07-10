@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CS 229 Autumn 2018: End Mark Prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><forename type="middle">Mark</forename><surname>Martin</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Computer Science</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<address>
+									<postCode>2021, 2021</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Zwiebel</surname></persName>
+							<email>jzwiebel@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Computer Science</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<address>
+									<postCode>2021, 2021</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">CS 229 Autumn 2018: End Mark Prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Our project developed models for the task of assigning one of three end-marksperiods, question marks, or exclamation points -to variable-length English sentences. Our models were trained with a labeled data set extracted from English novels and scored using labeled examples from the same set. We tested logistic regression, naïve bayes, random forests, and SVMs, and found them all to be more effective than our baseline, proportional guessing, and less effective than our oracle, human-level. We found that random forests had the strongest performance of the developed models, although the similarities in performance make it impossible to conclude that they outperform the other models for this task.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Practically all of our mobile devices use some form of autocorrect, predictive typing, or dictation to complete our sentences for us. Yet, if you open your phone and type a sentence your device will almost certainly punctuate it (if at all) with a period whether it's "Talk to you later.", "Come over!" or "You up?". We present results and analyses of our experimentation with several different methods for predicting the terminal punctuation of a sentence.</p><p>The terminal punctuation, or end mark, of a sentence provides important semantic and syntactical information about a sentence. In the question "What is that?", for instance, we don't think of "What" as some subject that is existing ("is") as some object "that". Without the knowledge that this is a question, however, it can be much more difficult for a computer to determine this information. The question of end marks also poses a simple problem: given a sentence, classify it as ending with either a period, question mark, or exclamation point. We limited our exploration to consider only English-language sentences and only these three end marks.</p><p>The goal of our project is to be able to correctly punctuate variable-length English sentences with one of three end marks: periods, question marks, or exclamation marks (denoted PERIOD, QMARK, EXPOINT in this poster). We want to punctuate sentences drawn from the distribution of English sentences so we did not re-weight our data to have equal proportions of each punctuation mark.</p><p>Deep Learning for Punctuation Restoration in Medical Reports by Wael Salloum, Greg Finley, Erik Edwards, Mark Miller, and David Suendermann-Oeft <ref type="bibr" target="#b5">(6)</ref>. This project used bidirectional RNNs to restore punctuation on text that was generate from transcriptions. This paper was the most complex model that we read about related to our project. This project did a good job of providing clear metrics and establishing a point of comparison for a similar (albeit different given the kinds of punctuation and presence of context) problem.</p><p>It is clear that the state-of-the-art for a problem like this is an RNN. It is also clear from reading these papers that this is a difficult problem even for humans, given both the complexity and subjectivity of assigning punctuation. Almost all of the paper ran into the issue that text corpuses extracted from novels and online-sources are written by human authors who often deviate from standard punctuation rules. Two identical text segments may be punctuated differently when written by different authors. This in turn suggests that algorithms may do better when trained on a single source, which is promising for applications such as smart keyboards and speech-to-text engines.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>Our goal was to be able to correctly punctuate variable-length English sentences with one of three end marks: periods, question marks, or exclamation marks (denoted PERIOD, QMARK, EXPOINT in this poster). We want to punctuate sentences drawn from the distribution of English sentences so we did not re-weight our data to have equal proportions of each punctuation mark.</p><p>We drew data from 10 of the top English-language books available at project Gutenberg, available for free use. We wanted to ensure that we could extract usable examples even from complex grammar structures such as dialogue and clauses. Additionally to maximize the number of question mark and exclamation point samples we needed to ensure that we could extract standalone sentences within quotations (eg: "'How are you?' said Frankenstein."). Our definition for a sentence was a sequence of space-separated words starting with a capital word, ending with an end mark, and unbroken by any single or double quotation marks. We wrote a parser to extract sentences from the texts according to this definition.</p><p>We then tokenized the dataset with tokens for each of the top 20,000 words from the Google Trillion Word Dataset, with five special-use tokens: &lt;NUMBER&gt;, &lt;COMMA&gt;, &lt;SEMICOLON&gt;, &lt;PROPER&gt;, &lt;UNKNOWN&gt; to handle important cases not counted in this dictionary. Commas and semicolons were made into their own words in the parsing stage so they could be captured by the tokenizer. We made this decision because of the valuable structural information these non-terminal punctuation provide about the sentence they are in.</p><p>We merged this tokenized data and then vectorized each tokenized sentence in a number of different ways, including binary vectors, bag-of-word vectors, and tfidf-transformed bag-of-word vectors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>Because this is a relatively unexplored problem, there isn't a well established baseline for a naïve algorithm. Random guessing would given an unfairly low benchmark as the vast majority of the data belongs to the period class.</p><p>We started by looking at the results of guessing all periods <ref type="table" target="#tab_0">(Table 1)</ref>. This was an important step to identifying which evaluation metrics were important to a "good" solution for this problem, as while this model is trivially useless, it still scores very well on micro-average precision, recall, and f1 scores due to the large proportion of period examples.</p><p>One metric it scored very poorly on, however, was macro-averaged even-weighted f1 score (macro f1). The macro average is helpful, as the fact that it evenly weights each class regardless of number of examples exacts a significant penalty on models that over-predict the period class. Using f1 score ensures that we are taking both precision and accuracy into account.</p><p>The 0.30 macro f1 from guessing all periods, doesn't serve as a good benchmark to evaluate our models against. To set a lower-bound macro f1, we used proportional guessing <ref type="table" target="#tab_1">(Tables 2, 3)</ref>, a model that would randomly guess an end mark using proportions taken from the training set.   To set an upper bound, we used an oracle from human-level assessment <ref type="table" target="#tab_3">(Tables 4, 5</ref>). Over random splits from a reduced test set, we asked humans to classify sentences the same tokenization scheme (but formatted to read as natural English) as given to the learned models.  We used three fold cross validation on our aforementioned train-dev-test splits. Each model was trained on the training set, and measured on the development set. In each class, the model with best-in-class performance on the development set was run against the test set. The metrics you see reported in the tables throughout are the result of these runs against the test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head><p>We evaluated five different classes of models -logistic regression, naïve bayes, SVM, random forests, and fully connected neural networks -and compared their performance. Each model was evaluated over matching 90-5-5 train-dev-test splits and scored using standard classification metrics.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Logistic Regression</head><p>A standard multiclass logistic regression was run with 20005 features. We tested both binary and bag-of-words feature vectors and found binary feature vectors to be our strongest logistic regression model. See <ref type="table" target="#tab_5">Tables 6 and 7</ref>.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Naïve Bayes</head><p>We trained two multinomial Naïve Bayes models-one trained on bag-of-words vectors and the other on term-frequency inverse-document-frequency (TFIDF) transformed bag-of-word vectors, one Bernoulli model on binary vectors, and one Gaussian model on bag-of-word vectors. Of the four, the Bernoulli model achieved the highest macro f1. This potentially indicates that word frequency without any data conveying their order is a noisier, or just worse, representation of sentence structure than just the presence of a word. See <ref type="table" target="#tab_7">Tables 8 and 9</ref>.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Random Forests</head><p>We started by training a random forest with aggregation by averaging of 100 decision tree estimators using Gini loss on bag-of-words vectors with a max tree depth of 5. While this model trained very quickly, it predicted that everything was a period. We increased the max depth to 5, 10, and then 50 to try to get better classifications, but even with a depth of 50 the forest still only predicted periods. Finally, we tried allowing the constituent trees to branch until total leaf purity. This model took much longer to train, and while we worried that allowing this depth would result in a model with excessive variance. On the contrary, the bagging kept the model from overfitting, and it performed very well on macro f1 score. Overall, this random forest was the highest performing model statistical model we tested on the test set <ref type="table" target="#tab_0">(Tables 10 and 11</ref>).    </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Support Vector Machines</head><p>Each of the support vector machines (SVMs) were trained on bag-of-words vectors. We started by training two non-linear kernel support vector classifiers (SVCs), a radial basis function (RBF) and a polynomial kernel. Both of these models took so long to train that we trained them on a random subsample of the train set, but they then predicted all periods. With more compute, we could have tweaked the hyper-parameters on these models, including outputting probabilities instead of hard classification, to achieve better metrics, but given their poor results and the time they took to train, we decided our time would be better spend experimenting with other models. We also tested a stochastic gradient descent (SGD) classifier with a linear kernel. We found that this last model performed best-in-class for SVMs <ref type="table" target="#tab_0">(Tables 14, 15</ref>).    </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Analysis</head><p>Though the random forest classifier out-performed the other statistical models on the test set, it did so by only a few percentage points of macro-average F1-score. This is not significant enough for us to conclude that a random forest is the optimal model for this problem.</p><p>We found, not surprisingly, that all of our models had stronger performance on QMARK sentences than EXPOINT sentences. This matches our intuition, questions can be identified by the presence of question words (ex: who, when, will) while exclamatory sentences are more easily confused with declarative sentences. We see this in the confusion matrix for our oracle ( <ref type="table" target="#tab_3">Table 4</ref>) which demonstrates that even humans do better with QMARK sentences than EXPOINT sentences.</p><p>We also found that logistic regression and naïve bayes seemed to overpredict PERIOD while random forests and SVMs were more willing to predict QMARKs and EXPOINTs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusions and Future Work</head><p>All of our models outperformed our baseline but were not able to outperform our oracle, demonstrating that machine learning methods provide a reasonable solution to this problem, but can still be improved. Still, the poor absolute performance (precision of 70% on questions and exclamations) means that none of our models would be appropriate to include on a keyboard and dictation applications.</p><p>We strongly anticipate that incorporating knowledge about the length of the sequences, the order of the words, and the related context can greatly improve our performance. In particular, we believe that order can improve performance on questions which start clauses with common 'question words (who, is, when, how). Additionally sentences such as "is it now" (question) and "it is now" (declaration or exclamation) are vectorized identically by our models, so incorporating order will allow our feature vectors to more accurately represent our input phrases. We believe that sentence length and context can help with exclamations which are often shorter that PERIOD sentences and grouped together.</p><p>One way we could do this is by appending a series of binary vectors to our feature vector representing a one-hot of the first word, a one-hot of the last word, a binary vector of words that begin clauses, and a 150 binary vector where the nth element is 1 if there at least n tokens in our sentence. Another approach we would like to try is a true sequence-based model such as an RNN. To do this we would likely need to find a word embedding to reduce our feature space. To incorporate context we would also consider using a bidirectional-RNN.</p><p>Finally, we envision these models having applications on keyboard and dictation apps on mobile devices, so we would like to train our models over a more representative corpus of text.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>Eric worked on the Naïve Bayes, Random Forest, Naïve Bayes, and Oracle models. He also set up the development environment and preprocessing scripts. Jonathan worked on the Logistic Regression and Baseline models. He also worked on the vectorizer and tokenizer.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>All-periods classification metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.82 
+1.00 
+0.90 
+1942 
+QMark 
+0.00 
+0.00 
+0.00 
+198 
+ExPoint 
+0.00 
+0.00 
+0.00 
+240 
+Micro 
+0.82 
+0.82 
+0.82 
+2370 
+Macro 
+0.27 
+0.33 
+0.30 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2 :</head><label>2</label><figDesc>Proportion Guessing Confu- sion matrix</figDesc><table>Period QMark ExPoint 
+
+Period 
+1568 
+140 
+190 
+QMark 
+174 
+16 
+8 
+ExPoint 
+192 
+19 
+29 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="true"><head>Table 3 :</head><label>3</label><figDesc>Proportion Guessing Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.81 
+0.81 
+0.81 
+1932 
+QMark 
+0.08 
+0.08 
+0.08 
+198 
+ExPoint 
+0.13 
+0.12 
+0.12 
+240 
+Macro 
+0.34 
+0.34 
+0.34 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="true"><head>Table 4 :</head><label>4</label><figDesc>Human-Level Confusion ma- trix</figDesc><table>Period QMark ExPoint 
+
+Period 
+151 
+1 
+10 
+QMark 
+3 
+7 
+1 
+ExPoint 
+12 
+2 
+5 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="true"><head>Table 5 :</head><label>5</label><figDesc>Human-Level Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.91 
+0.93 
+0.92 
+162 
+QMark 
+0.70 
+0.64 
+0.67 
+11 
+ExPoint 
+0.31 
+0.26 
+0.29 
+19 
+Macro 
+0.64 
+0.61 
+0.62 
+192 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5" validated="false"><head>Table 6 :</head><label>6</label><figDesc>Logistic</figDesc><table>Regression Confu-
+sion matrix 
+
+Period QMark ExPoint 
+
+Period 
+1874 
+26 
+32 
+QMark 
+116 
+72 
+10 
+ExPoint 
+166 
+13 
+61 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6" validated="true"><head>Table 7 :</head><label>7</label><figDesc>Logistic Regression Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.87 
+0.97 
+0.92 
+1932 
+QMark 
+0.65 
+0.36 
+0.47 
+198 
+ExPoint 
+0.59 
+0.25 
+0.36 
+240 
+Macro 
+0.70 
+0.53 
+0.58 
+2370 </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7" validated="true"><head>Table 8 :</head><label>8</label><figDesc>Naïve Bayes Confusion ma- trix</figDesc><table>Period QMark ExPoint 
+
+Period 
+1606 
+23 
+303 
+QMark 
+76 
+47 
+75 
+ExPoint 
+73 
+4 
+163 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8" validated="true"><head>Table 9 :</head><label>9</label><figDesc>Naïve Bayes Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.92 
+0.83 
+0.87 
+1932 
+QMark 
+0.64 
+0.24 
+0.35 
+198 
+ExPoint 
+0.30 
+0.68 
+0.42 
+240 
+Macro 
+0.62 
+0.58 
+0.54 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9" validated="true"><head>Table 10 :</head><label>10</label><figDesc>Random Forest Test Confu- sion Matrix</figDesc><table>Period QMark ExPoint 
+
+Period 
+1900 
+10 
+22 
+QMark 
+124 
+67 
+7 
+ExPoint 
+170 
+8 
+62 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_10" validated="true"><head>Table 11 :</head><label>11</label><figDesc>Random Forest Test Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.87 
+0.98 
+0.92 
+1932 
+QMark 
+0.79 
+0.34 
+0.47 
+198 
+ExPoint 
+0.68 
+0.26 
+0.37 
+240 
+Macro 
+0.78 
+0.53 
+0.59 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_11" validated="false"><head>Table 12 :</head><label>12</label><figDesc>Random</figDesc><table>Forest Dev Confu-
+sion Matrix 
+
+Period QMark ExPoint 
+
+Period 
+1909 
+11 
+22 
+QMark 
+133 
+56 
+9 
+ExPoint 
+170 
+11 
+62 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_12" validated="true"><head>Table 13 :</head><label>13</label><figDesc>Random Forest Dev Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.86 
+0.98 
+0.92 
+1942 
+QMark 
+0.72 
+0.28 
+0.41 
+198 
+ExPoint 
+0.62 
+0.22 
+0.32 
+230 
+Macro 
+0.73 
+0.49 
+0.55 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_13" validated="true"><head>Table 14 :</head><label>14</label><figDesc>SVM SGD Test Confusion matrix</figDesc><table>Period QMark ExPoint 
+
+Period 
+1903 
+17 
+12 
+QMark 
+128 
+69 
+1 
+ExPoint 
+182 
+16 
+42 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_14" validated="true"><head>Table 15 :</head><label>15</label><figDesc>SVM SGD Test Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.86 
+0.98 
+0.92 
+1932 
+QMark 
+0.68 
+0.35 
+0.46 
+198 
+ExPoint 
+0.76 
+0.17 
+0.28 
+240 
+Macro 
+0.77 
+0.50 
+0.55 
+2370 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_15" validated="true"><head>Table 16 :</head><label>16</label><figDesc>SVM SGD Dev Confusion matrix</figDesc><table>Period QMark ExPoint 
+
+Period 
+1913 
+18 
+11 
+QMark 
+138 
+56 
+4 
+ExPoint 
+196 
+11 
+23 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_16" validated="true"><head>Table 17 :</head><label>17</label><figDesc>SVM SGD Dev Metrics</figDesc><table>Class 
+Precision Recall F1-Score Support 
+
+Period 
+0.85 
+0.99 
+0.91 
+1942 
+QMark 
+0.66 
+0.28 
+0.40 
+198 
+ExPoint 
+0.61 
+0.10 
+0.18 
+230 
+Macro 
+0.71 
+0.46 
+0.49 
+2370 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>We would like to acknowledge Professor Ng and the CS 229 course staff for teaching us the material necessary to create these models and for looking over / providing feedback on our work. We would also like to acknowledge Project Gutenberg for providing us with a completely free-to-use corpus of text and Google for providing the free-to-use trillion word corpus.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Template-based algorithms for connectionist rule extraction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">A</forename><surname>Alexander</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">C</forename><surname>Mozer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<editor>G. Tesauro, D.S. Touretzky and T.K. Leen</editor>
+		<meeting><address><addrLine>Cambridge, MA</addrLine></address></meeting>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="1995" />
+			<biblScope unit="page" from="609" to="616" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">The Book of GENESIS: Exploring Realistic Neural Models with the GEneral NEural SImulation System</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">M</forename><surname>Bower</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Beeman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1995" />
+			<publisher>TELOS/Springer-Verlag</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Dynamics of learning and recall at excitatory recurrent synapses and cholinergic modulation in rat hippocampal region CA3</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">E</forename><surname>Hasselmo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Schnell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Barkai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="5249" to="5262" />
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Punctuation Prediction for Unsegmented Transcript Based on Word Vector</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Che</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Meinel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">LREC</title>
+		<imprint>
+			<date type="published" when="2016-05" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Naive bayes for text classification with unbalanced classes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Frank</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">R</forename><surname>Bouckaert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Principles of Data Mining and Knowledge Discovery</title>
+		<meeting><address><addrLine>Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2006-09" />
+			<biblScope unit="page" from="503" to="510" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Association for Computer Linguistics. Code and Data Our code can be found at github.com/ericmarkmartin/cs229-autumn-2018-project. The list of 20k words were taken from github.com/first20hours/google-10000-english. The texts used in this project were taken from www</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Salloum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Finley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Edwards</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Suendermann-Oeft</surname></persName>
+		</author>
+		<ptr target=".gutenberg.org/browse/scores/top" />
+		<imprint>
+			<date type="published" when="2017-08" />
+			<biblScope unit="page" from="159" to="164" />
+		</imprint>
+	</monogr>
+	<note>Deep Learning for Punctuation Restoration in Medical Reports</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

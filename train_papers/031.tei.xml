@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Discovery of Transcription Factor Binding Sites with Deep Convolutional Neural Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Reesab</forename><surname>Pathak</surname></persName>
+							<email>rpathak@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Dept. of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Discovery of Transcription Factor Binding Sites with Deep Convolutional Neural Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Transcription factors are key gene regulators, responsible for modulating the conversion of genetic information from DNA to RNA. Though these factors can be discovered experimentally, computational biologists have become increasingly interested in learning transcription factor binding sites from sequence data computationally. Though traditional machine learning architectures, including support vector machines and regression trees have shown moderately successful results in both simulated and experimental data sets, these models suffer from relatively low classification accuracy, typically measured by area under the receiver operating characteristic curve (auROC). Here we show that learning transcription factor binding sites from sequence data is feasible and can be done with high accuracy. We provide a sample CNN architecture that yields greater than 96% auROC. Additionally, we discuss key questions that need to be answered to improve hyperparamter search in this domain.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Since the Human Genome Project, which concluded in the early 2000s, computational biologists have become interested in learning features of the genome from sequencing data. Revolutionized by the rapid advancement of second and third generation sequencing technologies, learning biologically relevant features from sequencing data has become possible. In the past 5 years, scientists have used traditional machine learning techniques and probabilistic graphical models to impute haplotypes, learn epigenetic markers, and much more. Though we cannot provide a full review here, this is done well in <ref type="bibr" target="#b4">[5]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Problem and Related Work</head><p>This paper specifically considers the transcription factor binding site discovery problem. Though we cannot provide a review of transcription factors here, we refer the reader to Slattery et al, where the transcription factor binding site literature is well-reviewed <ref type="bibr" target="#b7">[8]</ref>. Formally, our problem is a multi-task classification problem. We are given, as input, a training set with pairs {X (i) , y (i) } n i=1 . In our problem, the input data, X (i) is a matrix, of dimension 4 × N , where N is the length of a DNA sequence. This matrix, which is referred to as the positional frequency matrix (PWM) has four rows corresponding to each channel of genetic alphabet, namely {A, C, T, G}. Our labels, y (i) are either scalar or vector, depending on the number of transcription factor binding sites that are being learned. Nonetheless, the dimension is equal to the number of classification tasks, and each element of y (i) is a binary label in the standard space, {0, 1}. The goal is then to accurately predict the labels from the training data, which is to accurately predict whether or not each of the transcription factors binds in a given sequence.</p><p>Recently, many groups have studied similar genome prediction problems, especially in the context of epigenetic features. Leung et al review the progress here in <ref type="bibr" target="#b4">[5]</ref>. For this specific problem, support vector machines with a k-mer kernel has shown greater than 70 percent auROC <ref type="bibr" target="#b3">[4]</ref>. Additionally, recent groups have discussed the applicability of neural network architectures to this problem <ref type="bibr" target="#b5">[6]</ref>[10].</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.2">Our contributions</head><p>Here, we provide a sample convolutional neural network (CNN, ConvNet) architecture which provides greater than 96 percent accuracy on a simulated data set. Additionally, we use a recently published interpretation package to show that the features learned by the CNN are roughly the transcription factor binding sites themselves, suggesting that CNNs are good models for this problem, despite the computational expense. Finally, we provide a discussion of areas of key difficulty that need exploration to improve the accuracy of CNNs for larger scale problems and for experimental datasets.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Methodology</head><p>Our work uses a simulated training set of sequencing data and labels. We note, however, that this is a standard practice within this domain, and many papers that evaluate model accuracy have taken similar approaches <ref type="bibr" target="#b0">[1]</ref>. This simulated training set is then provided as input into our convolutional neural network, which requires hyperparamater tuning to get high accuracy.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">Simulated data</head><p>We sampled sequence of length 1000 base-pairs (1000 symbols) from the genetic alphabet, A, C, T, G, with a fixed GC fraction, of 0.4, which is a biologically motivated result. This means that the probability assigned to each letter was 0.3, 0.2, 0.3, 0.2, respectively. With these probabilities we sampled a fixed number of reference sequences, depending on the problem. We then uniformly at random, sampled an index from which to embed a transcription factor motif. These motifs, which come from the Encylopedia for DNA Elements (ENCODE) project, are non-deterministic. Again, we are unable to review the results of the ENCODE project here, but this is done well in <ref type="bibr" target="#b1">[2]</ref>.</p><p>The motifs are accompanied by a position weight matrix (PWM), which is a N × 4 representation of the odds of each symbol of the genetic alphabet at each position over the background frequency of a given letter. We binomially sampled motifs from the position weight matrix, and replaced our sequence data with the sequence of the motifs. For our studies, some experiments tested the number of training examples, in which case, we typically kept balanced classes of negative and training examples. Negative samples had randomly embedded sequences, which provides a more biologically relevant negative class of data. Then, from these reference sequences, we sampled sequence reads, which are 100 base pair substrings. Since sequencing data contains irreducible noise, we added noise by flipping some symbols, with probability 0.001 at each index, based on the approximate error rate of a standard high-throughput sequencing technology. Our labels were constructed by creating vectors with dimension equal to the number of transcription factors that were embedded. We placed a 1 in the ith index of our vector if transcription factor i was embedded in the sequence, otherwise we placed 0. Array data is achieved through the one-hot encoding of our reads. Our sampling methodology, though not identical to any previous study, was informed by previous machine learning studies in genomics <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">Convolutional Neural Network</head><p>Convolutional neural networks have three features: (1) convolutional layers, (2) pooling or subsampling layers, and (3) fully connected layers. The convolutional layer conducts an affine transformation over its input. Multiple activation maps are created by multiple convolutional lters. These pass to an activation function, which is a non-linearity such as a rectified linear unit (ReLU). The output is then passed to the pooling layer, which subsamples the convolutional output and takes the maximum entries within the domain of a subsampling unit (called Max Pooling). This process (convolution to max pool) is repeated. Unlike previous layers, the final layer is fully connected and a matrix-multiply is done to get output predictions. Our architecture is CL-MP-CL-MP-CL-MP-FC, where CL is a convolution layer, MP is a max pool layer, and FC is a fully connected layer. Between a convolution and max pool layer, data always passes through the ReLU. Additionally, convolutional neural networks like other feedforward archictures use backpropogation to update weights during each epoch during training. We cannot fully review CNNs here, so again we refer the reader to <ref type="bibr" target="#b2">[3]</ref>.</p><p>We implemented our convolutional neural network using Keras, a deep learning library that wraps around the deep learning software in Theano. We discuss hyperparamaters used in Results and Discussion. The input data was the training set as described previously. The testing and validation data were similarly simulated sets of data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Results and Discussion</head><p>We conducted two classes of experiments: single-motif classification and multi-motif classification. The first task is formulated as a single-task, binary classification problem, with scalar labels. The second task is formulated as a multi-task, binary classification problem, with vector labels.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Single motif embedding task</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 1: T AL1 (ENCODE) transcription factor motif, depicted as sequence logo</head><p>In the single motif embedding task, we first embedded motif TAL1, which encodes the transcription factor T-cell acute lymphocytic leukemia protein 1. This transcription factor has the sequence (see right), based on the second known motif from the ENCODE project.</p><p>This figure is related to the position weight matrix (PWM) of each motif, which is of dimension 4 × L (L is the length of the motif). The ith column of the matrix represents the probability of each of the four states (A, C, T, G) at base-pair i in the motif. The sequence logo above is generated by calculating for each base, the information content, which is log 2 (4) − (H i + e n ), where H i is the (Shannon) entropy at each base pair, and e n is the small sample collection factor, which is reviewed in <ref type="bibr" target="#b6">[7]</ref>. <ref type="figure">Figure 2</ref>: Single motif embedding, data needs We investigated how many training examples in the form of position-specific scoring matrices (PSSMs) were necessary to get near optimal results. We measured an upper bound on testing accuracy by providing to a Random Forest the exact locations in the PSSM where the embedded motifs were. Thus, this represents an upper bound on performance, since we do not limit CNNs from learning these decision boundaries.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Data needs</head><p>From <ref type="figure">Figure 2</ref>, around 4000 training examples is optimal to reach near testing accuracy achieved by a Random Forest model (au-ROC = 0.9502, n = 4000).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">Hyperparameter tuning</head><p>The hyperparameters for the single motif task needed to be tuned to get optimal results. Basedo on <ref type="figure" target="#fig_0">Figure 3</ref>, with a convolution  <ref type="figure">Figure 4</ref>: Dropout probability versus test auROC</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.3">Dropout</head><p>To prevent overfitting, we investigated whether dropout was a feasible strategy to improve training accuracy. To assess this, we used a motif with greater heterogeneity than TAL1. The motif we chose was CTCF, discovered motif 5, which displayed more entropy in its position weight matrix. Based on the figure 4, as dropout increases, the test auROC substantially increases, suggesting that adding dropout to the model may improve its robustness.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Multi motif embedding task</head><p>For the multi motif embedding task, we embedded three motifs known to co-bind <ref type="bibr" target="#b8">[9]</ref>. CTCF known motif 1 is responsible for transcripition regulation, V(D)J recombination, and chromatin architecture regulation. ZNF143, known motif 2, is a transcription activator, and SIX5, known motif 1, recruits many DNA-binding proteins. The sequence logos are shown in <ref type="figure">Figure 5</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2">Hyperparameter tuning</head><p>The hyperparameters for the multiple motif task needed to be tuned to get optimal results. Based on figure 7, using a convolution filter </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.3">Feature importance and model interpretation</head><p>Recently, a group at Stanford published a method called DeepLIFT (Deep Linear Importance Feature Tracker), which is able to identify feature importance in the input to a CNN (CITE!). We ran the software for our multi-task classification to see what features the CNN found most important to predicting the labels. These figures are encouraging because, if compared against <ref type="figure">Figure 5</ref>, it is clear that the features learned by the model correspond with parts of the ENCODE motifs. Thus, not only is the model learning the correct labels, but it does so by identifying structure of motifs within the sequence data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Further Questions and Outlook</head><p>Despite good accuracy on the learning tasks described above, a number of questions need to be answered before this model can be extended to experimental data. This work shows that it is indeed possible to learn transcription factor binding sites based on sequencing data, after sufficient data and hyperparameter tuning. Nonetheless, it is still unclear how the optimal width of the convolution filter scales with the entropy and structure of the position weight matrix. Additionally, we were not able to investigate how density localization impacts hyperparameters and how penalty coefficients for regularization and dropout probabilities may need alteration as more motifs are embedded. Though our methodology is similar to that adopted by previous computational biology papers, we acknowledge that testing this model on experimental data is important.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>Here, we have demonstrated the feasibility of learning transcription factor binding sites from sequencing data. We note that there are an number of key questions (see Further Questions and Outlook) that should be explore prior to using these models on experimental data. Nonetheless, deep learning through CNNs provides high accuracy for learning genomic transcription factor binding loci.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 3 :</head><label>3</label><figDesc>Example hyperparameter tuning plots for single motif embedding filter width of 10, pooling filter width of 25, and 10 convolution filters per convolutional layer, we achieved auROC of 0.975, with n = 4000 training examples.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 5 : 2 Figure 6 :</head><label>526</label><figDesc>Multi motif embedding, ENCODE motif sequence logos3.2.1 Data needsWe again investigated the number of training examples to reach the accuracy of the Random Forest model, which is given the op- timal decision boundaries by location of motifs in the sampled sequence. Based onfigure 6, we needed around 12000 training examples(a) Data size, overall task (b) Data size, motif 1 (c) Data size, motif 2 Figure 6: Data size needs by task, multiple motif embedding to get near the Random Forest accuracy. Additionally, for single motifs, within the task, the same size of data also nearly achieved the Random Forest model's accuracy.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 7 :</head><label>7</label><figDesc>Hyperparameter tuning plots, combined for all 3 tasks width of 15, a pooling filter width of 25, and 45 convolutional filters per layer, we achieved auROC = 0.967 with n = 12000 training examples.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 8 :</head><label>8</label><figDesc>DeepLIFT interpretation sequence logos, multi-task classification problem</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>We thank Stanford Research Computing for allowing access to the Sherlock computing cluster for access to GPU compute nodes on which to run Theano and Keras code. Additionally, we thank Anshul Kundaje, Johnny Israeli, and Avanti Shrikumar (Stanford, Computer Science) for providing access to their recently published DeepLIFT code, which provided interpretation figures for our CNNs.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Predicting the sequence specificities of DNA-and RNA-binding proteins by deep learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Babak</forename><surname>Alipanahi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="831" to="838" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Integrative analysis of 111 reference human epigenomes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Roadmap Epigenomics Consortium</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">518</biblScope>
+			<biblScope unit="page" from="317" to="330" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Deep learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">521</biblScope>
+			<biblScope unit="page" from="436" to="444" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A method to predict the impact of regulatory variants from DNA sequence</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dongwon</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Genet</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page" from="955" to="61" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Machine Learning in Genomic Medicine: A Review of Computational Problems and Data Sets</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">K</forename><surname>Michael</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Leung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. IEEE</title>
+		<meeting>IEEE</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="volume">104</biblScope>
+			<biblScope unit="page" from="176" to="197" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">DanQ: a hybrid convolutional and recurrent deep neural network for quantifying the function of DNA sequences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Quang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaohui</forename><surname>Xie</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page">32821</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Sequence logos: a new way to display consensus sequences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R Michael</forename><surname>Schneider</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Stephens</surname></persName>
+		</author>
+		<idno>18.20</idno>
+		<imprint>
+			<date type="published" when="1990" />
+			<biblScope unit="page" from="6097" to="6100" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Absence of a simple code: How transcription factors read the genome</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthew</forename><surname>Slattery</surname></persName>
+		</author>
+		<idno>arXiv: NIHMS150003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Trends Biochem. Sci</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="381" to="399" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Sequence features and chromatin structure around the genomic regions bound by 119 human transcription factors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jie</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Res</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="1798" to="1812" />
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Predicting effects of noncoding variants with deep learning-based sequence model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olga</forename><forename type="middle">G</forename><surname>Troyanskaya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Methods</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="931" to="935" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

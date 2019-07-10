@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Improving Robustness of Semantic Segmentation Models with Style Normalization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evani</forename><surname>Radiya-Dixit</surname></persName>
+							<email>evanir@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Tierno</surname></persName>
+							<email>atierno@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Felix</forename><surname>Wang</surname></persName>
+							<email>felixw17@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="department" key="dep3">Department of Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Improving Robustness of Semantic Segmentation Models with Style Normalization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We introduce a novel technique for data augmentation with the goal of improving robustness of semantic segmentation models. Standard data augmentation methods rely upon augmenting the existing dataset with various transformations of the training samples but do not utilize other existing datasets. We propose a method that draws images from external datasets that are related in content but perhaps stylistically different; we perform style normalization on these external datasets to counter differences in style. We apply and benchmark our technique on the semantic segmentation task with the DeepLabv3+ model architecture and the Cityscapes dataset, leveraging the GTA5 dataset for our data augmentation.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>The task of semantic segmentation is a key topic in the field of computer vision. Recent advances in deep learning have yielded increasingly successful models <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b2">3]</ref> and remarkable improvement on standard benchmark datasets Cityscapes <ref type="bibr" target="#b3">[4]</ref> and PASCAL VOC 2012 <ref type="bibr" target="#b4">[5]</ref>. One important goal of semantic segmentation models is robustness: the ability to successfully function on unusual or unexpected inputs. Our solution is to augment the existing dataset with images from a different source that share similar content domains yet perhaps vary in their style domains. We define the style domain of an image as the aspects of the image linked to the medium from which it originates. For example, there exists an inherent stylistic difference in photographs of the real world and those generated by a computer.</p><p>Intuitively, semantic segmentation should depend only the content of an image, and not on the style. Indeed, the style of an image captures domain-specific properties, while the content is domaininvariant. We choose to focus on the DeepLabv3+ model <ref type="bibr" target="#b2">[3]</ref> for semantic segmentation on the Cityscapes dataset. We will apply our data augmentation technique with the GTA5 dataset <ref type="bibr" target="#b9">[10]</ref>; we hypothesize that the addition of such synthetically generated data with style normalized to the style of the Cityscapes dataset will improve performance.</p><p>flipping <ref type="bibr" target="#b6">[7]</ref>, random jittering and translations <ref type="bibr" target="#b8">[9]</ref>. We came across two other interesting approaches. The first was partitioning images into overlapping regions in <ref type="bibr" target="#b10">[11]</ref>. The second approach was a novel technique called combinatorial cropping, where all possible combinations of ground-truth labels are used to generate pixel masks that act on all training samples. This technique was introduced in <ref type="bibr" target="#b5">[6]</ref>. We did not come across any papers that utilized an approach similar to ours, i.e. performing data augmentation with an external dataset while normalizing style.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Datasets</head><p>The Cityscapes dataset collects a diverse set of street view images from 50 cities in Germany and surrounding countries. Some examples can be seen in <ref type="figure" target="#fig_1">Figure 1</ref>. Each image comes with a pixel level annotation classifying each pixel into one of 19 categories. Sample categories include person, vehicle, building, and sky. Due to computational limitations, we used 1 25 of the original Cityscapes dataset.</p><p>The GTA5 dataset consists of screenshots of the open world sandbox game Grand Theft Auto V. The game is a particularly apt content domain as it is set in a large metropolitan city where street view style images are possible. Further, the GTA5 images have pixel level image labels that are compatible with those of Cityscapes; however, they required some additional preprocessing. The Cityscapes and GTA5 datasets have a difference in their representations of ground truth. In particular, the Cityscapes dataset encodes class labels with a grayscale image where each pixel's grayscale value represents the class label. On the other hand, the GTA5 dataset encodes class labels with an image where the pixel color represents the class label. This difference is displayed below in <ref type="figure" target="#fig_3">Figure 2</ref>.  Note the differences in the styles of the Cityscapes and GTA5 datasets. Shown above in <ref type="figure" target="#fig_1">Figure 1</ref> are three Cityscapes images (from Aachen, Bremen, and Bochum, respectively) and three GTA5 images. There are some evident stylistic differences between the two which stem from efficiency tricks employed by GTA5's graphical engine to quickly render the screen for the player. We also note a far more vibrant palette in the GTA5 set compared to the drab appearance of the Cityscapes images. Despite these stylistic differences, both domains share a highly similar content domain: cars, trees, buildings, etc.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>We selected the well known DeepLabv3+ architecture for semantic segmentation and used a popular PyTorch implementation (https://github.com/jfzhang95/pytorch-deeplab-xception). DeepLabv3+  uses a pre-trained ResNet-101 model as its backbone but adds two additional modules (an atrous spacial pyramid pooling module and decoder module) designed specifically for the task of semantic segmentation. It utilizes cross entropy loss. Cross entropy loss is defined as follows: for a set of classes C and an image I, if y i,c indicates whether the true label of pixel i is c andŷ i,c is the probability computed by our model that pixel i is of class c then</p><formula xml:id="formula_0">CE = − i∈I c∈C y i,c logŷ i,c .</formula><p>For style normalization we utilized a recent state-of-the-art image-to-image translation model called UNIT, introduced in <ref type="bibr" target="#b7">[8]</ref>. We used a pretrained model designed specifically for converting images between the Cityscapes and GTA5 style domains.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments and Results</head><p>To quantify the effects of our data augmentation technique on the robustness of semantic segmentation models, we ran two primary experiments. For the first experiment we took a DeepLabv3+ network pretrained on the PASCAL VOC and Semantic Boundaries dataset, and applied transfer learning with two additional datasets: the first dataset consisted of the 587 Cityscapes training images and 302 additional GTA5 images, and the second dataset consisted of the 587 Cityscapes training images and the 302 GTA5 images mapped to the Cityscapes style domain with UNIT. For the second experiment, we trained DeepLabv3+ from scratch with two datasets: the first dataset consisted of the 587 Cityscapes training images and 587 additional GTA5 images, and the second dataset consisted of the 587 Cityscapes images and 587 additional GTA5 images mapped to the Cityscapes style domain with UNIT.</p><p>The standard benchmark statistic for semantic segmentation is mean intersection-over-union score (MIoU). Intuitively, the intersection-over-union quantifies how accurately a particular model estimates the location of an object relative to a ground truth image by computing the ratio of the number of pixels the model correctly identifies (intersection) to the total number of pixels representing either the ground truth or object or the model's prediction of the object (union). To extend this notion beyond binary classification, we introduce the notion of a confusion matrix. A confusion matrix M is defined such that M ij is the number of pixels whose ground truth label is i that the model classifies as j.</p><p>Notice that the diagonal elements M ii represent correctly classified pixels. Suppose we have a set of class labels C. We can then define</p><formula xml:id="formula_1">MIoU(M ) = 1 |C| c∈C M cc i∈C M ci + i∈C M ic − M cc .</formula><p>As stated above, we first used a pretrained DeepLabv3+ model and applied transfer learning in two ways. For both models we trained on the first combined dataset of Cityscapes and GTA5, 587 images of each. For the baseline model, DeepLabv3+ was trained on this dataset to produce semantic segmentation predictions. For the UNIT-Mapped model, we first mapped the GTA images in our training dataset to the Cityscapes domain using the pretrained UNIT model. We then trained DeepLabv3+ on the Cityscapes images and these UNIT-mapped GTA images. <ref type="figure" target="#fig_6">Figure 4</ref> shows our pipeline for the baseline model and our UNIT-Mapped Model. After training for 120 epochs, we evaluated our model on a test dataset of 98 Cityscapes images. Our training losses and MIoU scores over epochs are shown in <ref type="figure" target="#fig_8">Figure 5</ref>, and our final MIoU scores are shown in <ref type="table">Table 1</ref>. Baseline and UNIT-Mapped performed comparably, having MIoU scores of 0.56 and 0.55, respectively.   <ref type="table">Table 1</ref>: MIoU scores for our two models evaluated on the CityScapes dataset after 120 epochs of training using transfer learning.</p><p>We also trained DeepLab3+ from scratch on the second combined dataset of Cityscape and GTA5 images. Our baseline and UNIT-Mapped followed the pipelines in <ref type="figure" target="#fig_6">Figure 4</ref>. After training for 100 epochs, we evaluated our model on a test dataset of 98 Cityscapes images. Our final MIoU scores are shown in <ref type="table">Table 2</ref>. UNIT-Mapped had a slightly higher MIoU score of 0.51 compare to the Baseline score of 0.48.</p><p>MIoU Scores (training from scratch) Baseline 0.48 UNIT-Mapped 0.51 <ref type="table">Table 2</ref>: MIoU scores for our two models evaluated on the CityScapes dataset after 100 epochs of training from scratch.</p><p>Our code is available at the following link: https://bit.ly/2Pxnla9. The downloadable zip file includes our codebase for both the UNIT and DeepLab models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Discussion</head><p>We find similar performance between baseline and UNIT-Mapped for our models trained using transfer learning. We hypothesize that the pretrained model may not be the best fit for the street city scenes of the Cityscapes and GTA datasets. The PASCAL Visual Object Classes (VOC) Dataset and the Semantic Boundaries Dataset (SBD) are different tasks than the semantic segmentation of classes in street scenes.</p><p>We also performed qualitative analyses of our results on this experiment. We compared the predicted semantic segmentations of our baseline model and the UNIT-Mapped model and find that the segmentations are similar with no noticeable differences. We hypothesize that training on a larger dataset would yield higher MIoU scores for our UNIT-Mapped model as well as more clear visual differences. Given our constrained resources and limited compute power, we were restricted to a small dataset. Our observed results in the pre-trained DeepLabv3+ experiments reinforce the fact that more data is necessary. The comparable performance on the task suggests that neither training regimen could shift the model's weights particularly far from the VOC/SBD optimum in the parameter space. The learned features for the VOC task effectively drowned out any subtleties of the street view segmentation task and the effect of our additional images. We believe that we would find more significant improvements provided more UNIT-Mapped GTA images.</p><p>Our results from our second round of experiments, where we trained DeepLabv3+ from scratch, show some potential. Here, we find that UNIT-Mapped slightly outperformed baseline. The improved MIoU scores suggest that mapping synthetic data onto the real-world domain could potentially improve the robustness of a real-world classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion and Future Work</head><p>Our results, as discussed above, do not yield any significant conclusions regarding our novel technique for data augmentation. We note again that compute and time restrictions did not allow us to train DeepLabv3+ with sufficiently many training samples to achieve baseline results, as reported in other papers. Nonetheless, our results yield various promising avenues for future research. In particular, the superior performance of the DeepLabv3+ model with our novel technique for data augmentation (when trained from scratch) in comparison to the model with simply a combined dataset suggests that our technique could be successful if we used more training samples. Another area for future work is exploring the efficacy of our data augmentation approach across other tasks in computer vision. For instance, we would like to test our methodology on object detection and localization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Contributions</head><p>There were two main tasks over the course of this project: data preprocessing and training DeepLabv3+. Evani worked on training the DeepLabv3+ model using transfer learning for our initial results. Andrew handled parts of the data preprocessing such as converting GTA5 images to the Cityscapes style domain with the UNIT model and contributed to training DeepLabv3+ for the initial results. Felix worked on training the DeepLabv3+ codebase from scratch and some of the data preprocessing such as making the GTA5 and Cityscapes labels compatible.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Selected images from Cityscapes and GTA5 datasets.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 :</head><label>2</label><figDesc>Ground truth examples from the Cityscapes and GTA5 datasets.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>( a )</head><label>a</label><figDesc>Input to UNIT model. (b) Output from UNIT model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 3 :</head><label>3</label><figDesc>UNIT translates an image from the GTA5 style domain to the Cityscapes style domain.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 4 :</head><label>4</label><figDesc>A comparison of our data pipelines for our baseline</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>(a )</head><label>)</label><figDesc>Training loss. (b) MIoU scores during training on testing dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 5 :</head><label>5</label><figDesc>Baseline and UNIT-mapped show similar training loss curves and MIoU curves for</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Coco-stuff: Thing and stuff classes in context</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Holger</forename><surname>Caesar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">R</forename><surname>Jasper</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vittorio</forename><surname>Uijlings</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ferrari</surname></persName>
+		</author>
+		<idno>abs/1612.03716</idno>
+		<ptr target="http://arxiv.org/abs/1612.03716" />
+		<imprint>
+			<date type="published" when="2016" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Deeplab: Semantic image segmentation with deep convolutional nets, atrous convolution, and fully connected crfs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Liang-Chieh</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Iasonas</forename><surname>Kokkinos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alan</forename><forename type="middle">L</forename><surname>Yuille</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<date type="published" when="2018" />
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="834" to="848" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Encoder-decoder with atrous separable convolution for semantic image segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yukun</forename><surname>Liang-Chieh Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Florian</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hartwig</forename><surname>Schroff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Adam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ECCV</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The cityscapes dataset for semantic urban scene understanding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marius</forename><surname>Cordts</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename><surname>Omran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sebastian</forename><surname>Ramos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Timo</forename><surname>Rehfeld</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Markus</forename><surname>Enzweiler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rodrigo</forename><surname>Benenson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Uwe</forename><surname>Franke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bernt</forename><surname>Schiele</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+		<imprint>
+			<date type="published" when="2016-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">The pascal visual object classes challenge: A retrospective</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Everingham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">M A</forename><surname>Eslami</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Van Gool</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">K I</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Winn</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s11263-014-0733-5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="98" to="136" />
+			<date type="published" when="2015-01" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Decoupled deep neural network for semi-supervised semantic segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Seunghoon</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hyeonwoo</forename><surname>Noh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bohyung</forename><surname>Han</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="1495" to="1503" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Refinenet: Multi-path refinement networks for high-resolution semantic segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guosheng</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anton</forename><surname>Milan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chunhua</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><forename type="middle">D</forename><surname>Reid</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Cvpr</title>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">5</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Unsupervised image-to-image translation networks. CoRR</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ming-Yu</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Breuel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jan</forename><surname>Kautz</surname></persName>
+		</author>
+		<idno>abs/1703.00848</idno>
+		<ptr target="http://arxiv.org/abs/1703.00848" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Fully convolutional networks for semantic segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jonathan</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evan</forename><surname>Shelhamer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Trevor</forename><surname>Darrell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="3431" to="3440" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Playing for data: Ground truth from computer games</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stephan</forename><forename type="middle">R</forename><surname>Richter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vibhav</forename><surname>Vineet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vladlen</forename><surname>Koltun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">European Conference on Computer Vision (ECCV)</title>
+		<editor>Bastian Leibe, Jiri Matas, Nicu Sebe, and Max Welling</editor>
+		<imprint>
+			<publisher>Springer International Publishing</publisher>
+			<date type="published" when="2016" />
+			<biblScope unit="volume">9906</biblScope>
+			<biblScope unit="page" from="102" to="118" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Understanding convolution for semantic segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Panqu</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pengfei</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ye</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ding</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zehua</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">2018 IEEE Winter Conference on Applications of Computer Vision (WACV)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2018" />
+			<biblScope unit="page" from="1451" to="1460" />
+		</imprint>
+	</monogr>
+	<note>Xiaodi Hou, and Garrison Cottrell</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:15+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Logistic Regression</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Logistic Regression</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Techniques: L2 Regularization</term>
+					<term>Ensembling</term>
+					<term>k-Fold Cross Validation Support Vector Machines Techniques: Polynomial</term>
+					<term>Gaussian RBF Kernel</term>
+					<term>Regularization Gaussian Discriminant Analysis : MLE Techniques : Box-Cox Transforms Neural Networks Techniques: ReLU</term>
+					<term>Sigmoid activations</term>
+					<term>L2 Regularization</term>
+					<term>Drop Out</term>
+					<term>Early Stopping</term>
+					<term>Learning Rate Decay</term>
+					<term>Adam Optimizer</term>
+					<term>Hyperparameter Tuning</term>
+					<term>Threshold Variation</term>
+				</keywords>
+			</textClass>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PCA outperforms MethylMix algorithm</head><p>The MethylMix Algorithm is used to identify disease related hyper-and hypo-methylated genes <ref type="bibr" target="#b0">[1]</ref> . However, all models performed better on DNA Methylation + PCA dataset as compared to DNA Methylation + MethylMix dataset. PCA may be a better feature reduction technique in the context of lymphoma detection.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Immune Cells Fractions: Transform induces normality</head><p>GDA works well if the data is Gaussian. GDA's performance improved with when x was transformed using Box-Cox transforms. Normalization of the data is useful given the biological noise.</p><p>Bias Variance Trade-Offs 1. Logistic Regression: Ensembling reduced variance 2. Neural Networks, Random Forests: High Variance 3. GDA: High Bias, best model for immune cell fractions dataset (small dataset) with power transform</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>methylation is an epigenetic process affecting gene expression which has been linked to cancer. We use this biomarker to classify future Lymphoma, a group of cancers beginning in white blood cells of the immune system. The Optimizing Metric for the classification model is F1 Score.DNA methylation• 566 blood samples from two cohorts (m) • 444,000 genomic probes (n) Immune cell fractions • 196 blood samples (m) • 23 fractional components of blood (n) Challenges : Small data set, biological noise CS229, Fall 2018 DNA methylation data is noisy with correlation across gene probes. Feature selection and normalization techniques are useful precursors to supervised learning techniques. Discussion Future Acknowledgements • Model and dataset ensembling • Pair with microRNA expression data • Map feature importance to genes • Softmax classification of lymphoma subtypes Thanks to Dr. Almudena Espin Perez in the department of Biomedical Informatics for the data and mentorship.Best Lymphoma Predictor Dataset : DNA Methylation Features : First 59 Principal Components Model : Logistic Regression Test F1 Score : 72%, Test Accuracy : 69%</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">MethylMix 2.0: an R package for identifying DNA methylation genes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P.-L</forename><surname>Cedoz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Prunello</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Brennan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Gevaert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page" from="3044" to="3046" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">ABLoc Audio-Based Localization Motivation Methodology</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Sun</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Reid</forename><surname>Westwood</surname></persName>
+						</author>
+						<title level="a" type="main">ABLoc Audio-Based Localization Motivation Methodology</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head><p>Sample Spectrograms</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Audio Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MFCC</head><p>• Measure of power in short term spectrum of a signal.</p><p>• Mimics human hearing Spectrogram Peak Detection (SPD)</p><p>• Counts local maxima in frequency • Designed to detect consistent energy bands over time</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Arrillaga, 2 Days Bytes, Circle</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Classifier Comparison</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Voting</head><p>Because we use 1-second processing to generate features, just 10 seconds of data give us 10 test samples known to have a single label. This curve shows the decrease in test error as we increase the duration of a test clip.</p><p>1. Use our primary classifier to predict each test subsample 2. If the gap between 1 st and 2 nd is small, run the test sample through the secondary classifier 3. Use a weighted average of the two classification results to determine prediction.</p><p>Our use of ensemble takes advantage of need for voting. The process is as follows: Unsurprisingly, we found that data gathered within a single day at a given location is highly correlated, compared to between different days. Because of this, we measure our test classification methods two ways. First, standard cross correlation was used, where each sample was treated independently.</p><p>Second, which we refer to as 'generalization error', we hold out all data gathered on a single day from training. This day's data is then our test data. We chose a set of 73 features for each audio sample (13 MFCCs and 60 SPDs). Using PCA, we saw that a large subset of these features were needed to explain the variation in our dataset. Of the 73 principal components, the first 50 accounted for 95% of the data variance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>X-Validation Error</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Generalization</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>X-Validation Error Generalization Error</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Confusion Matrices Summary</head><p>As seen in the classifier comparison, our ensemble method, which used a Gaussian kernel SVM as a primary classifier and the linear logistic as a secondary classifier, produced the most promising results. When testing data, we settled on using 10 subsamples of 1 second audio. While the test error was reduced by using more data, we found that this duration offered a good tradeoff with application -a user may not spend much more than 10 seconds in a given spot (or want to hold their phone out for longer).</p><p>Initial results are very encouraging. However, gathering representative data remains a large challenge given the hugely temporal nature of our dataset. Classifier interpretation also poses difficulties given our feature space's dimensionality and nature. Nevertheless, we are optimistic that the increasing availability of data and ubiquity of technologically advanced personal devices can greatly expand the scope of this project and allow for its integration in general localization systems.</p><p>We used the first 3 principal components as a basis to visualize our data. Using just these 3 principal components, we were able to visually see clear separations in some pairs of regions, such as Rains and Tressider (Right). However, other region pairs did not have quite so nice a separation in this low dimensional projection, such as Tressider and Bytes (Left). </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>As people go about their daily routine, often they begin to recognize their location just by the sounds they hear. We aim to test if a machine can do the same by investigating the distinctness of soundscapes between locations on campus. If actually possible, this ability could augment traditional localization methods with qualitative details.Much of the literature on audio-based learning has focused on speech recognition. However, interest in using audio for broader applications is increasing. Previous related work has included audio-augmented scene recognition for robotics[1] and sound type discrimination [2] [1] S. Chu, S. Narayanan, C. c. J. Kuo, and M. J. Mataric, "Where am i? scene recognition for mobile robots using audio features," in 2006 IEEE International Conference on Multimedia and Expo, July 2006, pp. 885-888. [2] L. Chen, S. Gunduz, and M. T. Ozsu, "Mixed type audio classification with support vector machine," in 2006 IEEE International Conference on Multimedia and Expo, July 2006, pp. 781-784.</figDesc><table>Error 
+Gaussian 
+Kernel SVM 
+13.65% 
+21.72% 
+Linear SVM 
+27.84% 
+32.74% 
+Linear Logistic 
+15.45% 
+21.22% 
+Random Forest 
+14.09% 
+28.26% 
+RBF+Logistic 
+Ensemble 
+13.89% 
+19.68% 
+
+Much of the literature on audio-based learning has focused on speech recognition. 
+However, interest in using audio for broader applications is increasing. Previous related 
+work has included audio-augmented scene recognition for robotics [1] and sound type 
+discrimination [2] 
+
+[1] S. Chu, S. Narayanan, C. c. J. Kuo, and M. J. Mataric, "Where am i? scene recognition 
+for mobile robots using audio features," in 2006 IEEE International Conference on 
+Multimedia and Expo, 
+July 2006, pp. 885-888. 
+[2] L. </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>RainsCircle Tressider Huang Bytes Oval Arrillaga Rains Circle Tressider Huang Bytes Oval Arrillaga</figDesc><table>Rains 
+
+Circle 
+
+Tressider 
+
+Huang 
+
+Bytes 
+
+Oval 
+
+Arrillaga </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

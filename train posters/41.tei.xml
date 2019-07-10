@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:18+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Comparison of Machine Learning Techniques for Artist Identification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennie</forename><surname>Chen</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Deng</surname></persName>
+							<email>andrewde@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Comparison of Machine Learning Techniques for Artist Identification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Many paintings have unknown or highly contested artists, and experts in the field need a long time to learn various styles before answering these questions. Machine learning can be used to reduce time and effort. In this project, we will be comparing two techniques in terms of performance and ease of use for the task of artist classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVM</head><p>• Multi-class SVM with RBF kernel • PCA with 100 components to condense feature space • Trained models across various combinations of features</p><p>• Training CNN took significantly longer (7-8 hours).</p><p>• Feature extraction took ~44 minutes for the training data.</p><p>• Inference times on same CPU were lower on the CNN for better/similar accuracy.</p><p>• Using a SVM requires a lot of overhead in tuning feature combinations compared to feeding images into the CNN.</p><p>• Only a subset of features (GIST, Hu, Color Hist) proved useful; some (Haralick) had detrimental effect on accuracy </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Hu Moments: descriptors of object shapes in image • Color Histogram: distribution of colors throughout image Other features extracted: • Scale-Invariant Feature Transform (SIFT) • Histogram of Oriented Gradients (HOG) • Local Binary Pattern (LBP) • ORB • Haralick Texture Original Image Color Histogram Local Binary Pattern SIFT Keypoints HOG [1] GitHub. 2018. Winning solution for the Painter by Numbers competition on Kaggle -inejc/painters. Retrieved from http://github.com/inejc/painters.</figDesc><table>• Further attempts at addressing 
+SVM overfitting 
+○ Already tuned regularization 
+parameter C 
+○ Explore options such as 
+early stopping 
+• Explore Classemes and Picodes 
+as additional features 
+• Try transfer learning from 
+existing models like AlexNet or 
+ResNet 
+
+Model 
+Training 
+Accuracy (%) 
+
+Test 
+Accuracy (%) 
+
+Train 
+Time (s) 
+
+Inference 
+Time (ms) 
+Features Used 
+
+LR* 
+67.4 
+61.2 
+1.86 
+179.8 
+GIST, Color Hist 
+
+SVM 
+97.9 
+68.1 
+6.78 
+180.2 
+GIST, Hu 
+Moments 
+
+SVM 
+97.8 
+67.3 
+6.69 
+181.0 
+GIST, Color Hist 
+
+SVM 
+97.1 
+61.2 
+5.12 
+178.4 
+GIST, Color Hist, 
+Hu Moments 
+
+CNN 
+81.3 
+74.7 
+28921 
+12.2 
+NA 
+
+Input Image 
+
+Convolution (16, 3, 3) 
+
+Convolution (16, 3, 3) 
+
+Max-Pool (2, 2) 
+
+CNN 
+
+Convolution (16, 3, 3) 
+Max-Pool (2, 2) 
+
+Convolution (32, 3, 3) 
+Max-Pool (2, 2) 
+
+Convolution (128, 3, 3) 
+Max-Pool (2, 2) 
+
+Convolution (256, 3, 3) 
+Max-Pool (2, 2) 
+
+Dense 
+
+Flatten 
+
+Dense 
+
+Softmax 
+
+(256, 256, 3) 
+
+(256, 256, 16) 
+
+(256, 256, 16) 
+
+(128, 128, 16) 
+
+(128, 128, 16) 
+
+(64, 64, 16) 
+
+(64, 64, 32) 
+
+(32, 32, 32) 
+
+(32, 32, 128) 
+
+(16, 16, 128) 
+
+(16, 16, 256) 
+
+(8, 8, 256) 
+
+(16384,) 
+
+(2048,) 
+
+(2048,) 
+
+(15,) 
+
+• Architecture based on winning 
+submission to the official 
+Kaggle competition [1] 
+• 11 convolutional layers 
+• 2 dense layers 
+• Batch normalization after each 
+computation layer 
+• Dropout layers after last 
+max-pool and before softmax 
+layer with keep probability 0.5 
+• ReLU activation functions 
+• Adam optimizer with 
+cross-entropy loss 
+
+Most useful features: 
+• GIST: features to estimate the "shape of a scene" in terms 
+of five different criteria (e.g. naturalness, openness) 
+• Original Image 
+
+Color Histogram 
+Local Binary Pattern 
+
+SIFT Keypoints 
+HOG 
+
+[1] </table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">* Baseline model -logistic regression with best combination of features</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

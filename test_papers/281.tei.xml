@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Explore Co-clustering on Job Applications</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qingyun</forename><surname>Wan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sunet</forename><surname>Id</surname></persName>
+						</author>
+						<author>
+							<affiliation>
+								<orgName>1 Introduction</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Explore Co-clustering on Job Applications</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In the job marketplace, the supply side represents the job postings posted by job posters and the demand side presents job seekers who would like to apply for suitable jobs. In the platforms of job marketplace, like Linkedin, Indeed and etc., it is crucial for these job posting platforms to recommend desirable jobs to job seekers based on their career interests to deliver high value for both job posters and seekers to become qualified matches, and ultimately serve a reliabled ecosystem of job markeplace themselves.</p><p>In the recommender system, there are two general approaches to provide recommendations. Consider the job marketplace. One approach is based on content, where job seekers' preferences are predicted depending on how their explicit skills, titles, industries and etc. match the jobs. It involves extensive data from job seekers and jobs so that features can be complicated. Another approach is consider jobs preferred by similar job seekers via collaborative filtering which leverages less data. In collaborative filtering, one way to obtain similar job seekers is through clustering <ref type="bibr" target="#b0">[1]</ref> by pre-training K-means clustering of seekers based on their applications to jobs. However, compared to one-way clustering, co-clustering on both job seekers and jobs simultaneously can may provide better performance and the constructed clusters can be directly used to improve the quality of job recommendations.</p><p>In the follow sections, first, I will briefly discuss related work on co-clustering and the data set to use in this project. Second, I will introduce two co-clustering methods I experimented to deal with job applications. Third, I will discuss the validation process, compare the performances of co-clustering methods with the baseline algorithm -K-means and demonstrate visual comparision. At the end is the conclusion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>There are many co-clustering approaches that simultaneously clustering rows and columns of a given matrix experimented on clustering documents and words. Some of them are representative while the others more or less extend their ideas, as they use different methodologies but acheive the the goal. <ref type="bibr" target="#b1">[2]</ref> attempted to minimize the loss of mutual information between original and clustered random variables. <ref type="bibr" target="#b2">[3]</ref> proposed a spectral co-clustering algorithm based on bipartite graph, turning co-clustering into graph partitioning. <ref type="bibr" target="#b3">[4]</ref> and <ref type="bibr" target="#b4">[5]</ref> focused on low-rank matrix factorization and related it with simultaneously clustering rows and columns. The latter two involves matrix decompostion which are slow and computationally expensive so the work <ref type="bibr" target="#b6">[6]</ref> that utilizes co-clustering in collaboritive filtering doesn't pick them for static training.</p><p>To explore co-clustering jobs and job seekers via job application in this project, intuitively, <ref type="bibr" target="#b2">[3]</ref> and <ref type="bibr" target="#b3">[4]</ref> can possibly provide insightful clusters. The former one tries to build clusters that have more intra-cluster applications in and less inter-cluster applications, which can produce exclusive job clusters. The latter one instead can discover latent clusters for job seekers and jobs during matrix trifactorization to approximate the original seekerjob matrix.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Data set and Preprocessing</head><p>The data set is from CareerBuilder's competition (https://www.kaggle.com/c/job-recommendatio n/data). It contains job applications lasting for 13 weeks. For each application record, each row in the original data set contains UserID, ApplicationDate and JobID. ApplicationDate is not considered in the project when splitting the data set into training and testing sets though it seems more fair to use job applications happened later to test against clusters trained on previous job applications, due to the fact that job postings are usually posted in a limited period of time and receives the majority of all applications as soon as they are posted and as a result, jobs applied in the training set will hardly appear in the testing set if splitted by ApplicationDate, which leads to insufficient and less representative testing datapoints. Therefore, I extracted UserID and JobID for each application from the raw data, removed duplicated applications, shuffled them randomly and transformed to 0-1 valued user-job matrices, whose rows represent unique users, columns represent unique jobs and entries represent whether the user applies for the job, since both of the two co-clustering methods take an input of user-job matrix.</p><p>One concern is that the original user-job matrix is very sparse which contains non-trivial noise for co-clustering. So I also filtered out jobs whose job has less than certain number of job applications to reduce the sparsity. <ref type="table" target="#tab_0">Table 1</ref> shows the statistics when using different threshold for each job to filter:</p><p>So the general preprocessing steps are:</p><p>1. Create two data sets of job applications from the original data set by filtering on different number (75 and 100) of job applications per job. 2. For each data set generated above, split into 5 partitions and create 5 pairs of training set and testing set for 5-fold cross validation.</p><p>3. For each training set, convert it into 0-1 user-job matrix for clustering. Two data sets yield user-job matrices with different densities. The sizes of training and testing set for each density is in <ref type="table" target="#tab_1">Table 2</ref>. 4 Methods</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">One-way clustering: K-means</head><p>The baseline clustering method is one-way clustering on users using K-means. Each user is represented by a vector u where u i = 1 if the user applies to the ith job 0, otherwise K-means will cluster these user vectors based on the Euclidean distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Co-clustering: Nonnegative Matrix Tri-factorization</head><p>This method is proposed in <ref type="bibr" target="#b3">[4]</ref>. Basically, Given the nonnegative user-job matrix X, Nonnegative Matrix Tri-factorization is derived from NMF which factorizes the nonnegative X into 2 nonnegative matrices,</p><formula xml:id="formula_0">X ≈ F G T</formula><p>If imposing orthogonality on both F and G, the objective is:</p><formula xml:id="formula_1">min F ≥0,G≥0 ||X−F G T || 2 , s.t.F T F = I, G T G = I</formula><p>As shown in <ref type="bibr" target="#b7">[7]</ref>, it is equivalent to simultaneously runninig K-means clusterins of rows and columns of X. Since the orthogonality requirement is very strict, instead, we can consider the 3-factor decomposition, X ≈ F SG T and the objective function then becomes</p><formula xml:id="formula_2">min F ≥0,G≥0 ||X−F SG T || 2 , s.t.F T F = I, G T G = I</formula><p>where F is the cluster indicator matrix of row clusters and G is the cluster indicator matrix of column clusters because as described in <ref type="bibr" target="#b3">[4]</ref>, G is the K-means clustering result using kernel matrix X T F F T X to calculate the distance and similarily, F is the K-means clustering result using kernel matrix XGG T X T .</p><p>Since our user-job matrices contain 0-valued entries when the corresponding user (row) doesn't apply to the corresponding job (column), I replaced 0 with a small fractional number 0.01 which can be distinctive from the 1-valued entries before running this method then implemented the following algorithm to minimize the objective function and obtain F and G: Algorithm NMTF Initialization:</p><p>1. Run K-means of columns to obtain column cluster centroids as G. 2. Run K-means of rows to obtain row cluster centroids as F . 3. Let S = F T XG Update rules:</p><formula xml:id="formula_3">G := G X T F S GG T X T F S F := F XGS T F F T XGS T X := S F T XG F T F SG T G</formula><p>Then the cluster membership of rows and columns are extracted from F and G.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Co-clustering: Spectral Co-clustering</head><p>This method is from <ref type="bibr" target="#b2">[3]</ref> which leverages partitioning bipartite graph to achieve co-clustering. Giving the 0-1 user-job matrix X, a bipartite graph is constructed with two vertex sets representing users and jobs respectively with edge weight be 1 <ref type="figure">Figure 1</ref> or 0 as illustrated in <ref type="figure">Figure 1</ref>. Then the adjancy matrix is</p><formula xml:id="formula_4">M = 0 X X T 0 Let D be D row 0 0 D col where D row (i, i) = j X i,j , D col (j, j) = j X i,j We have the Laplacian matrix L = D − M .</formula><p>It is proved in <ref type="bibr" target="#b2">[3]</ref> that the second eigenvector of the problem Lz = λDz leads to a relaxed solution of finding the minimum normalized cut (a cut is defined as the sum of weights of edges connecting two partitions) of this bipartite graph, in the meantime balancing partitioning sizes. <ref type="bibr" target="#b2">[3]</ref> also shows to obtain the second eigenvector of L, we need to compute singular vectors of D − 1 2 row XD − 1 2 col first. To get the clustering result, we can directly run K-means on the second eigenvector of L which is a reduced-dimensional data set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Preprocessing the testing set</head><p>Since there are no labels for either jobs or users, the way to validate the trained clusters and generate usefuly metrics is to verify job applications in the testing set against the trained clusters. Since we shouldn't verify the same job applications in the testing set as the training set and are unable to verify jobs and users in the testing set that are unseen in the training set, I preprocessed the testing test to extract unseen job applications whose corresponding jobs and users were involved in the training set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Metrics</head><p>Due to lack of label, the metrics to verify the effectiveness of clustering algorithms are recall, accuracy and F1-score. To compute them, we need to compute the metrices:</p><p>• True Positive: a job applied by a user in the testing set is in the same cluster of this user in the trained clusters.</p><p>• False Positive: a job not applied by a user in the testing set is in the same cluster of this user in the trained clusters.</p><p>• True Negative: a job not applied by a user in the testing set is not in the same cluster of this user in the trained clusters.</p><p>• False Negative: a job applied by a user in the testing set is not in the same cluster of this user in the trained clusters.</p><p>In practical, the ways to determine the cluster which a job belongs to are different for different clustering methods:</p><p>• K-means: Any cluster if any user in this cluster applies to this job in the training set • NMTF: Though it is co-clustering jobs and users, the cluster labels of jobs and users in the same co-cluster are different. So follow the K-means way.</p><p>• Spectral Co-clustering: Since if jobs and users are in the same co-cluster, their cluster labels are same. So use the job cluster label.</p><p>The metric to determine the optimal number of cluster is silhouette score. The silhouette score for each user i is</p><formula xml:id="formula_5">s(i) = b(i) − a(i) max(b(i), a(i)) a(i)</formula><p>is the dissimilarity to the user's cluster and b(i) is the minimum dissimilarity to other clusters where the disimilarity to a cluster for a user is defined by 1 − # of jobs applied in this cluster by this user total # of jobs applied by this user The average of the cluster silhouette score (i.e., the average of the user silhouette score in this cluster) will be used to determine the optimal number of clusters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Experiments and Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.1">Performance</head><p>The recall, accuracy and F1-score are computed on different number of clusters for two data sets with different densities. The results are illustrated in <ref type="figure">Figure 2</ref>, 3 and 4 (Density 1 is larger and less dense than Density 2).</p><p>We can see although the recall of K-means is not bad since the jobs are overlapping in different clusters, it can provide many true-positives. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.2">Silhouette Analysis for Number of Clusters</head><p>By running 5-fold cross-validation and computing silhouette scores on different number of clusters for two data sets with different densities, the result is: By observing the coordinates where the silhouette scores start to drop, for the first data set which is larger and more sparse, the optimal number of cluster is ≤ 80. For the second one which is smaller and more dense, the optimal number is ≤ 50.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.3">Visual Comparision</head><p>The figures (a), (b) and (c) visualize example clustering results using K-means, Nonnegative Matrix Tri-factorization and Spectral Co-clustering on user-job matrix.</p><formula xml:id="formula_6">(a) K-means (b) Spectral Co-clustering (c) NMTF</formula><p>We can observe some straightforward facts that 1. Spectral Co-clustering produces more balanced co-clusters of users and jobs as its algorithm is designed for while Nonnegative Matrix Tri-factorization may result in one big cluster while the others are relatively small.</p><p>2. Nonnegative Matrix Tri-factorization allows specifying different numbers of clusters on rows and columns though normally they are specified as same. Then it requires extra steps to corresponding the user cluster to the job cluster if they actually represent the same cocluster, as their cluster labels are different, which is not as convenient as Spectral Co-clustering.</p><p>3. Like NMTF, one-way clustering using K-means produces inbalanced clusters. More importantly, unlike the coclustering methods, from the visualization we can tell in the big cluster, the jobs applied by the users in the same cluster overlap heavily with the ones in other clusters, which will introduce many noises for job recommendation, while the users in the rest small clusters are matched so accurately that it might miss potential suitable jobs to recommend.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>It is shown that simultaineously clustering users and jobs based on merely job applications using different co-clustering methods can produce exclusive clustering of jobs, which improves the accuracy as jobs with potentially higher apply rate can be recommended compared to one-way clustering. In addition, Spectral co-clustering is designed to construct more balanced clusters, which is more ideal for recommendation by supplying more accurate pools of jobs to recommend.</p><p>In the future, since both co-clustering methods are slow because they leverage matrix decomposition, it's beneficial to explore more scalable co-clustering methods so that we can co-cluster efficiently on more sparse data set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>All is done by myself.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Github</head><p>The source code is in https://github.com/qingyunwan/cs229-project.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 2 Figure 4 :</head><label>24</label><figDesc>Spectral Co-clustering When coming to accuracy, co-clustering meth- ods NMTF and spectral co-clustering have much higher accuracies since their job clusterings are more exclusive, there are much less false- positives.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1</head><label>1</label><figDesc>Minimum # of Job Applications per Job Density # of Job Applications # of Jobs # of</figDesc><table>Users 
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2</head><label>2</label><figDesc></figDesc><table>Minimum # of Job 
+Applications per Job Training Testing 
+75 
+63732 
+15934 
+100 
+26298 
+6575 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Clustering methods for collaborative filtering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">H</forename><surname>Ungar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Foster</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI workshop on recommendation systems</title>
+		<imprint>
+			<date type="published" when="1998-07" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="114" to="129" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Information-theoretic co-clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">S</forename><surname>Dhillon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Mallela</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">S</forename><surname>Modha</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the ninth ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the ninth ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2003-08" />
+			<biblScope unit="page" from="89" to="98" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Co-clustering documents and words using bipartite spectral graph partitioning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><forename type="middle">S</forename><surname>Dhillon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the seventh ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the seventh ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2001-08" />
+			<biblScope unit="page" from="269" to="274" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Orthogonal nonnegative matrix t-factorizations for clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Park</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th ACM SIGKDD international conference on Knowledge discovery and data mining</title>
+		<meeting>the 12th ACM SIGKDD international conference on Knowledge discovery and data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2006" />
+			<biblScope unit="page" from="126" to="135" />
+		</imprint>
+	</monogr>
+	<note>August)</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Long</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><forename type="middle">M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">S</forename><surname>Yu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Co-clustering by block value decomposition</title>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the eleventh ACM SIGKDD international conference on Knowledge discovery in data mining</title>
+		<meeting>the eleventh ACM SIGKDD international conference on Knowledge discovery in data mining</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<biblScope unit="page" from="635" to="640" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A scalable collaborative filtering framework based on coclustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>George</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Merugu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Data Mining, Fifth IEEE international conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2005-11" />
+			<biblScope unit="page">4</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">On the equivalence of nonnegative matrix factorization and spectral clustering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">D</forename><surname>Simon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2005 SIAM International Conference on Data Mining</title>
+		<meeting>the 2005 SIAM International Conference on Data Mining</meeting>
+		<imprint>
+			<date type="published" when="2005-04" />
+			<biblScope unit="page" from="606" to="610" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

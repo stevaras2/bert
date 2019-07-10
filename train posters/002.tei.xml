@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Visual A)en,on Models of Object Coun,ng</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jack</forename><surname>Lindsey</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Steven</forename><surname>Jiang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Visual A)en,on Models of Object Coun,ng</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p>• Industrial feed--forward convolu3onal neural networks perform well on tradi3onal image recogni3on tasks • However, they're computa,onally expensive and are unreliable when image inputs have imperfect resolu,on outside of the focus area for object recogni3on • Need be@er network architecture; look to biological models of re3nal mo3on for designs</p><p>• Extend Recurrent A)en,on Model (RAM) of Mnih et. al. to recognize and count objects in images with reinforcement learning and an a@en3on mechanism <ref type="bibr">[1]</ref> • Produce accurate counts for the number of objects in an image by scanning and layering blurriness to simulate focus • Use glimpse network to track loca3ons for detec3ng objects Evaluate accuracy of generated re3nal glimpses by measuring against object count accuracy in images</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>• We train on a database of microscrope cell images synthesized by SIMCEP and developed by Lehmussola et. al. <ref type="bibr">[2]</ref> Benefits for object coun3ng include: • Cells are similar enough in appearance to train network architectures for coun3ng • Cells vary in shape and color to prevent naïve approaches, like integra3ng non--background mass • We use 5000 128 x 128 images, split into 4000 for training and 1000 for tes3ng, and divided evenly among count classes • To test effec3veness of glimpse network on basic cases, we limit our count classes to 1 --5</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Network Formulation</head><p>We  <ref type="figure">fig. 6</ref>), the glimpse network and model's predic3ve power fail to show correla3on</p><p>• We use a simple reward func3on to reinforcement learn, where y is our training predic3on and c is the correct count class for each image over successive itera3ons • True state of the environment remains unobserved-the re3nal sensor can only focus on one area at a 3me • Layer focus with 8 x 8 full resolu3on window and 32 x 32 ¼ resolu3on layer around focus point, with rest of image at 1/16 resolu3on, repeat N = {1, …, 7} 3mes • Convolu3onal on ini3al input and previous loca3on, recurrent on upda3ng parameters and crea3ng next loca3on and classifica3on itera3on</p><p>• <ref type="figure">Fig. 1</ref>. Sample input. Varying blurriness, sizes, and shape ensure RAM integrity. Replicates imperfec3on of human vision. We have three panels layered as input: the en3re image blurred, a window with less blur, and a sub--window at full resolu3on to mimic re3nal focus </p><formula xml:id="formula_0">R = 1{y = c} R =1{y = c} •</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 3 .Fig. 5 :Fig. 6 :</head><label>356</label><figDesc>A visual representa3on of the RAM we build on- credits to Mnih et. al. for original architecture and diagram. A glimpse network-fg----processes input images and previous loca3on itera3ons into hidden layers that output the count classifica3on and the next loca3on itera3on with current internal state 0 20 40 60 80 100 120 1 2 3 4 5 6 Percentage Accuracy on Each Object Count Class Fig. 5: Accuracy on Object Classes for Different Values of Glimpse Number Hyperparameter 1 Glimpse 2 Glimpses 3 Glimpses 4 Glimpses 5 Glimpses 0 10 20 30 40 50 60 70 80 90 100 1 2 3 4 5 6 Percentage Accuracy on Each Object Count Class Fig. 6: Accuracy</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>of the gradient function for our reward function. 1. Volodymyr Mnih, Nicolas Heess, Alex Graves, Koray Kavukcuoglu, Recurrent Models of Visual Attention,NIPS 2014. 2. A. Lehmussola, P. Ruusuvuori, J. Selinummi, H. Huttunen, and O. Yli- Harja. Computational framework for simulating fluorescence microscope images with cell populations. IEEE Trans. Med. Imaging, 26(7):1010-1016, 2007. 3. Williams, Ronald J., Simple statistical gradient-following algorithms for connectionist reinforcement learning, Machine learning 8.3-4 (1992): 229-256. 4. Leonard, Nicholas. Recurrent Model of Visual Attention, Torch Documentation 2015</figDesc><table>credit [4] for the code framework for the base RAM model and [1] for developing the 
+original design. We credit [2] for the data we draw on for our problem [3] for the 
+mathematical framework Imaging, 26(7):1010-1016, 2007. 
+3. Williams, Ronald J., Simple statistical gradient-following algorithms for connectionist 
+reinforcement learning, Machine learning 8.3-4 (1992): 229-256. 
+4. • 
+RAM soundly beats CNN-accuracy averages 65--70%, 
+fixing op3mal CNN parameters with heuris3c es3mate 
+• 
+Experimental flaw----can only know loca3on if predict 
+correctly and vice versa, so accuracy occasionally 
+remains constant at 20% 
+
+• 
+Experimental proof glimpse networks work (fig. 5)-low 
+counts predicted accurately with few glimpses, and there 
+is strong correla3on b/w glimpse # and object count 
+• 
+Control: when tested against input without access to 
+en3re field of vision (</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>We thank Steven Hansen and Professor James McClelland, Department of Psychology, for their guidance and the inspira3on behind this project.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

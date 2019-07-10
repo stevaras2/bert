@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Anthony Corso (acorso@stanford.edu) CS229 : Final Project Report System Identification of Partial Differential Equations</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-13">13 Dec 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Anthony Corso (acorso@stanford.edu) CS229 : Final Project Report System Identification of Partial Differential Equations</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-13">13 Dec 2018</date>
+						</imprint>
+					</monogr>
+					<note>github repo: https://github.com/ancorso/sci discovery</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Over the past several decades machine learning and artificial intelligence has made great strides in learning patterns from large amounts of data. Although accurate, these systems are often uninterpretable by the human researchers who create them. They do not report an explanation for their predictions nor do they generalize well when the task is changed slightly.</p><p>Recently, however, strides have been made to create AI systems that, rather than just looking for trends, look for causal explanations of observed data <ref type="bibr" target="#b1">(Bridewell, 2008</ref><ref type="bibr" target="#b2">, Brunton, 2016</ref>. If an AI system can correctly determine a simple underlying model for a system then it has the capability of providing an explanatory account of the data as well as the ability to generalize well in predicting behavior under a wider variety of situations. This can help researchers more quickly discover models that explain experimental data.</p><p>The goal of this project is to implement a system identifier for the discovery of physical processes in terms understandable by a human researcher (i.e. stated as partial differential equations (PDEs)). The system should work with multi-dimensional data, be robust to noise, and require small amounts of data to operate. This paper is outlined as follows: The next section discusses the approach to system identification that will be used, including how features are generated and selected from observed data. The following section describes two test systems from which synthetic noisy data is obtained to demonstrate the system identifier. The last two sections report the results of the system identifier and a discussion of how it can be improved.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>System Identification</head><p>The goal of identifying a simple model that describes observed data has been researched in the past by <ref type="bibr" target="#b1">Bridewell, 2008</ref><ref type="bibr" target="#b2">, Brunton, 2016</ref>. The system identifier presented here, takes elements from those two approaches while expanding the capabilities to the domain of spatio-temporal processes governed by nonlinear PDEs. The simplest form of a general PDE is given by ∂u(x, t) ∂t = α 1 f 1 (u(x, t)) + ... + α n f n (u(x, t)) = α T f where the α i are constant coefficients and the functions f i are feature functions of the solution u(x, t). For the purposes of this project we will place a constraint on the feature functions that they have no free parameters associated with them other than α. Therefore, an expression such as f (u(x, t)) = ∂u 2 (x, t)/∂x is a valid feature function while f (u(x, t)) = u(x, t)/(k + u(x, t)) is not, unless k is a known constant. This constraint is placed on the problem merely to make the model fitting process as straightforward as possible. The first step of the system will be to generate a large number of feasible feature functions that could comprise the PDE. The second step is to select a subset of these features that best explain the left hand side of the PDE through linear regression. These steps are discussed in more detail in the next few subsections.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Generation of Features</head><p>The choice of feature selection in general is a difficult problem. There are an infinite number of possible feature functions and it is impossible to know a priori which functions will comprise the PDE. Since the system identifier is meant to be an aide to researchers and scientists, it is reasonable to ask the user to provide some amount of guidance to the algorithm without explicitly handing over a set of feature functions (which the researcher presumably does not know).</p><p>To this end, the system identifier relies on a domain-specific grammar, provided by the user, that gives the rules for generating feature functions. A grammar is a set of production rules that govern a language (or a set of expressions). Each rule can either be non-terminal, in which the rule relates generic expressions together (e.g. multiplication), or terminal, in which an expression is concretely defined (e.g. the observed data). Each expression in the language can be represented by a tree of operators, each of which is part of the grammar. Once a grammar is defined, expressions can be sampled from the grammar with varying levels of complexity (as defined by the depth of the expression tree). A sample grammar and expression tree are shown in <ref type="figure">figure 1a</ref>. A convenient way to read the rules of the grammar is to convert it to plain english. Let R mean "an expression" and → mean "can be", then the second production rule reads "an expression can be an expression times an expression". The last production rule is where the variables of interest are introduced. This rule reads "an expression can be a velocity component or pressure". Sampling from a grammar is a process of selecting production rules and then filling in any non-terminal expressions until only terminal expressions remain. In the expression tree shown in the right of <ref type="figure">figure 1a</ref>, the first production rule chosen is multiplication. Then, on the left side, the terminal expression u was chosen, and on the right side, the spatial derivative was chosen, followed by the terminal expression u.</p><p>To produce the candidate set of features, the user will specify a desired tree depth, d, and all possible expressions with depth ≤ d will be produced. Then, this set of features is searched for expressions that evaluate to the same results and any such duplicates are removed. The number of candidate expressions grows exponentially with the depth of the tree, but fortunately, most pdes that govern physical processes have terms that are only at a depth of 4 or less which makes the problem tractable (see Wikipedia list of nonlinear PDEs, 2018). For the model systems, all terms can be produced from an expression depth of 3, which, for the grammar in figure 1a means that a total of 562 features will be considered (222 after removing duplicates). The julia package ExprRules.jl was used to build the grammar and to sample expressions from it at the desired depth.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Selection</head><p>Once the candidate feature functions are computed, the next step of the algorithm is to select the best subset of features that describes the observed data. In the next subsection, an evaluation metric is presented that will be used to determine how good a subset of features is. In the following subsection, the algorithm that chooses the best subset will be described in detail.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation Metric</head><p>The metric that was chosen to decide between models is the adjusted R 2 value of the fit. The traditional R 2 value always increases when new features are added so it makes our algorithm susceptible to overfitting. Instead, we penalized the addition of more features to the regression by defining the R 2 adj as</p><formula xml:id="formula_0">R 2 adj = R 2 − (1 − R 2 )(n − 1) 2 − λ(n − 1)</formula><p>where n is the number of features in the model. Note that when n = 1, this expression reduces to the traditional R 2 value. But when n &gt; 1, then the difference between R 2 and 1 is scaled by the number of parameters squared. The third term in the expression was included for the cases when R 2 was very close to or exactly one (as can be the case when dealing with noise-free synthetic data). If R 2 = 1, the second term vanishes, and there would be no way to distinguish between models of different complexity. Thus, a small value of λ is chosen to break ties in favor of the simpler model. In the following tests, λ = 0.001 was used.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Selection Algorithm</head><p>In general, the algorithm to find which subset of features has the best R 2 adj value is very computationally complex. To check all of the subsets of a set of n features requires 2 n linear regressions. The grammars and depths that would commonly be used would give rise to n = 100 − 1000 features which makes the subset search intractable. In place of the brute force search of subsets, a form of forward search was implemented instead. The workflow of this algorithm is shown in <ref type="figure">figure 1b.</ref> A description of the full algorithm is given in the following two paragraphs.</p><p>The inputs to the system indentifier are y, the data that needs to be explained (i.e. ∂u/∂t for the advection-diffusion equation), and the grammar defined by the domain expert which contains the observational data and the production rules to generate features. The grammar is then used to generate many possible features (with the expression depth controlled by the user). The features are stored in an input matrix X which is cleaned of duplicate columns (due to equivalent expressions from the grammar). The columns of the input matrix, X and the output vector, y, are normalized to a mean of 0 and a variance of 1 to avoid problems with differing scales and constant offsets. X and y are then passed into the feature selection algorithm.</p><p>The feature selection algorithm starts with an empty set of featuresX. Each feature from X is added, in turn, toX so that a linear regression with y can be performed and the R 2 adj value computed. The added feature is then removed and the next feature is added. Once all features in X have been tried, the feature that had the best R 2 adj value is permanently added toX. On the next iteration, all features (except the feature already used) individually get added toX and the R 2 adj is computed for the resulting two-feature input. If there is no feature that caused the R 2 adj to increase, then the algorithm stops and returns the set of features that are currently inX, otherwise, the new feature with the best R 2 adj gets added toX and the process continues.</p><p>The algorithm is also capable of returning not just the highest scoring set of features, but the top k scoring sets of features. This is achieved by running the feature selection algorithm k times and keeping a list of the sets of features that were returned on previous iterations. These sets of features are skipped over on the next iteration and the next best combination is found. Searching through more possibilities increases the chances that the algorithm doesn't get stuck in a local optimum due to the greedy selection criterion. The resulting complexity of this algorithm is O(nk) which is a significant improvement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sample Data</head><p>In order to evaluate the efficacy of the system identifier, two test systems were selected for trials. These test systems will produce data at varying levels of spatial resolution and with different amounts of noise. The data will then be fed through the system identifier and the results will be compared to the actual underlying system. The first test system is the unsteady 1D advection-diffusion equation which describes the general transport of material in a fluid. The system has the form ∂u ∂t = D ∂ 2 u ∂x 2 − v ∂u ∂x with bcs u(x, 0) = u 0 , u(0, t) = u L , ∂u ∂x (∞, t) = 0 The exact solution of which is given by Van Genuchten 1982 as</p><formula xml:id="formula_1">u(x, t) = u 0 + 1 2 (u L − u 0 ) erfc x − vt 2 √ Dt + exp(vx/D)erfc x + vt 2 √ Dt</formula><p>The solution is plotted in <ref type="figure" target="#fig_1">figure 2a</ref> for x &gt; 0, t &gt; 0, D = 1 and v = 0.5. The second test system is the steady 2D Euler equations which govern the flow of an inviscid fluid in two dimensions. The system has the form (written in vector index notation for convenience)</p><formula xml:id="formula_2">∂u i ∂x i = 0, u j ∂u i ∂x j = − 1 ρ ∂p∂x i , with bc u(−∞, y) = (U ∞ , 0)</formula><p>where ρ is the constant density of the fluid, u i is the i th velocity component and x i is the i th velocity spatial direction (for i = 1, 2). The first equation represents conservation of mass in the fluid, while the second equation represents conservation of momentum. The exact solution of these equations for flow around a circular cylinder of radius R, centered at the origin, is given in cylindrical coordinates as <ref type="bibr" target="#b0">(Anderson 1984)</ref> </p><formula xml:id="formula_3">u r = U ∞ 1 − R 2 r 2 cos θ, u θ = −U ∞ 1 + R 2 r 2 sin θ, 2p ρU 2 ∞ = 2 R 2 r 2 cos 2θ − R 4 r 4</formula><p>For the purposes of this project, the velocities were converted into Cartesian coordinates using the typical cylindrical coordinate transforms</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Adding Noise</head><p>In the real-world experimental setting, we expect the data collected to be noisy. To model this, we assume additive white gaussian noise in the measurements of u such that for a given noise level η, we have the standard deviation of the additive noise given by</p><formula xml:id="formula_4">σ = η std(u) so u noisy = u + i ∼ N (0, σ)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Numerical Differentiation and Filtering</head><p>Since the data we a dealing with comes from a spatio-temporal domain, it is required that we analyze the spatial derivatives of the data in order to build an accurate model of the system dynamics. In an experimental setting, the spatial derivatives of the data cannot directly be measured, so instead, we must compute the derivatives numerically using a central difference formula which gives the approximation</p><formula xml:id="formula_5">∂u i ∂x ≈ u i+1 − u i−1 2∆x</formula><p>where i represents the grid index in the spatial dimension. The same can be done in the time dimension.</p><p>In the case of a noisy measurement, taking the numerical derivative will amplify the noise more than the signal itself so we need a way to denoise the signal before taking the derivative. One excellent way of denoising a signal is to use total-variation regularization (Rudin 1992) which finds the signal u n such that the objective function E(x n , u n ) + λV (u n ) is minimized. x n is the noisy input signal and E(x, u) = 1 2 n (x n − y n ) 2 and V = n |y n+1 − y n | are the mean squared error and the total variation respectively. The function imROF was used from the julia package Images.jl to perform this filtering on the sampled data and after each differentiation is performed. The regularization parameter λ was set to 2. The effect of total-variation filtering on the numerical first derivative is showed in <ref type="figure" target="#fig_1">figure 2c</ref>, where we can see that noise in the observed data leads to amplification when taking the derivative. After using total variation, denoising, however, the signal is closely recovered. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The system identifier was run on both test systems with varying levels of spatial resolution (spatial sample points) and amount of noise in the data. The parameters used for each system are shown in table 1. In the trials for varying the spatial resolution, the data was produced without noise and the number of sample points per spatial dimension was varied from 100 down to 5. When varying the noise, the spatial resolution was fixed at 100 points per dimension and the amount of noise was varied from 1% to 50%. For each configuration, the system identifier was scored on if it induced the correct form of the underlying PDE (i.e. it chose the correct features) and to what degree it computed the correct coefficients of the features. The results of these tests are shown in <ref type="figure" target="#fig_2">figure 3</ref>. The color of the cell indicates if the select system identifier got the form of the PDE correct. Green means that the highest scoring set of features matched the PDE, yellow means that the correct features were found in the top k expressions but did not score as the highest, and red means the expression was not found at all. The percent error in the coefficients is reported in each cell where the correct PDE expression was induced.</p><p>We can see from the data that the system is very robust in the low-data limit and is moderately robust to noisy data. The correct form of the PDE was determined for all spatial resolutions tested -likely because the solutions are smooth enough that an accurate derivative can still be computed with largely spaced sample points. The 1D advection-diffusion equation was always determined correctly even in the presence of large amounts of noise, and only the system parameters suffered in accuracy. The 2D Euler equation did not work as well with noisy data, likely because the noise filtering was less effective in higher dimensions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions and Future Work</head><p>From this initial investigation we conclude that this system identification system can work for systems that are are unsteady,nonlinear, and have multiple dimensions. Identification is feasible in the low-data limit and for moderate amounts of noise in the observed data. The two main challenges of a system identifier are denoising, and feature selection. The use of a total variation denoiser and a domain specific grammar do much to alleviate these issues but more work can be done on improving the denoising filter when taking spatial derivatives, as well as implementing better algorithms for producing candidate features.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Solution to test systems and denoising example</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Results form the two model problems with variations of the amount of spatial resolution in the data and the amount of noise in the data</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Fundamentals of aerodynamics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Anderson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1984" />
+			<publisher>McGraw-Hill Companies</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Inductive process modeling</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Bridewell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Langley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Todorovski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Deroski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine learning</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="32" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Discovering governing equations from data by sparse identification of nonlinear dynamical systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">L</forename><surname>Brunton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Proctor</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">N</forename><surname>Kutz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the National Academy of Sciences</title>
+		<meeting>the National Academy of Sciences</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Constructing explanatory process models from biological data and knowledge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kochenderfer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">; P</forename><surname>Wheeler</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Shiran</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Shrager</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Todorovski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Pohorille</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence in Medicine</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="191" to="201" />
+			<date type="published" when="2006" />
+			<publisher>MIT Press • Langley</publisher>
+		</imprint>
+	</monogr>
+	<note>Algorithms for Optimization</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Nonlinear total variation based noise removal algorithms</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">I</forename><surname>• Rudin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Osher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Fatemi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physica D: nonlinear phenomena</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="issue">1-4</biblScope>
+			<biblScope unit="page" from="259" to="268" />
+			<date type="published" when="1992" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Analytical solutions of the one-dimensional convectivedispersive solute transport equation (No. 157268). United States Department of Agriculture</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">T</forename><surname>Van Genuchten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">J</forename><surname>Alves</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Economic Research Service</title>
+		<imprint>
+			<date type="published" when="1982" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

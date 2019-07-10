@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Project milestone: Generating music with Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Kang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stanford</forename><surname>Dwkang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jung</forename><surname>Youn</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kim</forename><surname>Stanford</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simen</forename><surname>Ringdahl</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stanford</forename><surname>Ringdahl</surname></persName>
+						</author>
+						<title level="a" type="main">Project milestone: Generating music with Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Composing music is a very interesting challenge that tests the composer's creative capacity, whether it a human or a computer. Although there have been many arguments on the matter, almost all of music is some regurgitation or alteration of a sonic idea created before. Thus, with enough data and the correct algorithm, machine learning should be able to make music that would sound human. This report outlines various approaches to music composition through Naive Bayes and Neural Network models, and although there were some mixed results by the model, it is evident that musical ideas can be gleaned from these algorithms in hopes of making a new piece of music.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>This report will explore the various ways in which a computer can be taught to generate music. Having learning algorithms as a creative aid will offer great help for those seeking inspiration and innovation in their music writing. This report will be approaching music generation in four ways: one through a simple Naive Bayes algorithm and the others through neural networks, specifically a vanilla neural network, an LSTM RNN, and an encoder-decoder model RNN. For each algorithm, we will utilize different approaches to data organization and music creation. The Naive Bayes and the vanilla neural network will organize the notes temporally, where a song is outlined by the specific time interval in which a note is played as each note will have a start and end time within a given piece. For the LSTM model, a song will be outlined based by new note events, where every time there's a new note, a new vector is created. The model also takes in one note at a time and outputs one note at a time. For the encoder-decoder model, the song will be organized by chords, where a song consists of just a series of chords with varying lengths. Moreover, the encoder-decoder model will take as input a sequence of notes and output a sequence of notes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.1">Problem definitions</head><p>The input to our algorithm will be a note or a series of notes from a MIDI file. We then use a Neural Network, Recurrent Neural Network, an Encoder and Decoder Recurrent Neural Network, and a Naive Bayes approach to generate a new sequence of notes with the aim of making a good piece of music.</p><p>To test how successful the music generation is from the neural networks, we will evaluate the prediction of the next note against the actual next note as a percentage score. For the Naive Bayes approach, however, we will compare the generated music to a random (flat) distribution of notes. We will therefore need to ask peoples opinions on to what extend our model improved the quality of the music. This is a slightly unscientific approach of evaluating music, but then again, that is the nature of music.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>There have been many attempts to make music using machine learning. One of the first attempts, made use of Markov Chains, and transition matrices that define the probabilities of certain notes being produced. This work was carried out by Iannis <ref type="bibr">Xenakis (20)</ref> The early successful works in this field began by looking at sequences, trying to predict the note played at some point n + 1 using all n points. Peter Todd (17) was among the first at this.</p><p>In the past few years, there has been an increased interest in machine-learning-created music. Ranging from AIVA (1) which focuses on making complete soundtracks using AI, to the Magenta research project (11) which touches of many different aspects of music production.</p><p>In addition to these rather large scale projects on music, the more successful approaches in music creation have been results of neural networks. There have been smaller projects looking particularly at the MIDI-build up of music. Daniel Johnson managed to make a simple piece of music using a specially designed recurrent neural network (RNN) (7), and RNNs have repeatedly been shown to give good and useful results in music generation. Drawing inspiration from these works, we will also apply RNNalgorithms to model sequences of music.</p><p>Moreover, a recent Transformer model has done very well in creating music that most resembles actual human performance. A recent study by <ref type="bibr">Huang et al. (2018) (6)</ref> utilized data that took into account the velocity the notes being played along with using models along with using a sequence model with self-attention to best maintain the medium-term memory that exists in music.</p><p>There have been far fewer attempts at making music using classification algorithms such as Naive Bayes, and they show variable results. The approach is usually combined with numerous strong assumptions and is thus not necessarily as versatile as the RNNs. (10)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and features</head><p>We had two main ways of obtaining data for our processing. The first was to use free downloaded files of MIDImusic and then use music21 (4) to decompose the files. For the encoder-decoder model that we've implemented, we focused on mainly classical piano music from the website www.piano-midi.de/ because of the availability of MIDI files for classical music and the fact that the music for classical music is more standardized than that of another genre. Piano works from a variety of different composers such as Bach, Brahms, Beethoven, and Mozart were used for a total of 771 songs. We processed all the MIDI files using the music21 Python package (4), and for MATLAB we used a similar written package (15). Each song was converted into a collection of chords, where all the notes were "chordified" or in other words compressed into a single chord for each time step. In other words, at every new note event (i.e. a new note was played), a new chord will be created to result in that change. Moreover, each chord was represented as a multi-hot vector of length 219. 128 for the number of possible of MIDI notes, 64 for the possible pitch duration which was derived from the given data, 8 for the possible numerators of the time signature, 4 for the possible denominators of the time signature, and 15 for the possible key signature (represented as number of flats, positive or negative). Thus, a song might consist of 5000 chords with varying note duration, which is our "note" representation as previously mentioned contrasted to the temporal representation. A total of around 700 songs were used for a total of around 400,000 notes, and a standard 80-10-10 training-validation-test split was used.</p><p>For the LSTM model, the dataset consisted of 24 of Romantic composer Frederic Chopin's etudes from https:// www.classicalarchives.com/ for a total of 57 minutes and 25 seconds of music and 22,290 notes. Due to the structure of piano music, we decided to process notes (or chords if there were multiple notes) and rhythms of the both the left and right hand at each time stamp to train our model.  <ref type="formula">(2)</ref>, it would correspond with an entry with a None instance. Thus, (2) would be represented as ['C5', 1.0, None, None]. Thus, a song would consist of a series of these vectors for each note event. Then a dictionary was created to enable one-hot encoding for each of the unique vectors. Therefore, as seen in <ref type="figure" target="#fig_1">fig. 2</ref>, our data consists of a three dimensional matrix with the height corresponding to each song, width corresponding to the one hot vector of note incident, and the length corresponding to the the time stamp of the note incident.</p><p>Aggregating non-classical music for the Naive Bayes and neural network model proved to be difficult for various different reasons ranging from copyright issues to general availability. Thus, we have referred to another method for collecting data.  <ref type="formula">(16)</ref> playing a MIDI-file as if it were being played on a real piano. The piano keys change color when a particular note is played, and usually, the right and left hand notes are colored differently. These videos can range from single 3 minute songs to hour-long videos with for example Pirates of the Caribbean film music. We therefore made a program which downloads and looks through these videos and generates an array with the notes played and at what times and their duration. This proved to be a working way to gather data on much more recent music, which might not have MIDI files readily available to the public. This data will give us the key pressed, expressed as an integer ranging from 1 to 88 representing the number of keys on the piano in order from lowest frequency to highest frequency, and it is organized temporally by the start and end time of when the note was pressed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Methods</head><p>As outlined previously, we have utilized four models of Naive Bayes, vanilla neural network, LSTM RNN, and the encoder decoder RNN.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Naive Bayes-like</head><p>We have named this a Naive-Bayes like approach as only uses some of the fundamentals from the Naive Bayes we know. In this algorithm we look at each press of a note as an independent variable (even though we know that they are not). The purpose of this model is to make a distribution for which keys are pressed for a given chord. Therefore, this algorithm will consist of two parts:</p><p>1. Classify Chords: This was achieved by looking at the notes played by the left hand on a piano.</p><p>We made a program that makes a dictionary of all the unique combinations of three consecutive notes played by the left hand. 1 2. Classify notes: Now that we know the chords in a song, the program will run through many pieces of music and find which notes were played by the right hand for a given chord in the dictionary. After multiple songs, we have generated a comprehensive distribution of P (note|chord).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Neural Networks</head><p>We implemented a basic neural network (NN) for pattern recognition in music generation. Using a similar method to predicting the next word typed by a user in a text program, we wanted to predict the next note played in the sequence. Therefore we gave the NN a vector representation of the previous note played, its key signature, the start and duration of the note, as well as the previous 100 notes played; a total of 104 entries. We fed this into a neural network with 1024 neurons and asked it to predict the most likely note played among the 88 different possibilities. As we will see in the next methods, there is no direct memory component with this neural network, but having the previous 100 notes as inputs serves as a proxy to the memory methods in the subsequent methods. The most popular method for music generation, the LSTM helps us solve the problem of the regular neural network lacking "memory" or knowing how to relate or figure out data sequentially. The main features of the LSTM RNN compared to the regular RNN are the intput, output, and forget gates. (5)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">LSTM</head><formula xml:id="formula_0">i (t) = σ(W T xi · x (t) + W T hi · h (t−1) + b i ) f (t) = σ(W T xf · x (t) + W T hf · h (t−1) + b f ) o (t) = σ(W T xo · x (t) + W T ho · h (t−1) + b o ) g (t) = tanh(W T xg · x (t) + W T hg · h (t−1) + b g ) c (t) = f (t) ⊗ c (t−1) + i (t) ⊗ g (t) y (t) = h (t) = o (t) ⊗ tanh(c (t) )</formula><p>Corresponding to the leftmost part of the center diagram in <ref type="figure" target="#fig_2">fig. 4</ref>, the first step of the LSTM is to decide what parts of the previous information will be forgotten. This corresponds to the forget gate denoted by f (t) . It takes in inputs from the previous hidden state and the current input to combine with the previous cell state to produce <ref type="bibr">t)</ref> decide what part of the input will be updated into the current cell. To actually update the cell state, the cell state from the previous time step is multiplied by the output of the forget gate and then is added to the input gate. This corresponds to the horizontal line in the top of the center diagram and is noted by c (t) in the equations. Lastly, the actual output and the hidden state for the current time step is denoted by y (t) , which is a result of a tanh layer from our cell state and a sigmoid layer from our input and previous hidden state.</p><note type="other">the current cell state. For the next step corresponding to the middle part of the diagram, the input gate layer denoted by i (t) combined with the new candidate values g (</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Encoder-Decoder (Seq2seq)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 5: Encoder-Decoder Model Diagram</head><p>To further explore the RNN architecture, we have also implemented the encoder-decoder model that is often used in Natural Language Processing (2). While still in essence an RNN, the main difference is that it is a many to many model. In other words, this is a model that takes in a sequence of data and outputs a sequence of data. The encoder takes in the input and "translates" it through the decoder for an output. Moreover, instead of focusing on a very long term memory, the memory of the algorithm is limited to the sequence that we feed into it (100 notes in this case). We have also used GRU layers instead of LSTM layers.</p><formula xml:id="formula_1">z = σ (x t U z + s t−1 W z ) r = σ (x t U r + s t−1 W r ) h = tanh x t U h + (s t−1 • r) W h s t = (1 − z) • h + z • s t−1</formula><p>The GRU and LSTM models are similar, except that the GRU has a reset (r) and an update gate (z) instead of the input, output, and forget gates of the LSTM. The forget and input gate are combined into a single update gate while the reset gate determines how to combine previous memory with the new input. In terms of overall structure, they are very similar, but the GRU is a much simpler model than the LSTM and has shown to be quicker to train (12).</p><p>Moreover, we used the approach of having each song be a collection of notes. Thus, compared to the Naive Bayes model, the data is not discretized by time, and unlike the LSTM model, the data is not organized by new note events. We will also use more features compared to the LSTM model as the data will include information about key signature and time signature. Although it is likely that the neural networks will be able to learn the ideas of  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments/Results/Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Vanilla Neural Network</head><p>We downloaded a Pirates of the Caribbean (9) film music compilation and found it had close to 10,000 notes played. Feeding this through our artificial neural network (hilariously termed Depplearning for the occasion), it was trained over 115 iterations. Using 15% of the data for validation and 15% for testing, the neural network showed the following development: The network showed a 5% error on the training set, but a 88% error on the test set, which is a sign of overfitting. When using the network to make music, we heard that the same notes were repeated unnaturally many times, and the song had no weight on harmony. It is as if the network gives up in finding any pattern, and instead returns the most played note in the selection.</p><p>The way we would generate the song after having trained the network is to keep the timings (start time and duration) of the original notes in the song, and then only change the note played. This further means that we have completely ignored the fact that more keys are played at the same time, which results in a bigger error for the model. If we would continue this project further, then this would have been an important area of focus.</p><p>To qualitatively assess the the music itself, we conducted a music Turing test survey. We let survey participants decide whether or not each generated piece of music by the algorithm sounded human or computer generated. We also asked participants what they thought of the composing complexity of each song. 47% of participants thought that the music was human generated while 53% of participants thought that the composing level was intermediate or advance. This is likely due to the model overfitting on the original song, which resulted in a song that sounds familiar with the original song with a few differences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Naive Bayes</head><p>To test this model, we chose music with comparatively few utilized chords. Virginia which had close to 5,000 notes through the song showed a total of 40 different combinations of left hand progressions, with four of these being very over-represented. These are the four chords that are repeated over the entire song. After making the distribution over the notes, we generated a new song where for each chord in the song the algorithm would pick notes from the probability distribution. To test the accuracy of this model, we compared the predicted key signature of the note to the actual key signature, and we could obtain an accuracy of over 20 %. However, the point of this algorithm is to consider the harmony of the generated music. This song sounded "better" in the form that we could hear the harmony a lot clearer, a lot more than we would see in a flat distribution. In our survey results, 47% of participants thought that the music was human generated. 93% of participants thought that the composing level was intermediate or advanced. This is again likely due to the overfitting of the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">LSTM</head><p>Our LSTM model was implemented on NumPy (13) resembling an implementation from Navjinder <ref type="bibr">Virdee (18)</ref> and consists of a single LSTM layer with 256 hidden neurons. The result of this layer is then passed into a softmax layer for the final output. Loss was calculated through cross entropy, and the algorithm was optimized using the Adam algorithm (8) with a .005 learning rate, β 1 = .9, and β 2 = .999.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 8: LSTM Model Loss</head><p>The training and evaluation loss dropped substantially in a similar pattern in first 20 epochs and finished at around .5345 and .8297 respectively after 100 epochs. In parallel, the average test loss was approximately .7986. Looking at the resulting sheet music from the algorithm, qualitatively, it is very difficult to determine whether or not the music was generated through an algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 9: Music Generated from LSTM Algorithm</head><p>Although there seems to be repetitions of certain melodies, the notes were slightly offset, so they are not exactly similar. With regards to the survey results, the LSTM model had the most interesting results. Only 36% of participants thought that the music was human generated, but 89% thought that the composing level was intermediate or advanced. Also, most people commented that they were able to distinguish the generated music because it was lack of dynamics. From what we gather, this indicates that the people thought that the music was relatively complex and coherent with typical musical motifs, harmonies, and melodies, but the music lacked a certain human quality. It would be interesting to study in future work what qualities in music lead people to think it to be more human.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.4">Encoder Decoder</head><p>The encoder-decoder model was implemented on Pytorch (14). Batch size of around 100 chords was used, which is around 40 measures or so in a typical song. The Encoder and Decoder both consist of two GRUs with 512 hidden neurons each followed by a dropout layer with .5 drop rate to prevent overfitting. However, the decoder model uses teacher forcing with rate .5 to aid and speed up training. The output of the last dropout layer in the decoder is then passed through a linear and a sigmoid layer that outputs the probability of each the occurrence of each pitch value, note duration, time and key signature.</p><p>Loss was calculated through binary cross entropy loss, where both the beginning of sequence and end of sequence tokens were removed to have sensible calculations. The algorithm was optimized by the Adam algorithm (8) with a learning rate of 1e − 5. The low learning rate and gradient clipping was utilized because we experienced exploding gradients in testing our algorithm.</p><p>The average training loss went down significantly throughout the epochs and lingered around .04473, but the average evaluation loss plateaued rather quickly and slowly started to increase in later epochs, hovering around .7212. This was closely aligned to the average test loss at .6773. The initial dip in the evaluation loss shows that the algorithm did learn a little bit, but the plateau indicates that there was a rather quick peak in how much the algorithm could learn, and running more epochs would only result in over-fitting. The middling evaluation loss is evident in the music, which consists of very repetitive sounding notes. Music was created by feeding sequences <ref type="figure" target="#fig_0">Figure 10</ref>: Encoder Decoder Model Average Loss of notes from the test set. Although there are hints of harmonic progression in the music, it is very clear that the music is not human generated. In our survey results, only 23% of the participants thought that the music was human generated and only 30% thought that the composing level of the music was intermediate or advanced. There are two possible causes for such mediocre performance on songs generated by the encoder decoder model. The first is data structure. Because a single note change indicates a new chord, often times, the notes generally seem as if they are repeating with minute differences each time, which is reflective in the generated music. The second is the small batch size. While 100 notes seem like a very sizable amount (it is around 40 or so measures), for high tempo frenetic songs with many minute changes, there might be high variability in how long these sequences are temporally. Thus, a thing to try in future attempts is to change the batch size for longer term memory.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion/Future Work</head><p>In conclusion, among the four algorithms that we tested, the LSTM RNN model performed the best. Coupled with organizing the data through new note incidents, the LSTM model was able to string together musical motifs with coherent melody and harmony. Although Naive Bayes and the Neural Network produced very musical ideas in song, it was largely due to over-fitting the data. For the encoder model, due to the discretization of the data, most of its results were very repetitive notes that made some harmonic sense but was mostly unmusical. In the future, with more time, it would be interesting to explore more memory focused models such as the transformer model while also incorporating note velocity from human recorded MIDI files to bring more life into the generated music.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>With regards to the models, Simen worked on the Naive Bayes and the vanilla neural network; Jay worked on the LSTM RNN; and David worked on the encoder-decoder model. Simen did majority of the work in constructing the poster and writing up the outline and milestone while David helped synthesize the write up/final report. Jay conducted the survey on generated music and accumulated the results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Code and Music</head><p>All code can be found in https://www.dropbox.com/sh/ ttzb502hheo9fst/AACx3uQSE CSxnyp6bvaMQzZa?dl=0, and you can listen to our generated music in these links:</p><p>https://docs.google.com/forms/d/1W3rfI kevqqDZGk1CnvoGCrLmhzajHHE6hcOfKrKuXw/viewform, https://bit.ly/2zZSGgD.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Beethoven's Fifth Symphony music sheetFor example, infig. 1, the data from (1) would be rep- resented by the vector ['C5', 1.0, 'B-3.D4', 2.0], where the first two entries refer to the notes played by the right hand and their duration while the other two entries refer to that of the left hand. If only one hand is playing at a time as in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Matrix representation of LSTM Model data Figure 3: A MIDI-file played in Synthesia fig. 3 shows a screenshot from a video of a very popular piano software Synthesia</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 4 :</head><label>4</label><figDesc>LSTM Structure Diagram (12)   </figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 6 :</head><label>6</label><figDesc>GRU Model Diagram(3)    key and time signature on its own with out the data, we have included it in the feature space to see if there were any different results in the outcome.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 7 :</head><label>7</label><figDesc>Neural network performance on a dataset with ca. 10,000 values, with 1024 neurons.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 11 :</head><label>11</label><figDesc>Encoder Decoder Model Generated Music</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Results for all the models</figDesc><table>Model 
+Train Loss 
+Test Loss Sample Size Turing Test 
+
+Naive Bayes 22.1% (Pred) 3.18% (Pred) 
+10,570 
+47%, 93% 
+Vanilla NN .01904 (CE) .1260 (CE) 
+10,570 
+47%, 53% 
+LSTM 
+.5345 (CE) 
+.7986 (CE) 
+22,290 
+36%, 89% 
+Enc-Dec .04473 (BCE) .06773 (BCE) 408,700 
+23%, 30% 
+
+Sample size is # of notes. Turing Test is % guessed human, % 
+perceived as intermediate/advanced composing level. All models had 
+15 survey responses 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Project milestone: Generating music with Machine Learning David Kang Stanford dwkang Jung Youn Kim</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">This may sound like many combinations, but in fact many modern songs can get away with just four different combinations.(19)</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Aiva</surname></persName>
+		</author>
+		<ptr target="https://www.aiva.ai/.Retrievedfromhttps://www.aiva.ai/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Learning phrase representations using RNN encoder-decoder for statistical machine translation. CoRR, abs/1406.1078</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Van Merrienboer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ç</forename><surname>Gülçehre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Bougares</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Schwenk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1406.1078" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Empirical evaluation of gated recurrent neural networks on sequence modeling</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Chung</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ç</forename><surname>Gülçehre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno>abs/1412.3555</idno>
+		<ptr target="http://arxiv.org/abs/1412.3555" />
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">d.). music21: A toolkit for computer-aided musicology and symbolic music data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">S</forename><surname>Cuthbert</surname></persName>
+			<affiliation>
+				<orgName type="collaboration">n.</orgName>
+			</affiliation>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Ariza</surname></persName>
+			<affiliation>
+				<orgName type="collaboration">n.</orgName>
+			</affiliation>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Hands-on machine learning with scikit-learn and tensorflow: Concepts, tools, and techniques to build intelligent systems. O&apos;Reilly Media</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Géron</surname></persName>
+		</author>
+		<ptr target="https://books.google.com/books?id=bRpYDgAAQBAJ" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C.-Z</forename><forename type="middle">A</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vaswani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Uszkoreit</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Shazeer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Hawthorne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">.</forename><forename type="middle">.</forename><surname>Eck</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018-09" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+				<idno type="arXiv">arXiv:1809.04281</idno>
+		<title level="m">Music Transformer. arXiv e-prints</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Composing music with recurrent neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Johnston</surname></persName>
+		</author>
+		<ptr target="http://www.hexahedria.com/2015/08/03/composing-music-with-recurrent-neural-networks/" />
+	</analytic>
+	<monogr>
+		<title level="j">Daniel Johnson</title>
+		<imprint>
+			<date type="published" when="2015-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization. CoRR, abs/1412</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1412.6980" />
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="volume">6980</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Pirates of the caribbean medley</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Landry</surname></persName>
+		</author>
+		<ptr target="https://www.youtube.com/watch?v=iddFrfC0YoU" />
+		<imprint>
+			<date type="published" when="2016-06" />
+		</imprint>
+	</monogr>
+	<note>piano tutorial</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Applying learning algorithms to music generation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Lichtenwalter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Lichtenwalter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Chawla</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="page" from="483" to="502" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Understanding lstm networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Magenta</surname></persName>
+		</author>
+		<ptr target="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">NumPy: A guide to NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Oliphant</surname></persName>
+		</author>
+		<ptr target="http://www.numpy.org/" />
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Trelgol Publishing</publisher>
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">.</forename><forename type="middle">.</forename><surname>Lerer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Nips-w</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Schutte</surname></persName>
+			<affiliation>
+				<orgName type="collaboration">n.d.). Kenschutte.com</orgName>
+			</affiliation>
+		</author>
+		<ptr target="http://kenschutte.com/midiSynthesia" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Synthesia</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+	<note>piano for everyone</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Music and connectionism</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Todd</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Loy</surname></persName>
+		</author>
+		<ptr target="https://books.google.com/books?id=NxycaQH6PeoC" />
+		<imprint>
+			<date type="published" when="1991" />
+			<publisher>MIT Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Virdee</surname></persName>
+			<affiliation>
+				<orgName type="collaboration">n.d</orgName>
+			</affiliation>
+		</author>
+		<ptr target="https://www.kaggle.com/navjindervirdee/lstm-neural-network-from-scratch/notebook" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">73 songs you can play with the same four chords</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>White</surname></persName>
+		</author>
+		<ptr target="https://www.buzzfeed.com/alanwhite/73-songs-you-can-play-with-the-same-four-chords" />
+		<imprint>
+			<date type="published" when="2014-04" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">Formalized music : thought and mathematics in composition / iannis xenakis (Rev</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Xenakis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1992" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

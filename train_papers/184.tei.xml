@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HybridVec: Hybrid Distributional and Definitional Word Vectors</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ranjani</forename><surname>Iyer</surname></persName>
+							<email>iyerr@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Haiyuan</forename><surname>Mei</surname></persName>
+						</author>
+						<title level="a" type="main">HybridVec: Hybrid Distributional and Definitional Word Vectors</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Word vectors are typically computed by implementing distributional statistics, but these word vectors cannot represent unknown words. The ability to integrate word definitions with distributional statistics to create hybrid word vectors has the potential to improve performance on out-of-vocabulary tasks. A baseline bag-ofwords and sequence-to-sequence auto-encoder were first iterated upon to obtain definitional word vectors that capture complementary information to distributional word vectors. Use of a sentence variational auto-encoder to compute word embeddings was also explored. Preliminary results suggest that a combination of distributional vectors (GloVE embeddings) and definitional word vectors produced from an autoencoder provide an improvement for Neural Machine Translation and warrants further testing.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Word vectors are typically calculated as distributional statistics, <ref type="bibr" target="#b9">(Mikolov et al., 2013)</ref>  <ref type="bibr" target="#b13">(Pennington et al., 2014)</ref> such as co-occurrence bag of word predictions, but the most logical source of words' meanings -dictionaries -are not leveraged in the process. We want to investigate the ability to use word definitions in the process of forming definitional word vectors that can work in parallel with existing distributional vectors to form a hybrid word vector.</p><p>We take word definitions as inputs into various autoencoder models (discussed in section 3) and use the hidden layer of the autoencoders as dense word embeddings of the definition. These embeddings are used to test against standard benchmarks to understand the information captured and can then be combined with existing distributional word vectors in varying degrees to improve the performance of downstream NLP tasks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>There have been a number of prior attempts at deriving word vectors from dictionary definitions. Neural models using dictionary definitions and character-level morphology <ref type="bibr" target="#b3">(Bahdanau et al. 2017)</ref>, applying embedded definitions to a reverse lookup task <ref type="bibr" target="#b5">(Hill et al. 2015)</ref>, a skip-gram model , and combining language modeling with derived definition embeddings <ref type="bibr" target="#b11">(Noraset et al. 2016)</ref>, are some examples of published work in the space.</p><p>This project is a continuation of previous work completed by Andrey Kurenlov, Tony Duan, Aneesh Pappu, and Rohun Saxena at Stanford university. Prior work began by building Def2Vec, a mapping of embedded word defintions into a semantically meaningful space, comparable to that of pretrained GloVe embeddings. The Def2Vec team demonstrated the utility of Def2Vec in improving the performance of a Neural Machine Translation model when the pre-trained vectors vocabulary is limited.</p><p>However, The Def2Vec team realized that definitional vectors alone are unable to perform as well as the highly robust distributional vectors in the NMT system; this motivated the introduction of combined distributional and definitional word vectors -Hybrid Distributional and Definitional Word Vectors. Including both types of representation can capture different aspects of a given word's meaning and the integrated performance may outperform either individual model.</p><p>Recently, Tom Bosc and Pascal Vincent published their successful results on training a Consistency Penalized Auto Encoder (CPAE) to capture semantic similarity better than distributional and current definitional word vectors. The model uses a LSTM to process the definition of a word and create a word embedding, which is then used by the decoder to reconstruct a bag-of-words representation of the definition.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Methods</head><p>As a continuation of previous work, we initially focused on two of the existing models in creating definitional embeddings: an LSTM baseline model which is composed of a multi-layer LSTM encoder and a simple conditional language model decoder with each output trained by Cross-Entropy loss based on 1-hot-vector over the entire vocabulary and softmax output(can be seen as a simple classification problem); and a normal Seq2seq Sentence Autoencoder model with both encoder and decoder as configurable recurrent neural network. After obtaining different word embeddings separately, the intrinsic evaluation is completed as a series of word embeddings benchmarks, comparing the LSTM baseline model, Seq2seq model, and existing GloVe word embeddings.</p><p>We finally applied our learnt word embeddings in combination with pretrained GloVe vectors to form our HybridVec embeddings and evaluated using OpenNMT as our extrinsic evaluation system. We also explored the possibility of utilizing a more advanced Variational Autoencoder (VAE) model in creating definitional embeddings. The sentence VAE is based off <ref type="bibr" target="#b2">Bowman et al. 2016</ref> and is an RNN-based variational autoencoder generative model that incorporates distributed latent representations of entire sentences (definitions in our case). This factorization allows it to explicitly model holistic properties of sentences such as style, topic, and high-level syntactic features.  This LSTM baseline model contains two separate word embeddings for both the encoder and the decoder. Let " be the set of all words that are used in definitions, and # be the set of all words that are to be defined. " and # are not necessarily the same but will be from the same vocabulary set. The definition of each word w from # is a list of words from " denoted as = ( % , ' ,..., ( ) where ) is the index of a word in vocabulary " . The definition for is hence a sequence of words which is encoded by RNN with LSTM cells [Hochreiter and <ref type="bibr">Schmidhuber, 1997]</ref>; multiple meanings will be encoded with multiple representations. The LSTM is parameterized by the input embedding, which is a | " |×m matrix with the ), row an m-dimentional input embedding for the ), word in " . The last hidden state will be the same number of m-dimensional definition embeddings as the number of layers passed into the model. The model is depicted in <ref type="figure" target="#fig_1">Figure 1</ref>, and the hidden layer can be described as the following equation, in which is our input embedding.</p><formula xml:id="formula_0">ℎ = 1,3 ( ) = 1,3 ( )</formula><p>The decoder part will have two types of inputs, the hidden state from the encoder, and the sequence of output word embeddings corresponding to the word definitions. It is a simple conditional language model, where each predicted word is learnt through normal classification methods, using softmax, | " | dimensional one-hot-vector, and Cross-Entropy loss. For each definition of d in defs(w), the Cross Entropy is given by:</p><formula xml:id="formula_1">( ) = ∑ log ? F G ℎ + J K L M )</formula><p>The total loss of all word definitions including multiple meanings of the same word is just the negative summation over all sentences; it can also be interpreted as Negative Log-Likelihood Loss (NLL):</p><formula xml:id="formula_2">N F , , G J = − Q Q ( ) K∈KSTU(V) V∈W X</formula><p>In our approach, we used different input and output embeddings, which could have caused the model to overfit. A unique word embedding matrix is an alternative way of implementation which can be explored in future experiments.</p><p>In order to minimize the distance between the definitional embeddings and the learnt word embeddings, a penalty weighted by is applied on the L2 norm between the predicted word embeddings and the learnt word embeddings, which gives the final loss function as:</p><formula xml:id="formula_3">F , , G J = N F , , G J + Q Z[ V − 1,3 ( )[Z ' ' V,K</formula><p>V denotes the input embedding associated with word w. If the penalty ( ) is large, then after optimization we will end up with V very near to 1,3 ( ) in Euclidean distance, which makes the definitional word vector hold very similar meaning to the defined word itself.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Seq2seq Autoencoder</head><p>The second model we explored to create word embeddings takes the form of a Seq2seq autoencoder (SAE) that respects the initial syntactic structure of the sentence. Given an input word w, we look up its definition d(w). Each word of the definition is encoded through an embedding layer (trained from scratch) and then run through a 2-layer LSTM encoder without attention to produce the dense representation h that represents the definitional embedding. In the decoder, another 2-layer LSTM is applied. The training loss minimizes the negative log-likelihood between the predicted definitional word \ and the ground truth definitional word d for every position in the definition, thereby constraining the definitional embedding to also learn the relative syntactic placement and relationships of the words in the definitions. We only evaluated this model intrinsically because of its poor capability in representing the word meaning effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Neural Machine Translation</head><p>Our approach for machine translation is another Seq2Seq model with attention, implemented through Harvard's open-source OpenNMT project <ref type="bibr" target="#b7">(Klein et al., 2017)</ref>. We use the default plain RNN encoder and decoder with attention and LSTM cells. To leverage our dictionary derived definitions, we generate our HybridVec by concatenating GloVe vectors g(w) and our embedded vectors f(w) created by different methods when training and evaluating the model. The evaluation of the model is done by comparing NMT training results using pre-trained HybridVec and pre-trained GloVe embeddings. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4">Variational Auto Encoder</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Experiments</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Data</head><p>For definitions, we incorporated the datasets of previous work and employed data from the WordNet database <ref type="bibr" target="#b10">(Miller, 1995)</ref>. For the LSTM baseline model and Seq2seq model, we used the 400k vocabulary version of GloVe trained on Wikimedia 2014 and Gigaword 6 (Pennington et al., 2014) with 300-dimensional word vectors. These 400k words were used as input definitional words, for which we extracted definitions from WordNet. The definitions were then run through the baseline and seq2seq models, where the hidden state between the encoder and the decoder was used to represent the input word's definitional embedding.</p><p>Lastly, for the NMT task we used both the default 10k demo English-German OpenNMT corpus, and the Yandex 1M English-Russian Corpus, which has one million aligned English and Russian sentences <ref type="bibr" target="#b17">(Yandex, 2018)</ref>. The default OpenNMT demo dataset is too small to make any serious NMT predictions but we believe it functions well in providing faster comparisons between our HybridVec and GloVe embeddings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Training</head><p>Both the LSTM baseline and Seq2seq models are trained with the word vector dimension of 300, and hidden layer dimension of 150, such that they are comparable to GloVe 300d word vectors. We implemented our model in PyTorch (Paszke et al., 2017) and trained using the Adam (Kingma and Ba, 2014) optimizer for 20 epochs with a learning rate of 0.0001 and a batch size of 64. The training was consistent with the prior work done in evaluating definitional and hybrid word vectors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Intrinsic evaluation</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Similarity and Relatedness:</head><p>We evaluate the quality of the embeddings produced from our autoencoder models by using a third-party word embedding benchmark test toolset: Word Embedding Benchmark (WEB) [https://github.com/kudkudak/word-embeddings- benchmarks]. WEB is focused on evaluating and reporting results on common benchmarks, such as analogy, similarity and categorization. These benchmarks are evaluated on similarity and/or relatedness datasets that contain pairs of words and human annotated scores for each pair of words. The predictions and the ground truth are ranked and the ranks are measured using the Spearman's × 100 metric.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>BLESS</head><p>Quantitatively, the Word Embeddings Benchmarks for GloVe, LSTM Baseline, and Seq2seq model in <ref type="table" target="#tab_0">Table 1</ref> reveal that our LSTM baseline model is approaching similarity levels that are produced by distributional vectors. More specifically, the LSTM baseline trained by initializing from the GloVe vectors result in a better score than one that is initialized randomly. However, none of the tested models surpassed the ground truth GloVe vectors. The more complex SAE model, on the other hand, shows very limited evidence of capability in matching the GloVe distributed word representation.</p><p>Using t-SNE visualizations (van der Maaten and Hinton, 2008) of the test set embedding space allowed us to qualitatively explore the model performance. The predicted LSTM baseline definitional word embeddings tended to cluster in the feature space to a much smaller number of groups, when compared to vocabulary size. This is probably because word definitions, mainly from dictionaries, are more rigorously defined and lack the variation that exists in example corpora; definitional vectors are unable to capture different types of texts, describe clichés and idioms, or pick up on context clues. Future studies should train definitions from a broader text source, and try and incorporate different types of texts. The Glove embeddings, however, make use of feature space more efficiently, suggesting GloVe vectors can grasp more subtle meanings of words in the real word.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4">Extrinsic Evaluation</head><p>The purpose of extrinsic evaluations in our work is to verify how useful definitional vectors are for downstream tasks. In order to compare different performance impacts of GloVe and HybridVec, we used the same GloVe 400K words as input vocabulary to generate embeddings for all the extrinsic evaluations. We trained a translation model with OpenNMT-py on two different corpora: the 10K default OpenNMT demo English-German corpus, and the 3k validation sentences to make a quick observation on different pre-trained word embeddings. These quantitative results are shown in <ref type="table">Table 2</ref>.</p><p>We compared NMT performance impacts between HybridVec and GloVe embeddings on the Yandex 1M English-Russian Corpus, which has one million aligned English and Russian sentences <ref type="bibr" target="#b17">(Yandex, 2018)</ref>. The validation was done on 10% of the whole corpus and it can be seen from <ref type="table">Table 3</ref> that the validation perplexity during training is not ideal for such a large validation set. The final validation is done by 5000 sentences as suggested by OpenNMT system. Two pretrained embeddings are applied for the NMT task: one with GloVe vectors, and one with HybridVec vectors combining both GloVe and LSTM baseline vectors. Quantitative results are presented in <ref type="table">Table 3</ref>. We included three metrics we measured from the results of the NMT task in the purpose to make a comparison between our   HybridVec and GloVe only word embeddings: train/evaluation accuracy, perplexity and BLEU. We implemented our model in PyTorch <ref type="bibr" target="#b12">(Paszke et al., 2017)</ref> and trained using the Adam (Kingma and Ba, 2014) optimizer with a learning rate of 0.0001 and a batch size of 64. Due to time limit and lack of computation resources, we only managed to finish 185000 sentences in the training for both and it presents an initial comparison between different word embeddings. Further full training to convergence will be done and different ways of combining distributional and definitional word vectors are to be implemented in the future.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Discussion</head><p>Using different input and output embeddings is a possible cause of overfitting within our models; a unique word embedding matrix is an alternative to be explored in future experiments. More time would also allow for the ability to finish testing the VAE model. Word definitions, mainly generated from dictionaries, are more rigorously defined and lack the variation required to capture real word semantic information. Future studies are needed to use a broader text source in the training. Due to lack of computation resources, the extrinsic training has not fully converged, so the full exploration of HybridVec impact on downstream tasks is not complete.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion</head><p>Definitional embeddings are fascinating, although rarely studied by researchers, for their potential in capturing complementary semantic information when combined with traditional distributional word embeddings. We aimed to explore whether encoding this different source of information could add to the representational power of current methods in embedding words.</p><p>Our experiments showed that an LSTM baseline autoencoder approach is intrinsically successful at constructing word embeddings at a level roughly similar to distributional embeddings. However, examining the t-SNE visualizations showed that the learned definitional embeddings for the LSTM baseline model tend to cluster in a small number of groups, suggesting insufficiency in representing more subtle word meanings in natural language. Furthermore, by observing validation datasets in intrinsic evaluation, it is apparent that the overall feature space of definitional word vectors is much smaller than GloVe. Further study on these clusters is to be explored in future work.</p><p>Extrinsic evaluation on both the OpenNMT demo corpus and Yandex 1m corpus suggests that during training, the perplexity and accuracy are both better than those of GloVe. However, the final evaluation on 5000 validation sentences diverges. The BLEU metric of our HybridVec vector is of a lower value for LSTM baseline vectors. Given both the positive and negative impact on perplexity and BLEU, and the fact that none of the extrinsic experiments are trained to convergence, the full utility of HybridVec remains to be seen.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Acknowledgements</head><p>Special thanks to Andrey Kurenkov for general mentorship and guidance throughout this project, as well as helping review our code and documents, and thanks to the Stanford CS229 teaching staff.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Contributions</head><p>As a group working on this collaborated project, we contributed equally overall. Haiyuan Mei is responsible for improving the LSTM baseline model and Seq2seq model by contributing to the existing code base, and getting the test results regarding the two models. Ranjani Iyer is responsible for the initial model understanding and working on implementation of the VAE model.  <ref type="table">Table 3</ref>: Comparing performance improvements using GloVe and HybridVec (a combination of Glove and LSTM baseline vectors), trained with Yandex 1M corpus. Note that this is trained for only 185,000 steps since one of our deep learning platforms kept reporting segmentation fault memory problems. We used two deep learning environment, one on cloud and one locally, both with 8G GPU and over 26G RAM. Both comparisons were at step 185,000.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>LSTM baseline model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc>Variational Auto EncoderWe also tried implementing a variational auto encoder based on Bowman et al 2016, as shown inFigure 2, but were not able to complete testing and evaluation of the model. The model was meant to use single-layer LSTM RNNs in the encoder and the decoder, with the Gaussian prior acting as a regularizer on the hidden code. The poor results of the Seq2Seq model and the improved results of the CPAE suggest that more work needs to be done on refining the definitional word embeddings, and the generative VAE model with latent encoding of variables could provide improved results with continued testing and evaluation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc>tSNE for LSTM baseline vectors shows that baseline vectors tend to cluster in feature space.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>tSNE for GloVe: GloVe makes use of feature space more efficiently, grasping more subtle meanings of words</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1 :</head><label>1</label><figDesc>Spearman's ρ × 100 on various benchmarks. (GloVe: for GloVe vectors; Baseline glove: for LSTM baseline model initialized from GloVe; Baseline rand: for LSTM baseline model initialized randomly; s2s enc mean: for S2s model with encoder output mean as the def vec.)</figDesc><table>ESSLI_1a 
+MEN 
+MTurk 
+RG65 
+SL999 
+WS353 
+
+Glove 
+0.82 
+0.75 
+0.737465 
+0.633182 
+0.769525 
+0.3705004 
+0.543326 
+
+Baseline glove 
+0.55 
+0.659091 
+0.51071 
+0.4226407 
+0.656402 
+0.3678366 
+0.449105 
+
+Baseline rand 
+0.52 
+0.613636 
+0.447908 
+0.3181051 
+0.6444908 
+0.3288122 
+0.35609 
+
+S2S enc mean 
+0.275 
+0.522727 
+0.106169 
+0.1370724 
+0.0890822 
+-0.018433 
+0.051959 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Comparing performance impacts on NMT task using LSTM baseline vector, GloVe and HybridVec. Note that BLEU for HybridVec is done with Yandex 1M corpus and shown in table 3.</figDesc><table>No retrained 
+Baseline 
+GloVe 
+HybridVec 
+description 
+
+Train PPL 
+7.47 
+6.69 
+4.84 
+4.4 
+10k nmp demo sentence trained 1 epoch, with/o 
+pretrained word vectors. Glove has most positive 
+impact, LSTM baseline also exhibites positive impact 
+
+Train 
+ACC 
+56.29 
+58.4 
+64.32 
+66.1 
+
+BLEU 
+0.93% 
+1.37% 
+1.99% 
+-
+
+10K nmt training demo 10 epochs, eval on 3k nmt 
+val sentences,similar result as above perplexity and 
+accuracy 
+Table 2: </table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>Code base: https://github.com/andreykurenkov/HybridVec 9 References 1. Kurenkov A., Duan T. (2018). Def2Vec: Learning Word Vectors from Definitions. Stanford Class Project 2. Pappu, A., Saxena, R. (2018). Best of both worlds "HybridVecs": Combining distributional and definitional word vectors. Stanford Class Project</figDesc><table>GloVe 
+HybridVec 
+
+Train PPL 
+39.11 
+33.81 
+
+Train ACC 
+38.99 
+40.53 
+
+Val PPL 
+67.4823 
+67.188 
+
+Val ACC 
+35.9683 
+35.97 
+
+BLEU 
+5.01% 
+4.69% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Tissier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Gravier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Habrard</surname></persName>
+		</author>
+		<title level="m">Dict2vec : Learning Word Embeddings using Lexical Dictionaries. EMNLP</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Bosc</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Vincent</surname></persName>
+		</author>
+		<ptr target="https://research.fb.com/wp-content/uploads/2018/10/Auto-Encoding-Dictionary-Definitions-into-Consistent-Word-Embeddings.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Research.fb.com. Available</title>
+		<imprint>
+			<date type="published" when="2018-12-14" />
+		</imprint>
+	</monogr>
+	<note>Accessed</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Generating Sentences from a Continuous Space</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Bowman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Vilnis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Vinyals</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">M</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Jozefowicz</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Bengio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Twentieth Conference on Computational Natural Language Learning (CoNLL)</title>
+		<meeting>the Twentieth Conference on Computational Natural Language Learning (CoNLL)</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dzmitry</forename><surname>Bahdanau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tom</forename><surname>Bosc</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stanisaw</forename><surname>Jastrzbski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward</forename><surname>Grefenstette</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pascal</forename><surname>Vincent</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1706.00286[cs].ArXiv:1706.00286</idno>
+		<title level="m">Learning to Compute Word Embeddings On the Fly</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manaal</forename><surname>Faruqui</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chris</forename><surname>Dyer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1506.05230[cs].ArXiv:1506.05230</idno>
+		<title level="m">Nondistributional Word Vector Representations</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Learning to understand phrases by embedding the dictionary</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Felix</forename><surname>Hill</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kyunghyun</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><surname>Korhonen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoshua</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno>abs/1504.00548</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Adam: A method for stochastic optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Diederik</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jimmy</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ba</surname></persName>
+		</author>
+		<idno>abs/1412.6980</idno>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Opennmt: Open-source toolkit for neural machine translation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guillaume</forename><surname>Klein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoon</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yuntian</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean</forename><surname>Senellart</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><forename type="middle">M</forename><surname>Rush</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. ACL</title>
+		<meeting>ACL</meeting>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Visualizing high-dimensional data using t-sne</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">J P</forename><surname>Van Der Maaten</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tomas</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kai</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Greg</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Dean</surname></persName>
+		</author>
+		<title level="m">Distributed representations of words and phrases and their compositionality. CoRR, abs/1310</title>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page">4546</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Wordnet: A lexical database for english</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">George</forename><forename type="middle">A</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Commun. ACM</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="39" to="41" />
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Definition modeling: Learning to define word embeddings in natural language</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thanapon</forename><surname>Noraset</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chen</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Larry</forename><surname>Birnbaum</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Doug</forename><surname>Downey</surname></persName>
+		</author>
+		<idno>abs/1612.00394</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Automatic differentiation in pytorch</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Paszke</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sam</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soumith</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gregory</forename><surname>Chanan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zachary</forename><surname>Devito</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zeming</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alban</forename><surname>Desmaison</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luca</forename><surname>Antiga</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adam</forename><surname>Lerer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Empirical Methods in Natural Language Processing (EMNLP)</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1532" to="1543" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Autoextend:¨ Extending word embeddings to embeddings for synsets and lexemes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sascha</forename><surname>Rothe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hinrich</forename><surname>Schutze</surname></persName>
+		</author>
+		<idno>abs/1507.01127</idno>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Dict2vec : Learning Word Embeddings using Lexical Dictionaries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Julien</forename><surname>Tissier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christophe</forename><surname>Gravier</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amaury</forename><surname>Habrard</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Conference on Empirical Methods in Natural Language Processing</title>
+		<meeting><address><addrLine>Copenhague, Denmark</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="254" to="263" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Rc-net: A general framework for incorporating knowledge into word representations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chang</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yalong</forename><surname>Bai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiang</forename><surname>Bian</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bin</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gang</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoguang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tie-Yan</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 23rd ACM International Conference on Conference on Information and Knowledge Management, CIKM &apos;14</title>
+		<meeting>the 23rd ACM International Conference on Conference on Information and Knowledge Management, CIKM &apos;14<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="1219" to="1228" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Yandex 1m en-ru dataset</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Yandex</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chunting</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chonglin</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhiyuan</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Francis</forename><forename type="middle">C M</forename><surname>Lau</surname></persName>
+		</author>
+		<idno>abs/1511.08629</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Rg [rubenstein</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">;</forename><surname>Goodenough</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ws353 [finkelstein</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1965" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mturk</forename><surname>Radinsky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">[</forename><surname>Simlex999</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Hill</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page">333</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

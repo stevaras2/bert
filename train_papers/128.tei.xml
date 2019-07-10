@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Personalize Movie Recommendation System CS 229 Project Final Writeup</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-04">December 4, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shujia</forename><surname>Liang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lily</forename><surname>Liu</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianyi</forename><surname>Liu</surname></persName>
+						</author>
+						<title level="a" type="main">Personalize Movie Recommendation System CS 229 Project Final Writeup</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-04">December 4, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>We use machine learning to build a personalized movie scoring and recommendation system based on user's previous movie ratings. Different people have different taste in movies, and this is not reflected in a single score that we see when we Google a movie. Our movie scoring system helps users instantly discover movies to their liking, regardless of how distinct their tastes may be.</p><p>Current recommender systems generally fall into two categories: content-based filtering and collaborative filtering. We experiment with both approaches in our project. For content-based filtering, we take movie features such as actors, directors, movie description, and keywords as inputs and use TF-IDF and doc2vec to calculate the similarity between movies. For collaborative filtering, the input to our algorithm is the observed users' movie rating, and we use K-nearest neighbors and matrix factorization to predict user's movie ratings. We found that collaborative filtering performs better than content-based filtering in terms of prediction error and computation time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p>Content-based filtering makes recommendation based on similarity in item features. Popular techniques in content-based filtering include the term-frequency/inverse-document-frequency (tf-idf) weighting technique in information retrieval <ref type="bibr" target="#b0">[1]</ref>[2] and word2vec in natural language processing <ref type="bibr" target="#b2">[3]</ref>. We move beyond the common use of tf-idf of finding similar movies to predict movie ratings and apply doc2vec, an extension of word2vec, to extract information contained in the context of movie descriptions. Other techniques include the Bayesian classifier <ref type="bibr" target="#b3">[4]</ref>[5], decision tree, neural networks, and so on [6].</p><p>Content-based filtering has the advantage of being able to solve the cold start problem when there hasn't been enough users or when the contents haven't been rated. However, it is limited to features that are explicitly associated with the items and requires extensive data collection process. In particular, automatic features extractions are difficult and expensive for multimedia data such as images, audio, and video stream [1] <ref type="bibr" target="#b6">[7]</ref>. Also, it does not distinguish between the quality of items. For example, a well celebrated movie and a badly received one are equally likely to be recommended if they share similar characteristics such as common phrases in movie descriptions.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>We use machine learning to build a personalized movie scoring and recommendation system based on user's previous movie ratings. Different people have different taste in movies, and this is not reflected in a single score that we see when we Google a movie. Our movie scoring system helps users instantly discover movies to their liking, regardless of how distinct their tastes may be.</p><p>Current recommender systems generally fall into two categories: content-based filtering and collaborative filtering. We experiment with both approaches in our project. For content-based filtering, we take movie features such as actors, directors, movie description, and keywords as inputs and use TF-IDF and doc2vec to calculate the similarity between movies. For collaborative filtering, the input to our algorithm is the observed users' movie rating, and we use K-nearest neighbors and matrix factorization to predict user's movie ratings. We found that collaborative filtering performs better than content-based filtering in terms of prediction error and computation time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p>Content-based filtering makes recommendation based on similarity in item features. Popular techniques in content-based filtering include the term-frequency/inverse-document-frequency (tf-idf) weighting technique in information retrieval <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr" target="#b1">[2]</ref> and word2vec in natural language processing <ref type="bibr" target="#b2">[3]</ref>. We move beyond the common use of tf-idf of finding similar movies to predict movie ratings and apply doc2vec, an extension of word2vec, to extract information contained in the context of movie descriptions. Other techniques include the Bayesian classifier <ref type="bibr" target="#b3">[4]</ref>[5], decision tree, neural networks, and so on <ref type="bibr" target="#b5">[6]</ref>.</p><p>Content-based filtering has the advantage of being able to solve the cold start problem when there hasn't been enough users or when the contents haven't been rated. However, it is limited to features that are explicitly associated with the items and requires extensive data collection process. In particular, automatic features extractions are difficult and expensive for multimedia data such as images, audio, and video stream <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr" target="#b6">[7]</ref>. Also, it does not distinguish between the quality of items. For example, a well celebrated movie and a badly received one are equally likely to be recommended if they share similar characteristics such as common phrases in movie descriptions.</p><p>Collaborative filtering addresses some of issues of content-based filtering -it recommends items that similar users like, and avoids the need to collect data on each item by utilizing the underlying structure of users' preference. There are two major approaches in collaborative filtering: the neighborhood model and latent factor models. The neighborhood model recommends the closest items or the closest user's top rated items. The latent factor model such as matrix factorization examines the latent space of movie and user features <ref type="bibr" target="#b7">[8]</ref>[9] <ref type="bibr" target="#b9">[10]</ref>. We modify this technique by introducing non-linear kernel and different update schemes and evaluate their performances. Matrix factorization can also be modified to incorporate time dependence in order to capture users' change in preference with time <ref type="bibr" target="#b10">[11]</ref>.</p><p>Many work has been done to combine the two techniques, giving rise to various hybrid approaches. One such approach is realized by incorporating content information in collaborative filtering, in which the content of a rated item is used to estimate the user's preference for other items <ref type="bibr" target="#b11">[12]</ref> <ref type="bibr" target="#b12">[13]</ref>. This is particularly helpful when users rated only a small portion of the items population, as the information of the unrated items can be inferred from content-based filtering, instead of having just a missing value. Other hybrid methods include linear combination of predictions from both methods <ref type="bibr" target="#b13">[14]</ref> or developing a unified probabilistic model <ref type="bibr" target="#b0">[1]</ref> <ref type="bibr" target="#b14">[15]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset and Features</head><p>We use the MovieLens dataset available on Kaggle 1 , covering over 45,000 movies, 26 million ratings from over 270,000 users. The data is separated into two sets: the first set consists of a list of movies with their overall ratings and features such as budget, revenue, cast, etc. After removing duplicates in the data, we have 45,433 different movies. The other dataset used is the user-movie ratings, which contains user ID, movie ID and the user's 1-5 rating of the given movie. We represent this data as a matrix where one dimension represents users and the other dimension represents movies; the matrix is very sparse since most users have rated only a small portion of all the movies. Techniques such as nearest neighbor and matrix factorization are used to analyze this dataset.</p><p>We treat the task as a continuous ranking problem, rather than a classification problem of thumbs-up/thumbs-down, because it is more flexible and encodes more information. We can map ranking back to predicted rating, and at suggestion time, we will recommend the highest-ranked items to users. Due to computational constraints, we use a random subset of 100,000 ratings data in our project. We randomly split the set of user-movie rating pairs into an 80% training set and 20% test set. We minimize the sum of squared error of between the predicted ratings and the actual ratings.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>We run the baseline of content-based filtering using TF-IDF, calculates the weighted similarity between bag of words. The importance of a term t is positively correlated with the number of times it appears in document d, but the frequency of term t among all documents is inversely related its ability to distinguish between documents. Thus we calculate the frequency of word t in document d, weighted by the inverse of frequency of t in all documents: tf-idf(t) = tf (t, d) * idf (d) = tf (t, d) * log |D| 1+|d:t∈d| , where |D| is the length of the document, and |d : t ∈ d| is the number of documents where t appears.</p><p>We calculate the cosine similarities between movies based on movie features. We create two similarity matrix -one using movie descriptions and tagline, and the other using actor names, director names, and keywords. We remove the space between first and last names to avoid confusion on different people with the same first name. Movie descriptions and taglines are often long and extensive, whereas actor names are only one word; combining them into one word vector would overweight descriptions and underweight actor and director names. Thus we separately calculate two cosine similarity matrix and combined them using a weight that minimizes training set error.</p><p>TF-IDF looks for the frequency of the exact word in a document and could not pick up on synonyms or similar descriptions, so it produces very low similarity scores across all movies. Word2vec is based on a distributional hypothesis where words appear in the same context tend to have similar meanings. To take the context of a word into account, we use doc2vec <ref type="bibr">[16]</ref>, which is an extension of the word2vec model that added a document-unique feature vector representing the entire document. We use word2vec to calculate movie similarity based on movie descriptions, and preprocess the data by removing the punctuations and convert all the words to lower case to avoid confusion. We also remove stopwords such as "the", "and", "a", and "of"</p><note type="other">that do not provide information on the context. Movie names are concatenated as a single word. We use the movie feature similarity obtained from TF-IDF and word2vec to predict ratings of movie i using ratings of movie j and the similarity between movies i and j:r</note><formula xml:id="formula_0">ui = µ u + j sim(i, j)(r j − µ u ) j sim(i, j)<label>(1)</label></formula><p>Next, we apply K-nearest neighbors as a baseline to collaborative filtering. In item-to-item collaborative filtering, we predict user u's rating of movie i to be the weighted sum of movie i's rating from the k nearest users based on their ratings similarity score <ref type="bibr">[17]</ref>. Since some people might be more critical of movies, we adjust the predicted rating based on their average ratings:</p><formula xml:id="formula_1">r ui = µ u + v∈N k i (u) sim(u, v)(r vi − µ v ) v∈N k i (u) sim(u, v)</formula><p>where sim(u, v) is the rating similarity between user u and v, r vi is user v's rating of movie i, and N k i (u) is the k nearest neighbors of user u's ratings. Similarly, we can predict user u's rating of movie i using KNN for item-to-item collaborative filtering, adjusted for a given movie's average rating:</p><formula xml:id="formula_2">r ui = µ i + j∈N k u (i) sim(i, j)(r uj − µ j ) j∈N k u (i) sim(i, j)</formula><p>Matrix factorization is another useful method in building a recommendation system <ref type="bibr" target="#b3">[4]</ref>. Users' movie ratings form a sparse matrix, where single user only rates a tiny portion of the whole movie set. User ratings can be decomposed asr ui = q T i p u , where entries in q T i measure the extent to which the movie possesses certain characteristics, and entries in p u measure the extent of "interest" that user has in the movie on corresponding characteristics. To learn these two factor vectors, we minimize the regularized squared error based on the training set:</p><formula xml:id="formula_3">min q * ,p * ,b * (u,i)∈s (r ui − µ − b u − b i − q T i p u ) 2 + λ(||q i || 2 + ||p u || 2 + b 2 u + b 2 i )</formula><p>where s is the set of (u, i) pairs for r ui in training set and λ controls the extent of regularization to penalize the magnitudes of learned parameters and thus avoid overfitting. bias = µ + b i + b u incorporates global average µ, bias from movie b i and bias from user b u .</p><p>We minimize the RMSE by stochastic gradient descent. The user and movie factors are initialized randomly from a uniform distribution, and baselines are initialized to zero. Then for each user-movie rating in the training set, we update each parameter according to the error between the predicted rating and true rating. For example, the user factor p u is updated by p u = p u + α (r ui −r ui )q i − λp u , where α is the learning rate. Similar rules apply to all other parameters. Note that the entire factor vector for user u is updated. After all the examples in the training set are seen, one "epoch" has finished, and we repeat the "epochs" until the change in training RMSE converges. Alternatively, instead of updating the entire factor vector for users and movies simultaneously, we first update the first entry, p u,1 and q i,1 , by going through several epochs until convergence. Then we move on to p u,2 and q i,2 , and so on. We can also change how the use factors and movie factors interact by kernelizing the term q T i p u . The other kernels we considered are radial basis function kernel (rbf) and sigmoid function.</p><p>Throughout this report we use root mean squared error (RMSE)= 1 |s| (u,i) (r u,i −r u,i ) 2 to evaluate the performance of the algorithm, where r u,i is the actual rating given by user u to movie i andr u,i is the predicted rating.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussion</head><p>For content based filtering, we use the movie similarity matrices generated by TF-IDF and word2vec to predict an user's movie ratings (Formula (1)). To combine the two similarity matrices from TF-IDF, we calculate their weighted sum. Evaluating the performance on a training set consisting of 80% randomly selected user-movie rating pairs, we see that the RMSE is smallest for the weight w 1 = 0.7, w 2 = 0.3 as shown in <ref type="figure">figure 1</ref>. We then run the prediction algorithm with these weights on the test set. <ref type="figure">Figure 3</ref> illustrates the performance of our algorithm in predicting users' rating for movies. Each bin represents user-movie pair that has rating in the specific range. The blue bars represent the portion for which our algorithm's prediction is within ±0.75 of the true rating, and the the green bars represent the portion for which our algorithm's prediction is outside of ±0.75 of the true rating. We see that our algorithm performs well for user-movie pairs with ratings higher than 3, which constitute the majority of the data points. The RMSE on the test set is 1.052.</p><p>For doc2vec, we use the Distributed Memory version of Paragraph Vector (PV-DM) model and include some noise words to increase the overall robustness. We have experimented with various starting learning rates <ref type="table">(Table 3)</ref>, and α = 0.025 minimizes RMSE to 0.927. The learning rate starts with 0.025 and linearly decrease to 0.001. Using this model, we could also query keywords or movie names for the most similar movies based on the similarity score calculated from the movie overview. <ref type="table">Table 2</ref>   <ref type="table">Table 3</ref>: Learning rate with test RMSE For collaborative filtering, we run item-to-item and user-to-user CF using KNN. We grid searched for the best k value ( <ref type="figure">Figure  3</ref>) and found that the test RMSE overall decreases as k increases. The test RMSE stabilizes around k = 20, and it does not monotonically decrease. k = 43 yields the lowest test RMSE of 0.9079 for item-to-item CF and k = 28 yields the best test RMSE of 0.9203 for user-to-user CF, though other values of k &gt; 20 yield the same results to three decimal places, so the results are fairly robust. With k = 43, the item-to-item CF training RMSE is 0.2900 and the test RMSE is 0.9079. With k = 28, the user-to-user CF training RMSE is 0.2830 and the test RMSE is 0.9203. The differences between training and test RMSE suggest some degrees of overfitting. We have tried increasing k up to 300, but the gap between test and train RMSE remains. <ref type="figure">Figure 4</ref> and 5 show the rating prediction histogram from the KNN model. Again, the model performs well for ratings that are larger than 3 due to an imbalance in the ratings. For matrix factorization, we run the algorithm with various parameter settings to find the optimal values. <ref type="figure">Figure 6</ref> shows the RMSE for different number of factors used in the model. We see that using 14 factors is optimal. The optimal values for other parameters such as the regularization constant and learning rate are found in similar fashion. We have found that using 14 factors, a regularization factor λ = 0.01 and learning rate 0.001 achieves the lowest trainig RMSE of 0.832. <ref type="figure">Figure 6</ref>: RMSE for different number of factors. 14 factors seems to be the optimal. We also compare the two update scheme described in the method section. In the second update scheme, we minimize the error by updating one factor (individual entry of the user/movie vector) at a time. The RMSE is reduced significantly after the first few factors have completed updating. This shows that the most important characters of movie (or user preference) are contained within the first few factors. <ref type="figure" target="#fig_2">Figure 7</ref> shows the RMSE as a function of number of epochs for the two update schemes. We see that the first update scheme, where all factors are updated simultaneously, converges faster and gives better result. We also compare the performance of the algorithm using different kernels, as shown in <ref type="figure" target="#fig_3">Figure 8</ref>. We thus choose to use the linear kernel for our model, and the test RMSE is 0.9039. From <ref type="figure" target="#fig_4">Figure 9</ref>, we see that our algorithm performs well for ratings that are larger than 3. However due to the small sample size of ratings smaller than 3, even when the true rating is low, the algorithm still tends to predicts high ratings and thus performs poorly.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>We have explored both content-based and collaborative filtering for building the recommendation system. Collaborative filtering overall performs better than content-based filtering in terms of test RMSE. Additionally, content-based filtering is computationally more expensive than collaborative filtering, as it involves extensive processing of text features. Therefore collaborative filtering is preferred. All codes are available at Google Drive link.</p><p>For future work, we would like to address the skewed prediction caused by imbalance in the number of low ratings compared to high ratings. We would also explore ways such as regularization to address the overfitting issue in KNN. Additionally, our recommendation system can be improved by combining content-based filtering and collaborative filtering. Possible techniques include incorporating content features as additional features in collaborative filtering, or vice versa, decision trees, and neural network. We could also add in a time dimension to our model to capture the change in user preference over time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contribution</head><p>Lily cleaned the data, conducted literature review, and worked on KNN and doc2vec. Tianyi cleaned the data, reviewed literature, and worked on TF-IDF and matrix factorization. Shujia reviewed literature, coded up the matrix factorization algorithm with Tianyi, and made poster.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :Figure 2 :</head><label>12</label><figDesc>RMSE for different values of w1. (w2 = 1 -w1) Figure 2: Histogram for predictions using TF-IDF similarity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 3 :Figure 4 :Figure 5 :</head><label>345</label><figDesc>KNN training RMSE with different values of k Figure 4: KNN Item-based Ratings Prediction Histogram Figure 5: KNN User-based Ratings Prediction Histogram</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 7 :</head><label>7</label><figDesc>RMSE as a function of number of epochs for different update schemes</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 8 :</head><label>8</label><figDesc>RMSE as a function of number of epochs for different kernels.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 9 :</head><label>9</label><figDesc>Histogram for predictions using matrix factorization.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1</head><label>1</label><figDesc>is the top 10 most popular movies by their weighted score, calculated using the IMDB weighting 2 . We randomly split this dataset into an 80% training set and 20% test set for content-based filtering.</figDesc><table>Movie Title 
+Avg Votes Num Votes Weighted Score 
+
+The Shawshank Redemption 8.5 
+8358.0 
+8.445871 
+The Godfather 
+8.5 
+6024.0 
+8.425442 
+Dilwale Dulhania Le Jayenge 9.1 
+661.0 
+8.421477 
+The Dark Knight 
+8.3 
+12269.0 
+8.265479 
+Fight Club 
+8.3 
+9678.0 
+8.256387 
+Pulp Fiction 
+8.3 
+8670.0 
+8.251408 
+Schindler's List 
+8.3 
+4436.0 
+8.206643 
+Whiplash 
+8.3 
+4376.0 
+8.205408 
+Spirited Away 
+8.3 
+3968.0 
+8.196059 
+Life Is Beautiful 
+8.3 
+3643.0 
+8.187177 
+
+Table 1: Top 10 most popular movies by weighted score 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>shows the top 5 most similar movies to Skyfall.</figDesc><table>Similar Movies 
+Sim Score 
+
+Octopussy 
+0.8358 
+Transporter 
+0.8298 
+Safe house 
+0.8287 
+Unlocked 
+0.8106 
+Undercover Man 
+0.8062 
+Push 
+0.8033 
+Sniper 2 
+0.8007 
+Patriot Games 
+0.8005 
+2047 Sights Death 
+0.7952 
+Interceptor 
+0.7951 
+
+Table 2: Movies most similar to Skyfall 
+
+Learning Rate 
+RMSE 
+
+0.020 
+0.927403 
+0.025 
+0.927003 
+0.030 
+0.927009 
+0.035 
+0.927358 
+0.040 
+0.927994 
+0.05 
+0.929483 
+0.1 
+0.938572 
+0.2 
+0.950744 
+0.4 
+0.970215 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">https://www.kaggle.com/rounakbanik/the-movies-dataset/version/7 2 https://help.imdb.com/article/imdb/track-movies-tv/faq-for-imdb-ratings:v (v+m) * R + m (v+m) * C,where R is average movie rating (votes), v is the number of votes for the movie, m is the minimum votes required to be listed in the Top Rated list, which we set as 90 percentile of votes and roughly equals to 160, and C is the mean vote across all movies.</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tuzhilin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Adomavicius</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Knowledge &amp; Data Engineering</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="734" to="749" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Automatic Text Processing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Salton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989" />
+			<publisher>Addison-Wesley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Word2vec applied to recommendation: hyperparameters matter. RecSys</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hugo</forename><surname>Caselles-Dupré</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Book Recommending Using Text Categorization with Extracted Information</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">J</forename><surname>Mooney</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">N</forename><surname>Bennett</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Roy</surname></persName>
+		</author>
+		<idno>WS-98-08</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Recommender Systems Papers from 1998 Workshop</title>
+		<meeting>Recommender Systems Papers from 1998 Workshop</meeting>
+		<imprint>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+<note type="report_type">Technical Report</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Learning and Revising User Profiles: The Identification of Interesting Web Sites</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Pazzani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Billsus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<date type="published" when="1997" />
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="313" to="331" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Learning and Revising User Profiles: The Identification of Interesting Web Sites</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Pazzani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Billsus</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<date type="published" when="1997" />
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="313" to="331" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Social Information Filtering: Algorithms for Automating &apos;Word of Mouth</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">U</forename><surname>Shardanand</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Maes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Conf. Human Factors in Computing Systems</title>
+		<meeting>Conf. Human Factors in Computing Systems</meeting>
+		<imprint>
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Learning Collaborative Information Filters</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Billsus</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">J</forename><surname>Pazzani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Machine Learning</title>
+		<meeting>the International Conference on Machine Learning</meeting>
+		<imprint>
+			<date type="published" when="1998" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Matrix Factorization Techniques for Recommender Systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Koren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Bell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Volinsky</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computer</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Simon</forename><surname>Funk</surname></persName>
+		</author>
+		<ptr target="https://sifter.org/simon/journal/20061211.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Collaborative Filtering with Temporal Dynamics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Koren</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. 15th ACM SIGKDD Int&apos;l Conf. Knowledge Discovery and Data Mining (KDD 09)</title>
+		<meeting>15th ACM SIGKDD Int&apos;l Conf. Knowledge Discovery and Data Mining (KDD 09)</meeting>
+		<imprint>
+			<publisher>ACM Press</publisher>
+			<date type="published" when="2009" />
+			<biblScope unit="page" from="447" to="455" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A Framework for Collaborative, Content-Based, and Demographic Filtering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Pazzani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artificial Intelligence Rev</title>
+		<imprint>
+			<biblScope unit="page" from="393" to="408" />
+			<date type="published" when="1999-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Combining Content and Collaboration in Text Filtering</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Soboroff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Nicholas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Int&apos;l Joint Conf. Artificial Intelligence Workshop: Machine Learning for Information Filtering</title>
+		<meeting>Int&apos;l Joint Conf. Artificial Intelligence Workshop: Machine Learning for Information Filtering</meeting>
+		<imprint>
+			<date type="published" when="1999-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Combining Content-Based and Collaborative Filters in an Online Newspaper</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Claypool</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gokhale</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Miranda</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Murnikov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Netes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Sartin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. ACM SIGIR &apos;99 Workshop Recommender Systems: Algorithms and Evaluation</title>
+		<meeting>ACM SIGIR &apos;99 Workshop Recommender Systems: Algorithms and Evaluation</meeting>
+		<imprint>
+			<date type="published" when="1999-08" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Probabilistic Models for Unified Collaborative and Content-Based Recommendation in Sparse-Data Environments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. 17th Conf. Uncertainty in Artificial Intelligence</title>
+		<meeting>17th Conf. Uncertainty in Artificial Intelligence</meeting>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">An empirical evaluation of doc2vec with practical insights into document embedding generation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">H</forename><surname>Lau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Baldwin</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1607.05368</idno>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

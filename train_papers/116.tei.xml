@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">XXX-X-XXXX-XXXX-X/XX/$XX.00 ©20XX IEEE Classifying Spam using URLs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018">Autumn 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Di</forename><surname>Ai</surname></persName>
+							<email>diai@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Computer Science</orgName>
+								<orgName type="institution">Stanford University Stanford</orgName>
+								<address>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">XXX-X-XXXX-XXXX-X/XX/$XX.00 ©20XX IEEE Classifying Spam using URLs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018">Autumn 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>spam</term>
+					<term>url</term>
+					<term>classification</term>
+					<term>search engine</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-This project implements support vector machine and random forest models to create a spam classifier using primarily the url string as features. Because search engines have limited crawl resources, being able to identify a spam url without relying on page content will result in significant resource savings in addition to a reduction of spam for the user. This work implements various features and compares the performance of multiple classifiers in detecting spam.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Spam is a large and growing problem that is becoming increasingly difficult to tackle at scale. With the proliferation of devices that are connected to the internet, the amount of search queries increases each day, with Google currently processing over 3.5 billion queries per day. There are significant monetary incentives to achieving a high rank in search results, especially for queries with commercial intent like "hotel" or "plane tickets". As a result, spammers have tried a variety of techniques to rank highly in search results. Search engines have limited resources and cannot crawl every page on the web. Assuming a fixed crawl throughput, for each spam page that is crawled, a page that could have been useful to users will not be crawled. Thus, an algorithm that is able to identify a spam web page before crawling the page would be very useful. Not only would this save precious crawl resources by allowing the crawler to bypass spam urls, but it would also remove the possibility of that spam url from later being served to user queries, thereby improving the quality of search results.</p><p>The input to our algorithm is a url string along with metadata such as registered domain holder, first seen date, and traffic. We then use a SVM or Random Forest to output a prediction of spam/not spam.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>Previous work on this topic has involved content analysis of the page itself <ref type="bibr" target="#b0">[1]</ref>. These typically involve creating features from the html structure of the page, links, and anchor text, such as number of words on page, average wordlength, and number of words in title. Other methods involve looking at the amount and percentage of hidden content (not visible to a user) on a page.</p><p>Other work attempt to classify web spam into buckets, such as link spam, redirection, cloaking, and keyword stuffing <ref type="bibr" target="#b1">[2]</ref>. While splitting spam into more specific buckets will likely lead to improvements in classifier ability, this paper will focus on building a general classifier for all types of spam.</p><p>Another approach is to first determine what are important features in terms of ranking in a search engine and then find which features are likely to be used by spammers <ref type="bibr" target="#b2">[3]</ref>. The downside to this approach is that it is infeasible to enumerate every ranking element and thus important features may be missed.</p><p>While relying on the page content and links increase the amount of data available for spam classification, there are strong motivations for being able to classify spam prior to crawling a page. This paper explores using the url string as the primary feature in spam classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Overview</head><p>While there are a variety of features that one can use to classify if a web page is spam, this project aims to use only the url and limited metadata information to classify if web pages are spam/not spam. This choice was made for performance reasons, as scraping html from web pages is resource intensive and not useful since the page must have already been crawled. In the context of a search engine, it is often very useful to be able to detect if a given url is spam prior to a page being crawled. This way, urls that are likely to be spam can be deprioritized during crawling and those resources can be used to crawl more useful pages that are less likely to be spam.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Data</head><p>The dataset consists of 40,000 manually rated urls with 50% labeled as spam and 50% as not spam collected over the course of two months. Additional information that would have been available at crawl time was also included, such as first seen dates, whois contact data, and site traffic. Data is representative of the types of spam that appeared in Google Search in September and October 2018. All numerical features were scaled and standardized to have mean 0 and variance 1. Categorical variables like whois name and tld suffix were one-hot encoded with a minimum cutoff frequency threshold.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Features</head><p>Each url was broken down into domain, top-level tld, and deep url sections. For example, in the URL http://www.pcwebopedia.com/index.html, the domain name is pcwebopedia.com, the top-level tld is .com, and the deep url is index.html. Any characters preceding the domain name were discarded, such as http://www., except for subdomains like sub1.pcwebopedia.com/.</p><p>Each deep url was split into words by using various characters as delimiters, such as _, ., :, =, ;, and /. The full regex is shown below:</p><formula xml:id="formula_0">' |\.|\/|\/\/|:|-|_|%|\?|=|;|&lt;|&gt;|~|\$|&amp;|\+'</formula><p>Words were kept if they were more than 2 characters long, otherwise they were ignored. A multinomial event model was fitted on these words with Laplace smoothing and a dictionary limited to words that appeared with a frequency of at least 0.1% times the size of the dataset. The output probabilities from this classifier was used as a feature.</p><p>In a multinomial event model, we assume that the way a url is generated is via a random process in which spam/not spam is first determined according to p(y). Then, the spammer composes the url by generating words, xi, from some multinomial distribution p(xi|y). All words are assumed to be chosen independently and from the same distribution. Note that the distribution according to which a word is generated does not depend on its position within the url string. The likelihood function and maximum likelihood estimates of the parameters with Laplace smoothing are given below, where |V| is the size of the vocabulary dictionary:</p><p>This model had an accuracy of 83.2% and the top 5 indicative words for spam urls were: 'shgbcz', 'bdouwo1', 'yboyiw5k', 'yulsef', 'qoricksjw'.</p><p>Character counts of both domain name and deep url were used as features. The idea here is that longer urls, in general, are more likely to be spam, although this is a weak relationship that doesn't necessarily hold true for this specific dataset, as illustrated by the graph below.</p><p>Additional features include the first seen date of the url and the first seen date of the site. This helps to capture any trend in time of various types of spam. For example, during Black Friday and other peak shopping holidays, we might expect higher amounts of spam related to keywords such as iPhone, laptop, or TVs. The difference between the first seen date of the url and the first seen date of the site was also used as a predictor, with the idea being that urls with a large difference may be more likely to be hacked.</p><p>The ratio of web traffic to the url vs. the site was used as a predictor. If a url has a lot more traffic than the corresponding site home page, then it indicates that something suspicious is occurring. The url may have been hacked or contain a forum that has been overrun by comment spam. I added +1 to the denominator (site traffic) for each observation to avoid NaN issues from dividing 0 by 0.</p><p>When available, WhoIs data was also obtained for each url consisting of the registrant name, previous DNS and current DNS. A change in DNS would indicate a change in site ownership which could indicate that a site has fallen into the hands of a spammer.</p><p>Top-level tld was encoded as a categorical variable with the following distributions for spam and not spam urls. While .com is by far the most common tld in the data, we can see that the relative frequencies of other tlds varies across the spam vs. not spam datasets for a sample of 2000 spam and not spam urls.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TLD distribution for Spam Urls</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TLD distribution for Not Spam Urls</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head><p>SVM with both linear and Gaussian kernels (RBF) were fitted on the training data. The support vector machine attempts to find a separating hyperplane that separates the data with the maximum geometric margin. However, since not every dataset is linearly separable, we introduce slack variables to allow the model to make some mistakes with a cost C. This results in the following optimization problem.</p><p>Compared to the linear SVM, RBF SVM allows for a richer set of features as the Gaussian kernel represents an infinite dimensional mapping. While this may seem computationally expensive, by using the kernel trick, we are able to avoid blowing up the required time complexity. Specifically, we replace the dot product between x's with the Gaussian kernel.</p><p>We also use random forest to fit the data. Random forests are an ensemble learning method constructed from an agglomeration of decision trees. A decision tree makes binary splits of the data using the features and cutoff points that leads to greatest possible reduction in the loss in a greedy manner. Random forests aggregate a large number of decision trees using a method called bagging (bootstrap aggregation) and outputs the class that is the mode of the individual trees. The bootstrap method is first used to create random sub-samples of the dataset with replacement. Then, decision trees are fit on each sub-sample and their output averaged over all decision trees (for classification problems, you take the mode instead of average). Typically, random forests limit both the max depth of the trees and the number of features available for prediction for each tree to improve performance. This leads to greater variance reduction in the overall estimator because the pairwise correlation, ρ, between each tree is lower.</p><p>We used the Gini loss, which is shown below.</p><p>V. RESULTS 10% of the dataset (2000 examples with roughly 50% spam/not spam) was set aside as the test dataset. The primary evaluation metric is accuracy. However, in real world implementations the more important metric is probably precision, since failing to crawl a legitimate page results in significant loss to the business or site owner. On the other hand, crawling a spam page, while not ideal, is not as severe as a mistake, since the spam can still be suppressed or removed at serving time. Results are shown below for a variety of models and parameters. Varying the cutoff frequency threshold did not seem to have a large effect on the accuracy of the models. Any categorical variable that was one-hot encoded had the value dropped if it did not occur at least the cutoff frequency threshold number of times in the training dataset. Increasing the threshold from 5 to 50 resulted in the number of feature variables dropping from 406 to 81. While it is surprising that reducing the number of features by 5x does not degrade model performance, this may be due to the size of the test data, which was one-tenth the size of the training data. A combination of not enough training data (on 5 examples) and low prevalence frequency in the test dataset likely reduced the usefulness of the majority of categorical features.</p><p>The two models highlighted in red represent the models with the best, tuned hyperparameters as found by grid search for SVM and random search for Random Forest. The optimal SVM had hyperparameters of cost = 1 and gamma = 1. The optimal Random Forest model had hyperparameters of min samples leaf = 1, max features = sqrt(number of features), min samples split = 2, number of trees = 1400, bootstrap = False, and max depth = 3. Because of how Random Forests are constructed, they tend to be resistant to overfitting. However, the plot of test error vs. training error over training time seems to suggest that the model has high variance and could benefit from more training data. This is true for the Rbf SVM as well. My hypothesis is that given the vast variety of spam, 18,000 training examples (12,000 in the plots below which use 3-fold cross-validation) is simply not a large enough sample to adequately cover all possible variations of spam.</p><p>The confusion matrices for the best Rbf SVM and Random Forest models show that both ended up with a fairly balanced false positive rate and false negative rate, making roughly equal number of mistakes on both sides. The ROC curve clearly favors the Random Forest model over the Rbf SVM. However, for a model that would be used in production, we would likely increase the cutoff threshold for a positive label from a probability of 0.5 to something higher to reduce the false positive rate. A false positive, i.e. predicting a url is spam when it is in fact not spam, is a more serious error than a false negative, i.e. predicting a url is not spam when it is in fact spam. False positives create more damage to a search engine's reputation, especially if the false positive is on a prominent site, and harm real businesses, businesses that a search engine relies upon in a symbiotic relationship. In addition, false negatives at this stage can also be caught later at indexing or serving time. Hence, we would probably want to trade off a lower recall and higher false negative rate in exchange for a lower false positive rate. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I .</head><label>I</label><figDesc>RESULTS</figDesc><table>Model 
+
+Metrics 
+
+Cutoff* 
+Train 
+Accuracy 
+
+Test 
+Accuracy 
+
+Linear SVM, Cost = 1 
+50 
+88.70% 
+88.00% 
+
+Linear SVM, Cost = 10 
+50 
+89.40% 
+89.20% 
+
+Rbf SVM, Cost = 1, Gamma = 
+1 
+50 
+94.50% 
+91.15% 
+
+Rbf SVM, Cost = 1, Gamma = 
+0.01 
+50 
+87.37% 
+87.05% 
+
+Rbf SVM, Cost = 1, Gamma = 
+100 
+50 
+99.30% 
+81.45% 
+
+Rbf SVM, Cost = 10, Gamma 
+= 1 
+50 
+96.81% 
+89.85% 
+
+Rbf SVM, Cost = 100, Gamma 
+= 100 
+50 
+99.70% 
+81.90% 
+
+Rbf SVM, Cost = 1, Gamma = 
+1 
+5 
+94.41% 
+90.40% 
+
+Linear SVM, Cost = 1 
+5 
+89.55% 
+88.60% 
+
+Random Forest 
+50 
+99.70% 
+96.85% 
+
+Random Forest, Max Depth = 
+10 
+50 
+95.42% 
+95.20% 
+
+Random Forest 
+5 
+99.79% 
+96.50% 
+
+Random Forest, Max Depth = 
+10 
+5 
+94.36% 
+94.50% 
+
+Random Forest, Best 
+50 
+99.98% 
+97.25% 
+
+* Categorical variables were one hot encoded with a cutoff frequency threshold. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II .</head><label>II</label><figDesc>CONFUSION MATRIX</figDesc><table>N = 2000 
+RBF SVM, Best 
+
+Predicted Not Spam 
+Predicted Spam 
+Actual Not 
+Spam 
+
+903 
+90 
+
+Actual Spam 
+
+87 
+920 
+
+TABLE III. 
+CONFUSION MATRIX 
+
+N = 2000 
+Random Forest, Best </table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predicted Not Spam Predicted Spam Actual Not Spam</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="912">31</head><p>Actual Spam 27 1030 An ablation study was also performed to see which feature had the most impact on the model. Note that only single features were removed and the effects are not cumulative. We can see that the naïve bayes output probabilities (see Features section for description of how these were calculated) were the most important feature. This is corroborated by the feature importance ranking from the Random Forest model, shown below. Surprisingly, the suffix_net feature was the second most important feature, indicating that spammers favor .net domains significantly differently than non-spammers. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION</head><p>We have presented a variety of models in an attempt to identify spam urls prior to crawling the page. Random Forest with Gini loss performed the best out of the models tested, with 97.25% accuracy on the test data. Since spammers frequently alter their techniques, we expect model performance to degrade over time if the model is not retrained with new data. Gathering more data across a variety of spam types and time periods would help the model generalize to more types of spam. Training specific models for each spam type or geography/language would also likely result in performance gains.</p><p>The most important feature was the naïve bayes output probabilities, which was created by splitting the deep url portion into words and fitting a multinomial event model with Laplace smoothing. Since there is likely significant headroom to improve this feature, future work would involve more sophisticated feature extraction methods on the deep url portion. For example, using a bag of words model or n-grams would likely result in significant improvements. In addition, deep learning methods such as neural nets could also be explored given more time and computational power.</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Detecting spam web pages through content analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexandros</forename><surname>Ntoulas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marc</forename><surname>Najork</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mark</forename><surname>Manasse</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dennis</forename><surname>Fetterly</surname></persName>
+		</author>
+		<idno type="doi">10.1145/1135777.1135794</idno>
+		<ptr target="https://doi.org/10.1145/1135777.1135794" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 15th international conference on World Wide Web (WWW &apos;06</title>
+		<meeting>the 15th international conference on World Wide Web (WWW &apos;06<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2006" />
+			<biblScope unit="page" from="83" to="92" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Web Spam Taxonomy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zoltan</forename><surname>Gyongyi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hector</forename><surname>Garcia-Molina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">First International Workshop on Adversarial Information Retrieval on the Web</title>
+		<meeting><address><addrLine>Chiba, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005-05-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Egele</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Kolbitsch</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Platzer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Comput</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Virol</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s11416-009-0132-6</idno>
+		<ptr target="https://doi.org/10.1007/s11416-009-0132-6" />
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

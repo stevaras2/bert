@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Music Genre Classification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Derek</forename><surname>Huang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eli</forename><surname>Pugh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arianna</forename><surname>Serafini</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Music Genre Classification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>We used the GTZAN genre collection dataset, which features 1000 samples of raw 30s data. However, since this raw audio was sampled at 22050HZ, we could reasonably use 2 seconds of data at most to keep our feature space relatively small (44100 features). To compromise, we augmented our data by randomly sampling four 2-second windows to produce 8000 samples. While this dataset has its flaws, its widespread use makes it easy to compare our work across the field.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Processing</head><p>Initially ran our models on our raw audio data (amplitudes), which take the form of 44100 length arrays, but found that preliminary accuracy was lower than hoped for in all models. Decided to use mel-spectrograms, which are time vs. mel-scaled frequency graphs. Similar to short-time Fourier transform representations, but frequency bins are scaled non-linearly in order to more closely mirror how the human ear perceives sound. We chose 64 mel-bins and a window length of 512 samples with an overlap of 50% between windows. We then move to log-scaling based on previous academic success. Used the Librosa library -see examples below. </p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>We used the GTZAN genre collection dataset, which features 1000 samples of raw 30s data. However, since this raw audio was sampled at 22050HZ, we could reasonably use 2 seconds of data at most to keep our feature space relatively small (44100 features). To compromise, we augmented our data by randomly sampling four 2-second windows to produce 8000 samples. While this dataset has its flaws, its widespread use makes it easy to compare our work across the field.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Processing</head><p>Initially ran our models on our raw audio data (amplitudes), which take the form of 44100 length arrays, but found that preliminary accuracy was lower than hoped for in all models. Decided to use mel-spectrograms, which are time vs. mel-scaled frequency graphs. Similar to short-time Fourier transform representations, but frequency bins are scaled non-linearly in order to more closely mirror how the human ear perceives sound. We chose 64 mel-bins and a window length of 512 samples with an overlap of 50% between windows. We then move to log-scaling based on previous academic success. Used the Librosa library -see examples below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Motivation</head><p>Genre classification is an important task with many real world applications. As the quantity of music being released on a daily basis continues to sky-rocket, especially on internet platforms such as Soundcloud and Spotify, the need for accurate meta-data required for database management and search/storage purposes climbs in proportion. Being able to instantly classify songs in any given playlist or library by genre is an important functionality for any music streaming/purchasing service, and the capacity for statistical analysis that music labeling provides is essentially limitless.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models Support Vector Machine:</head><p>For the sake of computational efficiency, we first perform PCA on our data to reduce our feature space to 15 dimensions. Then we create an SVM model with an RBF kernel. This models offers us a baseline accuracy with which to compare our more complicated deep-learning models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>K-Nearest Neighbors:</head><p>We first perform PCA to reduce our feature space to 15 dimensions. We use k = 10 and distance weighting. Computation is deferred until prediction time. Feed-forward Neural Network: Our standard feed-forward neural network contains six fully-connected layers, each using ReLU activation. We use softmax output with cross-entropy loss, and Adam optimization.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Convolutional Neural Network:</head><p>As before, we use Adam optimization and ReLU activation. Structure is as illustrated below.</p><p>Convolutional layer:</p><formula xml:id="formula_0">z k,l = n j=1 m i=1 θ i,j x i+ks,j+ls</formula><p>Loss function: CE = − x∈X y (x) logŷ (x)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The confusion matrix to the right visualizes results from our CNN. For this project, we used traditional machine learning methods as well as more advanced deep learning methods. While the more complex models took far longer to train, they provided significantly more accuracy. In real world application, however, the cost/benefit of this tradeoff needs to be analyzed more closely. We also noticed that log-transformed mel-spectrograms provided much better results than raw amplitude data. Whereas amplitude only provides information on intensity, or how "loud" a sound is, the frequency distribution over time provides information on the content of the sound. Additionally, mel-spectrograms are visual, and CNNs work better with pictures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>While we are generally happy with the performance of our models, especially the CNN, there are always more models to test out -given that this is time series data, some sort of RNN model may work well (GRU, LSTM, for example). We are also curious about generative aspects of this project, including some sort of genre conversion (in the same vein as generative adversarial networks which repaint photos in the style of Van Gogh, but for specifically for music). Additionally, we suspect that we may have opportunities for transfer learning, for example in classifying music by artist or by decade.</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Convolutional Neural Network Achieves Human-level Accuracy in Music Genre Classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mingwen</forename><surname>Dong</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Corr</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1802.09697" />
+		<imprint>
+			<date type="published" when="2018-02" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">The GTZAN dataset: Its contents, its faults, their effects on evaluation, and its future use</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bob</forename><forename type="middle">L</forename><surname>Sturm</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Corr</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1306.1461" />
+		<imprint>
+			<date type="published" when="2013-06" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Music Genre Recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Piotr</forename><surname>Kozakowski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">&amp;amp;</forename><surname>Bartosz Michalak</surname></persName>
+		</author>
+		<ptr target="http://deepsound.io/musicgenrerecognition" />
+		<imprint>
+			<date type="published" when="2016-10" />
+		</imprint>
+	</monogr>
+	<note>html Fall 2018 CS229 Poster Session Emails: huangda@stanford.edu, epugh@stanford.edu, aserafini@stanford.edu</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

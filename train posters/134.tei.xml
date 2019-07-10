@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Using Latent Embeddings of Wikipedia Articles to Predict Poverty</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Evan</forename><surname>Sheehan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chenlin</forename><surname>Meng</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zaid</forename><surname>Nabulsi</surname></persName>
+						</author>
+						<title level="a" type="main">Using Latent Embeddings of Wikipedia Articles to Predict Poverty</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>In this project, we propose a novel method for the task of poverty prediction through the use of geolocated Wikipedia articles. Traditional state-of-the-art models rely on nightlights images to regress on the problem. We explore the utilization of the latent embeddings of these articles <ref type="bibr">(Sheehan et. al.</ref> suggest geolocated Wikipedia articles can be used as socioeconomic proxies for their surrounding regions) for wealth index prediction. These articles contain almost no information about poverty or wealth at facevalue. However, we obtain results suggesting that latent features within these articles strongly correlate with poverty, allowing us to perform regression on points throughout Africa and challenge the stateof-the-art results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem &amp; Data</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Approach &amp; Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Further Work</head><p>• Goal -predict poverty level given geolocated Wikipedia articles (1 mil. articles scraped).</p><p>• Data from Stanford Sustain Lab, UN World Bank, and DHS • 24100 wealth points normalized from -2 to 2</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background &amp; Summary</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head><p>So far, we have detailed a novel comparative approach for the task of poverty prediction, in particular, using latent Wikipedia embeddings to predict wealth levels with ! " 's that outperform state-of-the-art models. Our results suggest that combining nightlights imagery with Doc2Vec embeddings creates large improvements. In the future, we plan to experiment with more multi-modal architectures that show promise, such as the use of convolutional neural networks for the imagery.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Baseline Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multi-Modal Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>• Goal: Design a fully connected neural network as a second baseline.</p><p>• Approach: Train an MLP from scratch with a regression output corresponding to the poverty value.</p><p>• Take 10 closest articles to coordinate of interest, get Doc2Vec embedding of each, average the 10 feature vectors to get input for MLP.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Embedding Activation Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Wikipedia Embedding MLP</head><p>• In this model, similar to our second baseline, we take the ten closest geolocated Wikipedia articles to the point of interest, and pass each through a Doc2Vec model, to get ten 300-dimensional vectors • We then concatenate the ten vectors, and for each vector, we also append the distance of that Wikipedia article from our point of interest, to get a 3010-dimensional vector.</p><p>• We pass the 3010-dimensional vector through an MLP to get a poverty prediction. • Goal: Create a simple model to sanity check data and get a sense of the difficulty of the task.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model Results and Analysis</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Doc2Vec Neural Network</head><p>• Approach: Use support vector machine regression to predict the poverty index from Doc2Vec embeddings of 10 closest articles. Use loss function:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Doc2Vec SVM Regression</head><p>• In this model, we utilize both Wikipedia embeddings as well as the nighttime image of the region of interest.</p><p>• We generate a histogram from the nightlights image, and feed that through an MLP to obtain a 32-D feature vector.</p><p>• We also generate the same 3010-D vector described above through Doc2Vec embeddings.</p><p>• We concatenate both inputs and pass them through an MLP to get our final poverty prediction. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>We see that indices 24 and 182 yield the highest ! " . Below, we see the article titles which posses the highest values in those indices. On the left titles for index 24 are shown, while on the right, titles for index 182 are shown. Healthcare and education are important factors. PCA Average ! " value for each of our 4 models trained and tested on Uganda, Tanzania, Nigeria, Ghana, and Malawi (excluding testing on trained country). Cross-national boundary ! " results for our multi- modal model. Trained on column, and tested on row countries. Outperforms current state-of- the-art models Observed vs. predicted wealth values for models trained on Malawi and tested on Uganda. Leftmost graph shows only Doc2Vec input, center graph shows only nightlights histogram input, and rightmost graph shows model with both inputs</figDesc><table>Average doc2vec 
+embeddings from 10 
+closest articles 
+Feed average 
+vector into MLP 
+Output poverty 
+prediction: -2 &lt; y &lt; 2 
+
+Same concatenated 
+feature vector as 
+above 
+
+On the left, masked activation of 
+each embedding index is shown 
+(all other indices are set to 0), 
+along with its corresponding ! " 
+value. PCA 
+
+Average ! " value 
+for each of our 4 
+models trained and 
+tested on Uganda, 
+Tanzania, Nigeria, 
+Ghana, and 
+Malawi (excluding 
+testing on trained 
+country). 
+
+Cross-national 
+boundary ! " results 
+for our multi-
+modal model. 
+Trained on column, 
+and tested on row 
+countries. 
+Outperforms 
+current state-of-
+the-art models 
+
+Predicted vs. ground 
+truth value for 
+concatenated 
+Doc2Vec model 
+trained on Ghana 
+and tested on 
+Tanzania. </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

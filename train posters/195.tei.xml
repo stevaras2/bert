@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Input: 400 * 1 word indices Embedding Layer (6573 * 300): Trainable = False</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Input: 400 * 1 word indices Embedding Layer (6573 * 300): Trainable = False</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PREPROCESSING</head><p>We constructed a Word2Vec model using gensim library. The corpus is from the original training, validation, and test datasets. The embedding size is 300, and the words with frequency &lt; 3 are eliminated. The vocabulary length is 6573. We transformed each sentence into a vector of indices, which map the words to this vocabulary, and further to the embedding matrix. We padded each sentence to a length of 350 for SVM and XGBoost, and 400 for LSTM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVM for LINEAR REGRESSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SVM</head><p>We first extract the embedding vectors for each word in a sentence through indices, to form a sentence matrix. Then we created sentence feature vectors for training, validation, and test sets by averaging the sentence matrix along the vertical axis to get a vector. Each observation is a vector of size (1, 300). We tuned gamma, learning rates, kernel type through cross validation, and used linear SVC for our final model. XGBOOST The inputs are the same with SVM. We used GridSearchCV to tune for parameters including learning rate and max depth.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CNN for FEATURE EXTRACTION</head><p>FUTURE WORK 1. Collect better-labelled data; 2. Improve the quality of language representation models; Implement contextual representation, e.g. BERT; 3. Apply Attention mechanism for long input texts.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ABSTRACT</head><p>In this project we implemented 3 types of models (SVM, XGBoost, LSTM) for the fine-grained sentiment analysis of user reviews about restaurants in Chinese language. There are 20 elements, and 4 labels (positive, neutral, negative, not mentioned) for each of them. We trained one model of each type for each of the elements. On the whole, XGBoost has the best performance based on the accuracies, weighted f1 scores, and efficiencies.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>12/11/18 Copyright@Suofei&amp;Eziz</head><p>We constructed a two-layer LSTM (Long Short Term Memory) neural network. This model takes the 105,000 outputs of size (1, 400) from feature extraction step as the input. The embedding matrix takes weights from the Word2Vec model, and is not trainable. Apart from hyperparameters shown in the graph, we also modified class weights according to class distributions in each element. We used categorical cross entropy as the loss function:   Possible problems with the models:</p><formula xml:id="formula_0">L(✓) = 1 n n X i=1 4 X j=1 y ij log(p ij ) &lt; l a</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>x i t &gt; &lt; l a t e x i t s h a 1 _ b a s e 6 4 = " M i 2 E a x o 8 U E A b I T N 4 5 Y I m 2 / g 9 B U Y = " &gt; A A A C N H i c b V D L S g M x F M 3 4 r P V V d e k m W I S 6 s M y I o B t B d C P o o o K 1 h U 4 t m T T T p i a Z I b k j l G E + y o 0 f 4 k Y E F 4 q 4 9 R v M 1 C K + D g T O P e d e c u 8 J Y s E N u O 6 j M z E 5 N T 0 z W 5 g r z i 8 s L i 2 X V l Y v T Z R o y u o 0 E p F u B s Q w w R W r A w f B m r F m R A a C N Y L r 4 9 x v 3 D B t e K Q u Y B i z t i Q</head><p>• Label qualities;</p><p>• Long sentences;</p><p>• Vocabulary size.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>PREPROCESSING &amp; FEATURE EXTRACTIONModels Dish Recommendation Service Wait Time Location Traffic Convenience LSTM 0.6524 0.8776 0.8389 SVM 0.7561 0.8381 0.8563 XGBoost 0.7582 0.8326 0.8382 Test F1 scores for Top 3 Topics in Latent Dirichlet Allocation (LDA)</figDesc><table>Models 
+Dish 
+Recommendation 
+
+Service Wait Time Location Traffic 
+Convenience 
+LSTM 
+0.6524 
+0.8776 
+0.8389 
+
+SVM 
+0.7561 
+0.8381 
+0.8563 
+XGBoost 
+0.7582 
+0.8326 
+0.8382 
+
+We used accuracies 
+and weighted F1 
+scores as our metrics. 
+The graph shows a 
+very fluctuating test 
+accuracies across 20 
+elements. In general, 
+the XGBoost models 
+have better results. 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

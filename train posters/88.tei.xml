@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:20+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>For the confusion matrix, the TPR and FPR are 69.80% and 26.96% for Logistic Regression, 84.04% and 39.16% for Random Forests, and 74.12% and 26.81% for KNN respectively. Random Forests performs best on Confusion Matrix. We selected KNN model to run on test set with: Accuracy = 73.70% F1 score: 44.45%</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION EXPERIMENTS FUTURE WORK REFERENCE RESULTS</head><p>• Include more features of the companies, such as business description.</p><p>• Try more complex models, such as Neural Network and pre-trained word embedding.</p><p>• Try kernel method as moving the data to higher dimensional space.</p><p>• Explore some new questions, such as predicting the total funding size for a company (regression problem).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>The dataset we use is extracted from Crunchbase Data Export containing 60K+ companies' information updated to December 2015.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Logistic Regression</head><p>Logistic regression is s widely-used algorithm to model a binary dependent variable with many independent variables.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random Forest</head><p>Random Forest is an ensemble learning method for classification with constructing a multitude of decision trees at training time and outputting the class that is the mode of the classes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>K Nearest Neighbours</head><p>We classify an object by a majority vote of its K nearest neighbours.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DATASET &amp; METHODS</head><p>Random Forests have the best accuracy while KNN has the highest F1 score and the highest AUC score.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Preprocessing</head><p>• Extracted and merged the companies' information from several original files.</p><p>• Labelled all the data with 1 or 0 based on the companies' status. 1 = Acquired or IPO; 0 = Otherwise.</p><p>• Edited, filtered and selected meaningful features.</p><formula xml:id="formula_0">○ category_list Audio|Mobile|Music ○ funding_total_usd 440000 ○ country_code AUS ○ funding_rounds 3 ○ Num_of_investor 3 ○ funding_duration 425 ○ first_funding_at_UTC 15461 ○ last_funding_at_UTC 15886 ○ label 0</formula><p>• Used up-sample method to balance the training set.</p><p>• Normalized numerical features.</p><p>• Encoded text features using bag-of-words model. This table below shows the number of training, evaluation and test data for original and up-sampled dataset.</p><p>Model Selection we present three metrics:</p><p>• Accuracy: The proportion we have predicted right.</p><p>• F1 Score:</p><p>• AUC Score: Area under the ROC Curve, which is an aggregate measure of performance across all possible classification thresholds.</p><p>• TPR = TP / (TP + FN), FPR = FP / (FP + TN)</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:20+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Airbnb Price Estimation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Airbnb Price Estimation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>• Why? Evaluating the price of a listing on Airbnb is challenging for the owner as well as the customers who have minimal knowledge of an optimal price. This project aims to provide a price prediction model to help solve this challenge.</p><p>• What? Several models have been studied ranging from linear regression to tree-based models and neural nets. To boost the models' performance several feature selection schemas have been explored.</p><p>• Results: Using feature selection, hyperparameter tuning, and a variety of models, the R 2 of the prediction was improved from a negative value to 69% for the best model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>• Dataset: Public Airbnb dataset for New York City 1 • Data Description:~50,000 examples (listings) with 96 features from owner information to property characteristics such as number of rooms and bathrooms as well as geographic coordinates of the listings • Labels: Price of the listing (ground truth)-also included in the data ( <ref type="figure">figure 1</ref> shows the geographic spread of the labelled data points)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p>• Discussion: The dataset contained too many features, which led to model overfitting, causing variation of error to rise. Feature importance analysis using Lasso regularization improved performance, and using more advanced models such as SVR and neural networks resulted in higher R 2 score for both validation and test sets. Given the heterogeneity of the dataset a 69% R 2 score for the best performing model (SVR) is a decent outcome.</p><p>• Future: The future work on this project can include (i) studying other feature selection schemas such as Random Forest feature importance, (ii) further experimentation with neural net architectures, and (iii) getting more training examples from other hospitality services such as VRBO to boost the performance of Kmeans clustering + Ridge Regression model specifically.</p><p>Training (39,980 examples) and validation (4,998 examples) splits were used to evaluate different models. Unused test split (4,998 examples) was used to provide unbiased estimate of error.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Feature Description</head><p>• The raw dataset included 96 features including categorical and ones with too many missing entries • The incomplete features were removed and the categorical ones were transformed into one-hot vectors • Raw text of the listings reviews was analyzed using TextBlob 4 module • Data preprocessing resulted in 764 features which were trimmed down using the following feature analysis methods:</p><p>• Manual feature selection • P-value feature importance analysis • Lasso cross-validation feature importance analysis • The resulting R 2 values for the reduced feature sets are included in figure 2 • Classifying the data points using k-means clustering into one of the groups ( ( ) = arg min || ( ) − || 2 , where j is the index of the group) and using Ridge Regression trained on that specific group Where is the training label.</p><p>• Neural Network of 3 fully connected layers with Relu activation function in the first two layers and linear activation function in the output layer</p><p>• Gradient Boost tree ensemble 2 :</p><p>Let 0 be a constant model. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>•</head><label></label><figDesc>Support Vector Regression 3 with RBF kernel , = exp − || −</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Adding data to the debate</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Inside</forename><surname>Airbnb</surname></persName>
+		</author>
+		<ptr target="http://insideairbnb.com/get-the-data.html" />
+		<imprint>
+			<date type="published" when="2018-12-07" />
+		</imprint>
+	</monogr>
+	<note>Inside Airbnb</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="middle">Chalmers</forename><surname>Cse</surname></persName>
+		</author>
+		<ptr target="http://www.cse.chalmers.se/~richajo/dit865/files/gb_explainer.pdf" />
+		<imprint>
+			<date type="published" when="2018-12-07" />
+		</imprint>
+	</monogr>
+	<note>online] Available at</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+				<ptr target="https://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf?fbclid=IwAR3j" />
+		<title level="m">F3Un2p8avLZgKw6wHc2eyNQePAu7CzQA50uuWBkzTy840tjsjkLGBE</title>
+		<imprint>
+			<date type="published" when="2018-12-07" />
+		</imprint>
+	</monogr>
+	<note>Csie.ntu.edu.tw.. online] Available at. Accessed</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">TextBlob: Simplified Text Processing -TextBlob 0.15.2 documentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="middle">Readthedocs</forename><surname>Textblob</surname></persName>
+		</author>
+		<ptr target="https://textblob.readthedocs.io/en/dev/index.html" />
+		<imprint>
+			<date type="published" when="2018-12-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

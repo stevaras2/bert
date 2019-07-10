@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Machine learning application in optimization of flexible circuit configuration CEE Department</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-11">December 11, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ren</forename><surname>Gibbons</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS 229 Project</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Prajwal</forename><forename type="middle">K A</forename></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS 229 Project</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Machine learning application in optimization of flexible circuit configuration CEE Department</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-11">December 11, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Motivation Reinforcement learning approach Supervised learning approach</p><p>• Flexible circuits are of great interest to hardware manufacturers. However, achieving desired stretchability is difficult since transistor elements are relatively stiff and are easily damaged.</p><p>• One solution is to place semi-rigid transistors on a flexible polymer substrate.</p><p>• Next, we can optimize the transistor placement on the substrate using particle swarm optimization to minimize some objective (area, factor of safety, etc.).</p><p>• This has been successfully performed for 3-transistor circuits. However, the algorithm is computationally expensive.</p><p>• This motivates machine learning on a dataset of optimizations run offline to quickly predict an optimized geometry.</p><p>• We present the results of two supervised learning approaches -multivariate linear regression (MLR) and multivariate adaptive regression splines (MARS).</p><p>• Next, we present a starting framework for using reinforcement learning to optimize the circuit geometry which can ensure that constraints are satisfied.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Importance of flexible circuits</head><p>Flexible electronics is an exciting research area because potential applications are widespread. Cellphones, medical devices, and exercise monitors will benefit from flexible components.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Optimization problem</head><p>Unfortunately, stiff and fragile transistors elements complicate the production of reliable flexible circuits. One solution is to place the elements on a compliant polymer substrate and optimize the geometry. We use a particle swarm optimization tool to minimize circuit area:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>min × s.t. geometry is valid strain energy not exceeded</head><p>The algorithm uses 60 particles, where each particle is a possible geometric configuration, and a finite element simulation is run to see if the geometry is safe when strained by 50%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>• Inputs: 3 transistors, each with specified width ( ), </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulations</head><p>We use Latin hypercube sampling to randomly generate our input features, ensuring an appropriate span of the input space, where , ℎ ∈ 0.2mm, 2mm , ∈ 5MPa, 50MPa , and ∈ [0.005,0.01]. We generated 1,000 samples, which took two weeks of wall-clock time on 72 cores in parallel.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data augmentation</head><p>Since our data is expensive to obtain, we use an augmentation technique to increase the size of our dataset.</p><p>We permute the indices of each of the three transistors, giving an augmented dataset of size = 3! × 1,000 = 6,000 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Why machine learning for this problem?</head><p>Each PSO simulation takes roughly 24 hours on a single core. This expense is unreasonable for a large number of circuits to be designed, so machine learning can help speed up the process. For both MLR and MARS, we separate the data into 80% training set, 10% validation set, 10% test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multivariate linear regression (MLR)</head><p>MLR is a learning technique that generates a model to linearly predict an array of outputs of form = 0 + 1 1 + ⋯ + for the th observation and th feature. After training, we compute the MSE and absolute difference both the regular and augmented dataset with the results below. The difference in errors between the training and test data are small, so MLR has low bias. However, the augmented data set appears to somewhat help prediction performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multivariate adaptive spline regression (MARS)</head><p>MARS performs regression on a set of features and searches for nonlinear interactions in the training set by performing two stages. The forward stage looks for points to minimize MSE, and the pruning stage finds a subset of terms by minimizing a cross-validation score. The model is then comprised of a constant, linear functions, and hinge functions. MARS gives the results in the table below. The MARS model does not appear to perform significantly differently from MLR.</p><p>The box plot below shows the distribution of errors. Both MLR and MARS suffer from high outliers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization of predicted design</head><p>The figure below is an example of a predicted configure from the MLR model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem: violated constraints</head><p>The figure of the predicted configuration shows overlapping transistor elements. This is one limitation of a supervised learning approach: no simple way to enforce constraints. One workaround is to linearly scale the configuration until no overlap is observed as shown below. Performing this procedure on the MLR test set results in a mean size increase of 802% compared to the optimized shape. This is not a satisfactory result, which motivates a reinforcement learning approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reinforcement learning</head><p>Our optimization problem ideally falls into the category of continuous space and continuous action problem. To compound this, the continuous space for the transistor coordinates also keeps changing with area. As this is a complex problem, a simpler model having the area fixed is solved for maximizing the Factor of Safety (FS) of transistors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>=</head><p>In the RL algorithms, high positive rewards are given to global maximum state and high negative rewards for violated constraints. The state with the highest reward is output as the optimized solution.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Flexible circuits are of great interest to hardware manufacturers. However, achieving desired stretchability is difficult since transistor elements are relatively stiff and are easily damaged.</p><p>• One solution is to place semi-rigid transistors on a flexible polymer substrate.</p><p>• Next, we can optimize the transistor placement on the substrate using particle swarm optimization to minimize some objective (area, factor of safety, etc.).</p><p>• This has been successfully performed for 3-transistor circuits. However, the algorithm is computationally expensive.</p><p>• This motivates machine learning on a dataset of optimizations run offline to quickly predict an optimized geometry.</p><p>• We present the results of two supervised learning approaches -multivariate linear regression (MLR) and multivariate adaptive regression splines (MARS).</p><p>• Next, we present a starting framework for using reinforcement learning to optimize the circuit geometry which can ensure that constraints are satisfied.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Importance of flexible circuits</head><p>Flexible electronics is an exciting research area because potential applications are widespread. Cellphones, medical devices, and exercise monitors will benefit from flexible components.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Optimization problem</head><p>Unfortunately, stiff and fragile transistors elements complicate the production of reliable flexible circuits. One solution is to place the elements on a compliant polymer substrate and optimize the geometry. We use a particle swarm optimization tool to minimize circuit area:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>min × s.t. geometry is valid strain energy not exceeded</head><p>The algorithm uses 60 particles, where each particle is a possible geometric configuration, and a finite element simulation is run to see if the geometry is safe when strained by 50%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>• Inputs: 3 transistors, each with specified width ( ), </p><formula xml:id="formula_0">height (ℎ),</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulations</head><p>We use Latin hypercube sampling to randomly generate our input features, ensuring an appropriate span of the input space, where , ℎ ∈ 0.2mm, 2mm , ∈ 5MPa, 50MPa , and ∈ [0.005,0.01]. We generated 1,000 samples, which took two weeks of wall-clock time on 72 cores in parallel.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data augmentation</head><p>Since our data is expensive to obtain, we use an augmentation technique to increase the size of our dataset.</p><p>We permute the indices of each of the three transistors, giving an augmented dataset of size = 3! × 1,000 = 6,000 .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Why machine learning for this problem?</head><p>Each PSO simulation takes roughly 24 hours on a single core. This expense is unreasonable for a large number of circuits to be designed, so machine learning can help speed up the process. For both MLR and MARS, we separate the data into 80% training set, 10% validation set, 10% test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multivariate linear regression (MLR)</head><p>MLR is a learning technique that generates a model to linearly predict an array of outputs of form = 0 + 1 1 + ⋯ + for the th observation and th feature. After training, we compute the MSE and absolute difference both the regular and augmented dataset with the results below. The difference in errors between the training and test data are small, so MLR has low bias. However, the augmented data set appears to somewhat help prediction performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Multivariate adaptive spline regression (MARS)</head><p>MARS performs regression on a set of features and searches for nonlinear interactions in the training set by performing two stages. The forward stage looks for points to minimize MSE, and the pruning stage finds a subset of terms by minimizing a cross-validation score. The model is then comprised of a constant, linear functions, and hinge functions. MARS gives the results in the table below. The MARS model does not appear to perform significantly differently from MLR.</p><p>The box plot below shows the distribution of errors. Both MLR and MARS suffer from high outliers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization of predicted design</head><p>The figure below is an example of a predicted configure from the MLR model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Problem: violated constraints</head><p>The figure of the predicted configuration shows overlapping transistor elements. This is one limitation of a supervised learning approach: no simple way to enforce constraints. One workaround is to linearly scale the configuration until no overlap is observed as shown below. Performing this procedure on the MLR test set results in a mean size increase of 802% compared to the optimized shape. This is not a satisfactory result, which motivates a reinforcement learning approach.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reinforcement learning</head><p>Our optimization problem ideally falls into the category of continuous space and continuous action problem. To compound this, the continuous space for the transistor coordinates also keeps changing with area. As this is a complex problem, a simpler model having the area fixed is solved for maximizing the Factor of Safety (FS) of transistors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>=</head><p>In the RL algorithms, high positive rewards are given to global maximum state and high negative rewards for violated constraints. The state with the highest reward is output as the optimized solution.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Value iterations for discretized space</head><p>The simplest way to apply Reinforcement Learning to a complex continuous problem is by discretizing it. Both the space and actions are discretized. Random initializations contribute to uniform search over the domain. The optimal value function ( * ) is learnt using Bellman's equation</p><formula xml:id="formula_1">. * = + max ′ ( ′ ) * ( ′ )</formula><p>A sample simulation by discretizing the space into 4097 states and actions into 125 states produced an optimized configuration as shown below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fitted value iteration for continuous space</head><p>This is currently being worked on. The space is considered as continuous but the actions are discretized. In this method, we approximate the optimal value function as a function of the states, initially using Linear Regression.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussions</head><p>• Both MLR and MARS consider the output features to be independent of each other and just depend on the input features. This assumption doesn't hold in this problem and hence, they do not perform well.</p><p>• The amount of data we had for training the model is very less. This compelled us against using Deep Learning techniques like Recurrent Neural Networks (RNN) which considers the interactions between the outputs.</p><p>• The data we get by optimization is bereft of failed/unsafe configurations. Thus, supervised learning algorithms cannot learn anything about the safety of a resulting configuration.</p><p>• Linear scaling of the configuration to remove overlap is not a good solution for the problem of violated constraints as it results in a very high increase in area.</p><p>• Observing these drawbacks of supervised learning, it can be considered to not be a good method for this application. This urged us to look at Reinforcement Learning.</p><p>• Though value iterations by discretizing considers all the constraints, it may not be a good algorithm for optimization problems that are not convex as it takes a large amount of iterations and time.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>• The next immediate work would be to get results from the fitted value iteration method for continuous space.</p><p>• Next, we wish to extend this to the original problem of minimizing the area with continuous action space. This basically would be equivalent to an optimization algorithm.</p><p>• With more data, we would wish to observe how well Recurrent Neural Networks can handle the constraints.</p><p>• The main application of this project is in optimizing the design of complex circuits with a large number of transistors. So, we wish to extend these methods to larger circuits either by discretizing them into smaller circuits with 3 transistors and stitching them back, or by applying the RL for continuous space and actions directly to the method if it is scalable.</p><p>• Reza Rastak, CEE PhD candidate, author of PSO algorithm used in this project, offered advice and access to his code. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>• CS 229, PS 4, 2018, provided a template for the RL implementation.</figDesc><table>MLR 
+MSE 
+MSE (aug) 
+Abs. diff. Abs. diff (aug) 
+Training data 
+2.102 
+2.338 
+1.095 
+1.187 
+Test data 
+2.717 
+2.236 
+1.194 
+1.178 
+
+MARS 
+MSE 
+MSE (aug) 
+Abs. diff. Abs. diff (aug) 
+Training data 
+1.745 
+2.341 
+0.997 
+1.189 
+Test data 
+2.815 
+2.234 
+1.242 
+1.181 </table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Multivariate adaptive regression splines. The annals of statistics</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1991" />
+			<biblScope unit="volume">19</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">On Latin hypercube sampling for structural reliability analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">•</forename><surname>Olsson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Structural Safety</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="47" to="68" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

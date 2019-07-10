@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Human Action Recognition With CNN and BoW Methods Future Work</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Max</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ting-Chun</forename><surname>Yeh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Human Action Recognition With CNN and BoW Methods Future Work</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Data &amp; Methods Discussion CS229 Machine Learning Spring 2016</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>postersession.</p><p>com Human Action Recognition has been an integral part of recent work in both computer vision (CV) and machine learning (ML). While existing methods do well classifying objects, being able to recognize the primary action in any given image is still a challenge. This would be applicable to data analysis, AI, and robotics. For example, autonomous cars can use this information to discern whether or not a pedestrian might run in front of a car. This goal has spawned other realms of research, such as parts identification and pose estimation.</p><p>We tackled the root of this problem by seeing if we could create a learner that would recognize high level actions in real-world images. We built on previous work that used convolutional neural networks (CNN) and Bag of Word (BoW) methods that showed promise. We also examined our action data set to learn important feature information that may help improve our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data &amp; Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Human Action Recognition With CNN and BoW Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Max Wang &amp; Ting-Chun Yeh</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stanford University CS229 Machine Learning Spring 2016</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>Data: We used the Stanford40action dataset. Due to technical limitations, we chose 8 representative actions and worked with 2300 images for training and testing. We ran below methods on this data, and we also cropped images based on desired subject location to compare result. Features: We examined the features that the CNN and BOW methods think are important. We looked at Caffenet as a basis, and we visualized the values from its various layer's weights and outputs. Also, we extracted the last FC layer's outputs for each photo and clustered them using the t-SNE algorithm. We then used backward matching to visualized the test data set for further study.</p><p>For BOW, we used the histograms of features it grabs and matched them to the pixels on the original photo.</p><p>1. Examine lower-layer feature and higher-layer feature to see if the higher layer feature is always better and if it is possible to use lower feature. 2. Recognize background scheme and connect it with action prediction. We think background recognition can help action recognition.</p><p>We tried many promising models that could solve our problem. As expected, default CaffeNet and GoogleNet are effective classifiers. However, BoW methods did not perform nearly as well.</p><p>When we examined the data, we saw that both CNN and BoW were using noise from the background as features. We attempted two ways to resolve this issue. First, we created our own CNN with larger kernel sizes and fewer conv layers in order to increase locality. But we did not achieve very high performance, likely due to CNN's being very difficult to tune by nature. Second, we cropped our data to only include features that we wanted to classify before running the models. However, we noticed that the performance actually dropped by a little bit. We realized that some background features actually aid the models in classifying the action. This is particularly the case for "climbing" and "jumping" photos where the models require a view of the scenery to more accurate classify the action.</p><p>Knowing that CNN's do a great job identifying useful features, we extracted the features from the last FC layer of the CNN and used other classifiers to classify the action. We achieved our highest accuracy with this method.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Human Action Recognition has been an integral part of recent work in both computer vision (CV) and machine learning (ML). While existing methods do well classifying objects, being able to recognize the primary action in any given image is still a challenge. This would be applicable to data analysis, AI, and robotics. For example, autonomous cars can use this information to discern whether or not a pedestrian might run in front of a car. This goal has spawned other realms of research, such as parts identification and pose estimation.</p><p>We tackled the root of this problem by seeing if we could create a learner that would recognize high level actions in real-world images. We built on previous work that used convolutional neural networks (CNN) and Bag of Word (BoW) methods that showed promise. We also examined our action data set to learn important feature information that may help improve our results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data &amp; Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Human Action Recognition With CNN and BoW Methods </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>Data: We used the Stanford40action dataset. Due to technical limitations, we chose 8 representative actions and worked with 2300 images for training and testing. We ran below methods on this data, and we also cropped images based on desired subject location to compare result. Features: We examined the features that the CNN and BOW methods think are important. We looked at Caffenet as a basis, and we visualized the values from its various layer's weights and outputs. Also, we extracted the last FC layer's outputs for each photo and clustered them using the t-SNE algorithm. We then used backward matching to visualized the test data set for further study.</p><p>For BOW, we used the histograms of features it grabs and matched them to the pixels on the original photo.</p><p>1. Examine lower-layer feature and higher-layer feature to see if the higher layer feature is always better and if it is possible to use lower feature. 2. Recognize background scheme and connect it with action prediction. We think background recognition can help action recognition.</p><p>We tried many promising models that could solve our problem. As expected, default CaffeNet and GoogleNet are effective classifiers. However, BoW methods did not perform nearly as well.</p><p>When we examined the data, we saw that both CNN and BoW were using noise from the background as features. We attempted two ways to resolve this issue. First, we created our own CNN with larger kernel sizes and fewer conv layers in order to increase locality. But we did not achieve very high performance, likely due to CNN's being very difficult to tune by nature. Second, we cropped our data to only include features that we wanted to classify before running the models. However, we noticed that the performance actually dropped by a little bit. We realized that some background features actually aid the models in classifying the action. This is particularly the case for "climbing" and "jumping" photos where the models require a view of the scenery to more accurate classify the action.</p><p>Knowing that CNN's do a great job identifying useful features, we extracted the features from the last FC layer of the CNN and used other classifiers to classify the action. We achieved our highest accuracy with this method.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction Results</head><p>Original image (k = 300)</p><p>Original image (k = 200)</p><p>Action region (k = 300) </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>CNN:Fine-tuned existing CNN architectures and made new ones -CaffeNet: 5 convultion layers and 2 FC layers -GoogleNet: inception modules -Reduced CNN: our own model with 3 conv. layers and 2 FC BOW: Extracted features using Dense SIFT then apply classifier -SVM (linear, poly, rbf, chi-square),</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>CNN net 1: 3 CV layers + 2 FC layers &amp; 2Dropouts CNN net 2: 3 CV layers + 2 FC layers &amp; 1Dropout CNN net 3: 3 CV layers + 2 FC layers &amp; 0Dropout (The net is based on Caffenet structure. We delete higher layer and change kernel size and filter size to examine lower layer feature)</figDesc><table>Action region 
+(k = 200) 
+
+SVM(linear) 
+0.4715 
+0.4956 
+0.4649 
+0.4605 
+
+SVM(poly) 
+0.3618 
+0.3991 
+0.1842 
+0.2346 
+
+SVM(rbf) 
+0.4035 
+0.3882 
+0.4386 
+0.4342 
+
+SVM(chi-square) 0.5438 
+0.5372 
+0.5 
+0.4912 
+
+KNN 
+0.2324 
+0.2697 
+0.2697 
+0.3026 
+
+RFC 
+0.3004 
+0.3026 
+0.2982 
+0.3048 
+
+CNN net1 
+CNN net2 
+CNN net3 
+
+KNN 
+0.5438 
+0.5811 
+0.6052 
+
+SVM(linear) 
+0.5833 
+0.5855 
+0.5812 
+
+SVM(rbf) 
+0.5438 
+0.5526 
+0.5701 
+
+RFC 
+0.5526 
+0.5574 
+0.5789 
+
+BoW(SPM+Kmeans) 
+
+CNN 
+
+Feature Findings </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Dropout: A simple way to prevent neural networks from overfitting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nitish</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ruslan</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page">15</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">3D convolutional neural networks for human action recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shuiwang</forename><surname>Ji</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="221" to="231" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>Pattern Analysis and Machine Intelligence</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Human Action Recognition based on Convolutional Neural Networks with a Convolutional AutoEncoder</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chi</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jianxin</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">5th International Conference on Computer Sciences and Automation Engineering</title>
+		<imprint/>
+	</monogr>
+	<note>ICCSAE 2015</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Yao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">X</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Khosla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">L</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">J</forename><surname>Guibas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Fei-Fei</surname></persName>
+		</author>
+		<title level="m">Human Action Recognition by Learning Bases of Action Attributes and Parts. Internation Conference on Computer Vision (ICCV)</title>
+		<meeting><address><addrLine>Barcelona, Spain</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

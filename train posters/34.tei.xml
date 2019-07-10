@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:18+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>• Bigger images • Different sequence lengths • More layers</term>
+					<term>encoding + decoding • Layer parameters</term>
+					<term># filters, stride, etc • Bidirectionality options</term>
+				</keywords>
+			</textClass>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUTURE WORK EXPERIMENTAL RESULTS -PERFORMANCE METRICS</head><p>• Complexity -meaningfully, creatively using convolutions and LSTMs for interesting applications; here inside a U-Net encoder-decoder architecture..</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• Comparison to baselines</head><p>(DepthNet) is difficult, because we chose different image size and parameter sizes due to machine constraints.</p><p>• LSTM and bidirectionality have not distinguished themselves from convolutions.</p><p>• Computation slow.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>REVIEW -DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>U-N.O.1T: A U-NET EXPLORATION, IN DEPTH JOHN CHUTER (JCHUTER), GEOFFREY BOULLANGER (GBAKKER), MANUEL NIEVES (MNIEVESS)</head><p>Objective: Given a video feed, infer a corresponding depth map sequence. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DATASET -FEATURES</head><formula xml:id="formula_0">convLSTM: i t = σ(ReLU(W xi * X t + W hi * H t−1 + W ci • C t−1 + b i ) ) f t = σ(ReLU(W xf * X t + W hf * H t−1 + W cf • C t−1 + b f ) ) g t = tanh(ReLU((W xg * X t + Whg * H t−1 + b g ) ) C t = f t • C t−1 + it • g t o t = σ(ReLU(W xo * X t + W ho * H t−1 + W co • C t + b o ) ) H t = o t • tanh(C t )</formula><p>where * refers to a convolution operation see 'Model -Specifics' </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MODEL -MATH</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>fig.1 Encoder-Decoder U-Net</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>•</head><label></label><figDesc>DepthNet • Convolutional LSTM Network: A Machine LearningApproach for Precipitation Nowcasting</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGEMENTS -LITERATURE</head><p>We would like to thank Professor Ng and Professor Dror, as well as the TAs, for their dedicated instruction. </p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

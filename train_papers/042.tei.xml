@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Twitter US Airline Recommendation Prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaotong</forename><surname>Duan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianshu</forename><surname>Ji</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wanyi</forename><surname>Qian</surname></persName>
+						</author>
+						<title level="a" type="main">Twitter US Airline Recommendation Prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>000 001</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>The goals of this project are 1) build a model for six major U.S. airlines that performs sentiment analysis on customer reviews so that the airlines can have fast and concise feedback, 2) make recommendations on the most important aspect of services they could improve given customers' complains. In this project, we performed multi-class classification using Naive Bayes, SVM and Neural Network on the Twitter US Airline data set from Kaggle. Significant accuracy has achieved, which shows that our models are reliable for future prediction.</p></div>
+			</abstract>
+		</profileDesc>
+		<revisionDesc>
+				<date type="submission" when="-1" />
+		</revisionDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>In recent years, Twitter has become the de facto online customer service platform. Thus, a companys image on Twitter is of central importance and this is especially true for airlines given that many tweets are travel-related in nature. In fact, research has shown that responding to tweets has revenue generating potential, drives higher satisfaction than other customer service channels, and perhaps most importantly, satisfied Twitter users spread the word. In this project, we use tweets gathered from Twitter to learn about people's flight experiences and give airline companies suggestions on how to make their trip more enjoyable.</p><p>The data set contains about 15,000 tweets, collected from February 2015 on various airline reviews. Every review is labeled as either positive, negative or neutral. First, we want to build a model to perform sentiment analysis on the data set. Second, more interestingly, we want to assign a reason to each negative response, such as late flight, lost luggage, etc. In our data set, about 80% of the negative reviews has a negative reason label, yet the rests are labeled as "can't tell". Our goal is to assign a label to this unspecified group. By knowing every review's negative reason, we can give specific suggestions to different airline companies on how to improve their service.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Background and Related Work</head><p>Nowadays, developing and testing different models for a natural language processing problem is an interesting and challenging task. However, due to the nature of the problem, the accuracy of sentiment analysis on single sentence like movie reviews never reaches above 80% for the past 7 years <ref type="bibr" target="#b0">[1]</ref>. Looking at last years project on twitter <ref type="bibr" target="#b1">[2]</ref>, their accuracy was 59.32% to 63.71%, depending on different models. In our project, we achieved near 20% more than their result, which is a significant improvement.</p><p>Since tweets texts are usually short and verbal, the same problem presents in our data set as well. However, even though the tweets are short, there are strong indicative words. Specific words can be used as indicators for spam/ham emails and achieve good test accuracy. Therefore, we believe that tweets review, without many negating negatives, can be predicted well using the frequency vector representation. To prove this, we will use Recurrent Neural Network model and the GloVe word vector <ref type="bibr" target="#b2">[3]</ref> to compare the result.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Approach</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Dataset</head><p>The sentiment analysis labels are positive(20%), negative(60%), and neutral(20%). The negative reason labels are bad flight(7.45%), canceled flight(9.62%), customer services issues(39.77%), damaged luggage(0.84%), flight attendant complaints(6.05%), flight booking problems(6.19%), late flights(1.99%), long lines(19.97%), and lost luggage(8.23%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1">Preprocess of Dataset</head><p>In the preprocessing step, non-English word, symbols and website links are eliminated. Then the whole data set is randomly separated into training set (10000 samples, 70%) and test set (4636 samples, 30%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.2">Dictionary</head><p>The dictionary is made based on the training data and all sentences are broken down into list of words: (1) Delete common words such as a, an, to, of, on etc. with high frequency but little semantic usage. (2) Stem words, such as "thanks" and "thank" as one word. (3) Delete low frequency words that appear once to reduce the size of dictionary for calculation efficiency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.3">Frequencies Matrix</head><p>A feature matrix is built to convert the textual information into numerical information. In the feature matrix, the number of rows indicates the number of samples, the number of columns is the length of the dictionary, and each element indicates whether the specific word has appeared in the current review, 1 for existence and 0 for absence.</p><p>To get a sense of correlation presented in our feature matrix, i.e. "bad" and "suck" may have a higher chance to present together, we perform PCA to capture the variance. The result shows that for the first component, variance explained is 2.3%, and for the next nine components, the variance explained is all around 1.0%. This shows that there isn't significant correlation between words and to achieve better accuracy, we include all the words in the dictionary. We propose that the lack of correlation comes from the nature of the text data. Most of them are very short sentences and extremely verbal.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Models</head><p>1. Naive Bayes with multinomial event model from sklearn is used. Input is the frequency vector and Laplace smoothing is used.</p><formula xml:id="formula_0">θ yi = N yi + α N y + αn<label>(1)</label></formula><p>2. Support vector machines with linear kernel and RBF kernel are used in this project. SVM uses the same input and implementation package as Naive Bayes.</p><formula xml:id="formula_1">K(u, v) = u T v (2) K(u, v) = exp(− u − v 2 2σ 2 )<label>(3)</label></formula><p>3. Neural Network Tensorflow is used in implementation. Input is the frequency vector that represents a review. The output is a vector with probabilities for different classes and the highest is selected as prediction. Label is a one-hot vector that represents the class. Loss function is cross entropy plus a regularization term. The vanilla Neural Network that we use:</p><formula xml:id="formula_2">h = W x + b (4) y = sof tmax(W h + b)<label>(5)</label></formula><p>4. Recurrent Neural Network A Bi-directional Gated Recurrent Unit Network (GRU) can capture the structure features of a sentence. Also, it solves the vanishing gradient problem which many recurrent neural network models have. Bi-directional GRU is commonly used in text analysis, which we want to compare with our models. Package scikit is used for implementation. In GRU, word vectors, instead of frequency vector, will be used and we choose glove.twitter.27B.zip. <ref type="bibr" target="#b2">[3]</ref> These are pre-trained word vectors that are trained on twitter data set. The math for GRU is shown as follows:</p><formula xml:id="formula_3">For right direction − → h (i) t − → z (i) t = σ( − → W (z) i x (i) t + − → U (z) i h (i) t−1 ) (6) − → r (i) t = σ( − → W (r) i x (i) t + − → U (r) i h (i) t−1 )<label>(7)</label></formula><formula xml:id="formula_4">h (i) t = tanh( − → W i x t + r t • − → U i h t−1 )<label>(8)</label></formula><formula xml:id="formula_5">− → h (i) t = z (i) t • h (i) t−1 + (1 − z (i) t ) • h (i) t<label>(9)</label></formula><p>Similarly for ← − </p><formula xml:id="formula_6">h (i) t Output y t = sof tmax(U [ − → h (top) t ; ← − h (top) t ] + c)<label>(10</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2">Support Vector Machine With Linear Kernel</head><p>Before tuning the regularization, SVM with linear kernel, RBF kernel results in 0.23, 0.21 test error, respectively. Therefore, SVM with RBF kernel is excluded from future tuning due to the higher initial test error. L2 regularization is used to avoid overfitting. According to the graph shown below, the lowest test error (0.200) is achieved when L2 regularization is 0.02. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.3">One layer neural network</head><p>In each stochastic gradient descent step, only a batch of 100 samples is used in SGD to increase the training speed. Tuning parameters are learning step and regularization term, which are 0.01 and 0 respectively. The best test error for this one layer neural network is 26.3374%</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.4">Bi-directional Gated Recurrent Unit Network</head><p>Word vectors from GloVe with a dimension of 50 will be used in GRU. A 2-layer GRU has a test error of 26.5%. A 3-layer GRU has a test error of 25.6%. Learning step is 0.01; l2 is 0.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.5">Sentiment Analysis Result</head><p>In sentiment analysis task, SVM with linear Kernel achieves the best test accuracy. Therefore, SVM is recommended in this section. According to the result from linear SVM, Virgin American performs the best according to its lowest negative review composition in its total reviews.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Negative Reason Prediction</head><p>In this section, the goal is to determine the most negative reason on flight services. All the negative reviews have been collected for this task, and separated into labeled set and unlabeled set. We will make predictions on the unlabeled set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1">Naive Bayes Classification</head><p>Using Naive Bayes Classification, the test error is average to 29.26% after ten-fold cross-validation, with a Laplace smooth factor of 0.5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2">Support Vector Machine</head><p>L2 regularization is tuned. The best test error for SVM is 32.82%, when l2 regularization = 0.03. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.3">One layer neural network</head><p>Input is same as before. Label's dimension changes to 9. Learning step and regularization term are 0.01 and 0 respectively. The test error is 37.82%</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.4">Negative reasons classification</head><p>Given by the lowest test error, Naive Bayes is used for the prediction of unclassified data. Result is shown below that most complaints are on customer service. One postulate might be due to the high volume of contact. Since various reasons can lead to calling customer service. Thus correlations between classes may play a factor in determining this result.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusion</head><p>• It is pleased that our vectors work. It is surprising that SVM and Naive Bayes perform better than deep learning methods. And the accuracy is very high, 80%. We think the reason behind this is that while movie reviews have a lot of sarcasm <ref type="bibr" target="#b0">[1]</ref>, which is very difficult for any model to grasp, twitter reviews are much more straight forward, and thus most of the sentiments are expressed directly at the word level. That is to say, with specific word appearance, sentiment is indicated clearly, which justifies our feature representation using frequency vector. It is possible to judge a twitter airline review's sentiment only by identifying positive words in a review. Therefore, given the nature of our data set, the task can be solved at bag-of-word level well.</p><p>• However, it is too early to say that neural network can not perform better than bag-of-word models. The frequency vector used in vanilla neural network is so large that takes enormous time to train, roughly 6 hours for 10,000 iterations now. Therefore, clever ways of reducing frequency vector size are needed. Meanwhile, better tuning parameters can be figured out once training time is significantly decreased.</p><p>• Another possible reason is that for recurrent neural network, GRU in our project, labeling every node is very important. While this model can achieve as high as above 80% accuracy using Stanford Sentiment Tree Bank dataset[4], Our results show that without sufficient labeling, this model is not able to achieve an accuracy above 80%, which means RNN family needs strong supervision. However, most of the online reviews and other documents only have limited labels. Better labeling algorithm on new data set should be thought about in future work.</p><p>6 Reference</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>α</head><label></label><figDesc>(smoothing parameter) is tuned. The lowest test error (0.214) is achieved when α is 0.5 or 1. α = 1 is used in further experiments.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Sentiment Analysis test error</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Negative reason test error</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Negative Reason Classification</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lee</forename><surname>Pang</surname></persName>
+		</author>
+		<title level="m">CS224D Slides</title>
+		<imprint>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Twitter Sentiment Analysis with Recursive Neural Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhou</forename><surname>Yuan</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">GloVe: Global Vectors for Word Representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Socher</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Manning</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

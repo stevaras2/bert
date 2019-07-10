@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Training a Playlist Curator Based on User Taste</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amel</forename><surname>Awadelkarim</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Computational and Mathematical Engineering</orgName>
+								<orgName type="department" key="dep2">Computer Science</orgName>
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">KEVIN COELHO</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Training a Playlist Curator Based on User Taste</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Additional Key Words and Phrases: machine learning</term>
+					<term>deep learning</term>
+					<term>neu- ral network</term>
+					<term>SVM</term>
+					<term>regression</term>
+					<term>feature extraction</term>
+					<term>audio &amp; music</term>
+					<term>playlist</term>
+					<term>classification</term>
+					<term>Spotify</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Playlist curation is time consuming and difficult with few tools available for avid music listeners. Spotify's playlist recommendations rely on song similarity (collaborative filtering), but these recommendations lack the novelty and creativity of an individual creator's taste. In this paper, we propose a playlist classifier, incorporating audio feature and genre data on each track from Spotify's public API. Numerical features include Spotify's audio features, "danceability", "energy", "tempo", etc. Categorical features include genre tags and artist names. For categorical variables, we experimented with different encodings including 1-hot vectors, word2vec, node2vec, and GLOVE. Among the tested models, a neural network with 1 hidden layer achieves the highest measured test accuracy on our "toy-dataset" of 82%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">INTRODUCTION</head><p>Humans are generally good at categorizing and organizing music. We may create novel playlists containing songs that may seem very dissimilar, according to any baseline similarity measures. It is this novelty and deeper level of understanding that we attempt to learn in this work: "How do users put together novel playlists?" Music listeners create playlists based on a multitude of strategies and intents. Many users put similar sounding songs together, some make playlists solely from one artist, others generate heterogeneous mixes spanning multiple genres, eras, and soundscapes. Clearly, the problem of playlist classification increases in difficulty as playlist moods become less concrete and/or separable. To tackle this problem, we will be using Spotify's API to gather audio, artist, and genre data for selected playlists. With a more carefully curated and specialized fingerprint of each playlist, we hope to teach an algorithm to understand what makes that user and their playlists special. the playlist lengths in the dataset. For example, in the toy dataset (section 3), m = 1044. Each song is labeled with an integer, y (i ) ∈ [C], representing one of the C output classes (playlists). In the toy case, C = 13.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">RELATED WORKS</head><p>In general, we would describe our problem space as "non-radio playlist continuation" to distinguish from real-time radio-based solutions. There are a few core concepts in our approach. First, we attempt to model the "theme" of a playlist with minimal assumptions about the user. Second, the model should be scalable and generalizable to any user and any song on a service (we use Spotify). Third, the model should be novel and specific to each user. These concepts are informed by three fundamental pieces of literature in the space which conclude the following:</p><p>• Individuals apply a wide variety of methods and reasoning for how and why their playlists are created <ref type="bibr">[Cunningham et al. [n. d.]</ref>] • Some types of music recommendation algorithms are infeasible at scale <ref type="bibr" target="#b14">[Whitman 2012</ref>] • Song similarity does not equate to user satisfaction with a playlist and current literature is less user centric than it could be <ref type="bibr" target="#b6">[Ha Lee 2011]</ref> Following this, we chose not to use the widely cited "Million Song Dataset" (MSD) <ref type="bibr" target="#b1">[Bertin-Mahieux et al. 2011]</ref> since it would limit our scope of application to songs in that set. Related works have suggested a variety of algorithms including:</p><p>• Model playlists using random walks on a hypergraph of song nodes <ref type="bibr" target="#b10">[Mcfee and Lanckriet 2018]</ref> • Neural networks <ref type="bibr" target="#b12">[Vall et al. 2017]</ref> • Collaborative filtering <ref type="bibr" target="#b12">[Vall et al. 2017]</ref> • K-means <ref type="bibr" target="#b9">[Lin et al. 2018]</ref> • Hybrid collaborative / content-feature methods <ref type="bibr" target="#b12">[Vall et al. 2017;</ref><ref type="bibr" target="#b13">Vall and Widmer 2018]</ref> Drawbacks to some of these implementations include the "out of set" problem -if a song has not been seen by the model, predictions are poor <ref type="bibr" target="#b10">[Mcfee and Lanckriet 2018]</ref>. Other weaknesses include lack of generalizability to individual users due to use of MSD data <ref type="bibr" target="#b10">[Mcfee and Lanckriet 2018;</ref><ref type="bibr" target="#b12">Vall et al. 2017]</ref> or extremely large number of playlists <ref type="bibr" target="#b10">[Mcfee and Lanckriet 2018;</ref><ref type="bibr" target="#b12">Vall et al. 2017]</ref>. Unsupervised methods naturally suffer from producing results that may not align with users' taste <ref type="bibr" target="#b9">[Lin et al. 2018]</ref>.</p><p>Especially due to large data, these implementations would not be fully appropriate for our application, however they introduce important core concepts and algorithms that we have borrowed such as</p><p>• Hybrid feature sets (both collaborative filtering and contentbased features) <ref type="bibr" target="#b12">[Vall et al. 2017;</ref><ref type="bibr" target="#b13">Vall and Widmer 2018]</ref> • Segmentation using content-based features <ref type="bibr" target="#b9">[Lin et al. 2018]</ref> or emotional perception / tagging <ref type="bibr" target="#b2">[Bohra et al. 2015]</ref> • Pre-selecting music a user likes based on their "library" <ref type="bibr" target="#b2">[Bohra et al. 2015;</ref><ref type="bibr" target="#b9">Lin et al. 2018]</ref> • Neural networks to learn playlist-song membership relations <ref type="bibr" target="#b12">[Vall et al. 2017]</ref> • Better evaluation metrics <ref type="bibr" target="#b13">[Vall and Widmer 2018]</ref> • Interactive user interfaces for feedback <ref type="bibr" target="#b13">[Vall and Widmer 2018]</ref> • Vector representations of graphs <ref type="bibr" target="#b5">[Grover and Leskovec 2016]</ref> • Modeling co-occurence <ref type="bibr" target="#b4">[Goldberg and Levy 2014;</ref><ref type="bibr" target="#b11">Pennington et al. 2014</ref>] The biggest difference between our approach and current literature is our small-data approach, training models on a per-user basis, instead of using many thousands of playlists across many users. We believe this makes our model more novel and user-centric. Using features that are available for every song and not using MSD data makes our approach more scalable and generalizable to arbitrary songs and users, and also more robust to the "out of set" problem. For these reasons, we believe our approach to be a significant step towards better playlist curation at an individual level.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">DATASET &amp; FEATURES</head><p>For our first study, we started with data we perceived to be most separable, a "toy set" of C 1 = 13 Spotify-curated playlists:</p><formula xml:id="formula_0">• Dance Rising • All The Feels • Have a Great Day! • Kitchen Swagger • Swagger • Sad Vibe • Afternoon Acoustic • Tender • Jazz Vibes • '90s Baby Makers • Celtic Punk</formula><p>• Country by the Grace of God • Spread the Gospel for a total of m 1 = 1044 tracks. The first experiment is an idealized, fully-supervised setting. We also conduct a second study, generalizing the most successful model on real user data, to truly challenge the models.</p><p>For each playlist, we used Spotify's API to pull tracks, audio features per track, and genre tags per artist in the dataset <ref type="bibr">[aud 2018]</ref>. Track audio features include the following:</p><formula xml:id="formula_1">• Danceability • Energy • Key • Loudness • Mode • Speechiness • Acousticness • Liveness • Valence • Tempo</formula><p>Spotify has developed 2095 genre tags, spanning from broad, ex. "pop" or "r&amp;b", to extremely granular, ex. "australian dance" and "big room". These audio features and genre tags are created with Spotify's internal machine listening and analysis capabilities, acquired mostly from EchoNest <ref type="bibr" target="#b14">[Whitman 2012</ref>]. We presume that Spotify's playlist-curation algorithm relies heavily on these features. To handle categorical data, such as these, we appended one-hot vector representations of the genre tags onto each track, and plan to incorporate NLP methods like node2vec and word2vec to make better use of such tags (section 7). As above mentioned, we also conduct a study on C 2 = 116 of our friends playlists, broadly representing unique moods/styles, for a total of m 2 = 5721 tracks. As the end goal is to build a tool for avid music listeners, it is only right that we ultimately test our successful models in a real-world deployment.</p><p>For both experiments, we split the dataset 80/20, 80% train and 20% test. In the future, we may explore data augmentation techniques to expand the size of these datasets.</p><p>Most of the audio features, ex. "danceability", "energy", and "speechiness", are measures between [0,1]. However, "key" takes on an integer value ∈ [0, 11], "loudness" is a float ∈ [−60, 0] measuring average decibel (dB) reading across a track, and "tempo" is a float representing beats-per-minute (BPM). As such, we explore the effects of applying the standard preprocessing step of subtracting the mean and scaling by the variance of each feature. This ensures that the relative scale of these features do not negatively skew the results. A summary of our results is in section 5.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">METHODS</head><p>The models we elected to compare are perceptron regression, with one-versus-all binary classification for each class, various SVMs (polynomial, sigmoid, and RBF kernels), and two neural network architectures.</p><p>The perceptron update rule, given a sample predictionŷ = h θ (x (i ) ), is given by</p><formula xml:id="formula_2">θ θ + α (y (i ) −ŷ) · x (i ) where h θ (x ) = д(θ ⊤ x ) =      0, if θ ⊤ x &lt; 0 1, otherwise.</formula><p>This update rule comes a generalization of the gradient descent update on the negative log-likelihood for logistic regression. SVMs attempt to find a boundary which maximizes the geometric margin between classes. Specifically, denoting γ the geometric margin, we look to solve the following constrained maximization problem:</p><formula xml:id="formula_3">max γ ,w,b γ s.t. y (i ) (w ⊤ x (i ) + b) ≥ γ , ∀i ∈ [m]</formula><p>||w || = 1.</p><p>I.e., find the separating boundary, given by w and b, such that all samples are a distance of at least γ away from the boundary. The true algorithm solves the dual form of this primal problem, as the problem as stated above is non-convex. The library used for the regression and SVMs is scikit-learn, Python's machine learning platform. Lastly, a neural network can be thought of as a sequence of linear transformations + (non)linear functions applied to an input set of samples, X ∈ R m×n , to obtain a prediction vector, y ∈ R n . y = a h (...a 2 <ref type="figure" target="#fig_0">(W 2 a 1 (W 1 X )</ref>)...)</p><p>where W i is a linear transformation, a i is a (non)linear activation function applied element wise to its argument, and h denotes the number of hidden layers. The neural network attempts to learn a weighting of the input features, W i 's, that best classifies the output. The neural networks were implemented in PyTorch.</p><p>Though we test 6 models/architectures in this work, we have elected to focus most of our efforts on the neural networks to solve the problem. It is difficult, sometimes even for humans, to discern exactly what holds a playlist together. Furthermore, the relationship between song features and playlists will not lend itself well to geometric separation in a feature space, further complicated by the fact that one data point (song) may have multiple labels (belong to multiple playlists). The complexity of this problem indicates that less complex algorithms may not be suited to solving the problem effectively.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">RESULTS</head><p>For all tests below, we took test accuracy to be our primary metric of success. TA = # correctly classified total # of samples Many models achieved high training accuracy, but unless the test accuracy matched this level, the model was likely overfitted.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Regression/SVMs</head><p>We compared perceptron with polynomial, sigmoid, and RBF kerneled SVMs, with and without the preprocessing step of rescaling the features, on the toy dataset (13 Spotify-curated playlists). We performed k-fold cross validation with k = 5. The results are summarized in Without performing the preprocessing step, the accuracy of the results takes a significant hit. On preprocessed data, RBF kerneled SVM reliably performed the best (achieved the highest test accuracy). Tuning the penalty parameter on the error term, we obtain a final test accuracy of 0.80 ± 0.05 . The precision, recall, f-score, and support results are tabulated in  Note that the playlists "Celtic Punk" and "Spread the Gospel" achieved 100% precision by the tuned SVM -all corresponding tracks in the test set were correctly classified into these playlists. This demonstrates the efficacy of these methods on more unique, genre specific, lists. "Kitchen Swagger", on the other hand, is a harder playlist to classify, as it does not match any one genre.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Neural network</head><p>We considered many parameters of our network: number of hidden layers, activation functions (sigmoid, relu, identity, softmax/logsoftmax), with vs. without L 2 regulation, number of iterations, stochastic/batch/full gradient descent, loss function (MSE vs NLL), etc. We ultimately found that a neural network, minimizing NLL loss via full gradient descent, with one hidden layer of C neurons, and a LogSoftmax output layer performs best on the toy set. <ref type="figure" target="#fig_1">Figure 2</ref> illustrates the increase in training and test accuracies over multiple epochs of the dataset. The gap between these accuracies is small, indicating a low-bias model. <ref type="table">Table 3</ref> compares the training and test accuracies between one hidden layer with C neurons and two hidden layers with 2 · C and C neurons, respectively. We see that the optimal neural network achieves 82% test accuracy on the toy-dataset, an improvement on our RBF SVM result.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head># Hidden layers</head><p>Train Test 2 (identity + sigmoid) 0.91 0.77 1 (sigmoid) 0.89 0.82 <ref type="table">Table 3</ref>. Train and test accuracy on the toy dataset for various architectures (activation functions in parentheses).</p><p>With the architecture finalized, we tested on a handful of real users, again training on 80% of their playlists, and testing on the remaining 20%. The results are summarized in <ref type="table">Table 4</ref>. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>User</head><p>Train Test  <ref type="table">Table 4</ref>. Train and test accuracy on various users using final neural network architecture. Jacob's dataset is relatively separable, while Myles' playlists are heavily overlapping in sound.</p><p>(a) Jacob's playlists (b) Myles' playlists <ref type="figure">Fig. 3</ref>. User playlists, mapped to two dimensions via PCA. We can see that Jacob's set is far more separable than Myles', even in two-dimensions</p><p>We see that certain users are more challenging to classify than others, ex. Myles vs. Jacob. <ref type="figure">Figure 3</ref> illustrates the separability of these users sampled playlists. The selected playlists for Jacob are even separable in two-dimensions, whereas Myles' playlists are clearly more overlapping and similar in sound.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">DISCUSSION</head><p>In some ways, the observed results are not surprising. We have observed that a relatively minimal neural network does a better job at classifying playlists than perceptron and SVMs do. This is understandable as the nature of curating a playlist is rather subjective, and playlists are not always separable. Even so, the neural network struggled against a real user set. There are multiple factors that play into this:</p><p>• Larger labeled datasets. In many instances, the user data we were training/testing on consisted of only hundreds (sometimes tens) of samples. Training on only 80% of this dataset decreases this number further. This is not enough information to train a neural network classifier on, nor to gather meaningful test results on, given our limited features. In the future, we may either select larger user playlists, or consider applying data augmentation techniques to increase the size of our set.</p><p>• Segmentation. It is easier to classify a song into a playlist when the number of output classes, C, is small. This concept is known as segmentation <ref type="bibr" target="#b2">[Bohra et al. 2015</ref>], which we have not performed in this study. For users with tens of playlists in the dataset, we have run preliminary experiments only considering up to C = 5 of their playlists at a time when classifying. Running segmentation on Miz's playlists, we see an average test accuracy of 0.79 running the RBF SVM over 100 trials, vastly outperforming both train and test scores from our neural network (train accuracy was 0.62). We will continue to explore this in future iterations of our algorithm.</p><p>• Different algorithm. It may be the case that even neural networks are not the best option for this problem, though literature in the field suggests otherwise <ref type="bibr" target="#b7">[Jannach and Ludewig 2017;</ref><ref type="bibr" target="#b12">Vall et al. 2017]</ref>. We plan to test other fully-supervised, multi-class classifier algorithms, such as decision trees.</p><p>• More track features. We have built a classifier with only audio features and one-hot vectors of genre tags for each track. We are missing vital data, such as artist info, release date, etc (section 7).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">CONCLUSION &amp; FUTURE WORKS</head><p>Playlist curation and music recommendation is an art that trained music analysts and disc jockeys have perfected over decades. With the rise of massive listener data and the wealth of statistical and algorithmic developments, we have begun to see a rise in computergenerated playlists and mixes. At this stage, however, there is massive room for improvement. We have attempted to build a playlist classifier using audio features and genre tag data from Spotify's public API <ref type="bibr">[aud 2018]</ref>. The optimal classifier of those tested was a single-layered neural network, achieving a test accuracy of 0.82 on a toy-dataset. Though the results are promising in this case, we have many future directions to explore in optimizing for real users.</p><p>Node2Vec. Through Spotify's API, we have access to relatedartists data: each artist comes with a list of 20 similar artists. We have gathered this information and built a related-artists graph, where each node represents an artist, and edges link like artists. Using SNAP <ref type="bibr" target="#b8">[Leskovec and Sosič 2016]</ref>, a public network analysis library built at Stanford, we fed the graph through its node2vec framework, and have computed 128-dimensional artist embeddings. <ref type="figure" target="#fig_2">Figure 4</ref> illustrates a two-dimensional visualization of the resulting vector space via PCA. We believe that the representation successfully captures artist similarity. These vectors can then be appended to each data point as an additional feature of a track, connecting like-artists.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Word2Vec</head><p>. Google has published an open-source library for computing vector embeddings of words. In the future, we hope to integrate this into our framework, taking advantage of large free corpuses such as Wikipedia and music website scrapes. Results from EchoNest show that NLP "understanding" of the text around music are highly effective in music classification <ref type="bibr" target="#b14">[Whitman 2012</ref>]. This allows us to gain a "cultural understanding" of what the words in our documents mean.</p><p>For example, the "stevie_wonder" vector may be near the words "soul", "michael_jackson", "piano", or "motown" in the vector space. Candidates for word2vec representations in our data include artist names, user generated tags (both from our users and from open sources like AcousticBrainz), genre tags, playlist titles, song names, etc.</p><p>FastText. Facebook has developed the FastText library for document classification. We hope to try using it with the variety of texts that we hope to collect including the Wikipedia pages for our artists, user-generated tags, genre tags, and a variety of other textual metadata from track information, artist information, and more. In this case, a playlist can be considered a document category and we will attempt to classify song documents as belonging to the document category.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">MEMBER CONTRIBUTIONS</head><p>The data used for this problem comes from Spotify's Web API. Kevin obtained the necessary authorization with Spotify, automated the request process for all playlists, tracks, and feature data, and built a Postgres database from scratch via Sequelize, an object-relational manager (ORM) for Node.js. Once all the data for the toy-set was in the database, the duo implemented the baseline Perceptron/SVM tests on the toy-set using scikit-learn. Amel designed and tested our neural networks using PyTorch &amp; wrote script to get PCA visualizations. Kevin took on advanced data collection, building a related artists graph and computing vector embeddings of each node using node2vec.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Ratio of audio features to genre features for a sample track, x (i ) .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Results of training neural network with one hidden layer (sigmoid activation) and LogSoftmax output layer, minimizing NLL loss with L 2 regularization over 150 epochs.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>2D node2vec data on related artists graph. D'Angelo, Tim McGraw, and Bob Marley and the Wailers are seed nodes, plotting 4 nearest neighbors of each. Isolated clusters demonstrate the lack of similarity in these groups.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="true"><head>Table 1</head><label>1</label><figDesc></figDesc><table>Scaled 
+Unscaled 
+RBF SVM 
+0.77(±0.05) 
+0.25 (± 0.04) 
+
+Sig SVM 
+0.74 (± 0.07) 
+0.09 (± 0.04) 
+Poly SVM 
+0.17 (± 0.02) 
+0.48 (± 0.05) 
+Perceptron 
+0.76 (± 0.05) 
+0.13 (± 0.10) 
+
+Table 1. Test Accuracies. Trained and tested with audio feature data + one-
+hot genres. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="true"><head>Table 2 .</head><label>2</label><figDesc></figDesc><table>Playlist 
+A 
+B 
+C 
+D 
+"Swagger" 
+0.65 
+0.62 
+0.64 
+76 
+"Spread the Gospel" 
+1.00 
+0.93 
+0.96 
+40 
+"'90's Baby Makers" 
+0.74 
+0.79 
+0.76 
+47 
+"Tender" 
+0.75 
+0.36 
+0.49 
+33 
+"Have a Great Day!" 
+0.69 
+0.83 
+0.75 
+100 
+"Dance Rising" 
+0.85 
+0.94 
+0.89 
+99 
+"Sad Vibe" 
+0.71 
+0.83 
+0.77 
+42 
+"Afternoon Acoustic" 
+0.79 
+0.80 
+0.80 
+76 
+"Kitchen Swagger" 
+0.49 
+0.43 
+0.46 
+75 
+"All The Feels" 
+0.85 
+0.88 
+0.86 
+65 
+"Jazz Vibes" 
+0.92 
+0.92 
+0.92 
+118 
+"Celtic Punk" 
+1.00 
+0.94 
+0.97 
+49 
+"Country by the ... " 
+0.95 
+0.84 
+0.89 
+49 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 2 .</head><label>2</label><figDesc>Results of tuned RBF-kerneled SVM on test set. A: Precision, B: Recall, C: F1-score, D: Support (number of songs in playlist).</figDesc><table></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Problem Statement. Given a set, K, of unfinished playlists, and a set of unclassified songs, S, can we sort song s ∈ S into the best playlist k ∈ K, or suggest that a new playlist be created? The input to our classifier is a track vector, x (i ) ∈ R n , where n represents the number of features. For most tests in this paper, n = 2105, 10 of which are audio features, and the remaining 2095 is a onehot vector of the song's genre tags (section 3). Depending on the experiment, the number of samples, m, corresponds to the sum of</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">, Vol. 1, No. 1, Article . Publication date: December 2018.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="9">CODE REPOSITORIESJavascript repo (database initialization): https://github.com/kevin-coelho/ playlistr-ml-v1 Python repo (algorithms): https://github.com/kevin-coelho/playlistr-ml-py-v1</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Get Audio Features for Several Tracks</title>
+		<ptr target="https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The Million Song Dataset</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Thierry Bertin-Mahieux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">W</forename><surname>Daniel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Ellis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Whitman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lamere</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th International Conference on Music Information Retrieval</title>
+		<meeting>the 12th International Conference on Music Information Retrieval</meeting>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Segmenting music library for generation of playlist using machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">S</forename><surname>Bohra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Ganesan</surname></persName>
+		</author>
+		<idno type="doi">10.1109/EIT.2015.7293429</idno>
+		<ptr target="https://doi.org/10.1109/EIT.2015.7293429" />
+	</analytic>
+	<monogr>
+		<title level="m">2015 IEEE International Conference on Electro/Information Technology (EIT)</title>
+		<imprint>
+			<date type="published" when="2015" />
+			<biblScope unit="page" from="421" to="425" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">More of an art than a science&quot;: Supporting the creation of playlists and mixes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><forename type="middle">J</forename><surname>Cunningham</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Bainbridge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Falconer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 7th International Conference on Music Information Retrieval Conference</title>
+		<meeting>the 7th International Conference on Music Information Retrieval Conference</meeting>
+		<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+	<note>n. d.</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">word2vec Explained: deriving Mikolov et al.&apos;s negative-sampling word-embedding method</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yoav</forename><surname>Goldberg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Omer</forename><surname>Levy</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1402.3722</idno>
+		<ptr target="http://arxiv.org/abs/1402.3722" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aditya</forename><surname>Grover</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1607.00653</idno>
+		<ptr target="http://arxiv.org/abs/1607.00653" />
+		<title level="m">node2vec: Scalable Feature Learning for Networks</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">How Similar Is Too Similar?: Exploring Users&apos; Perceptions of Similarity in Playlist Evaluation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jin</forename><surname>Ha Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 12th International Society for Music Information Retrieval Conference</title>
+		<meeting>the 12th International Society for Music Information Retrieval Conference</meeting>
+		<imprint>
+			<date type="published" when="2011" />
+			<biblScope unit="page" from="109" to="114" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">When Recurrent Neural Networks meet the Neighborhood for Session-Based Recommendation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dietmar</forename><surname>Jannach</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Malte</forename><surname>Ludewig</surname></persName>
+		</author>
+		<idno type="doi">10.1145/3109859.3109872</idno>
+		<ptr target="https://doi.org/10.1145/3109859.3109872" />
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="306" to="310" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">SNAP: A General-Purpose Network Analysis and Graph-Mining Library</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jure</forename><surname>Leskovec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rok</forename><surname>Sosič</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Intelligent Systems and Technology (TIST)</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">An Application for Automated Playlist Generation From Personal Music Libraries Using Clustering Algorithms and Music Analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sampath</forename><surname>Diana E Lin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu</forename><surname>Jayarathna</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sun</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+	<note>Ph.D. Dissertation</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Mcfee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gert</forename><surname>Lanckriet</surname></persName>
+		</author>
+		<editor>HYPERGRAPH MODELS OF PLAYLIST DI-ALECTS.</editor>
+		<imprint>
+			<date type="published" when="2018-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Glove: Global Vectors for Word Representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jeffrey</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Richard</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christoper</forename><surname>Manning</surname></persName>
+		</author>
+		<idno type="doi">10.3115/v1/D14-1162</idno>
+		<ptr target="https://doi.org/10.3115/v1/D14-1162" />
+	</analytic>
+	<monogr>
+		<title level="j">EMNLP</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="1532" to="1543" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Music Playlist Continuation by Learning from Hand-Curated Examples and Song Features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreu</forename><surname>Vall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hamid</forename><surname>Eghbal-Zadeh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Matthias</forename><surname>Dorfer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Markus</forename><surname>Schedl</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1705.08283</idno>
+		<ptr target="http://arxiv.org/abs/1705.08283" />
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Machine Learning Approaches to Hybrid Music Recommender Systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreu</forename><surname>Vall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gerhard</forename><surname>Widmer</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1807.05858</idno>
+		<ptr target="http://arxiv.org/abs/1807.05858" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">How music recommendation worksand doesn?t work</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Whitman</surname></persName>
+		</author>
+		<ptr target="https://notes.variogr.am/2012/12/11/how-music-recommendation-works-and-doesnt-work/" />
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

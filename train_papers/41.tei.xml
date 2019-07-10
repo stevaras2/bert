@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:51+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Comparison of Machine Learning Techniques for Artist Identification</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jennie</forename><surname>Chen</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Electrical Engineering Stanford University</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Deng</surname></persName>
+							<email>andrewde@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Electrical Engineering Stanford University</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Comparison of Machine Learning Techniques for Artist Identification</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Artist identification is the task of identifying the artist of a work given only the image with no other metadata. Many paintings have unknown or highly contested artists, and experts in the field need a long time to learn the styles of various artists before being able to analyze paintings. Additionally, even with significant expertise, artist identification can be difficult because one artist's style can vary wildly from painting to painting. With machine learning, we can provide experts with baseline estimate to reduce necessary time and effort, as well as making artist identification more accessible to those with less experience.</p><p>Additionally, this task was chosen because it is a fairly straightforward image classification task, and we want to compare conventional machine learning techniques for image classification to more recent deep learning techniques. Specifically, in this report we will compare the use of feature extraction with an SVM to the use of a CNN. Our dataset contains 256 x 256 x 3 color images of paintings; for the SVM, we extract features from these images as the input for the classifier, while we feed in the raw image to the CNN. For both models, the output is a predicted artist. The metrics we chose to compare the two methods are accuracy, training and inference times, and ease of implementation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>As previously stated, artist identification is often a task done by human experts, such as curators in museums, art historians, and other collectors. However, recent times has lead to a marked increase in computational methods for artist identification.</p><p>Much of previous work on this task involves exploration into feature extraction and the subsequent application of a classifier like an SVM. Blessing and Wen uses features including Dense SIFT, HOG2x2, SSIM, and texton histograms to classify works using an SVM with 85.13% accuracy <ref type="bibr" target="#b0">[1]</ref>. Similarly, color moments and Tamura textural features are used in addition to SIFT by Liu and Jiang in classifying Chinese paintings <ref type="bibr" target="#b1">[2]</ref>, and GIST features, Classemes, and PiCoDes are used by Saleh and Elgammal <ref type="bibr" target="#b2">[3]</ref>. Work on similar tasks such as art style classification and aesthetic evaluation are also generally feature-based; Misumi et al. utilize SIFT features when classifying works in 3 different styles <ref type="bibr" target="#b3">[4]</ref>, and Sahu et al. utilize Local Binary Patterns, color histograms, HOG, and GIST in their aesthetic evaluation of artwork <ref type="bibr" target="#b4">[5]</ref>.</p><p>Approaches using deep learning have also been very successful on this task. Viswanathan explores the use of three different CNN models, demonstrating that features from ImageNet are generally applicable to artist identification and thus showing that transfer learning can be very useful for this task <ref type="bibr" target="#b5">[6]</ref>. Balakrishnan, Rosston, and Tang similarly explore the value of transfer learning on fine-tuned ResNet and VGG models, achieving 90.75% accuracy when classifying works from the Rijksmuseum between 10 artists and 87.7% when classifying between 20 artists <ref type="bibr" target="#b6">[7]</ref>.</p><p>Most prior work has worked with datasets involving relatively few classes; Blessing and Wen only used work from 7 artists <ref type="bibr" target="#b0">[1]</ref>, while Liu and Jiang used work from 4 artists <ref type="bibr" target="#b1">[2]</ref>. Jou and Agrawal similarly only use paintings from 5 artists <ref type="bibr" target="#b7">[8]</ref>. Balakrishnan et al. build classifiers for both 10 and 20 artists <ref type="bibr" target="#b6">[7]</ref>, while Saleh and Elgammal classify with 23 artists <ref type="bibr" target="#b2">[3]</ref>, and Viswanathan uses by far the most general dataset by classifying between 57 artists <ref type="bibr" target="#b5">[6]</ref>. In similar tasks, Misumi et al. only classify between three different styles <ref type="bibr" target="#b3">[4]</ref>. While we do not have the largest label space, our dataset has more variety than a large portion of related work. Additionally, most prior work focuses only on either a feature-based approach or a deep-learning approach. Our work differs in that we aim to explore both approaches and explicitly compare their performance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Obtaining the Data</head><p>Our data is obtained from the dataset for the Kaggle competition "Painters by Numbers" <ref type="bibr" target="#b8">[9]</ref>, which focuses on the task of taking pairs of paintings and identifying if they have the same artist. The dataset is largely obtained from WikiArt, with additional contributions by other artists; it contains roughly 103,000 paintings from around 2300 artists. For our work, we narrowed down the data by only selecting artists with at least 450 paintings, resulting in a final dataset of 7462 paintings from 15 artists. Each artist had between 450 and 499 paintings, so classes were roughly balanced. Each color image was resized to 256 by 256 pixels; the data was then randomly divided into training, validation, and test with a 80%/10%/10% split independently among each class. As a final count, we had 5982 training images, 737 validation images, and 743 test images. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Feature Extraction</head><p>A set of 6 image descriptors were explored as features for the SVM: GIST descriptors, Hu moments, color histograms, SIFT keypoints, histogram of oriented gradients, and Haralick textures. Each of the 64 possible feature combinations was explored by concatenating feature vectors obtained from each method horizontally. After exploring the combinations thoroughly, the 3 most useful features were found to be the GIST descriptors, Hu moments, and color histograms. GIST descriptors are a set of 5 attributes that represent intuitive properties of a scene: naturalness, openness, roughness, expansion, and ruggedness. These attributes were determined by Aude Oliva and Antonio Torralba <ref type="bibr" target="#b9">[10]</ref> to be a good representation of a scene. Each attribute is calculated for an image by taking the energy spectrum of the image and performing the inner product with empirically determined Discriminant Spectral Templates (DSTs), made of a linear combination of Karhunen-Loeve basis functions for the energy spectrum with coefficients determined by the authors of the paper.</p><p>Hu moments are a set of 7 polynomial combinations of image moments that are defined as to be scale, shift, and rotation invariant. Scale and shift invariance are ensured by using the central moments to account for shift, and scaling by the 0th moment to account for scale. Rotation invariance is obtained by the specific polynomial combinations of moments from Ming-Huei Hu <ref type="bibr" target="#b10">[11]</ref>.</p><p>The color histogram is a simple set of 3 histograms, representing the distribution of color appearances in the image. A histogram for each color was computed by quantizing the color values for each channel into 8 bins and counting appearances of each quantized color. The histogram has no representation of the spatial distribution of the colors, only their appearance.</p><p>Each feature combination was scaled using min/max scaling so that each element was in the rage [0, 1). For input to the SVM, PCA was applied with 100 components on the training features to determine the top 100 principal components. Test data was projected onto the same principal components prior to prediction. Examples of feature extraction can be seen in <ref type="figure" target="#fig_1">Figure 2</ref>. The SVM used was a multiclass (15 classes) SVM with the RBF kernel. The input to the SVM was the set of feature vectors decomposed to the first 100 principal components, vectors of length 100. The SVM was trained to minimize the objective</p><formula xml:id="formula_0">min w,b,ξ w 2 2 + C n i=1 ξ i sub. to y i (w T φ(x i ) + b) ≥ 1 − ξ i ξ i ≥ 0, i = 1, . . . , n</formula><p>for each class, where a one-vs-rest classification scheme was used so a classifier for each class was trained to identify that particular class. For each class, a distinct SVM finds the margin that best separates the data in one class from the data in the rest after the RBF kernel is applied, while minimizing the allowable misclassification terms ξ i .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">CNN</head><p>As a deep learning approach to image classification, the CNN is a neural network that consists of several layers of different types, including convolutional, max pooling, ReLU activation, dropout, dense/fully connected, and softmax. Each convolutional layer is a set of learnable 2D filters, which are applied to input data by the 2D cross-correlation operation. In max pooling layers, data is downsampled by a set factor n by choosing only the max value in each n × n square to propagate forward. The ReLU activation function is a unit ramp function f (x) = max(x, 0) that allows for nonlinearlity in the network. In dense layers, input data is flattened into 1D vectors, multiplied by a matrix of learnable weights, and added with a learnable bias. Dropout removes a percentage of activations to help prevent overfitting. Finally, the softmax layer computes the class probabilities for the data.</p><p>For our CNN, we base our architecture on the winning submission to the Kaggle "Painters by Numbers" competition <ref type="bibr" target="#b11">[12]</ref>, as well as on work by Viswanathan <ref type="bibr" target="#b5">[6]</ref>. Taking in raw 256 by 256 color images as input, the CNN has 6 convolutional layers using 3x3 filters as well as 5 max-pooling layers to reduce the dimensionality of each feature map by a factor of 2. The filters were chosen to have window size 3, as multiple 3x3 filters can mimic the effects of filters of other sizes, such as 5x5 or 7x7 filters. Each convolutional layer uses a ReLU activation function and additionally uses batch normalization to reduce the reliance between layers. These convolutional and max-pooling layers are followed by a single dropout layer, 2 dense layers, and another dropout layer, with both dropout layers using a keep-probability of 0.5. Finally, cross-entropy loss is computed on the outputs of the softmax layer:</p><formula xml:id="formula_1">L i = − log( e fy i</formula><p>j e fj ) where L i indicates the loss for example i, y i is the correct class for example i, j is one of the potential classes, and f k indicates the score for class k according to the CNN. The architecture is shown in <ref type="figure" target="#fig_2">Figure 3</ref> without the dropout or batch normalization layers for readability.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments</head><p>Our SVM model is implemented with the scikit-learn package <ref type="bibr" target="#b12">[13]</ref>, while our CNN is implemented using Keras <ref type="bibr" target="#b13">[14]</ref>. Feature extraction relied largely on the scikit-learn package as well as the OpenCV package <ref type="bibr" target="#b14">[15]</ref>. The SVM model was trained using the entire training set as one batch. Learning rate was not adjusted beyond the default value because we did not notice any problems with slow convergence/divergence. The CNN was trained using an Adam optimizer with a learning rate of 0.000074 and the default parameters β 1 = 0.9 and β 2 = 0.999; weights were initialized with He normal initialization. It was found that increasing the learning rate beyond 0.0001 would cause the training to diverge. The CNN model was trained using batches of size 96.</p><p>To choose the best hyperparameters (features, γ, and C) for our SVM, we ran a grid search and 3-fold cross validation across γ ∈ (10 −5 , 10 5 ) and C ∈ (10 −5 , 10 5 ) using the training set for each feature combination. The model for each feature combination with best γ and C was then tested on our validation data, and the best was chosen as our best model. The CNN was also trained multiple times using different architectures (adding and removing convolutional and max-pooling layers), and the best model was chosen using the final validation accuracy after training.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.1">Performance</head><p>The metric we used for judging our models was accuracy on the test set. Our dataset was overall reasonably balanced, so this should be a good measure for how our models perform on these classes. We found that the 3 most useful features in classifying artists were the GIST descriptors, Hu moments, and color histograms. From the results tabulated in <ref type="figure">figure 4</ref>, we immediately notice that our SVM has a severe overfitting issue. The training accuracy is almost 100%, while the test accuracy is much lower. This is in spite of tuning our regularization parameter C across a wide range of values, which indicates that other methods for addressing overfitting should be found and applied, such as using early stopping in the training. A possible source of the overfitting is the dimension of the feature vectors we use as input; using fewer principal components might reduce the ability of the svm to overfit.</p><p>We can see that compared to even the best SVM results, the CNN is superior. It achieves higher test accuracy with less noticeable overfitting. Looking at <ref type="figure" target="#fig_4">Figure 6</ref>, we can see by the bright colors in the diagonal entries that most artists were classified relatively well. The CNN has some difficulties differentiating between works by Claude Monet (label 5) and works by Childe Hassam (label 4); this is not surprising, as both artists were Impressionist painters using similar color palettes, and indeed the two were in contact throughout the years. We can see in <ref type="figure" target="#fig_5">Figure 7</ref> that works by the two artists look very similar. We can also see that some of the artists (Giovanni Battista Piranesi (label 8) and Gustave Dore (label 9)) have much better precision and recall than the others. This is likely because out of the entire dataset, these two artists prefer to paint mostly in black and white (as seen in <ref type="figure" target="#fig_5">Figure 7</ref>). This would allow features like the color histogram to distinguish them easily. The CNN was trained on a commercial Nvidia GTX 1070 GPU, while the SVM was trained on an Amazon c5.4xlarge EC2 instance with 16 vCPUs. Even though the CNN's training was accelerated by a GPU, it took on average 8 hours to train the full network. Compared to this, training the SVM took about 45 minutes total, almost all of which was spent extracting the features. The feature extraction would have likely taken even less time if the extraction procedures were accelerated by a GPU as well, since most of the techniques are highly parallelizable.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.2">Training and Inference Time</head><p>To compare inference time fairly, inference for both models were performed on the EC2 instance. The results show that CNN took an order of magnitude less time to run inference while achieving higher accuracy. The bulk of the inference time for the SVM can also be accounted for by the feature extraction of the test data, however, so if feature extraction were accelerated the SVM might achieve similar time results. Judging from our current results, however, the CNN is superior in inference.</p><p>Each blue data point in <ref type="figure" target="#fig_6">Figure 8</ref> is an instance of the SVM model with a different combination of feature vectors, and each orange data point is an instance of the CNN model with a different architecture. Comparing models across both test error and inference time, points closer to the origin are better, because we would like to minimize both.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.3">Ease of Implementation</head><p>In terms of ease of implementation, the CNN was superior; all it required was setting up the initial architecture and feeding in the raw images. In contrast, implementing the SVM required a lot of overhead in researching potential features, correctly extracting these features from the images, and then tuning different combinations to be used with the model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Conclusion and Future Work</head><p>We explored the task of artist identification using a dataset of 7462 paintings from 15 artists and compare the performance, training and inference time, and ease of implementation for both the classical method of feature extraction with an SVM classifier and the deep learning method of a CNN. Our best result came from the CNN, with an accuracy of 74.7% in comparison to our best SVM (using GIST features and Hu Moments) with an accuracy of 68.1%.</p><p>For future work, we would like to address the overfitting in our SVM models. Despite the tuning of the regularization parameter, our SVMs are overfitting heavily to the training data; this may be mitigated by other regularization techniques such as early stopping.</p><p>We would also like to investigate additional features such as Classemes <ref type="bibr" target="#b15">[16]</ref> and PiCoDes <ref type="bibr" target="#b16">[17]</ref>. From our work, we see that features often used for object recognition (such as Hu moments) were useful; other work <ref type="bibr" target="#b2">[3]</ref> has shown Classemes and PiCoDes can be helpful in image classification tasks, so it may be worthwhile to explore this avenue for our own models.</p><p>Given our rather small dataset, we believe that transfer learning would have a lot of success on this task. Training our CNN with a large dataset such as the ImageNet dataset and then fine-tuning for artist classification with our smaller dataset can help our model gain knowledge about object recognition, which has already proven useful in features for our SVM.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>The initial dataset and implementations of the CNN <ref type="bibr" target="#b11">[12]</ref> and the feature extraction for the CNN <ref type="bibr" target="#b17">[18]</ref> were found by Jennie. Andrew worked to preprocess and organize the data; both of us worked together to modify the initial implementations to read in our data in batches in the desired formats. Andrew took the lead on iterating over various models to tune hyperparameters, while Jennie worked to explore the literature and research potential additional features for the SVM. The actual implementation of the found features was also done by both of us.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Code</head><p>Our code can be found at www.github.com/jchen437/artist-classification.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Example input paintings by Monet, Matisse, Aivazovsky, and Sargent For the CNN, augmentation was performed on the training dataset with rotation, zooming, flipping, and shearing operations. This involved creating transformed duplicates of existing training examples, increasing the number of our training examples by a factor of 4 up to a total of 23928.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Examples of feature extraction</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Architecture for our CNN</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :Figure 5 :</head><label>45</label><figDesc>Accuracy across models (a) SVM (b) CNN Figure 5: Precision and Recall by artist</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Confusion Matrices (x-axis = predicted class, y-axis = true class)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 :</head><label>7</label><figDesc>Sample paintings for Claude Monet (far left), Childe Hassam (left), Giovanni Battista Piranesi (right) and Gustave Dore (far right)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 :</head><label>8</label><figDesc>Plot of inference time vs. test error</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Using machine learning for identification of art paintings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Blessing</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Wen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+		<respStmt>
+			<orgName>Stanford University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Classification of traditional Chinese paintings based on supervised learning methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on Communications and Computing</title>
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="page" from="411" to="412" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Large-scale classification of fine-art paintings: Learning the right metric on the right feature</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Saleh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+		<idno>arXiv:1505:00855</idno>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Image classification for the painting style with SVM</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Misumi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Orii</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Sharmin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Mishima</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Tsuruoka</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 4th IIAE International Conference on Industrial Application Engineering</title>
+		<meeting>the 4th IIAE International Conference on Industrial Application Engineering</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Classification and aesthetic evaluation of paintings and artworks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Sahu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Tyagi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Mittal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">13th International Conference on Signal-Image Technology and Internet-Based Systems (SITIS)</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Artist identification with convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Viswanathan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Stanford University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Using CNN to classify and understand artists from the Rijksmuseum</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Balakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Rosston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Tang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+		<respStmt>
+			<orgName>Stanford University</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Artist identification for Renaissance paintings</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Jou</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaggle</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/c/painter-by-numbers" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Modeling the shape of the scene: A holistic representation of the spatial envelope</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Oliva</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Torralba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Vision</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="145" to="175" />
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Visual pattern recognition by moment invariants</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">K</forename><surname>Hu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IRE Transactions on Information Theory</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="179" to="187" />
+			<date type="published" when="1962" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Winning solution for the Painters by Numbers competition on Kaggle</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Ilenic</surname></persName>
+		</author>
+		<ptr target="http://github.com/inejc/painters.GitHubrepository.GitHub" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Chollet</surname></persName>
+		</author>
+		<ptr target="http://github.com/fchollet/keras.GitHubrepository.GitHub" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">The OpenCV library</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Bradski</surname></persName>
+		</author>
+		<ptr target="http://github.com/opencv/opencv.GitHubrepository.GitHub" />
+		<imprint>
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Torresani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Szummer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Fitzgibbon</surname></persName>
+		</author>
+		<title level="m">Efficient object category recognition using Classemes. European Conference on COmputer Vision</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">PiCoDes: Learning a compact code for novel-category recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bergamo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Torresani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Fitzgibbon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Neural Information Processing Systems (NIPS)</title>
+		<imprint>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Using global feature descriptors and machine learning to perform image classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Ilango</surname></persName>
+		</author>
+		<ptr target="http://github.com/gogul09/image-classification-python.GitHubrepository.GitHub.2017" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">HDF5 for Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Collette</surname></persName>
+		</author>
+		<ptr target="http://h5py.alfven.org" />
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">A guide to NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">E</forename><surname>Oliphant</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Trelgol Publishing</publisher>
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Matplotlib: A 2D graphics environment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">D</forename><surname>Hunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing in Science and Engineering</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="90" to="95" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Scikit-image: Image processing in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Van Der</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Walt</forename></persName>
+		</author>
+		<idno type="doi">10.7717/peerj.453</idno>
+		<ptr target="http://dx.doi.org/10.7717/peerj.453" />
+	</analytic>
+	<monogr>
+		<title level="j">PeerJ</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">453</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<monogr>
+		<title level="m" type="main">Tensorflow: Large-scale machine learning on heterogeneous systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Abadi</surname></persName>
+		</author>
+		<ptr target="http://www.tensorflow.org" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Waskom</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Seaborn</surname></persName>
+		</author>
+		<ptr target="http://github.com/mwaskom/seaborn.GitHubrepository.GitHub" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Data structures for statistical computing in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Mckinney</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th Python in Science Conference</title>
+		<meeting>the 9th Python in Science Conference</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="51" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">A python wrapper for Lear&apos;s GIST implementation working with NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Tsuchiya</surname></persName>
+		</author>
+		<ptr target="http://github.com/tuttieee/lear-gist-python.GitHubrepository.GitHub.2018" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Mahotas: Open source software for scriptable computer vision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">P</forename><surname>Coelho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Open Research Software</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Towards automated classification of fine-art painting style: A comparative study</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">S</forename><surname>Arora</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Pattern Recognition (ICPR)</title>
+		<meeting>the International Conference on Pattern Recognition (ICPR)</meeting>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Recognizing art style automatically in painting with deep learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lecoutre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Negrevergne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Yger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of Machine Learning Research</title>
+		<meeting>Machine Learning Research</meeting>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="327" to="342" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Visual recognition in art using machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">J</forename><surname>Crowley</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+			<pubPlace>Oxford, United Kingdom</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>University of Oxford</orgName>
+		</respStmt>
+	</monogr>
+<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Art painting identification using convolutional neural network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Applied Engineering Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="532" to="539" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Draw: Deep networks for recognizing styles of artists who illustrate children&apos;s books</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hicsonmez</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Samet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Sener</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Duygulu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 ACM on International Conference on Multimedia Retrieval</title>
+		<meeting>the 2017 ACM on International Conference on Multimedia Retrieval</meeting>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="page" from="338" to="346" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

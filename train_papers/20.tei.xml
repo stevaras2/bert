@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:48+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Latent Feature Extraction for Musical Genres from Raw Audio</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Arjun</forename><surname>Sawhney</surname></persName>
+							<email>sawhneya@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vrinda</forename><surname>Vasavada</surname></persName>
+							<email>vrindav@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Woody</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Latent Feature Extraction for Musical Genres from Raw Audio</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>This paper proposes and evaluates preliminary models to produce musical style encodings with applications in music style transfer. Inspired by methods of neural style transfer <ref type="bibr" target="#b6">[7]</ref>, we seek to learn encodings of musical style directly from raw audio data. We evaluate our models primarily qualitatively in their ability to obtain interpretable embeddings of musical genre, which we hypothesize will be strongly correlated with musical style. Additionally, we also benchmark our models quantitatively based on precision, recall, and F1 scores on a genre classification dataset. For our final model, we propose a hybrid encoding and classification approach (with an adapted loss function), which obtains visually promising 64-dim and 4-dim encodings of musical genre and achieves upwards of 94% and 65% accuracy on our genre classification train and test sets, respectively.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction and Task Definition</head><p>With the success of neural style transfer <ref type="bibr" target="#b6">[7]</ref>, there has been an increasing number of attempts at performing music style transfer. Unlike in images, however, style is not as well defined for music. Intrinsic properties such as timbre and rhythm alone may not encapsulate what defines a song's style; however, the genre of a piece of music is highly related to its stylistic properties, which makes it particularly important in the field of music information retrieval (MIR). While both genre classification and musical style encoding are tasks that have been attempted, much of the work in those contexts involves extensive feature engineering.</p><p>In this paper, we consider musical genre to be directly correlated with style, and as such, attempt to learn a latent representation of it (using both supervised and unsupervised learning methods) directly from raw input audio. Concretely, we investigate hybrid neural networks with both autoencoding and classification components to learn genre embeddings. We evaluate our results primarily with the feasibility and interpretability of our embeddings when visualized using PCA. Additionally, we also look at classification metrics such as precision, recall, accuracy, and model error to benchmark our models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work</head><p>We primarily draw inspiration from previous work in neural style transfer for images. In neural style transfer, a common method of extracting a meaningful representation of style in an image is to use intermediate layers of a pretrained image classification network, such as the VGG-19 <ref type="bibr" target="#b6">[7]</ref>. Thus, in our task of learning style encodings of music, we initially seek to train a music genre classifier in hopes that intermediate layers in the network will have a meaningful representation of musical style.</p><p>With regards to the task of music genre classification, we are motivated by promising work done by Tzanetakis et al. on the GTZAN dataset <ref type="bibr" target="#b5">[6]</ref>. Based on examination of multiple previous works, we see that classification accuracy decreases significantly with an increase in the number of genres. Furthermore, since our work is primarily focused on learning potential style encodings of music, we select a subset of the original dataset to work with, namely the four genres of classical, jazz, pop, and metal. Finally, while we have seen precedence in approaches to genre classification using significant manual feature engineering in transforming inputs to Mel-Frequency Cepstrum Coefficients (MFCC) and Mel-Spectograms, we seek to experiment with learning musical style encodings directly from raw audio data <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b3">4]</ref>.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head><p>We started with the GTZAN Genre Collection Dataset which contains 1,000 tracks (each 30 seconds long) of 10 genres <ref type="bibr" target="#b0">[1]</ref>. As discussed in Related Work, due to our priority of learning interpretable style encodings, we chose to use only the 4 genres of classical, jazz, pop, and metal. First, we converted these files into .wav format and used the Python library LibROSA to convert the audio files to a raw audio time series of amplitudes. We then augmented our dataset by splicing each song into one second segments.</p><p>With a native sampling rate of 22.05 kHz, each of the original samples was in R 20,000 , so we used average pooling with a pool size of 40 to downsample the dimensionality of our data, which doubles as a regularization technique. We ended up with an equal number of the four genres and 8000 examples in total. Each example was represented as a vector in R 500 . We chose a random split of 6000-1000-1000 for our train, development, and test sets, respectively. Since our task was to learn encodings from raw data, we did not use any explicit feature engineering. <ref type="figure" target="#fig_1">Figure 1</ref> shows a visualization of the raw data using PCA (a variance-maximizing dimensionality reduction algorithm), in which the genres are clearly not distinguishable from each other.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Models and Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Two Layer Neural Network</head><p>For a classification model, we initially implemented a basic two layer neural network with one hidden layer in R 128 and tanh activation. Our loss for one example is defined as</p><formula xml:id="formula_0">L cross−entropy = − 3 j=0 y j log(ŷ j )<label>(1)</label></formula><p>where y ∈ R 4 is a one-hot vector with a one in the component corresponding to the true class, andŷ ∈ R 4 represents the output of our classifier.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Vanilla Autoencoder</head><p>We then implemented a vanilla autoencoder with a single hidden layer in the encoder and decoder as a baseline. However, this was extended to a deeper architecture as seen in the top half of <ref type="figure" target="#fig_2">Figure 2</ref> for a more fair comparison to the final model. We proceed to reference this model as a vanilla autoencoder in the rest of this paper. With such models, we seek a useful latent representation of the input audio x ∈ R 500 by attempting to learn f : R 500 → R 64 and g : R 64 → R 500 where f (x) = z for some z ∈ R 64 , and g(f (x)) ≈ x. Note that f is the encoder and g is the decoderboth modeled as neural networks. Our training objective for any autoencoder is to minimize the reconstruction loss of recovering the original input when passed through the encoder-decoder pair. Numerically, this is defined as</p><formula xml:id="formula_1">L reconstruction = ||x − g(f (x))|| 2 2<label>(2)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Deep Softmax Autoencoder</head><p>In our final model, we combine the two approaches, using the result of the encoder as input to a multi-class classifier to form, what we call, a Deep Softmax Autoencoder. We theorize that this approach may reduce overfitting (in the classification component) because the classifier takes as input a vector in R 64 instead of R 500 . To account for the combined model, we modify our objective to minimize a weighted combination of reconstruction and softmax cross-entropy loss aforementioned. This is formally defined for one example in Equation 3. </p><formula xml:id="formula_2">L reconstruction = γ||x − g(f (x))|| 2 2 − (1 − γ) 3 i=0 y i log(ŷ i )<label>(3)</label></formula><p>By encouraging the model to minimize reconstruction loss along with classification loss, the model should be more likely to learn a latent representation of genre while retaining important information to reconstruct the original piece of music. Intuitively, for both reconstruction and classification loss to decrease, the encodings must both represent the original input and encode some information about its genre.</p><p>Methodologically, upon settling on this blueprint approach, we ran consistent experiments to tune our hyperparameter values, such as the number of layers and the layer sizes in our final model. These, along with our final architecture, are reflected in <ref type="figure" target="#fig_2">Figure 2</ref>. Additionally note that in running our experiments, we decided to use a final value of γ = 0.9 for our modified loss function in order to more heavily weight reconstruction relative to classification.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Results and Discussion</head><p>We divide our evaluation into quantitative and qualitative metrics. We focus on measuring the performance of the Deep Softmax Autoencoder architecture through precision, recall, and F1 scores. In the qualitative analysis, we visualize potential 64-dim and 4-dim embeddings using PCA and discuss their benefits and tradeoffs.  From our baseline implementation of a basic two layer neural network as a genre classifier, we saw a relatively low training and test accuracy compared to previous works as described in Tzanetakis et al. <ref type="bibr" target="#b5">[6]</ref>. As we increased the number of hidden layers in our classifier, we noticed a general trend of high overfitting. To combat this, we tried to reduce the dimensionality of our input (therefore reducing the number of weights in our network). This motivated our decision to use average pooling as a preprocessing technique to reduce dimensionality, as well as use dropout between layers with a final keep probability of 0.9 after tuning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Quantitative Analysis</head><p>After implementing our Deep Softmax Autoencoder, we found a significant increase in training and test accuracy compared to the baseline two layer neural network. In addition, when examining the confusion matrix in <ref type="figure" target="#fig_3">Figure 4</ref>, we see that the entries are mostly concentrated along the diagonal, as desired. From <ref type="figure" target="#fig_3">Figure 4</ref>, the main sources of error are metal and pop pieces being mistaken for each other. We see that classical and jazz pieces are commonly mistaken for each other as well. From a human standpoint, these genres sound fairly similar, and we see further evidence to support their similarities in the visualizations of the latent spaces below. From analyzing our results in <ref type="table">Table 2</ref>, we see that our final model obtains the highest precision, recall, and F1 score on classical music, which we hypothesize is due to classical music's more distinct style. In order to evaluate our encodings, we visualized them in 2-D space using PCA. First, we examined potential 64-dim encodings from the bottlenecks of the autoencoders we trained. In <ref type="figure" target="#fig_4">Figure 5</ref>, the vanilla autoencoder's results are as expected, since it is unsupervised and has no incentive to learn a distinguishable representation of genre. This is visible in the lack of separation in the latent space. We also visualized the Deep Softmax Autoencoder's encodings when supervised with a genre classifier (architecture shown in <ref type="figure" target="#fig_2">Figure 2</ref>). These displayed promising separation and smoothness in the latent space. Qualitatively, we notice the jazz and classical Deep Softmax Autoencoder encodings are closely distributed in the latent space, which can likely be attributed to their similar instrumentation. Motivated by neural style transfer on images, we also visualized the classifiers' logits as another possible 4-dim genre encoding. As expected, due to the optimization objective, we see a clearer distinction between each class in the visualization of the classifiers' logits when accuracy is high. Again, like the bottleneck visualization, we see that the final model's logits, when used as encodings, display not only separation but also smoothness between clusters in the latent space. This is a desirable property for embeddings in general and less visible in the case of the two layer neural network logits, which seem to be inseparable clusters for all four genres in the latent space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Qualitative Analysis</head><p>We notice in <ref type="figure" target="#fig_5">Figure 6</ref> that our encodings for pop are not as clearly separable as the other three genres and are distributed with higher variance. As seen in the PCA visualization of the raw data in <ref type="figure" target="#fig_1">Figure 1</ref>, we observe a large variance in songs within the pop genre, which could explain the higher variance of the pop genre in the latent space. Upon listening to exclusively pop samples in the dataset, we found that pop songs seemed to have less of a distinct style compared to the other genres. We also observe a noticeable overlap between the pop class and the remaining three classes. When listening to random samples in the dataset, we found that pop songs could easily be mistaken for the other three genres, even by humans, which could explain the overlap in the latent space.</p><p>Compared to the 4-dim encodings, the 64-dim encodings have the potential to capture more subtle nuances within each genre. These encodings serve different purposes: particular tasks may require the expressivity of the 64-dim or the conciseness of the 4-dim.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Conclusion and Future Work</head><p>In conclusion, as shown in <ref type="figure" target="#fig_4">Figures 5 and 6</ref>, our attempt at learning genre embeddings purely from raw audio produces encouraging results for both 64-dim and 4-dim encodings. Our proposed hybrid model additionally outperforms our baseline model for genre classification, achieving around 95% and 65% compared to 52% and 36% accuracy on our train and hidden test sets for genre classification. We do notice, however, that in classification, our final model struggles to distinguish pop music whilst retaining strong performance on classical music. This is then reflected qualitatively in our embeddings (in both 4 and 64 dimensions), where pop music is more scattered as compared to the clustered classical music. In listening to and attempting to classify particular recordings ourselves, we posit that this discrepancy occurs due to the lack of a distinct style in pop music versus a clearer definition of classical music. Overall, our 64-dim embeddings display stronger granularity across genres, whilst our 4-dim embeddings indicate stronger separation. As aforementioned, both of these embeddings serve different purposes and will be useful in different scenarios.</p><p>In the future, we fundamentally seek to improve the interpretability of our latent representations. Specifically, we plan to experiment with using these encodings for musical style transfer and evaluate our embeddings in an extrinsic task. We also plan to interpolate components in our encodings to interpret the latent space. We acknowledge limitations in our approach, specifically in the trimming of the dataset and our avoidance of explicit feature engineering. As such, we hope to increase the number of classes in our dataset and expand our task brief to experiment with integrating MFCCs and other forms of feature engineering to see if we can further inform our encodings generated from raw audio. Finally, we are curious to see if replacing the autoencoder with a β-TCVAE would help us learn disentangled representations of genre via a mutual information gap (MIG) metric <ref type="bibr" target="#b9">[10]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head><p>Vrinda and Arjun worked on the initial data processing, which Woody then optimized. Vrinda and Woody worked on the initial classification model, and Arjun worked on the autoencoder. Vrinda and Woody worked on combining the two to form the Deep Softmax Autoencoder before we all collectively brainstormed ideas, ran experiments and evaluated results. We all worked on this report collectively.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>32nd Conference on Neural Information Processing Systems (NIPS 2018), Montréal, Canada.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Visualization of PCA on raw input data</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Model architecture of combined deep autoencoder and feed-forward multi-class classifier, referred to as a Deep Softmax Autoencoder</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc>Confusion matrix of the Deep Softmax Autoencoder's predictions on a test set of 1000 held-out examples</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc>Visualization of PCA on bottleneck 64-dim encodings</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 :</head><label>6</label><figDesc>Visualization of PCA on 4-dim logits as potential encodings</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Figure 3: Deep Softmax Autoencoder accuracy curves with the epoch number on the x-axisClassification Accuracies Train Set (6000 Examples) Dev Set (1000 Examples) Test Set (1000 Examples) Two Layer Neural Network 52.0% 38.1% 36.4% Deep Softmax Autoencoder 94.9% 64.1% 65.3% Table 1: Comparison of classification accuracy between Deep Softmax Autoencoder and baseline two layer neural network 3 Deep Softmax Autoencoder Precision Recall F1 Score Classical 0.783 0.775 0.779 Jazz 0.606 0.627 0.616 Metal 0.515 0.554 0.5337 Pop 0.670 0.608 0.638 Table 2: Objective metrics over a held-out test set of 1000 examples for the Deep Softmax Autoencoder</figDesc><table>Classification Accuracies 
+Train Set (6000 Examples) Dev Set (1000 Examples) Test Set (1000 Examples) 
+
+Two Layer Neural Network 
+52.0% 
+38.1% 
+36.4% 
+Deep Softmax Autoencoder 
+94.9% 
+64.1% 
+65.3% 
+Table 1: Classical 
+0.783 
+0.775 
+0.779 
+Jazz 
+0.606 
+0.627 
+0.616 
+Metal 
+0.515 
+0.554 
+0.5337 
+Pop 
+0.670 
+0.608 
+0.638 
+Table 2: </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Music Analysis, Retrieval and Synthesis for Audio Signals (MARSYAS) GTZAN Dataset</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Music Genre Classification using Machine Learning Techniques in arXiv</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Bahuleyan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">A Universal Music Translation Network in arXiv</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>Mor</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Learning a Latent Space of Multitrack Measures in arXiv</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Simon</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Music Style Transfer: A Position Paper in arXiv</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Dai</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Musical Genre Classification of Audio Signals in IEEE</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Tzanetakis</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">A Neural Algorithm of Artistic Style in arXiv</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Gatys</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">TensorFlow: Large-scale machine learning on heterogeneous systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Abadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Software available from tensorflow.org</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Automatic Musical Pattern Feature Extraction Using Convolutional Neural Network</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IMECS</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Isolating Sources of Disentanglement in VAEs</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Chen</surname></persName>
+		</author>
+		<ptr target="https://github.com/arjunsawknee/Genre-Extraction" />
+		<imprint/>
+	</monogr>
+	<note>in arXiv, 2018. Code can be seen here</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

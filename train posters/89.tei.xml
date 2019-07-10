@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:20+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Tree for JPY Cross-Currency Basis Predicting Foreign Exchange Arbitrage</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Stefan</forename><surname>Huber</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amy</forename><surname>Wang</surname></persName>
+						</author>
+						<title level="a" type="main">Tree for JPY Cross-Currency Basis Predicting Foreign Exchange Arbitrage</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.18637/jss.v077.i01</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Raw data are processed to form the final Train and Test sets following the procedures in the chart below. Note that before augmenting the data, we compute and use the percentage change instead of the original level for most of the data series. This is done to both normalize and extract more meaningful information.</p><p>Ultimately, each of our models is applied to 8 distinct Train/Test sets: for each of the AUD and JPY bases, we have either the Complete or the Post-Crisis sample, and within each sample, we split Train vs. Test using either a contiguous or a random approach.</p><p>For the AUD basis, the regression tree and the regularized regressions perform similarly. Comparing the MSEs from the two specifications of regularized regressions (linear vs. polynomial feature space), we note that the prediction error in the AUD basis is likely caused by a bias problem, as the MSE decreases with the inclusion of the higher-dimensional features in both the training and the test set. In predicting the JPY basis, we find indications of a variance problem, i.e. overfitting, since the polynomial improves the training error but increases the test error.</p><p>Overall, the random forest algorithm delivers the best performance, with the lowest train and test MSE. Note that in the second contiguous test period (2017), no algorithm seems to fit very well. One potential reason is that the cross-currency bases were on an elevated level with low variance, a state that has not been observed in the train data.</p><p>We also explore the set of variables with the most predictive power. The figure below shows how often the trees in the random forest (as applied to the Complete AUD sample) split on each of the considered features within the first seven splits. The horizontal line indicates how often a feature would appear if no feature had predictive power.</p><p>Given the observed bias issue with the AUD data, we would collect more economic features and use higher order polynomial features in the regularized linear regressions in the future.</p><p>To improve the performance on the JPY data, we will expand the set of algorithms employed. Specifically, we will apply the boosting technique, and we will consider training a neural network.</p><p>Finally, we want to extend the analysis to a larger set of currency bases. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Variable Importance AUD Random Forest</head><p>In the chart below, we exemplarily show a fitted tree for the JPY basis. Interestingly, the JPY basis is predicted by mostly US features; this contrasts with the prediction of AUD basis, which relies on both Australian and US features. This raises the question whether we have included the appropriate set of features for JPY basis.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>Baker, S. R., Bloom, N., &amp; Davis, S. J. (2016). Measuring economic policy uncertainty. The Quarterly Journal of Economics, 131(4), 1593-1636. Friedman, J., Hastie, T. and Tibshirani, R. (2008) Regularization Paths for Generalized Linear Models via Coordinate Descent, https://web.stanford.edu/~hastie/Papers/glmnet.pdf Journal of Statistical Software, Vol. 33(1), 1-22 Feb 2010 Wright, M. N. &amp; Ziegler, A. (2017). ranger: A fast implementation of random forests for high dimensional data in C++ and R. J Stat Softw 77:1-17. http://dx.doi.org/10.18637/jss.v077.i01.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classifying Treatment Effectiveness in Chronic Recurrent Multifocal Osteomyelitis from MRIs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><surname>Merkoulovitch</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University SCPD</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">SCPD</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zach</forename><surname>Wener-Fligner</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University SCPD</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">SCPD</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Classifying Treatment Effectiveness in Chronic Recurrent Multifocal Osteomyelitis from MRIs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>CRMO</term>
+					<term>MRI</term>
+					<term>machine learning</term>
+					<term>ensembling</term>
+					<term>bag of visual words</term>
+					<term>inception v3</term>
+					<term>convolutional neural network</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Chronic Recurrent Multifocal Osteomyelitis (CRMO) is a rare condition mainly affecting the distal regions of long bones in the body. We present a proof of concept application of machine learning to predict disease progression on pairs of MRI images containing the knee and long bones of the leg. In this approach, we train multiple classifiers: logistic and kNN classifiers with features extracted using a pre-trained Inception-v3 CNN and SVM and Naive Bayes classifiers on a bag of visual words. We use ensemble voting to combine these models and present results for both multi-class (improved; persisted; and regressed) and binary classes (improved; and persisted/regressed).</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p>Chronic Recurrent Multifocal Osteomyelitis (CRMO) is an inflammatory bone disease, affecting primarily children, where patients present with bone pain and localized swelling. Since its first description in 1972, there have been over 500 documented cases. Clinically, CRMO affects mainly the distal regions of long bones including the femur and tibula <ref type="bibr" target="#b0">[1]</ref>.</p><p>During CRMO treatment, physicians use whole-body magnetic resonance imaging (WB-MRI) to evaluate patient disease progression and response to treatment <ref type="bibr" target="#b0">[1]</ref>. The primary indicators of disease progression are the presence of lesions and localized brightness in the affected regions, with decreases in both corresponding to an improvement in condition.</p><p>Here, we evaluate disease progression automatically using machine learning on pairs of images from MRI scans. Due to the complexity of analyzing and generating high-quality features for a full body MRI, we consider only subsets of an MRI that contain clear images of the knee and long bones of the leg. This simplifies the problem and enables classical machine learning techniques. Pairs of input MRI images are classified as members of three classes: condition improved; condition persisted; and condition regressed. Additional models for the binary class problem: condition improved; and condition persisted or regressed are also presented.</p><p>Convolutional neural networks (CNNs) that are used for many computer vision and MRI processing applications require large datasets to avoid overfitting on the training set. Such requirements are unreasonable in many clinical settings, particularly in rare diseases such as CRMO where the number of known cases are in the hundreds. Instead, we focus on careful data augmentation and methods such as cross-validation and regularization to reduce overfitting. We use custom methods to extract features from images, applying classical models to attempt to make global predictions about an individual's disease progression based on an MRI subset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Chronic Recurrent Multifocal Osteomyelitis Research</head><p>WB-MRIs have proven to be a valuable tool in clinical and research CRMO settings. Roderick et al. evaluated CRMO treatment effectiveness by considering changes in visible lesions in WB-MRI <ref type="bibr" target="#b0">[1]</ref>. In <ref type="bibr" target="#b1">[2]</ref>, Arnoldi et al. devised a radiologic index for non-bacterial osteitis (RINBO), including CRMO, that allows standardized reporting of WB-MRI. Still, the method involves manually counting the number of lesions and manual classification of lesion size. To our knowledge, no research has attempted fully-automated evaluation of CRMO.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Scene Change Detection</head><p>Evaluating pairs of MRI scans is similar to computer vision problems that attempt to recognize changes in scenes with applications to building and traffic monitoring <ref type="bibr" target="#b2">[3]</ref>. Whereas traditional scene detection does gross object detection such as the addition of an object to a scene-ignoring changes to brightness-we are interested in detecting small changes to brightness and luminosity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Machine Learning Applications to MRIs</head><p>Machine learning applied to MRI and other radiograph images is an active field of research <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7]</ref>. <ref type="bibr">Tiulpin et al.</ref> showed that CNNs trained on thousands of knee MRIs could be an effective classifier of osteoarthritis severity as measured by the Kellgren-Lawrence scale (in essence a more mature version of RINBO) <ref type="bibr" target="#b2">[3]</ref>. Antony et al. applied CNNs to both knee joint detection and disease classification <ref type="bibr" target="#b6">[7]</ref>. Non-neural network techniques have been studied as well; Wang et. al. applied a SURF variant for image registration in <ref type="bibr" target="#b7">[8]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III.</head><p>DATA PREPARATION WB-MRI scans from 45 patients were procured from the Bristol Royal Hospital, with scans averaging one year apart per patient. A dataset containing the original radiologists' assessment, based on clinical data and MRI readings, was also procured. The radiologist assessments were simplified to fit a three-class model: given two consecutive MRI scans for a patient taken at two different dates, a patient's condition with respect to CRMO either improved (I), regressed (R), or persisted (S). As the scans represent a cohort of patients undergoing treatment with pamidronate therapy, the data is skewed towards the improved class. The MRI dataset was provided in DICOM format, each scan consisting of approximately one thousand individual images depicting cross-sections of the body. From this initial data, a pared-down dataset was manually curated by selecting one to two representative images with clear views of the knee and long bones of the leg from each MRI scan. In some cases, patients had no high-quality representative images because all leg and knee images were extremely blurry or noisy; these scans were omitted from the set, leaving scans of 28 patients.</p><p>A list of date pairs and disease progression labels was manually curated from the information provided by the radiologist. When possible, labels for non-consecutive scans were inferred to increase dataset size.</p><p>Merging the images with the curated radiologist data resulted in 55 examples, each consisting of a pair of images similar to figure 1, and a label of I, S or R. Image feature vectors were extracted in multiple ways: from a pre-trained convolutional neural network producing 2048-length vectors; and via a bag of visual words technique, producing vectors of length , where is the visual vocabulary size. These 2 V | | V | | approaches are described in the Methods section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Data Augmentation</head><p>Since initial models had high-variance issues, data augmentation was used to produce more training examples <ref type="figure" target="#fig_1">(Fig. 2</ref>). These were created by swapping the order of pairs of images such that the latter image was treated as the first scan and initial images were treated as the second scan, with requisite label adjustments. Additional image augmentation was performed for the bag of visual words model by random linear stretching and adding Gaussian noise, and is described in the Experiments section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Data Distribution</head><p>The augmented dataset was split to create 56 training samples and 25 validation samples. A significant number of samples were placed in the validation set in an effort to realistically quantify the generalization error. An additional small set of 7 test examples was held-out as a means for assessing final model quality at the end of development. The test sample was hand-selected prior to augmentation and contains a discrete set of patients whose scans do not overlap with those in the development sets. Class distribution of train/dev sets before and after augmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head><p>We present two component approaches and an ensembling technique producing the prediction pipeline shown in <ref type="figure">figure 3</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Transfer Learning with Inception-v3 network</head><p>Transfer learning is the process of using models trained in one setting for application to other problems. The Inception-v3 model presented by Szegedy, C., et al <ref type="bibr" target="#b8">[9]</ref>, trained for the ImageNet image classification challenge, achieved a top-1 error rate of 4.2% and has been applied to a variety of machine learning applications since.</p><p>We used the convolutional base of the pretrained model and extracted features generated in the penultimate layer using Tensorflow <ref type="bibr" target="#b9">[10,</ref><ref type="bibr">11</ref>]. The final layer was then replaced by a custom predictor, allowing us to build convolutional models in a small dataset setting where retraining a CNN is not possible.</p><p>Images were first normalized to match the training size of Inception-v3 (299x299) by padding and resizing, before being run through the network. Multiple approaches were tried to convert individual image feature vectors into a format to represent an MRI pair. Predictor models were trained using two classes of models: a) Softmax Regression: a generalization of logistic regression that applies to multi-class problems by defining linear boundaries between classes. Softmax uses the multi-class cross-entropy loss function (4.1) with probability determined by the softmax function (4.2): Overall architecture for proposed model.</p><p>b) K-Nearest Neighbors: an item is classified by majority voting of k neighbors.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Bag of Visual Words</head><p>The Bag of Visual Words <ref type="bibr" target="#b10">[12]</ref> is a technique for transforming a dataset of images into a feature set, where a given image is represented as a set of common visual components, termed visual words. First, a visual vocabulary is assembled by extracting a set of key points μ , .. , } V = { 1 . μ n for each image in our dataset, and running a k-means clustering algorithm on the set of key points. Let the set of key points for image be . Then the set of all key points across all images is represented in (4.3) with corresponding k-means clusters given by (4.4): , where the th element is the number of times a feature whose closest centroid is appears in the image. The input to our model is represented in , acquired by concatenating vectors for two input images.</p><p>On the resulting dataset, we trained SVM with radial basis function kernel and Naive Bayes classifiers. For Naive Bayes, a Bernoulli event model was used, and the feature vectors were transformed to a binary format, with 1 indicating the presence of a centroid in the image and 0 indicating its absence. Then, predictions are given by (4.5) and (4.6): (4.5) (4.6) was generated using Scale-Invariant Feature Transform X kp (SIFT) <ref type="bibr" target="#b12">[13]</ref>; Speeded-Up Robust Features (SURF) <ref type="bibr" target="#b13">[14]</ref>; and Oriented FAST and Rotated BRIEF (ORB) <ref type="bibr" target="#b14">[15]</ref>.</p><p>Both SURF and SIFT rely on approximations for the Laplacian of Gaussians (LoG), an edge detection technique that applies a Laplacian operator to a Gaussian-blurred image. The Gaussian blur is a low-pass filter, reducing noise, and the zeros of the Laplacian filter-a second-order differential operator-indicate areas of rapid change, characterizations of edges and blobs. SIFT approximates the LoG with a Difference of Gaussians (DoG), a similar technique which takes the difference of two images blurred by Gaussians with different . SURF does the approximation using box filters, σ 2 where a pixel is set to the average of its neighbors. ORB detects key points via a corner detector that uses heuristics on points within a given radius of a pixel.</p><p>After dropping low-contrast points and edge points, the remaining key points are transformed to vector descriptions computed by examining a window around the point.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Voting Ensemble</head><p>Ensembling methods were used to decrease variance by combining predictions of multiple weaker classifiers. We used a simple voting ensemble to combine the individually trained models discussed above. Soft weighting was used, which considers the probabilities produced by component models, whereas hard voting considers only the predicted class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. EXPERIMENTS AND RESULTS</head><p>Component models and parameter tuning were performed on a 70:30 train/dev split. We used 5 to 7-fold cross validation, ensuring sets were large enough to represent all classes in each round. The best-performing models were re-trained on the full training and development sets before final evaluation on the held-out test set. As accuracy is a poor lone indicator of success in small dataset problems, we use several metrics: F-1 Score. Weighted average that attempts to balance false positives and negatives by considering precision and recall.</p><p>Receiver Operator Curve (ROC). Plots recall against (1 -specificity); is a visualization of the discriminatory power of a model versus random guessing (a straight line). AU-ROC, the area under the curve, summarizes the ROC in a scalar between 0 and 1. AU-ROC closer to 1 indicates higher quality.</p><p>Macro/Micro Averaging. Used in multi-classification problems; macro average treats all classes equally, while micro average weights classes based on class size.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Baseline</head><p>We set a baseline by subtracting image brightness histograms, creating length-256 vectors, and training logistic regression. This performed similar to random guessing.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Transfer Learning Model.</head><p>In the transfer learning approach, we focused on methods for transforming individual feature vectors generated by the CNN into features that performed successfully when representing a pair of images. Two primary methods for combining data were tested: feature concatenation, where individual feature vectors were concatenated to form vectors of length 4096; and feature dissimilarity, where we subtract the individual feature vectors, giving a vector of length 2048.</p><p>Experiments were also conducted to process the initial data by performing data augmentation, feature normalization and feature reduction (removing features with ). <ref type="table" target="#tab_0">Table I</ref> .1 σ 2 &lt; 0 shows the evaluation set F-1 and accuracy scores after being trained with default sklearn logistic regression parameters. In all instances, micro average gives a more favorable result, likely due to a shortage of samples in the persisted (S) class, which is also the primarily misclassified class. The bolded row represents the processing method that best balanced scores.</p><p>Feature dissimilarity, applied to video scene detection in <ref type="bibr" target="#b8">[9]</ref>, outperformed simple concatenation. Unfortunately, since CNN features are not interpretable, there is ambiguity in what the dissimilarity represents. Data augmentation and feature reduction unsurprisingly improved model performance, given the small dataset's proneness to overfitting and high variance. Hyperparameter tuning was performed via grid search, selecting for models with high F-1 scores and better generalization error. Both multi-class and binary models performed best using L2 regularization with λ=10 and λ=20 respectively, with performance shown in <ref type="table" target="#tab_0">Table II</ref>. The confusion matrix in <ref type="figure" target="#fig_4">Figure 4</ref> indicates that softmax regression had difficulty distinguishing the persisted (S) class in the multi-class problem. This suggests this class may not be linearly separable, which is interesting since it class sits between the others in terms of disease progression. Interestingly, in the binary problem, once S was grouped with R, the model was quite successful with an AUC of 0.92. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Visual Bag of Words</head><p>We trained Naive Bayes and SVM with rbf kernel classifiers on the visual word datasets with vocabularies ranging from size 5 to 500. Hyperparameters for the SVM were selected via grid search in 5-fold cross validation. The highest-performing hyperparameters for the SVM models were found at C=10, . In Naive Bayes we 0.0001 γ = experimented with both a uniform prior for visual world probabilities and with priors learned from the training set. The best-performing models during cross-validation are summarized in <ref type="table" target="#tab_0">Table III.   TABLE III.</ref> VISUAL BAG OF WORDS PERFORMANCE (F-1 SCORING)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Train Dev Test</head><p>Multi-class Both bag-of-words models were high-variance, achieving 100% per accuracy on the training set. We augmented the dataset by generating 10-20 synthetic images for each training image, created by applying a random linear warp and adding Gaussian noise. This prevented the model from achieving perfect training accuracy, but failed to improve cross validation performance.</p><p>This method consistently struggled to generalize past the training set. Despite key point density around interesting regions in the image (visible as the green dots in the architecture diagram of <ref type="figure">fig 3)</ref>, it is possible that the key points are not effective proxies for the indicative regions in CRMO or that our dataset was too small to extract useful visual word representations. In addition, the scale-invariant properties of the feature extractors may make them ill-suited to transformation and noise-based data augmentation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Voting Ensemble</head><p>Using the hypertuned parameters for models in previous sections, we built custom pipelines to extract relevant features for each model and combine resulting predictions. The same cross-validation grid search approach was used to determine optimal weighting of the component models. Perhaps unsurprisingly, the highest performing ensemble models gave higher weight to the CNN-based model (e.g. 3:1 for multiclass). Although the confusion matrices on the validation set look the same for transfer learning and the ensembled method (see <ref type="figure" target="#fig_4">Figure 4)</ref>, comparing F-1 scores for the corresponding cross-validation sets (see <ref type="table" target="#tab_0">Tables II, IV)</ref> suggests ensembling did help reduce variance.  The ensembled models predicted 4/7 examples correctly in the multiclass problem, and 5/7 correctly in the binary problem.</p><p>Interestingly, visual inspection of the misclassifications showed that two of the examples in the multiclass and one of the examples in the binary class corresponded to images from a patient labeled S, that clearly matched our intuitive understanding of the I class, suggesting possible human error. Still, some of the other misclassified examples were harder to interpret without CRMO expertise.</p><p>More generally, our simplified model of isolating the knees of patients inherently adds label uncertainty. Although CRMO is most commonly found in the legs, previous analysis on this cohort showed lesions throughout the body <ref type="bibr" target="#b0">[1]</ref>, and so the hand-selected images may not be representative of the actual labels generated from the full WB-MRI.</p><p>Consistently, all multi-class models were unable to properly predict class S (see <ref type="figure" target="#fig_4">Figure 4)</ref>. This may be due to a smaller number of samples in the class, or to difficulty extracting features representative of this class compared to I or R classes. Poor predictability power of S can also be seen in the lower AU-ROC value for the multi-class ensemble <ref type="figure" target="#fig_6">(Fig 5)</ref>.</p><p>Although we made efforts to address model variance by ensembling, decreasing feature size, and performing data augmentation, the majority of final models still struggled with high variance. A validation curve for varied values of regularization parameters <ref type="figure" target="#fig_7">(Figure 6</ref>) shows that decreasing regularization makes our model swing from high bias to high bias and variance, suggesting more focus is still needed on improving features and increasing dataset size. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION AND FUTURE WORK</head><p>Our results are a promising beginning to research applying machine learning to CRMO, and we believe further investment in the small-data techniques is worthwhile. The most promising future work in improving our model lies in improving our features, as experimenting with models and hyperparameters had relatively little impact on our results compared to feature selection. The CNN transfer learning approach showed a level of success, and we suspect it could be improved by retraining on the Inception-v3 network using a more relevant MRI dataset (rather than the original ImageNet set). Such data exists for conditions like osteoarthritis and might be applied here to extract more appropriate features.</p><p>Working closely with CRMO experts is another promising path forward. Features based on RINBO developed with expert input could be information-dense, keeping both bias and variance low. Interpretable models such as decision trees could also make our models more useful in a clinical setting.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Contributions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Anna Merkoulovitch</head><p>-Worked with pediatricians at the Bristol Children's Hospital to acquire MRI images and labels indicating whether a patient's condition "improved", "stayed the same", or "regressed". </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Typical MRI appearances of improved CRMO condition after treatment with pamidronate therapy. (left: MRI dated 3-11-14, right: MRI dates 8-14-14)</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Fig. 2. Class distribution of train/dev sets before and after augmentation.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>2 Fig. 3 .</head><label>23</label><figDesc>m is the number of examples, K is the class and is y (i) the one-hot class encoding for i. The regression term ||θ|| λ</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>1 to . Then, a single image can be represented by a vector in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 4 .</head><label>4</label><figDesc>Confusion matrices for best performing models. (Top (multi-class): softmax; visual words; ensembled. Bottom (binary): logistic; visual words; ensembled.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head></head><label></label><figDesc>: Naive Bayes, SIFT, |V|=500. Binary model: SVM, ORB, |V|=50. Multiclass values represent macro-averaged f1-scores</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 5 .</head><label>5</label><figDesc>Receiver Operator Curve for multi-class ensembled model.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 6 .</head><label>6</label><figDesc>Validation curve of training and cross-validation accuracy for varied C=1/λ parameter values in logistic regression.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc>feature extraction, dataframe preparation, producing initial model -Project proposal, poster -Report writing &amp; editing -Shared code to perform GridCV parameter fitting, and creating confusion matrices -Inception-v3 based model development -Vote ensembling model development Zach Wener-Fligner -Worked with pediatricians at the Bristol Children's Hospital to acquire MRI images and labels indicating whether a patient's condition "improved", "stayed the same", or "regressed". -Manual DICOM extraction from Horos -Programmatic extraction of radiologist-labeled disease instances -Visual image selection -Manual data curation -Project proposal, poster -Report writing &amp; editing -Binary image thresholding investigation -Script for comparing incorrectly-predicted images -Bag of visual words model development Link to code: https://github.com/annamerk/crmo-diagnosis-using-mri/</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I .</head><label>I</label><figDesc>FEATURE SET SELECTION OVER MULTIPLE PROCESSING STRATEGIES</figDesc><table>Data Adjustment 
+F-1 Score 
+Accuracy 
+Aug 
+Norm 
+FR 
+Micro 
+Macro 
+
+Feature Concatenation 
+
+0.80 
+0.52 
+0.8 
+
+0.40 
+0.44 
+0.44 
+
+0.56 
+0.54 
+0.56 
+
+Feature Dissimilarity 
+
+0.67 
+0.41 
+0.66 
+
+0.73 
+0.45 
+0.73 
+
+0.72 
+0.62 
+0.72 
+
+0.76 
+0.66 
+0.76 
+
+*Aug: Data Augmentation. Norm: feature normalization, FR: feature reduction 
+*Gray boxes represent adjustment made on data 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II</head><label>II</label><figDesc></figDesc><table>. 
+F-1 SCORES OF TRANSFER LEARNING MODELS 
+
+Model 
+
+Train 
+Dev 
+Test 
+
+Multi-class 
+0.92 
+0.79 
+0.36 
+
+Binary classification 
+0.95 
+0.88 
+0.71 
+
+Multiclass values represent macro-averaged f1-score 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>TABLE IV .</head><label>IV</label><figDesc></figDesc><table>ENSEMBLED MODEL PERFORMANCE (F-1 SCORING) 
+
+Model 
+
+Train 
+Dev 
+Test 
+
+Multi-class 
+0.95 
+0.63 
+0.42 
+
+Binary classification 
+0.89 
+0.78 
+0.71 
+
+Multiclass values represent macro-averaged f1-scores 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">limits overfitting by penalizing large parameters to improve generalizability. This is important in small datasets where overfitting is often a problem.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>We thank Dr. Athimalaipet V. Ramanan of Bristol Royal Hospital for introducing us to CRMO research and guiding us along the way; Dr. Chandrika S. Bhat for assisting in manually curating data collected from radiologists; and the radiology staff for anonymizing and sharing patient MRI images.</p><p>We also thank TA Fantine Huot for her tremendous amount of guidance and support throughout the project, and TA Suvadip Paul for assistance in connecting with the UK-based team and technical guidance.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Chronic recurrent multifocal osteomyelitis (CRMO) -advancing the diagnosis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Roderick</surname></persName>
+		</author>
+		<idno type="doi">10.1186/s12969-011-0109-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Pediatric Rheumatology</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">47</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Whole-body MRI in patients with non-bacterial Osteitis: Radiological findings and correlation with clinical data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">P</forename><surname>Arnoldi</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s00330-016-4586-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Eur Radiol</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="2391" to="299" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Change Detection from a Street Image Pair using CNN Features and Superpixel Segmentation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Sakurada</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Okatani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">BMVC</title>
+		<imprint>
+			<date type="published" when="2015-09" />
+			<biblScope unit="page" from="61" to="62" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Fully automatic, multi-organ segmentation in normal whole body magnetic resonance imaging (MRI), using classification forests (CFs), convolutional neural networks (CNNs), and a multi-atlas (MA) approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Lavdas</surname></persName>
+		</author>
+		<idno type="doi">10.1002/mp.12492</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Med. Phys</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="5210" to="5220" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Automated lesion detection on MRI scans using combined unsupervised and supervised methods</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Dazhou</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Med Imaging</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page">50</biblScope>
+			<date type="published" when="2015-10-30" />
+		</imprint>
+	</monogr>
+	<note>Published online</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Automatic knee osteoarthritis diagnosis from plain radiographs: a deep learning-based approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Aleksei</forename><surname>Tiulpin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific reports</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">1727</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Automatic Detection of Knee Joints and Quantification of Knee Osteoarthritis Severity using Convolutional Neural Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Joseph</forename><surname>Antony</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Conference on Machine Learning and Data Mining in Pattern Recognition</title>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Research on a novel non-rigid registration for medical image based on SURF and APSO</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anna</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">International Congress on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2010" />
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">3</biblScope>
+		</imprint>
+	</monogr>
+	<note>Image and Signal Processing (CISP)</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Rethinking the inception architecture for computer vision</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE conference on computer vision and pattern recognition</title>
+		<meeting>the IEEE conference on computer vision and pattern recognition</meeting>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="2818" to="2826" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Tensorflow: a system for large-scale machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martín</forename><surname>Abadi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">OSDI</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Video Google: Efficient visual search of videos</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Sivic</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Toward category-level object recognition</title>
+		<imprint>
+			<date type="published" when="2006" />
+			<biblScope unit="page" from="127" to="144" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Springer</surname></persName>
+		</author>
+		<imprint>
+			<pubPlace>Berlin, Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Distinctive image features from scale-invariant keypoints</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">G</forename><surname>Lowe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2004" />
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page" from="91" to="110" />
+		</imprint>
+	</monogr>
+	<note>International journal of computer vision</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Surf: Speeded up robust features</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Herbert</forename><surname>Bay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tinne</forename><surname>Tuytelaars</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Luc</forename><surname>Van Gool</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin, Heidelberg</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">ORB: An efficient alternative to SIFT or SURF</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Rublee</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Rabaud</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Konolige</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Bradski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision (ICCV), 2011 IEEE international conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2011-11" />
+			<biblScope unit="page" from="2564" to="2571" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">.</forename><forename type="middle">.</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Dr. Dobb&apos;s journal of software tools</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gary</forename><surname>Bradski</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Adrian</forename><surname>Kaehler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000" />
+			<biblScope unit="volume">3</biblScope>
+		</imprint>
+	</monogr>
+	<note>OpenCV</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Jupyter Notebooks-a publishing format for reproducible computational workflows</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Kluyver</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ELPUB</title>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

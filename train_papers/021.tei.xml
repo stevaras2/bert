@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:43+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Modeling Malicious Network Packets with Generative Probabilistic Graphical Models</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashe</forename><surname>Magalhaes</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gene</forename><surname>Lewis</surname></persName>
+							<email>glewis17@cs.stanford.edu</email>
+						</author>
+						<title level="a" type="main">Modeling Malicious Network Packets with Generative Probabilistic Graphical Models</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Cyber enterprise systems often are difficult to protect due to a large number of sub-components that must work in concert to remain resilient. In cyber enterprises where incoming traffic may approach a few megabits per second, an IDS and host system controlled by a Markov Decision Process may serve as an efficient resiliency solution. However, the structure of this model leverages very little information about the adversary. For example, attack signatures of well known attacks and the behavior of previous packets are not considered when the system decides if a network packet is malicious or normal.</p><p>In this paper, we attempt a first step to augmenting such a resiliency system by learning about adversary behavior through modeling malicious packet data with a probabilistic graphical model. We examine the effects of weakening the Markov assumption on the behavior of an adversary, and investigate how well this Markov adversary model is borne out in real data for four different cyber attack types. Finally, we investigate how well our model captures intrinsic characteristics of malicious behavior by using log-likelihood scores of various attack models to train a discriminative classifier; we find that our classifier is able to attain anywhere from 93% to 98% classification accuracy, a strong indicator that our generative models have successfully captured the distribution of features and behaviors that comprise a malicious adversary vs. a benign one.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Cyber enterprise systems often are difficult to protect due to a large number of sub-components that must work in concert to remain resilient. In cyber enterprises where incoming traffic may approach a few megabits per second, an IDS and host system controlled by a Markov Decision Process may serve as an efficient resiliency solution. However, the structure of this model leverages very little information about the adversary. For example, attack signatures of well known attacks and the behavior of previous packets are not considered when the system decides if a network packet is malicious or normal.</p><p>In this paper, we attempt a first step to augmenting such a resiliency system by learning about adversary behavior through modeling malicious packet data with a probabilistic graphical model. We examine the effects of weakening the Markov assumption on the behavior of an adversary, and investigate how well this Markov adversary model is borne out in real data for four different cyber attack types. Finally, we investigate how well our model captures intrinsic characteristics of malicious behavior by using log-likelihood scores of various attack models to train a discriminative classifier; we find that our classifier is able to attain anywhere from 93% to 98% classification accuracy, a strong indicator that our generative models have successfully captured the distribution of features and behaviors that comprise a malicious adversary vs. a benign one.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Technological advances such as high-speed backbones, local area networks, and wireless technology have created a dynamic network of systems which have become mission critical for governments, companies, and institutions <ref type="bibr" target="#b0">[1]</ref>. In recent years, a number of high profile attacks on cyber infrastructure have inspired a considerable amount of research into enhancing traditional protection mechanisms <ref type="bibr" target="#b1">[2]</ref>. To reduce dependency on security experts, projects have used data mining and machine learning techniques to obtain the automatically learn and respond to common attack signatures <ref type="bibr" target="#b2">[3]</ref>. This paper focuses on the problem of protection for a cyber enterprise, which consists of an elaborate web of applications, software, storage, and networking hardware. These systems have difficulty keeping up with incoming network traffic which excludes a few megabits per second.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Intrusion Detection Systems</head><p>An Intrusion detection system (IDS) is often deployed as a primary component for enabling security and resiliency within industrial control systems. Its objective is to detect ongoing intrusive activities in computer systems and networks. An IDS searches for evidence of malicious behavior by analyzing one or more event streams. Events may be represented by network packets, operating system calls, audit records produced by the operating system auditing facilities, or log messages produced by applications <ref type="bibr" target="#b3">[4]</ref>. When an attack is detected, the IDS produces an alert that describes the type of attack. A false positive warning occurs when normal network behavior is labeled as an attack. A false negative warning occurs when malicious network behavior is not detected. Consequences of false positives include reduced system availability and a subsequent disregard of IDS warnings. Consequences of false negatives include reduced trust in the IDS and damages caused by the attacker <ref type="bibr" target="#b0">[1]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Cyber enterprises as a Markov Decision Process</head><p>The problem of maintaining a secure and reliable enterprise can be addressed with a Markov Decision Process (MDP) model of a host and IDS system <ref type="bibr" target="#b4">[5]</ref>. Resilient cyber infrastructure can be defined as the ability of a system to continue to function (though possibly in a degraded manner) in the face of behaviors that affect the proper operation of some of its components <ref type="bibr" target="#b5">[6]</ref>. Modeling the system as a MDP allows for the incorporation of rigorous definitions for state awareness and operational resiliency in our modeling of realtime control systems.</p><p>The evaluation of such MDP systems requires examining the expected utility frontier for policies obtained from varying the model parameters. However, varying all model parameters over all possible values does not accurately reflect the behavior of the MDP system in handling real-world malicious network packets.</p><p>In order to augment the analysis of the MDP controller, we can leverage information about the adversary through generative probabilistic graphical models. This achieves the dual purposes of generating data to better categorize attack types as well as incorporating the generative models into the MDP system to boost resiliency.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Related Work</head><p>While controller-based autonomous systems has been implemented widely for applications in defense <ref type="bibr" target="#b6">[7]</ref>, sensor networks <ref type="bibr" target="#b7">[8]</ref>, and power management <ref type="bibr" target="#b8">[9]</ref>, to name a few, this paper builds on a novel approach to modeling an IDS and host as an MDP controller <ref type="bibr" target="#b4">[5]</ref>. The connection between anomaly detection and probabilistic graphical modeling has been shown to provide robust operational solutions <ref type="bibr" target="#b9">[10]</ref> <ref type="bibr" target="#b10">[11]</ref>.</p><p>The contribution of this paper to the existing literature is to provide further exploration of the insight generative probabilistic graphical models yield into the behavior of adversaries in the context of cybersecurity. Our work diverges Action A I encodes the action space of the IDS (i.e. whether to pass or drop a packet). Action A H encodes the action space of the host (i.e. whether to wait for a packet or reset) <ref type="bibr" target="#b4">[5]</ref>.</p><p>from those cited in its reliance on supervised learning as a means of modeling types of attacks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. MODELS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Packet Model</head><p>We collect a total of 40 different features for each packet, ranging from duration to protocol type to the number of files accessed. We model each continuous variable as a Gaussian distribution and model each discrete variable as a Multinomial distribution. Furthermore, we model the Bayesian Network of packet features with a Naive Bayes Model; given the observed state of the adversary, the distributions for each of the packet features are independent of each other. Our packet generation procedure creates a new packet by sampling each of the 40 packet features from their respective distributions, conditional on if the adversary choose to act normally or maliciously. To fit the parameters for each distribution, we calculate the maximum likelihood estimates for each parameter. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Adversary Naive Bayes Model</head><p>As a baseline approach, we model the adversary as a Naive Bayes Model; given the probability of an adversary acting maliciously, the observed states that of the adversary are independent. A packet is then generated from the corresponding distribution, as described above. To estimate the probability of an adversary acting maliciously, we calculate the maximum likelihood estimate. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Adversary Markov Model</head><p>As an improvement on our baseline approach, we break the Naive Bayes Assumption to capture more complex stochastic dynamics of adversary actions over time. In this model, each observed state of the adversary is dependent on past T observed states, where T is the number of previous time steps that influence the current state. For example, T = 1 gives the standard Markov Assumption that the current state is only dependent on the previous state. The transition probability for the adversary is given by a Ttensor, where each dimension has size 2 and each entry gives the probability of transitioning to the next state given the current and previous T states. To estimate the entries of the probability tensor we calculate the maximum likelihood estimates. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. EXPERIMENTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Dataset</head><p>The maximum likelihood estimation of our model parameters relies on the NSL-KDD dataset <ref type="bibr" target="#b11">[12]</ref>. Due to the confidential nature of network attacks, there are few publicly available data sets for network-based anomaly detection systems <ref type="bibr" target="#b4">[5]</ref>. Since 1999, KDD CUP has been the most widely used dataset for the evaluation of anomaly detection methods <ref type="bibr" target="#b12">[13]</ref>. Researchers Mahbod Tavallaee, Ebrahim Bagheri, Wei Lu, and Ali A. Ghorbani created a data set, NSL-KDD, to address the shortcomings of KDD. Specifically, the advantages of NSL-KDD over KDD include the following:</p><p>• It does not include redundant records in the train set so the classifiers will not be biased towards more frequent records • The performance of the learners are not biased by the methods which have better detection rates on the frequent records • The number of records in the train and test sets are reasonable, which allows for experiments on the complete set. Consequently, evaluation results by different research works will be comparable <ref type="bibr" target="#b12">[13]</ref>. Consequently, NSL-KDD has been carefully constructed to be representative of existing real networks.</p><p>We group our attacks into four types <ref type="bibr" target="#b13">[14]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1) Denial of Service Attacks (DoS)</head><p>A DoS attack is a type of attack in which the adversary makes a computing resource too busy to serve legitimate networking requests. This denies users access to a machine. Examples of DoS attacks within the dataset include local area network denial (land), Neptune, ping of death (pod), smurf, and teardrop attacks.</p><p>2) Probe Attacks A probe attack is a type of attack in which the adversary scans a machine or a networking device in order to determine vulnerabilities that may later be exploited. This technique is commonly used in data mining. Examples of probe attacks within the dataset include portsweep, nmap, ipsweep, and satan.</p><p>3) Remote To User Attacks (R2L) A remote to user attack is a type of attack in which the adversary sends packets to a machine over the internet which s/he does not have access to in order to expose the machines vulnerabilities and exploit privileges which a local user would have on the computer. Examples of R2L attacks in the dataset include imap, spy, phf, multihop, and guessing the password.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4) User to Root Attacks (U2R)</head><p>A user to root attack is a type of attack in which the adversary starts off on the system with a normal user account and attempts to abuse vulnerabilities in the system in order to gain super user privileges. Examples of U2R attacks in the dataset include perl, buffer overflow, and rootkit. <ref type="bibr" target="#b14">[15]</ref> B. Training</p><p>Prior to training, each packet was converted to feature space and processed so that all discrete-valued features instead take on integers. We next implement each of our attack types (DoS, Probe, R2L, U2R) as a Markov Model and learn the model parameters via maximum likelihood estimation as described above. In order to analyze the dynamics of the past T adversarial states, we fit each of the above models We then calculate the log likelihood of the data given our learned model and use this as an evaluation metric for the appropriateness of fit. Below we have plotted the log likelihood scores for each type of attack normalized against the maximum log likelihood achieved by that attack model; this allows us to examine the effect of T on each model relative to each other. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Testing</head><p>To examine the appropriateness of fit of the attack models from a different perspective, we fit a discriminative classifier using the log-likelihood responses of our attack models and then measure the classifier's ability to discriminate between malicious and non-malicious packets; the intuition behind this procedure is that an attack model should score a malicious data-packet of the corresponding attack type as more likely than a normal data-packet or a malicious data-packet of a different attack type (e.g. a packet with the signature of a DoS attack should be scored highly by the DoS model and low by the Probe, U2R, and R2L models).</p><p>We first trained Markov models for each of the four attack types for varying degrees of Markov steps from T = 1 to T = 10. We then converted two sets of 10000 and 50000 data points into vectors x i ∈ R 4 , where each feature in a given x i is the log-likelihood score of the data point from one of the four different attack models. We then trained an SVM classifier with an radial basis function kernel <ref type="bibr" target="#b18">[19]</ref> on these four dimensional vectors and made predictions on validation data of size 10% of the training data. Our validation accuracies are given in the figure below.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. ANALYSIS</head><p>We note that during training most models achieve a maximum log likelihood score with T = 4 or T = 5, with average likelihood score decreasing for larger T ; this implies that most packet signatures are primarily influenced by the previous 4 or 5 packets, where modeling probabilities for longer timesteps leads to a model with too few independence assumptions that overfits the data. This result is intuitive, as we would expect certain time-dependent attack types such as Denial of Service to be better modeled and predicted by a model that takes into account extended time dynamics. We also note that the true log likelihood score of each attack model is proportional to its representation in the data set, and so our model for a given attack type is only as robust as this proportion.</p><p>During testing, we noted that our SVM classifier trained on log-likelihood scores performed surprisingly well, correctly classifying anywhere from 93% to 99% of 1000 -5000 validation examples. We note a particularly surprising result, in which our classification accuracy decreases as the number of Markov steps our attack models were trained with increases. This result at first seems to contrast with our training results, in which our models attain a maximum log-likelihood of the data around T = 5; however, as <ref type="figure" target="#fig_6">Figure 7</ref> shows, we find that the difference in average log-likelihood response of our models to malicious packets is at a maximum at T = 1 and decreases as T moves to 10. Stated differently, the loglikelihood responses of each model to malicious vs. normal data begins to converge as the number of previous timesteps considered increases. Thus, our likelihood scores contain the most discriminative power at T = 1, which coincides with our classification accuracy results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. CONCLUSION</head><p>In this work, we have constructed a generative probabilistic Markov model of four different attack types, fitting the parameters of the corresponding distributions from the data. We found that changing the time dependence of the Markov model had a strong influence of the appropriateness of fit of the model, in general reaching a maximum when considering the previous five timesteps. We also showed that the average log-likelihood response of our models between positive and negative examples generally converges, suggesting the discriminative power of the models drops as we consider more timesteps. Finally, we also showed that fitting a discriminative classifier with the collective log-likelihood scores of our models generally achieves very good accuracy and supports the claim that our models do indeed capture much of the intrinsic structure differentiating an adversarial model from a malicious one, along with the behavior of such an adversary in choosing states. Future includes investigating how we can further leverage these models by incorporating them into an MDP resiliency system or intrusion detection system as discussed in the introduction.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 .</head><label>1</label><figDesc>Example of MDP Controller. Controller has actions A I and A H .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 .</head><label>2</label><figDesc>Naive Bayes Network Packet Model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3 .</head><label>3</label><figDesc>Naive Bayes Adversary Model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 4 .</head><label>4</label><figDesc>Markov Adversary Model</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5 .</head><label>5</label><figDesc>Network Packet Types in NSL-KDD Dataset for 1 ≤ T ≤ 10.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 6 .</head><label>6</label><figDesc>Normalized Log Likelihood of Attack Types vs. Number of Timesteps</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 7 .</head><label>7</label><figDesc>Log Likelihood for Malicious and Normal Packets for different Attack Types vs. Number of Timesteps Fig. 8. Raw Log Likelihood of Attack Types vs. Number of Timesteps</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 9 .</head><label>9</label><figDesc>SVM Validation Accuracy for Predicting Malicious Data</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENTS</head><p>The authors thank Professor Mykel Kochenderfer, Vineet Mehta, and Paul Rowe for their consistent support and inspiration. The authors also thank Dr. Arash Habibi Lashkari from the ISCX Research Center, UNB, Canada for sharing the NSL-KDD dataset.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A Comprehensive approach to intrusion detection alert correlation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fredrik</forename><surname>Valeur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="146" to="169" />
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+	<note>Dependable and Secure Computing</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A mathematical framework for the analysis of cyber-resilient control systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alexander</forename><forename type="middle">M</forename><surname>Melin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Resilient Control Systems (ISRCS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>6th International Symposium on</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">An adaptive automatically tuning intrusion detection system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhenwei</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">P</forename><surname>Jeffrey</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Thomas</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Weigert</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Transactions on Autonomous and Adaptive Systems</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">10</biblScope>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+	<note>TAAS)</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Paid: A probabilistic agent-based intrusion detection system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vaibhav</forename><surname>Gowadia</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Csilla</forename><surname>Farkas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marco</forename><surname>Valtorta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computers &amp; Security24</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="529" to="545" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Cost Optimal Cyber Resilience Analysis For an Intrusion Detection System</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vineet</forename><surname>Mehta</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Rowe</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mykel</forename><surname>Kochenderfer</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+	<note>unpublished</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Action Recommendation for Cyber Resilience</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sutanay</forename><surname>Choudhury</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2015 Workshop on Automated Decision Making for Active Cyber Defense</title>
+		<meeting>the 2015 Workshop on Automated Decision Making for Active Cyber Defense</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A controller-based autonomic defense system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Derek</forename><surname>Armstrong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">DARPA Information Survivability Conference and Exposition, 2003. Proceedings</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2003" />
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Markov decision processes for control of a sensor network-based health monitoring system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Anand</forename><surname>Panangadan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Syed</forename><surname>Muhammad Ali</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ashit</forename><surname>Talukder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the National Conference on Artificial Intelligence</title>
+		<meeting>the National Conference on Artificial Intelligence<address><addrLine>Menlo Park, CA; Cambridge, MA; London</addrLine></address></meeting>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="1999" />
+			<biblScope unit="volume">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Dynamic power management based on continuous-time Markov decision processes</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qinru</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Massoud</forename><surname>Pedram</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 36th annual ACM/IEEE Design Automation Conference</title>
+		<meeting>the 36th annual ACM/IEEE Design Automation Conference</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="1999" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Automatic construction of anomaly detectors from graphical models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Erik</forename><forename type="middle">M</forename><surname>Ferragut</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computational Intelligence in Cyber Security (CICS)</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<publisher>IEEE</publisher>
+		</imprint>
+	</monogr>
+	<note>IEEE Symposium on</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A combined discriminative and generative behavior model for cyber physical system defense</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Owen</forename><surname>Mccusker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Resilient Control Systems (ISRCS)</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>6th International Symposium on</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nsl-Kdd</forename><surname>Dataset</surname></persName>
+		</author>
+		<ptr target="http://www.unb.ca/research/iscx" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A Detailed Analysis of the KDD CUP 99 Data Set</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mahbod</forename><surname>Tavallaee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Second IEEE Symposium on Computational Intelligence for Security and Defence Applications</title>
+		<meeting>the Second IEEE Symposium on Computational Intelligence for Security and Defence Applications</meeting>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kdd Dataset</surname></persName>
+		</author>
+		<ptr target="http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Denial-of-Service, Probing &amp; Remote to User (R2L) Attack Detection using Genetic Algorithm</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Swati</forename><surname>Paliwal</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ravindra</forename><surname>Gupta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Computer Applications</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page">19</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Evaluating Intrusion Detection Systems in High Speed Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Fifth International Conference on Information Assurance and Security</title>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Design of an intrusion-tolerant intrusion detection system</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Dacier</surname></persName>
+		</author>
+		<idno>D10. IBM</idno>
+		<imprint>
+			<date type="published" when="2002" />
+			<pubPlace>Zurich Research Laboratory</pubPlace>
+		</imprint>
+	</monogr>
+<note type="report_type">Tech. Rep.</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Decision making under uncertainty: theory and application</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mykel</forename><forename type="middle">J</forename><surname>Kochenderfer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Christopher</forename><surname>Amato</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hayley</forename><forename type="middle">J</forename><surname>Davison Reynolds</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>MIT press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Universal approximation using radial-basis-function networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jooyoung</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Irwin</forename><forename type="middle">W</forename><surname>Sandberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural computation</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="246" to="257" />
+			<date type="published" when="1991" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

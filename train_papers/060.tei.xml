@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Exploration of Reinforcement Learning to SNAKE</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bowei</forename><surname>Ma</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Meng</forename><surname>Tang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun</forename><surname>Zhang</surname></persName>
+						</author>
+						<title level="a" type="main">Exploration of Reinforcement Learning to SNAKE</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-In this project, we explored the application of reinforcement learning in the problem not amenable to closed form analysis. By combining convolutional neural network and reinforcement learning, an agent of game Snake is trained to play the revised Snake game. The challenge is that the size of state space is extremely huge due to the fact that position of the snake affects the training results directly while its changing all the time. By training the agent in a reduced state space, we showed the comparisons among different reinforcement learning algorithms and approximation optimal solution, and analyzed the difference between two major reinforcement learning method.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>Since video games are challenging while easy to formalize, it has been a popular area of artificial intelligence research for a long time. For decades, game developer have attempted to create the agent with simulate intelligence, specifically, to build the AI player who can learn the game based on its gaming experience, rather than merely following one fixed strategy. The dynamic programming could solve the problem with relative small number of states and simple underlying random structure, but not the complex one.</p><p>The Reinforcement learning is one of the most intriguing technology in Machine Learning, which learns the optimal action in any state by trial and error, and it could be useful in the problem not amenable to closed form analysis. Therefore, we selected and modified the Snake game to investigate the performance of reinforcement learning. The goal of this project is to train an AI agent to perform well in a revised Snake game.</p><p>Snake is the game popularizing over the world with Nokia mobile phones. It is played by sole player who controls moving direction of a snake and tries to eat items by running into them with the head of the snake, while the foods would emerge in random place of bounded board. Each eaten item makes the snake longer, so maneuvering is progressively more difficult. In our game, we slightly changed the games rule into scoring as many points as possible in fixed time, instead of counting points in unlimited period.</p><p>Q-Learning is an example of a reinforcement learning technique used to train an agent to develop an optimal strategy for solving a task, in which an agent tries to learn the optimal policy from its history of interaction with the environment, and we call the agent's knowledge base as "Q-Factor". However, it is not feasible to store every Q-factor separately, when the game need a large number of The SARSA algorithm is an On-Policy algorithm for Temporal Difference learning. Compared to Q-learning, the major difference of SARSA is that the maximum reward for the next state is not necessarily used for updating the Q-values, instead, a new action, and therefore reward, is selected by using the same policy that determined the original action.</p><p>II. WORK REVIEW There are abundant works about the artificial intelligence research for game agent. In <ref type="bibr" target="#b0">[1]</ref>, Miikkulainen showed that soft computational intelligence (CI) techniques such as neural network, have been excelling in some challenging field, where the relatively standard, labor-intensive scripting and authoring methods failed. At the same time, recent research focuses not only on games that can be described in a compact form using symbolic representations, such as board and card games, but on more complex video games.</p><p>TD-gammon, a backgammon-playing program developed in 1990s, is one of the most successful example in reinforcement learning area. In <ref type="bibr" target="#b1">[2]</ref>, TD-gammon used a model-free reinforcement learning algorithm similar to Q-learning, and approximated the value function using a multi-layer perceptron with one hidden layer1.</p><p>Tsitsiklis and Van Roy <ref type="bibr" target="#b2">[3]</ref> showed that combining modelfree reinforcement learning algorithms such as Q-learning with non-linear function approximators, or indeed with off-policy learning could cause the Q-network to diverge. Subsequently, the majority of work in reinforcement learning focused on linear function approximators with better convergence guarantees.</p><p>With the revival of interest in combining deep learning with reinforcement learning, Sallans and Hinton <ref type="bibr" target="#b3">[4]</ref> illustrated that deep neural networks could be used to estimate the environment, while restricted Boltzmann machines could benefit the estimation of the value function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. METHOD</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Mathematical Analysis of Snake</head><p>• Abstractly, each step of the Snake game could be considered as finding a self-avoiding walk (SAW) of a lattice in R 2 . A realization of Snake game can be mathematically represented as -The m × n game board is represented as G = (V, E), where V = {v i } is the set of vertices, where each vertex corresponding to a square in the board, and E = {e ij |v i is adjacent to v j }. -The snake is represented as a path</p><formula xml:id="formula_0">{u 1 , · · · , u k },</formula><p>where u 1 , u k are the head and tail, respectively.</p><p>• NP-hardness: Viglietta(2013) <ref type="bibr" target="#b5">[6]</ref> proved that any game involving collectible item, location traversal and oneway path is NP-hard. Snake is a game involving traversing a one-way path, i.e., the snake cannot cross itself. Thus, if we have no prior information about the sequence of food appearance, picking every single shortest SAW for each step in an episode is NP-hard.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Approximation Algorithm for Snake</head><p>Due to the NP-hardness of finding optimal solution for Snake, we developed a heuristic algorithm that does considerably well for Snake problem and used it as benchmark for the reinforcement learning algorithms we will discuss later. The algorithm is shown in Algorithm1.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Reduction of State Space for Reinforcement Learning</head><p>To conduct and implement successful reinforcement learning algorithms to play the game, one of the fundamental obstacles is the enormous size of state space. For instance, denote the size of the game board as n × n. Naively, using the exact position of the snake and food, each cell could be parameterized by one of the four conditions: {contains food, contains the head of the snake, contains the body of the snake, blank}. By simple counting principle the size of the state space |S| satisfies |S| &gt; n 8 , which is immense when n is large and learning in state space of such size is infeasible. Hence, to accelerate the learning rate, one simple reduction technique is to record only the relative position of the snake and the food with the current condition of the snake. Precisely, each state in the reduced space is of the form {w s , w l , w r , q f , q t }</p><p>In the above expression, w s , w l and w r are indicator functions whether there is a wall adjacent to the head in straight, left and right directions respectively, and q f , q t are the relative position of the food and tail with respect to the head.</p><p>Algorithm 1: The deterministic heuristic algorithm for Snake  Find the longest Path between s 1 and s k , Using such mapping the total size of state space is only 2 3 · 4 2 = 128, and the performance is would be improved prominently in the learning process.</p><formula xml:id="formula_1">1 Build the graph G = (V, E), each square v ij ∈ V 2 while Snake S= {s 1 , · · · , s k } ∈ V and Food F= {f } ∈ V do 3 build {v ij , v kl } ∈ E, where v ij , v kl / ∈ S with (i = ±k, j = l) or (i = k, j = ±l) 4 initialize m × n array D 5 assign D[i][j] =</formula><formula xml:id="formula_2">} ∈ E 7 if D[i][j] = M AX N U M then 8 find Path P = {v ij , p 2 , · · · , p n−1 , f } 9 assigns 1 = f,s 2 = p n−2 , · · ·s k = p n−k 10 ifs 1 ands k is connected then 11 assign s 1 = v ij , s 2 = s 1 , · · ·</formula><formula xml:id="formula_3">16 P = {s 1 , p 2 , p 3 · · · , p n−1 , s k } 17 assign s 1 = p 2 , s 2 = s 1 , · · ·</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Reinforcement Learning -Q-Learning</head><p>In Q-learning, an agent tries to learn the optimal policy from its history of interaction with the environment. A history is defined as a sequence of state-action-rewards:</p><formula xml:id="formula_4">&lt; s 0 , a 0 , r 1 , s 1 , a 1 , r 2 , s 2 , a 2 , r 3 , · · · &gt;<label>(1)</label></formula><p>For the Snake game, the process is indeed a Markov Decision Process, and the agent only needs to remember the last state information. We define the experience as a tuple of &lt; s, a, r, s next &gt;. These experiences will be the data from which the agent can learn what to do. As in decision-theoretic planning, the aim is for the agent to maximize the value of the total payoff Q(s, a), which in our case is the discounted reward. In Q-learning, which is off-policy, we use the Bellman equation as an iterative update</p><formula xml:id="formula_5">Q i+1 (s, a) = E s ∼ {r + γ max a Q i (s , a |s, a)}<label>(2)</label></formula><p>In the above equation, s, s are the current and next state, r is the reward, γ is the discount factor and is the environment. And it could be proven that the iterative update will converge to the optimal Q-function. Since the distribution and transition probability is unknown to the agent, in our approach we use a neural network to approximate the value of the Q-function. This is done by using the temporal difference formula to update each iteration's estimate as</p><formula xml:id="formula_6">Q(s, a) ← Q(s, a) + α(r + max a Q(s , a ) − Q(s, a)) (3)</formula><p>The action set includes three possible outcomes :{turn left, turn right, go straight}.</p><p>An greedy approach is implemented here. The exploration probability is is changed from 0.5 to 0.1 with a constant density 0.01 during training. Once it reaches 0.1, it holds constant. This propels the agent to explore a lot of possibilities in the beginning of the game when it doesnt know how to play the game. This leads to a great amount of random actions thus enable the agent to exploit much enough to narrow down the optimal actions. E. Reinforcement Learning -State-Action-Reward-StateAction(SARSA)</p><p>State-Action-Reward-State-Action(SARSA) is an onpolicy reinforcement learning algorithm which estimates the value of the policy being followed. We could describe an experience in SARSA in the form of:</p><formula xml:id="formula_7">&lt; s, a, r, s , a &gt;<label>(4)</label></formula><p>This means that the agent was in state s, did action a, received reward r, and ended up in state s , from which is decided to do action a . This provides a new experience to update Q(s, a) and the new value which this experience provides is r + γQ(s , a ). So SARSA could be described as below:</p><formula xml:id="formula_8">Q(s t , a t ) ← Q(s, a) + α(r + γQ(s , a ) − Q(s, a))<label>(5)</label></formula><p>So SARSA agent will interact with the environment and update the policy based on the actions taken, and that's why it's an on-policy learning algorithm. Q value for a stateaction is updated by an error, adjusted by the learning rate α. Q values represent the possible reward received in the next time step for taking action a in state s, plus the discounted future reward received from the next state-action observation. The algorithm of SARSA goes in Algorithm3</p><p>IV. RESULTS</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Tuning Parameters</head><p>The discount factor γ was set to be 0.95, moderately decreasing learning rate starting from α = 0.1 and the rewards were set as shown in <ref type="table">Table 1</ref>.</p><p>We want the agent to control the snake to go to the food quickly, and the last column in table 1 is a punishment for taking for one movement, which encourages the agent to traverse shorter walk to the food. This negative rewards acts as similar function as the discount factor γ. We performed trial and error on different combinations of reward for different cases to get current combination of reward values as one optimal combination among all the trials.   <ref type="table">Table   case</ref> eat food hit wall hit snake else reward +500 -100 -100 -10</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Learning Curve</head><p>The learning curves for Q-learning ( <ref type="figure" target="#fig_5">fig. 2.)</ref> and SARSA ( <ref type="figure">fig. 3.)</ref> are shown below respectively. The red dash lines represent the average learning curves.</p><p>We could easily observe that the performance of agent with Q-learning get improved faster than that of agent with SARSA in the beginning, i.e. in a short run, agent with Qlearning algorithm outperforms the agent with SARSA. But as the number of training iterations increases, the performance of agent with Q-learning doesn't improve much, while the performance of agent with SARSA still gets improved comparatively significantly. Q-learning does well(compared to SARSA), when the training period is short. But in the long period, SARSA wins.</p><p>The reason why the agent of Q-learning doesn't perform well in some cases in the long period training is that Qlearning algorithm would reinforce its self-righteous Q-value even with a very small learning rate. This would lead to considerably volatile performance. Although the agent with SARSA seems to outperform the agent with Q-learning algorithm in a long-period training, it also has a comparatively sluggish learning curve in our cases.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Performance Comparison</head><p>We took the performance of approximated optimal solution algorithm as the benchmark. As we mentioned before, due to the fact that Snake is a NP-hard problem, the best benchmark we could get here is the approximated optimal solution. And it could be shown later that our agents with reinforcement learning algorithms could not beat this approximated solution even with a considerable long training period.</p><p>Then we compared the performance of the agents based on two reinforcement learning algorithms with the benchmarkthe performance of our approximated optimal solution. At the same time, we consider the effects of training period on the performances of SNAKE agents. We performed 10 4 ,10 5 ,10 6 training iterations on agents based on different reinforcement learning algorithms and evaluate their performances respectively.</p><p>We set the time limit to be 1 minute for the game, run 1000 tests for agents with different algorithms and compute the average score different agents could achieve. The reason why we choose 1 minute to be the time limit is that within 1 minute, the agents with those reinforcement learning algorithms could control the snake survive so we could make sure that the difference lies only on whether different agents could find shorter path to the food. 1 minute is a comparatively long time period to show the significant performance difference among different algorithms while it is a relatively short time period that 1000 tests could be handled with our PC in a reasonable running time.</p><p>The results are shown in <ref type="figure">figure 3</ref> and <ref type="table">Table 2</ref>. It's worth mentioning here that the performance of our approximated optimal solution algorithm is not related to the number of training iterations. Only the performances of agents with SARSA and Q-learning algorithm are directly Our results show that within the range of 10 4 to 10 6 training iterations, a larger number of training iterations would lead to better average scores for both Q-learning and SARSA algorithm. Given the same number of training iterations, agent trained in SARSA has better performance than that trained in Q-learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. FUTURE WORK</head><p>A. Explore the stability of Q-learning algorithm</p><p>We found that in some training cases, even with a decreasing exploration probability, the performance of Qlearning algorithm is not very stable. So it's worth exploring principles and methods to improve the stability of the Qlearning algorithm. For example, one intuitive way to address this problem is to add various tuning parameters to improve the probability of convergence for Q-learning algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Study the other state space approximation methods</head><p>Other approximation of the state space could be explored for better performance. Currently, we use a quadrant view state mapping technique as discussed in the previous section. Using such means, the snake does not have a good sense of precaution for hitting himself. Hence, a more rigorous state mapping technique should be developed. Such reduction mapping must not only approximate the relative position of the head and the food, but also obtain a concise sense of the position of the body without tremendously enlarging the size of the state space.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Expected SARSA</head><p>In order to further improve the learning rate of the Snake agent, Expected SARSA could be used. van Seijen et al.</p><p>(2009) <ref type="bibr" target="#b6">[7]</ref> provide a theoretical and empirical analysis of Expected SARSA, and found it to have significant advantages over more commonly used methods like SARSA and Q-learning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSIONS</head><p>In this project, we have shown an implementation of both Q-learning and SARSA, by approximation of state space, in neural network. We anticipated that the difference between performances of Q-Learning and SARSA might become apparent after long training period, and the outcome verified our expectation. Also, we compared this two methods with an approximated optimal solution and found that neither of the two agents could achieve the performance of the approximated optimal solution, while they exhibited prominent learning. Also, We observed the instability of Q-learning algorithm in some cases and it's worth exploring feasible solutions for future work.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Game Snake action state pairs, so we could introduce Neural Network to store Q-factor of each state.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>length of path between v ij and f or M AX N U M if no path exists 6 find the min{D[i][j]} with {v ij , s 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc>Choose a from s using -greedy policy 8 Q(s t , a t ) ← Q(s, a) + α(r + γQ(s , a ) − Q(s,</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 2 :</head><label>2</label><figDesc>Learning curves from Q-Learning Fig. 3: Learning curves from SARSA</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 4 :</head><label>4</label><figDesc>performance comparison among 3 different algo- rithms related to the number of training iterations. The performance of the approximated optimal solution is shown to be a benchmark in the same table and figure as performances of agents with different reinforcement learning algorithms.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Rewards</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Performance Comparison</figDesc><table>iterations 
+method Optimal SARSA Q-learning 
+
+10 4 
+77.504 
+36.858 
+18.023 
+10 5 
+77.504 
+51.994 
+25.789 
+10 6 
+77.504 
+61.830 
+36.567 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bobby</forename><surname>Risto Miikkulainen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ryan</forename><surname>Bryant</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Igor</forename><surname>Cornelius</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kenneth</forename><surname>Karpov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chern Han</forename><surname>Stanley</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Yong</surname></persName>
+		</author>
+		<ptr target="ftp://ftp.cs.utexas.edu/pub/neural-nets/papers/miikkulainen.wcci06.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">Computational Intelligence in Games</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Temporal difference learning and td-gammon</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gerald</forename><surname>Tesauro</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">5868</biblScope>
+			<date type="published" when="1995" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">analysis of temporaldifference learning with function approximation. Automatic Control</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Tsitsiklis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Van Roy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">674690</biblScope>
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Reinforcement learning with factored states and actions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Sallans</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">10631088</biblScope>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Lucas Jen An application of SARSA temporal difference learning to Super Mario</title>
+		<ptr target="http://x3ro.de/downloads/MarioSarsa.pdf" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Gaming is a hard job</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Giovanni</forename><surname>Viglietta</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+	<note>but someone has to do it!</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A theoretical and empirical analysis of Expected Sarsa</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Van Seijen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Van Hasselt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Whiteson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Wiering</surname></persName>
+		</author>
+		<ptr target="http://goo.gl/Oo1lu" />
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Symposium on Adaptive Dynamic Programming and Reinforcement Learning</title>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="page">177184</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

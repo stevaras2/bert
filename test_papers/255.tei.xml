@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:50+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Caesar&apos;s Taxi Prediction Services Predicting NYC Taxi Fares, Trip Distance, and Activity</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Jolly</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Boxiao</forename><surname>Pan</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Varun</forename><surname>Nambiar</surname></persName>
+						</author>
+						<title level="a" type="main">Caesar&apos;s Taxi Prediction Services Predicting NYC Taxi Fares, Trip Distance, and Activity</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>1</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-In this paper, we propose three models each predicting either taxi fare, activity or trip distance given a specific location, day of week and time using NYC taxi data. We investigated three approaches for each of the models -Random Forest, Fully Connected Neural Network and Long Short-Term Memory Network. We explored increasing data granularity by applying K-Means to group coarse location data into finer level clusters. In the end, we also plotted heatmaps of all three outputs as the final deliverable to drivers. Empirical analysis shows that our models can capture the relative magnitudes of labels among different locations very well. The models discussed in this paper aim to help taxi drivers find the most profitable trips.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>For an NYC taxi driver, being at the right place at the right time is often what makes or breaks a day. One may naively assume that the right spot corresponds to a place where demand is high, for instance, the New York financial district at the end of a work day. However, this may not necessarily be the best place to be. Taxi drivers might find themselves spending the whole day stuck in traffic traveling far away from the high activity zone thereby reducing overall profits for the day. Sometimes a better option might be for the driver to go to an area that is slightly less popular where people are making many short local trips, which would accumulate to a handsome sum over the course of the day.</p><p>To assist drivers in deciding where to be, we used NYC Yellow Taxi data provided by the NYC Taxi and Limousine Commission (TLC) <ref type="bibr" target="#b0">[1]</ref> to create three different prediction models. Each model outputs either the taxi fares, activity or expected trip distances given a certain location, day of week, and time of the day in 30 minute intervals. For each model, we implemented three different approaches: Random Forest Classifier, Fully-Connected Neural Network and Long Short-Term Memory (LSTM) network. In order to make the best of our data, we also applied K-Means to increase the granularity of the data. And in the end, we generated heatmaps to show the results more intuitively. It turned out that our model can capture the relative magnitudes of labels among different locations very well.</p><p>In this paper, we discuss the design and results for each of these approaches and outline the next steps that would lead to a successful tool.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORKS</head><p>A few groups have tried to predict NYC Taxi Activity and Fares with a variety of features. One group used Random Forest Regressors and K-Nearest Neighbors Regression to predict pickup density using 440 million trips <ref type="bibr" target="#b1">[2]</ref>. They used features such as pickup lat / long, time, day, month, year, weather, etc. Despite using more data, the model outputted activity maps with high levels of noise. Differently, we approached this problem by trying to solve a classification task. We discretized all the outputs so that we can improve the accuracy of the models. In addition, the group didn't use any of the newer and relevant taxi pickup data. Our approach attempts to provide a solution for training on both sets of data and providing pickup spots to a taxi driver that have a smaller area than the location IDs present in the newer data.</p><p>Recently there was a Kaggle competition that attempted to solve the fare prediction problem using features such as pickup / drop-off locations in lat / long, time, date, and number of passengers. Some of the approaches used include LGBM <ref type="bibr" target="#b2">[3]</ref>, XGBoost <ref type="bibr" target="#b2">[3]</ref>, Random Forests <ref type="bibr" target="#b3">[4]</ref>, etc. However the problem we're attempting to solve is different from the one in the competition. The competition aims to predict a fare given all the features about the trip including drop-off location whereas we attempt to forecast activity, fares, and trip distances using time of day, location information, and day of week. As a result we can use some of the methods used for the competition but we can not compare our model to the ones used in the competition.</p><p>The problem we are attempting to solve does not have much literature and most of the approaches we used have not been tested before.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATA AND FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Raw Data Description</head><p>The NYC Taxi and Limousine Commission (TLC) provides a large amount of trip data covering over a billion trips from the years 2009 to 2018. Each trip sample contains a lot of information from which we chose pickup date and time, pickup location, drop-off date and time, drop-off location, fare amount, and trip distance. For data prior to July 2016 (referred to as older data), the pickup and drop-off locations are reported as latitude and longitude, while for data July 2016 onward (referred to as newer data), they are reported as location IDs -IDs that correspond to larger geographic regions. Other than this, the data is consistent over the years.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Data Pre-Processing</head><p>Due to computational and storage constraints, we used a sample of the full data set from July 2014 to June 2018 which amounted to 2 million trips. For each of the models, we used a 90% / 5% / 5% split for training, validation, and testing respectively. 1) Obtaining Activity: To derive the activity feature from the provided data, we aggregated the trips for each location, day of week, and time interval and repeated for each week over the entire sampled data set (208 weeks). This resulted in 208 data points of activity for each location, day of week and time interval.</p><p>2) Label Bucketing: To convert this problem into a classification task, we discretized each of the labelsfare, activity and trip distance -into buckets. We first attempted to do this using K-Means clustering, however this resulted in a non-ideal spread of clusters in which some groups would be clumped too close together. This did not practically make sense since it would be more useful to a driver to split some of the larger clusters into smaller buckets. Instead, we used the K-means clusters as a guide to discretizing the labels into bins. <ref type="table" target="#tab_0">Table I</ref> shows the discretized buckets for each of the labels. Both fare and trip distance were split into 8 buckets, while Activity was split into 9 buckets. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Feature Extraction</head><p>Feature extraction is divided into two steps: constructing non-time series set for the Random Forest and FCNN models and constructing time-series set for the LSTM model. 1) Constructing Non-Time Series Data: In this case, since every time we are inputting data at a single time point, so we simply used each data piece as an example, and splitted them into different subsets.</p><p>2) Constructing Time Series Data: By using sequential model, we hope our model can discover a relationship timewise, so we loop through the data and put the next seq len data pieces as one single example only when these seq len pieces and the following one piece are of the same location ID. Here seq len is a hyper-parameter which denotes the length of input sequence, and through cross-validation we set it to 5. The corresponding output label for that example is the label (fares, activity or trip distance) of the next one data piece right after all seq len pieces.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head><p>Our work employed various data pre-processing and modeling techniques. We go over the methodologies in this section.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. K-means Clustering and Non-Uniform Distribution</head><p>We cluster our Location IDs into 10 smaller clusters to increase the granularity of the model. In the newer data set, the pickup / drop-off locations are specified by large location IDs defined by the NY Taxi Commission. However the regions the commission chose were quite large and we wanted to reduce the area to a few blocks. K-Means algorithm works as follows: (1) Randomly assign cluster centroids in a given location ID. (2) Iteratively compute the cluster centroids to minimize the cost function. For every cluster i compute:</p><formula xml:id="formula_0">c (i) := arg min j x (i) − µ j 2 (1)</formula><p>For each j set:</p><formula xml:id="formula_1">µ j := m j=1 1 c (i) = j x (i) m j=1 1 c (i) = j (2)</formula><p>Clustering works by first randomly assigning cluster centroids and then iteratively computing the cluster centroids to minimize the L2-norm between all the points in the data set and their respective centroid. This approach works well for our case because we are attempting to clump pickups by their spatial locations. This allows us to roughly estimate activity in a few blocks rather than a large neighborhood. Example outputs are shown in <ref type="figure" target="#fig_0">figure  1</ref>. Once the clusters were created, we computed a probability distribution for the clusters within each location ID by computing the fraction of the total trips in a specific location ID that fell within a given cluster. Using this distribution, we assigned each trip in the newer data set to a cluster based on their location ID. This homogenization allowed us to combine the older and newer data sets together.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Models 1) Random Forest Classifier:</head><p>We used random forest classifiers with varying hyper-parameters to predict fare, activity and trip distance. Random forests construct an ensemble of decision trees that randomly compare features and assign a classification to a given input by calculating the mode classification from the outputs of the decision trees <ref type="bibr" target="#b4">[5]</ref>. This method guarantees that the model does not overfit to the training data. We used the Gini loss for the random forests criterion shown in equation 3.</p><formula xml:id="formula_2">L gini = cp c (1 −p c )<label>(3)</label></formula><p>The gini criterion tries to minimize the missclassification loss and is generally less computationally expensive than the entropy criterion.</p><p>2) Fully Connected Neural Network: For the case of activity prediction, we used a fully connected layer consisting of 4 hidden layers and 1 output layer, while the hidden layers contain 6, 10, 6 and 12 hidden neurons, respectively (see <ref type="figure" target="#fig_1">figure 2</ref>). All neurons in the hidden layers use ReLU as the activation function, while for the final output layer we used Softmax as the activation. We will not detail the network structure for all three types of outputs due to the space limitations. For the FCNN, we used the cross entropy loss function (equation 4).</p><formula xml:id="formula_3">L cross = − c p c (logp c )<label>(4)</label></formula><p>3) Long Short-Term Memory Network: A LSTM network is a variant of Recurrent Neural Networks (RNN), which was proposed by Hochreiter and Schmidhuber in <ref type="figure">Fig. 3</ref>: Heatmap representation of ground truth activity (left) versus predicted activity (right). The lighter the color, the heavier the activity. Despite not being able to predict the exact magnitude of activity well, our model is able to capture the relative activity between different locations.</p><p>1997 <ref type="bibr" target="#b5">[6]</ref>. RNNs are Artificial Neural Networks (ANN) in which unit connections form a directed cycle <ref type="bibr" target="#b6">[7]</ref>. This cycle allows information to be passed from one step of the network to the next <ref type="bibr" target="#b7">[8]</ref>, which makes it good at dealing with data that possesses sequential patterns. LSTMs can achieve incredibly good performance on a large variety of problems that deal with sequential data such as Machine Translation, Sentiment Analysis and Natural Language Conversation, thus being widely used. LSTM redesigns the structure of hidden layers specifically to tackle the long-term dependency problem of RNN <ref type="bibr" target="#b5">[6]</ref>.</p><p>Since in our case we assume there is some relationship across time, we decided to adopt a sequential model, and used the widely adopted LSTM. For the example of activity prediction, we used a Long Short-Term Memory Network (LSTM) consisting of 4 LSTM layers and a final Dense layer on top. The output size for all LSTM layers is 128. Like the FCNN, we used cross-entropy loss as the loss function (equation 4).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. RESULTS AND DISCUSSION</head><p>A. Hyperparameter Tuning 1) Random Forests: We tuned the hyperparamaters of our model with the validation set. Some of the parameters we tweaked include number of trees, tree depth, and loss criterion. In our final models we used 40 trees, the gini criterion, and tree depths of two (for activity prediction) and three (for fare and distance predictions).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2) FCNN/LSTM:</head><p>We tuned these hyperparameters on the validation set. <ref type="figure" target="#fig_0">Figure 1</ref> shows an example result of K-means clustering of the World Trade Center (ID 261). The left image is a plot of the pickup latitudes and longitudes that occurred over two years at the World Trade Center, while the right image shows the same trips distributed into the 10 Kmeans clusters of the World Trade Center.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. K-means Clustering Output</head><p>C. Accuracy <ref type="table" target="#tab_0">Table II</ref> shows the accuracy results for each of the approaches for each model. RFC performs the best in all three models, but overall we see the performance is poor. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Heat Maps</head><p>With the predictions, we were able to produce heatmaps for each of the models to visualize how they vary with region for a given day of week and time interval. <ref type="figure">Figure 3</ref> shows an example heatmap output for activity from our RFC approach (right) compared to the corresponding ground truth (left). We see that despite the colors not matching completely (low accuracy), the relative magnitudes between regions are captured quite well. Therefore, our model is able to rank regions in terms of activity.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Discussion</head><p>From <ref type="table" target="#tab_0">Table II</ref>, we can see that the model does not perform well when predicting exact numbers. But the heatmaps show that our model can capture the relative differences between regions well. Our goal was to show drivers heatmaps so that they could get a rough understanding of the differences between regions. This is better than providing exact numbers since exact numbers would not be as meaningful to them. So in this sense our model has reached our expectation.</p><p>However, we have carried out some error analysis steps to analyze the poor performance of the models. First, we analyzed the K-Means clustering/non-uniform distribution used for distributing the newer data into the cluster IDs. We assumed that the clustering would have a low error but after seeing our results we tested it. We split 5% of the older data into a validation set, and compared the cluster IDs assigned to them (using Location ID and non-uniform distributions) versus their ground truth cluster IDs (we got this by directly mapping their lat / long to cluster ID). After running tests, the accuracy of our K-Means algorithm was only 11%. In order to test the effect of this poor performance on our prediction model, we further trained the model using only newer data (i.e., location ID rather than cluster ID). However, the results turned out to be approximately the same as with cluster ID. This suggests that our prediction model inherently doesn't do well. We attribute the poor performance of our prediction model mainly to two aspects. First, our models only use three features to tackle the problem and this might not be enough. Second, since we sampled 1% of the data from each month uniformly (due to computation issues), the time buckets may be too sparsely distributed. This sparse distribution may be causing models such as LSTM to not capture the temporal pattern in the data.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. CONCLUSION AND FUTURE WORK</head><p>In this project, we approached the problem of forecasting NYC taxi fares, activity and trip distance for taxi drivers. Specifically, we applied K-Means to increase the granularity of our data, implemented different models such as Random Forest, Fully-Connected Neural Network, and Long Short-Term Memory Network to do the prediction. Then we generated heatmaps using the predictions for taxi drivers. We also carried out error analysis steps to help diagnose the focus of our future work:</p><p>1) Extract more related features for our prediction model. 2) Currently our loss function penalizes all misclassifications equally. However some misclassfications may be better than others. A weighted loss function could help improve our model's accuracy. These weights could be determined by the distance between the actual classification and the predicted classification. 3) Even though yellow taxis are allowed to operate in all the boroughs of New York, there are regions where the taxis do not frequently pickup customers from. In a future iteration of our model we could disregard those regions where the taxis do not pick up from frequently. That way our model has plenty of data for a given location ID.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4) Using one model to understand the Taxi Pickup</head><p>Patterns of 5 boroughs may be infeasible. We are making an assumption that the behaviors of people across all the boroughs can be predicted using one model. A possible future implementation could focus a single model on one of the boroughs. This may improve performance. 5) Sample more data.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Example of K-means clustering of location ID 261. The left image shows the pickup locations latitude and longitude that fall within location ID 261. The right image shows the result of K-means clustering of these trips into 10 clusters.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>Architecture of Our Fully-Connected network</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>TABLE I :</head><label>I</label><figDesc>Bucketed Labels</figDesc><table>Bucket 
+ID 
+
+Fare 
+($) 
+
+Trip Distance 
+(Miles) 
+
+Activity 
+(# Trips) 
+0 
+&lt;0 
+&lt;0.5 
+&lt;2 
+1 
+0-5 
+0.5-1.0 
+2-5 
+2 
+5-10 
+1.0-1.5 
+5-7 
+3 
+10-15 
+1.5-2.0 
+7-10 
+4 
+15-25 
+2.0-3.0 
+10-15 
+5 
+25-50 
+3.0-5.0 
+15-25 
+6 
+50-60 
+5.0-10.0 
+25-35 
+7 
+&gt;60 
+&gt;10.0 
+35-45 
+8 
+-
+-
+&gt;45 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>TABLE II :</head><label>II</label><figDesc>Prediction Accuracy for Each Model</figDesc><table>Model 
+Activity 
+Fare 
+Trip Distance 
+RFC 
+51.02% 
+45.71% 
+30.08% 
+FCNN 
+35.67% 
+45.72% 
+23.16% 
+LSTM 
+26.65% 
+27.72% 
+23.10% 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Tlc trip record section</title>
+		<ptr target="http://www.nyc.gov/html/tlc/html/about/triprecorddata.shtml" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Nyc taxi data prediction</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Daulton</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Raman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Kindt</surname></persName>
+		</author>
+		<ptr target="https://sdaulton.github.io/TaxiPrediction/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Cleansing eda modelling(lgbm xgboost starters)</title>
+		<ptr target="https://www.kaggle.com/madhurisivalenka/cleansing-eda-modelling-lgbm-xgboost-starters" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Sterling</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaggle</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/dster/nyc-taxi-fare-starter-kernel-simple-linear-model" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Random decision forests,&quot; in Document analysis and recognition</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">K</forename><surname>Ho</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">proceedings of the third international conference on</title>
+		<meeting>the third international conference on</meeting>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="1995" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="278" to="282" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Long short-term memory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural computation</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1735" to="1780" />
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Recurrent neural network</title>
+		<imprint>
+			<date type="published" when="2018-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Understanding lstm networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><surname>Olah</surname></persName>
+		</author>
+		<ptr target="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

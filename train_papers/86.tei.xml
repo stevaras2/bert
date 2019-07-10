@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Zestimate Bazinga: Predicting the Selling Price for Condos in Downtown Vancouver</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrey</forename><surname>Koch</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marina</forename><forename type="middle">K</forename><surname>Peremyslova</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lucas</forename><surname>Lemanowicz</surname></persName>
+						</author>
+						<title level="a" type="main">Zestimate Bazinga: Predicting the Selling Price for Condos in Downtown Vancouver</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Abstract-Predicting the price of a home is part art, part science. This paper applies linear regression, neural networks, random forest and gradient boosted trees to look at how well these models can be used in predicting the selling prices of condos in downtown Vancouver, Canada. Gradient boosting (GB) shows the best performance, with random forest and neural networks in close second place. Our best method (GB) gives test set M SE = 0.09 and R 2 = 0.91 with reasonable generalization M SECV /M SEtrain = 1.25.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>The real estate market in large metropolitan areas across USA and Canada is characterized by high volatility. Home prices in popular technological and cultural centers, such as Vancouver, Canada, have been reportedly growing over the last decade owing to a constant influx of people, including immigrants, attracted by a combination of career opportunities, and a superb geographical setting by the ocean bay and nearby mountains. As a result, predicting home prices has become a big challenge. Real estate agents use their domain knowledge to estimate a home price aiding sellers and buyers in the transaction. This estimate is often very subjective and facilitates bubbling the home prices, especially in highly attractive areas like Vancouver. Therefore, our main study goal was to come up with an automated way of pricetagging a home based on its characteristics including floor area, number of rooms, location and others.</p><p>The input to our algorithm is a dataset of all condo listings under $2.5MM CAD in downtown Vancouver between January 2016 and October 2018, containing approximately 50 features after pre-processing. We then use linear regression, neural networks, and boosted tree models to predict the expected selling price of a condo.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RELATED WORK</head><p>There is a good number of articles related to real estate pricing predictions. In general, it is difficult to compare the results given the diversity of features used to model the predictions and relevant error analysis. However, there are some common themes that we tried to reproduce and improve upon in our research. More often than not, the authors attempt to use linear regression and boosted trees regression algorithms <ref type="bibr" target="#b3">[6]</ref>. In this example, the R 2 received were 0.73 and 0.9194 respectively. However, no further error analysis was done, so no conclusions about model variance and bias can be inferred.</p><p>Another author <ref type="bibr" target="#b4">[7]</ref> states that they were able to create a model that explained 80% of the Boston housing sale price variance by simply using the neighbourhood and total square footage features. Expanding the feature set to 36 (unnamed) features boosted the R 2 to 0.92. However, no specific details of the latter model were given.</p><p>In another example related to Bay Area house pricing prediction <ref type="bibr" target="#b5">[8]</ref> , the author worked with a data set-up similar to the one we were able to obtain, i.e. the initial data set contained the information about various house features, zoning etc. Their best result was achieved on 19 features with gradient boosting (R 2 of about 0.6616), although the information about houses location and surroundings were not used in the final model. In our opinion, those pricing factors are important and should not have been overlooked. So we used this article accuracy results as our benchmark and tried to improve upon it.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DATASET &amp; FEATURES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Raw Data</head><p>The original dataset we received had exhaustive information about all condos listed for sale under $2.5MM CAD in downtown Vancouver between January 2016 and October 2018. The data was pulled from an official Canadian real estate listings database called MLS with the help of a local real estate agent, and contained approximately 10,000 listings. Each listing had up to 237 features including immanent property characteristics like square footage, number of bedrooms and bathrooms, maintenance fees, and relational characteristics like address, vicinity to schools and public transportation, and views. The features can be classified into three categories: structured data (e.g., total floor area); semistructured data (e.g., address); unstructured data (e.g., listing agent comments). Furthermore, data can be categorized into various types: interval-scaled variables (e.g., number of bedrooms, year built, etc.); temporal (e.g., date property was sold); rank (e.g., floor number); boolean (e.g., fireplace yes/no); categorical (e.g., dwelling type).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Feature Engineering: Geocoding and Bucketing</head><p>Our dataset did not have the geographical location of homes originally, only the physical addresses. Since location is supposedly important for home value, we used the Google Maps API [12] to geocode condo addresses to geographical coordinates (latitude, longitude). In addition, since the area of interest was relatively small (only about 9 km 2 ), we approximated it with a flat rectangle and converted geographic to Cartesian coordinates mapping all condos to a C. Feature Engineering: View Scoring <ref type="figure" target="#fig_0">Figure 1</ref> shows the selling price of condos plotted against their geographic locations. One can empirically see that properties adjacent to the edges of research area (along the waterfront) tended to be more expensive. This suggests that the view is an important feature in determining the price of a condo. Therefore, we created a new feature called the "View Score" by mapping the free-text "View Description" field onto an interval scale. We formed a dictionary mapping all of the words from this field to more broad view categories such as: water, mountains, city park, and urban. For example, the "water" category included keywords like "sea", "marina", "english" (referring to English Bay), etc.; the "urban" category included "church", "stadium", "cityscape", etc. We also included abbreviated words (e.g., "hrbr" -"harbor") and misspelled words (e.g., "poark" -"park"). We added two more categories characterizing the quality of the view: panoramic and partial. The keywords for the first category included "panoramic", "outstanding", "180" (meaning 180 view), etc., and the keywords for the second category included: "partial", "peek", "peekaboo", etc. We assigned scores for view descriptions containing words in any of the categories. View descriptions involving "water" and "mountains" received 2.0 points, "city park" received 1.5 points, "urban" received 1.0 points. Accumulated scores were increased or decreased by 50% if the property had words indicative of the view quality (panoramic or partial, respectively).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Data Cleaning</head><p>Cleaning the data was essential to having an accurate model, since it was originally input by real estate agents and was prone to mistakes. We removed outliers for the numerical features using three sigma rule. We then imputed data for features that had occasionally missing data (less than 1%) with medians. Lastly, we standardized the data. The final feature set consisted of 48 features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Error Analysis</head><p>To improve the quality of our predictions we performed error analysis with k-fold cross-validation (CV). We split our dataset randomly into a training and test set (80%/20%). The training set was used in CV-setting where it was sequentially split into training and validation subsets k=5 times. The training subset was used to fit the model to the data, and validation subset was used to compute errors. The average of k errors, the CV-error, characterized how accurately our model performed.</p><p>We used two main metrics for calculating errors; mean squared error:</p><formula xml:id="formula_0">M SE = i (y i − f (x i )) 2 n</formula><p>and coefficient of determination (R-squared):</p><formula xml:id="formula_1">R 2 = 1 − i (y i − f (x i )) 2 (y i −ȳ) 2</formula><p>with y i = predicted variable observations,ȳ = its mean, x i = vector of independent variables (features), f (x) = the model mapping features x on y, and n = number of observations (i = 1, .., n). MSE characterizes the average of squared deviations of predictions from observations with MSE = 0 corresponding to an idealistic model exactly mimicking observations. R 2 measures how well the model captures variability of observations given observed features with R 2 = 1 being an idealistic scenario. One can show that these properties are closely related such that</p><formula xml:id="formula_2">R 2 = 1 − M SE V ar(y) = V ar(y) − M SE V ar(y)</formula><p>giving it the meaning of the fraction of explained variance in y.</p><p>We calculated MSE and R 2 for both CV (as explained above) and training sets and also calculated the ratio of MSE on CV and training sets to characterize how well our model generalized to new data (model variance): V ar = M SE CV /M SE train . A good model would have this metric not much larger than 1. A V ar 1 would mean we overfitted the data, and our model would most likely perform badly on new data. Finally, after tuning each model and obtaining best set of coefficients, we calculated MSE and R 2 for test set as the final unbiased accuracy characteristic.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Linear Regression</head><p>We used multiple (multiple predictors) linear regression as our benchmark model. As the name suggests, it assumes a linear relationship between the features and the predicted (target) variable, and treats it as a linear combination of features: f (x) = θ T x + b, where x is the feature vector, θ is the vector of model coefficients, and b is the bias. To train the linear regression model, one needs to find the coefficients θ given data X and target variable observations y as approximation of the predictions of f (X). By minimizing the least squares cost function:</p><formula xml:id="formula_3">J(θ) = 1 2 i (f (x i ) − y i ) 2</formula><p>w.r.t. coefficients θ, they are found effectively using normal equation:</p><formula xml:id="formula_4">θ = (X T X) −1 X T y C.</formula><note type="other">Regularization with LASSO As with any method that uses features on different and non-comparable unit scales, the problem with linear regression is that features having larger units tend to contribute to the final result more than features with smaller units, even if their dimensionless variances are comparable. This is mitigated by adding regularization term to the cost function such that coefficients for larger scaled features get penalized. LASSO is a popular regularization technique that uses the L1 norm:</note><formula xml:id="formula_5">θ = argmin θ J(x) + λ j |θ j |</formula><p>The added benefit of LASSO regularization is that it sets coefficients of unimportant features to 0 and can be used as a feature selection technique for other methods. This was precisely the reason we used LASSO in our research.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Neural Networks</head><p>One property of neural networks that makes them a popular ML method is their ability to perform end-to-end learning: given some input features x, a network is able to determine the appropriate intermediary features and weights of those features on its own <ref type="bibr" target="#b8">[11]</ref> (unlike a linear model). In the case of predicting the price of a condo for example, these intermediary features could be the neighborhood quality or family-friendliness. This ability makes it a powerful choice for modeling the selling price of condos.</p><p>A neural network's ability to model non-linear data stems from its use of activation functions in between its neuron layers. One example of a commonly used activation function is the Rectified Linear Unit (ReLU) function:</p><formula xml:id="formula_6">ReLU (x) = max(0, x)</formula><p>Its main advantage is that it has a very simple gradient and doesn't suffer from vanishing gradients at extreme values, although it can cause "dead neurons" when the product of the weights and inputs skews negative.</p><p>The Leaky ReLU activation function addresses this shortcoming:</p><formula xml:id="formula_7">LeakyReLU (x) = x if x &gt; 0 αx otherwise</formula><p>where α is a small number (e.g., 0.1).</p><p>Dropout layers are commonly used to address overfitting in neural networks. This is implemented by randomly dropping a small percentage of nodes in a layer during each update iteration, preventing the network from over-relying on any individual neuron. Neural networks learn through the backpropagation of error gradients, and the weights w l at a layer l are updated by:</p><formula xml:id="formula_8">w l := w l − α ∂J ∂w l</formula><p>where α is the learning rate,</p><formula xml:id="formula_9">J = 1 m m i=1</formula><p>L i is the cost function, and L i is a loss function (least squares in our case) for an i th example.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Random Forests and Gradient Boosting</head><p>As alternate methods accounting for nonlinear relationship between features and target variable, we use tree-based techniques, Random Forest and Gradient Boosting. The random forest (RF) is a special case of ensemble ML methods when individual models are combined together to produce balanced model that have higher generalization power than separate models.</p><p>In the case of RF, individual learners are regression trees termed as:</p><formula xml:id="formula_10">f (x) = M m=1 c m I(x ∈ R m )</formula><p>where feature space is partitioned into M regions R 1 , ..., R M and the c m = ave(y i |x i ∈ R m ). At each tree node, the binary partition is performed on one variable. Finding best binary partition in terms of split variable j and split point s by minimizing sum of squares is computationally infeasible, and a greedy algorithm is used when decision is being made only one step forward. Starting with all the data, a pair of half-planes is defined:</p><formula xml:id="formula_11">R 1 (j, s) = {X|X j ≤ s} R 2 (j, s) = {X|X j &gt; s}</formula><p>Then j and s are found by solving:</p><formula xml:id="formula_12">min j,s [min c1 xi∈R1(j,s) (y i − c 1 ) 2 +min c1 xi∈R2(j,s) (y i − c 2 ) 2 )]</formula><p>After finding the split, the data is partitioned into two regions and the splitting process is repeated on both regions and all subsequent regions until some stopping criterion is met. Among different criteria, most popular is stopping growing a tree when minimum node size is reached. Individual trees are prone to overfitting, and RF method overcomes this problem by combining multiple trees grown on separate data subsets. The default approach to forming subsets in RF is bootstrap sampling with replacement when dataset size remains the same but its composition varies among samples. This way, overfitting is decreased as each individual tree is learning from a different subset of data. Moreover, a random subset k rather than the whole list of features m is considered at each split, where usually m k. This way, if few features dominate the rest in their contribution to the target variable, their contribution to the final model is decreased as now the chances for them to be selected for a split are reduced.</p><p>Another tree-based ensemble technique is called boosting when power of combining weak learners is leveraged.  <ref type="table">Table I</ref>: Accuracy and variance metrics for different methods "Weak" in our case usually means shallow trees with only 3-4 levels of splitting nodes. This algorithm is called forward stagewise boosting and is also done in a greedy fashion <ref type="bibr" target="#b9">[13]</ref>. To overcome this shortcoming, the modified version called Gradient Boosting (GB) is used when the current iteration tree is fit to the negative gradient of the loss function w.r.t. the previous tree. This tree is being used in the minimization procedure as done in stagewise boosting to learn the parameters of the final tree that is added to the previous iteration tree <ref type="bibr" target="#b9">[13]</ref>. The most important hyperparameters for GB is the number of trees, maximum depth of the tree, minimal leaf size, learning rate, and the loss function.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>V. EXPERIMENTS &amp; RESULTS</head><p>We start off with the linear regression (LR) using all features. The reported CV MSE is 0.19 <ref type="table">(Table I)</ref> with larger test MSE (0.2). The variance given by M SE CV /M SE train is only 1.04 suggesting the model is generalizing well on new data. The problem with linear regression is that it underfits. The R 2 plotted as a function of training set size <ref type="figure" target="#fig_1">(Fig. 2)</ref> is flattened starting from about 3000 observations for both CV and training sets suggesting LR is reaching its predictability limit given our features and remain under desired performance level (around 0.95-0.98). When LASSO regularization is added to the LR, the MSE and R 2 remain almost unchanged which is an expected result considering we standardized all our real-valued features. The large observed bias is due to limitations of linear method since it is not accounting for nonlinear relationship between condo features and the selling price.</p><p>This made us try nonlinear learning methods, and the first one was neural networks (NN). There is no formula for building the "perfect" NN architecture. Many design decisions are empirical and based on past experiences using them. As a result, we experimented with various layer depths, neuron counts, and activation functions. We found that in general, deeper networks with smaller layers performed better than shallow networks with larger layers. This is supported by <ref type="bibr" target="#b6">[9]</ref> which shows that deeper networks can represent more complex relationships between features, and by <ref type="bibr" target="#b7">[10]</ref> which suggests that larger layers require more parameters which make them more likely to overfit the training data. Below is a highlight of 6 network architectures tested in this experiment (numbers inside the activation functions represent the number of nodes in a layer):</p><formula xml:id="formula_13">input → 1) ReLU(50) → ReLU(100) → ReLU(50) 2) ReLU(64) → Dropout(0.2) → ReLU(32) → Dropout(0.2) → ReLU(16) 3) ReLU(16) → Dropout(0.2) → ReLU(8) → ReLU(4) 4) ReLU(24) → Dropout(0.2) → ReLU(16) → Dropout(0.2) → ReLU(12) → ReLU(8) → ReLU(4) 5) LeakyReLU(16) → Dropout(0.2) → LeakyReLU(8) → Dropout(0.2) → ReLU(4) 6) LeakyReLU(64) → Dropout(0.2) → LeakyReLU(32) → Dropout(0.2) → LeakyReLU(16) → 1 output node</formula><p>The NN initially suffered from significant overfitting (CV MSE was 10x of training MSE). This issue was addressed by adding dropout layers to the network and choosing the best configuration (5). As a result, the train-CV MSE difference dropped to below 15% <ref type="table">(Table I)</ref>, and the corresponding test R 2 and MSE became 0.83 and 0.17, respectively. The next nonlinear method we employed was Random forest (RF). Initial default parameters produced a model with large unacceptable variance (around 30), and decreasing the maximal depth of the trees to 10 reduced overfitting and produced reasonable MSE for both CV and training sets. The RF implementation reduced MSE and raised prediction accuracy to a new level producing CV and test MSE as small as 0.1 <ref type="table">(Table I</ref>). There still remained room to further generalize our model since M SE CV /M SE train was 2.34 suggesting our model still overfitted the data.</p><p>Gradient Boosting Regression (GB) finally provided most robust and accurate model leveraging non-linear nature of interaction between condo features and target variable reporting CV set MSE 0.1 and test MSE 0.09 with M SE CV /M SE train being 1.25 <ref type="table">(Table I)</ref>. To further improve the performance of GB model, we tried to find optimal hyper-parameters for the model by CV gradient search when model is being fit sequentially to CV subsets with variable combinations of hyper-parameter (loss function, number of trees, maximal tree depth, minimal leaf size, and learning rate) values. The optimal set of hyper-parameters was least squared loss (ls), 200, 20, 10, 0.05. With these values, CV R 2 was 0.95 but variance raised up to 8.32 which was not acceptable. Further tuning of hyper-parameters and checking CV MSE, R 2 , and M SE CV /M SE train gave us hyperparameters {ls, 100, 3, 10, 0.05} which was close to the default settings ({ls, 100, 3, 2, 0.1}) and gained only marginal improvement. The R 2 curve as a function of training set size <ref type="figure" target="#fig_1">(Fig. 2)</ref> suggests that our GB model reached good results in terms of both accuracy and generalization, especially when we compare it with LR curves. Another experiment we performed was to find a feature subset selected by LASSO (32 features out of 48) but it gained no improvement supposedly because GB algorithm already implicitly assigns importance to different features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VI. DISCUSSION</head><p>In addition to testing the three models, we looked at the top features highly correlated with selling price of a condo. They were (in order): 1) number of bedrooms 2) number of bathrooms 3) total floor area 4) number of parking spaces 5) maintenance fees We also noticed that the more expensive the condo was, the more subjective the price appeared to be (and the worse our models performed). Speaking about listing price that we intentionally excluded from the model, we note that it is highly correlated with our target variable, the selling price. The MSE between them is about 6 times smaller than our best MSE. One might think that the domain knowledge of real estate agents is very thorough in estimating home value but there is a paradox. When people want to sell or buy a home, they first look at the listing price and therefore the resulting selling price often is very close to the listing price, with listing price being a major driving factor. Our goal, on the other hand, was to come up with the emotionfree algorithm that uses only bare facts about property itself and external factors. Comparing metrics of our model to those achieved by others, we see that theres still room for improvement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>VII. CONCLUSIONS &amp; FUTURE WORK</head><p>Our findings show that gradient boosting had the best performance, followed closely by random forest and neural networks. This makes sense because both algorithms are useful for non-linear modeling. The small data scale in our project lends itself more favorably to trees, whereas it makes it more likely for a neural network to overfit (resulting in slightly lower overall performance).</p><p>The models described in this paper can be further improved in future work through usage of additional training datasets and additional feature engineering. The federal interest rate has a direct effect on the supply of money and affordability of housing, which can affect the selling price. Over the timespan of the training dataset used in this study, the federal interest rate changed from a low of 0.5% up to a high of 1.75% which could significantly affect the selling price of a condo. An additional dataset that would improve the model is upcoming new condo developments. Large, growing cities often have new real estate being built. Additional inventory coming onto the market would affect existing condo prices negatively by increasing the available supply and alternatives for buyers.</p><p>Lastly, future work should focus on adding more temporal components to the model, for example through features such as listing date, "number of condos sold in last n days", and "n-day average sell price".</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 :</head><label>1</label><figDesc>Condos sale price distribution on the map rectangular grid of 35 square districts (500m x 500m each) to approximate neighborhoods. The district variable was one- hot encoded and included in the final dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2 :</head><label>2</label><figDesc>R 2 as a function of training set size for LR and GB</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">andkoch at stanford.edu 2 mpkoch at stanford.edu 3 llemanowicz at stanford.edu</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>We'd like to thank Adina Dragasanu from RE/MAX Crest Realty for providing us the data that enabled our research.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Simple Housing Price Prediction Using Neural Networks with TensorFlow</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>John</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medium.com</title>
+		<imprint>
+			<date type="published" when="2018-05-29" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Real Estate Price Prediction with Regression and Classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Tensorflow</surname></persName>
+		</author>
+		<ptr target="https://www.tensorflow.org/api_docs/python/tf" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Create a model to predict house prices using Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Raghavan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017-06-17" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Alternative to the Boston Housing Data as an End of Semester Regression Project</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cock</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistics Education</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Linear Regression in Python; Predict The Bay Area&apos;s Home Prices</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">TowardsDataScience.com</title>
+		<imprint>
+			<date type="published" when="2017-10-24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Training Very Deep Networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">K</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Greff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015-11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Explore overfitting and underfitting</title>
+		<ptr target="https://www.tensorflow.org/tutorials/keras/overfit_and_underfit" />
+		<imprint>
+			<date type="published" when="2018-12" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Karpathy</surname></persName>
+		</author>
+		<ptr target="http://cs231n.github.io/convolutional-networks/" />
+		<title level="m">CS231n: Convolutional Neural Networks for Visual Recognition</title>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<title level="m">The Elements of Statistical Learning. Data Mining, Inference, and Prediction</title>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2013" />
+			<biblScope unit="page">745</biblScope>
+		</imprint>
+	</monogr>
+	<note>2nd edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Estimating the Performance of Random Forest versus Multiple Regression for Predicting Prices of the Apartments</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Eh</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Kilibarda</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lisec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Bajat</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ISPRS Int. J. Geo-Inf</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">168</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Urban Data Streams and Machine Learning: A Case of Swiss Real Estate Market</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Moosavi</surname></persName>
+		</author>
+		<ptr target="https://arxiv.org/pdf/1704.04979.pdf" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

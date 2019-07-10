@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Airbus Ship Detection -Traditional v.s. Convolutional Neural Network Approach</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ying</forename><surname>Chen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Junwen</forename><surname>Zheng</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhengqing</forename><surname>Zhou</surname></persName>
+						</author>
+						<title level="a" type="main">Airbus Ship Detection -Traditional v.s. Convolutional Neural Network Approach</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>We compared traditional machine learning methods (naive Bayes, linear discriminant analysis, knearest neighbors, random forest, support vector machine) and deep learning methods (convolutional neural networks) in ship detection of satellite images. We found that among all traditional methods we have tried, random forest gave the best performance (93% accuracy). Among deep learning approaches, the simple train from scratch CNN model achieve 94 % accuracy, which outperforms the pre-trained CNN model using transfer learning.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>The fast growing Shipping traffic increases the chances of infractions at sea, such as environmentally devastating ship accidents, piracy, illegal fishing, drug trafficking, and illegal cargo movement. Comprehensive maritime monitoring services helps support the maritime industry to increase knowledge, anticipate threats, trigger alerts, and improve efficiency at sea. This challenge origins partly from the Airbus Ship Detection Challenge on Kaggle. We plan to come up with a solution to efficiently detect ship in satellite images. This classification is challenging because boats are really small in the satellite images. Various scenes including open water, wharf, buildings and clouds appear in the dataset <ref type="bibr" target="#b6">(Kaggle, 2018)</ref>. Most of the images do not contain any ships and the fact that many images are covered by clouds and fog also increases the difficulty of detection.</p><p>In this paper, we compared traditional methods and deep learning methods in solving the classification problem. For traditional methods, we experimented with naive Bayes, linear discriminant analysis, k-nearest neighbors, random forest and support vector machine model. Before training these models, we did image features extraction by finding global feature descriptors of every image, which includes color histogram, Hu Moments, Haralick Texture and Histogram of Oriented Gradients (HOG). We found that feature engineering significantly improved the performance of traditional models. We also noticed that for some model, certain com-  <ref type="bibr" target="#b6">(Kaggle, 2018)</ref> bination of feature descriptors give the best performance, indicating that having more features doesn't necessary improve performance but can also lower performance.</p><p>For deep learning method, we used a pre-trained network (DenseNet-169 of ImageNet) architecture as the baseline network (referred as TL-CNN). We then designed a simple CNN model consisting of 4 convolutional layers and 4 maxpooling layers (referred as SIM-CNN) without using transfer learning approach. We observed that the simple train from scratch CNN model worked better than the pre-trained CNN model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Works</head><p>Recently, machine learning and artificial intelligence have attracted increasing attention and achieved great success in different areas including Computer Vision <ref type="bibr" target="#b7">(Karpathy &amp; Li, 2014)</ref>, <ref type="bibr" target="#b10">(Sermanet et al., 2013)</ref> and Natrual Language Processing <ref type="bibr" target="#b1">(Collobert &amp; Weston, 2008)</ref>, <ref type="bibr" target="#b3">(Graves et al., 2013)</ref>. With rapid progress in machine learning, especially in deep learning, many significant breakthroughs have been made in the area of image classification, such as AlexNet <ref type="bibr" target="#b8">(Krizhevsky et al., 2012)</ref>, ResNet <ref type="bibr" target="#b4">(He et al., 2015)</ref> and DenseNet <ref type="bibr" target="#b5">(Huang et al., 2016)</ref>.</p><p>When narrow down to the problem of ship detection, there are no research papers studying this problem since it is a recent Kaggle Challenge problem. However, there are several attempts made by some Kaggle users. For example, Kevin Mader <ref type="bibr" target="#b9">(Mader, 2018)</ref> used a transfer learning technique to tackle this ship detection problem. We reproduced his work in our baseline model (see Section 4 for more details).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Data Set and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Data Description</head><p>We obtained a public dataset provided on the Airbus Ship Detection Challenge website <ref type="bibr" target="#b6">(Kaggle, 2018)</ref>. The dataset contain more than 100k 768 × 768 satellite images with a total size exceeding 30 Gb, and is actually quite imbalance in the sense that only ≈ 1/4 of the data images have ships. Along with the images is a CSV file that lists all the images ids and their corresponding pixels coordinates. These coordinates represent segmentation boxes of ships. Not having pixel coordinates means the image doesn't have any ships. However, due to computational limits, we can only handle a dataset of size ≈10k. Although one can manually balance the data when training on a subset of full data, since imbalance is the nature of the data, we want our subset to inherit the imbalance property and we may use other method such as threshold tuning to tackle the problem. If our method turns out to make good prediction under this setting, we may have more confidence that the model would work when train on the whole dataset (where imbalance is inevitable). Hence we sample uniformly at random from the full dataset and selected 7k images as training set, 3k images as development set and 5k images as test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Data Preprocessing</head><p>First of all, we re-sized the original image to the size of 256 × 256 × 3, then we applied different data preprocessing techniques for traditional machine learning algorithms and deep learning algorithms.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.1.">FEATURE EXTRACTION FOR TRADITIONAL MACHINE LEARNING METHOD</head><p>We used hand engineering features extraction methods (Gogul09, 2017) to obtain three different global features for traditional ML algorithms. The images were converted to grayscale for Hu and Ha, and to HSV color space for His before extraction, as shown in <ref type="figure">Figure</ref>  Haralick et suggested the use of gray level co-occurrence matrices (GLCM). This method is based on the joint probability distributions of pairs of pixels. GLCM shows how often each gray level occurs at a pixel located at a fixed geometric position relative to other pixels, as a function of the gray level.</p><p>Hu Moments (Hu): Features are used to captured the general shape information. Hu moment, or image moment is a certain particular weighted average (moment) of the image pixels' intensities. Simple properties of the image which are found via image moments include area (or total intensity), centroid, and information about its orientation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2.">DATA AUGMENTATION FOR CNN MODEL</head><p>To enhance the robustness of our CNN model, for all the images in the training set, we implemented data augmentation method, such as rotation, shifting, adjusting brightness, shearing intensity, zooming and flipping. Data augmentation can improve the models ability to generalize and correctly label images with some sort of distortion, which can be regarded as adding noise to the data to reduce variance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methods</head><p>To classify whether an image contains ships or not, several standard machine learning algorithms and deep learning algorithms were implemented. We compared different approaches to evaluate how different model performed for this specific task. For all the algorithms, the feature vector is x = (x 1 , . . . , x n ) representing n features (from the flattened original image or from feature engineering).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Machine Learning Algorithms</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.1.">LINEAR DISCRIMINANT ANALYSIS (LDA)</head><p>The algorithm finds a linear combination of features that characterizes and separates two classes. It assumes that the conditional probability density functions p(x|y = 0) and p(x|y = 0) are both normally distributed with mean and co-variance parameters ( µ 0 , Σ 0 ) and ( µ 1 , Σ 1 ). LDA makes simplifying assumption that the co-variances are identical (Σ 0 = Σ 1 ) and the variances have full rank. After training on data to estimate mean and co-variance, Bayes' theorem is applied to predict the probabilities.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.2.">K-NEAREST NEIGHBORS (KNN)</head><p>The algorithm classifies an object by a majority vote of its neighbors, with the object being assigned to the class that is most common among its 5 nearest neighbors. The distance metric uses standard Euclidean distance as</p><formula xml:id="formula_0">d(x (1) , x (2) ) = n i=1 (x (1) i − x (2) i ) 2</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.3.">NAIVE BAYES (NB)</head><p>Naive Bayes is a conditional probability model. To determine whether there is a ship in the image, given a feature vector x = (x 1 , . . . , x n ), the probability of C 0 "No ships" and C 1 "has ships" is p(C k |x 1 , . . . , x n ). Using <ref type="bibr">[[Bayes' theorem]</ref>], the conditional probability can be decomposed as p(</p><formula xml:id="formula_1">C k |x) = p(C k ) p(x|C k ) p(x)</formula><p>. With the "naive" conditional independent assumption, the joint model can be expressed</p><formula xml:id="formula_2">as p(C k |x 1 , . . . , x n ) = p(C k ) n i=1 p(x i |C k ) 4.1.4. RANDOM FOREST (RF)</formula><p>The algorithm is an ensemble learning method. Bootstrap samples are selected from the training data, and then the model learns classification trees using only some subset of the features at random instead of examining all possible feature-splits. After training, prediction is made by taking the majority vote of the learned classification trees. The depth of tree is limited by 5 and the number of trees is 10.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.5.">SUPPORT VECTOR MACHINE (SVM)</head><p>The algorithm finds the maximum margin between different classes by determining the weights and bias of the separating hyperplane. The soft-margin SVM classifier minimizes the loss as</p><formula xml:id="formula_3">L = 1 n n i=1 max (0, 1 − y i (w · x i − b)) + λ w 2</formula><p>The fit time complexity is more than quadratic with the number of samples.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Convolutional Neural Network (CNN)</head><p>Convolutional Neural Network (CNN), which is prevailing in the area of computer vision, is proved to be extremely powerful in learning effective feature representations from a large number of data. It is capable of extracting the underlying structure features of the data, which produce better representation than hand-crafted features since the learned features adapt better to the tasks at hand. In our project, we experimented two different CNN models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.1.">TRANSFER LEARNING CNN (TL-CNN)</head><p>The motivation of using a transfer learning technique is because CNNs are very good feature extractors, this means that you can extract useful attributes from an already trained CNN with its trained weights. Hence a CNN with pretrained network can provide a reasonable baseline result.</p><p>As mentioned in Section 2, we reproduced the so-called "Transfer Learning CNN" (TL-CNN) as our baseline model. We transferred the "Dense169" <ref type="bibr" target="#b5">(Huang et al., 2016</ref>) (which was pre-trained on the ImageNet <ref type="bibr">(Deng et al., 2009)</ref>) to our task. More precisely, for each 256 × 256 × 3 image, fed it into the "Dense169" network with pre-trained weights, and then applied a Batch Normalization layer, a Dropout layer, a Max Pooling layer and two Fully Connected layers, we finally sent the output to a Sigmoid function to produce a prediction probability of whether the input image contains ships. See <ref type="figure" target="#fig_2">Figure 3</ref> for more details. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.2.">SIMPLE CNN (SIM-CNN)</head><p>Instead of using a pre-trained CNN model, we decided to construct a simple CNN model (named "SIM-CNN") with a few layers and trained it from scratch. One might hope that this could improve the performance of TL-CNN since its CNN weights were trained specifically by our Dataset <ref type="bibr" target="#b6">(Kaggle, 2018)</ref>, hence it was more specific to our task.</p><p>The  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">Training</head><p>For the traditional machine learning algorithms discussed in Section , we applied sklearn package in python to realize each algorithms.</p><p>For the deep learning approach, the two CNN models were trained in Microsoft Azure Cloud with GPUs. Cross-entropy loss was used. We trained the model for 30 epochs using mini-batch (size 64) with batch normalization. We applied Adam optimizer as well as decaying learning rate to facilitate model training. The weights of model would not be updated, if the loss of development set did not improve after training an epoch.  Comparing performance with and without feature engineering, we found that feature engineering significantly improved performance in general. Instead of directly training on image pixels information, the information extracted from feature engineering amplified the signal of whether an image containing ships, especially for NB and SVM approaches. However, since 0.84 of the images in test set are labeled as "No ships", among those traditional machine learning method only LDA and RF outperformed the accuracy of blindly guesting "No ships". In addition, We learned that some algorithms give much better performance when working with only certain combination of features. It is suggested that Haralick Textures information of image is of great importance for NB method (improving from 0.42 to 0.75).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.2.">TEST ACCURACY</head><p>We applied 10-fold Cross Validation to each machine learning algorithms and create the corresponding box plot in <ref type="figure" target="#fig_6">Figure 5</ref>. As we can see, RF achieve the highest mean test accuracy and the smallest variance among all the machine learning algorithms. Though 10-fold Cross Validation only reduced the training data by 10%, the other methods except RF fluctuated a lot about 5%. They were not as stable as RF. For LDA, the reason why it outperformed blindly guesting might just due to good luck of reaching the upper bound. For each CNN Model, we plotted the training loss curve as well as the training accuracy curve for 30 epoch (see <ref type="figure" target="#fig_7">Figure 6</ref>). We observed that both training processes converged within 30 epoch. Additionally, the SIM-CNN model achieve both higher training accuracy and lower training loss compared to TL-CNN. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.2.">THRESHOLD SCANNING</head><p>Consider our dataset being imbalanced, instead of using a threshold of 0.5, we wanted to find one that would take imbalance into consideration as suggested by <ref type="bibr" target="#b0">(Collell et al., 2016)</ref>. We scanned thresholds from 0.1 to 0.9 and plot the accuracy of the validation data (see <ref type="figure" target="#fig_8">Figure 7)</ref>. We used 0.1 for TL-CNN and 0.6 for SIM-CNN to make prediction on the test data. With these thresholds, TL-CNN gave 0.90 test accuracy while SIM-CNN gave 0.94 test accuracy. The result is reasonable because the images of our dataset were different from those in the pre-trained ImageNet dataset, and TL-CNN was not specialized for this project. Besides, there were much more trainable parameters in SIM-CNN (4, 292, 001) than in TL-CNN (216, 577). Therefore, SIM-CNN could better capture the information from the image than TL-CNN. In <ref type="figure" target="#fig_9">Figure 8</ref> there are normalized confusion matrices of TL-CNN and SIM-CNN methods. From the confusion matrix, TL-CNN has a precision of 0.65 with recall equals to 0.88 and specificity equals to 0.92. To compare, SIM-CNN has a precision of 0.76 with recall equals to 0.86 and specificity equals to 0.95 . On one hand, we found that SIM-CNN did better job at classifying "no ship" images. However, on the other hand TL-CNN outperforms SIM-CNN when classifying "has ship" images. Notice that by Section 5.2.2 that SIM-CNN has higher test accuracy, we suspected that this might be caused by the imbalance nature of our dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusoin &amp; Future Works</head><p>Among all traditional methods, Random Forest gave the best result (0.93 accuracy) with feature engineering. As for the CNN model, our train from scratch SIM-CNN model outperforms the baseline TL-CNN model based on pre-trained DenseNet 169 network. In the future, for traditional Machine Learning algorithms, we plan to improve feature engineering by extracting global features along with local features such as SIFT, SURF or DENSE, which could be used along with Bag of Visual Words (BOVW) technique. For Deep Learning algorithms, to achieve better performance, we will try implementing different networks (e.g., deeper network) to train the classifier. Last but not least, it is more challenging but also more interesting to try applying segmentation technique to identify the locations of all ships in a image.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Team Contribution &amp; Project Code</head><p>All three members of this team work together and contribute equally to this project in data prepossessing, algorithm designing, model designing, model training and report writing.</p><p>Please follow project code or https://github.com/ cs229ShipDetection/CS229project-Airbus-Ship-Detection for the project code.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Example images from dataset</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>2. (Hu, Ha and His are types of features explained below.) Color Histogram (His) : Features are applied to quantified the color information. A color histogram focuses only on the proportion of the number of different types of colors, regardless of the spatial location of the colors. They show the statistical distribution of colors and the essential tone of an image. Haralick Textures (Ha) : Features are extracted to de- scribed the texture. The Haralick Texture, or Image texture, (a) Original Image (b) Grayscale Image (c) Original Image (d) HSV Image Figure 2. Feature Engineering Examples is a quantification of the spatial variation of grey tone values.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>Transferred Learning CNN (TL-CNN) Model Frame- work</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4</head><label>4</label><figDesc>in below shows the structure of SIM-CNN. The model took images as input and predicted probabilities as output. It started with 4 Convolutional layers and 4 Max Airbus Ship Detection Pooling layers, with each Max Pooling layers following a Convolutional layer, and ended in 2 Fully Connected Layers as well as a sigmoid function.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc>Simple CNN (SIM-CNN) Model Framework</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc>Box Plot for Test Accuracy of Machine Learning Algo- rithms 5.2. Results Analysis for CNN models 5.2.1. TRAIN ACCURACY</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 .</head><label>6</label><figDesc>Training Loss and Accuracy of CNN Models</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 7 .</head><label>7</label><figDesc>Threshold Scanning of TL-CNN and SIM-CNN 5.2.3. CONFUSION MATRIX</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 8 .</head><label>8</label><figDesc>Normalized Confusion Matrix</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 .</head><label>1</label><figDesc>Test</figDesc><table>Accuracy of Machine Learning Algorithms with dif-
+ferent feature extraction techniques, "His" stands for Color His-
+togram, "Ha"means Haralick Textures and "Hu" ia abbreviation of 
+Hu Moments 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Reviving threshold-moving: a simple plug-in bagging ensemble for binary and multiclass imbalanced data. CoRR, abs/1606.08698</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Guillem</forename><surname>Collell</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Drazen</forename><surname>Prelec</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Patil</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Kaustubh</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1606.08698" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A unified architecture for natural language processing: Deep neural networks with multitask learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ronan</forename><surname>Collobert</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Weston</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jason</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 25th international conference on Machine learning</title>
+		<meeting>the 25th international conference on Machine learning</meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2008" />
+			<biblScope unit="page" from="160" to="167" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Image classification using python and machine learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Dong</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L.-J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Feifei</surname></persName>
+		</author>
+		<ptr target="https://github.com/Gogul09/image-classification-python" />
+	</analytic>
+	<monogr>
+		<title level="m">CVPR09, 2009. Gogul09</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+	<note>ImageNet: A Large-Scale Hierarchical Image Database</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Geoffrey. Speech recognition with deep recurrent neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Mohamed</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Hinton</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Acoustics, speech and signal processing (icassp), 2013 ieee international conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="6645" to="6649" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Deep residual learning for image recognition. CoRR, abs/1512.03385</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaiming</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Xiangyu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shaoqing</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jian</forename><surname>Sun</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1512.03385" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Gao</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zhuang</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Weinberger</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Q</forename><surname>Kilian</surname></persName>
+		</author>
+		<idno>abs/1608.06993</idno>
+		<ptr target="http://arxiv.org/abs/1608.06993" />
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Dataset For Airbus Ship Dectection Challenge</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kaggle</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/c/airbus-ship-detection/data" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Deep visual-semantic alignments for generating image descriptions. CoRR, abs/1412.2306</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrej</forename><surname>Karpathy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Fei-Fei</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1412.2306" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Imagenet classification with deep convolutional neural networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Alex</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ilya</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Geoffrey</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+		<ptr target="http://dl.acm.org/citation.cfm?id=2999134.2999257" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 25th International Conference on Neural Information Processing Systems</title>
+		<meeting>the 25th International Conference on Neural Information Processing Systems<address><addrLine>USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Curran Associates Inc</publisher>
+			<date type="published" when="2012" />
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="1097" to="1105" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Transfer Learning For Boat or No−Boat</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><surname>Mader</surname></persName>
+		</author>
+		<ptr target="https://www.kaggle.com/kmader/transfer-learning-for-boat-or-no-boat" />
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Pedestrian detection with unsupervised multi-stage feature learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pierre</forename><surname>Sermanet</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Kavukcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Koray</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Soumith</forename><surname>Chintala</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yann</forename><surname>Lecun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Computer Vision and Pattern Recognition (CVPR), 2013 IEEE Conference on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="3626" to="3633" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:10+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>• (Kross, Ayduk, Mischel, Logo</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0" /><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>••</head><label></label><figDesc>source: . Minear, M. &amp; Park, D.C.(2004). A lifespan database of adult facial stimuli. Behavior Research Methods, Instruments, &amp; Computers. 36, 630-633 1 Lau, S. (1982). The effect of smiling on person perception. The Journal of Social Psychology, 117(1), 63-67. 2 Wood, D., &amp; Brumbaugh, C. C. (2009). Using revealed mate preferences to evaluate market force and differential preference explanations for mate selection. Journal of personality and social psychology, 96(6), 1226. (Kross, Ayduk, Mischel, Helping 1. Accuracy of choice prediction is more strongly affected by choice of bandwidth for neural models 2. We can predict BOLD signal from features of the photo with varying success for the 6 regions of interest Methods Results Results (Continued) Conclusion Predicting choice from BOLD signal Note: Error bars depict standard errors Future Directions • Comparing performance of other models on classifying data Predicting BOLD signal from stimulus features Background: • Smiling increases positive affect for target 1 • Attractiveness is associated with higher dating interest • Stated ideal partner preferences have been shown not to be very accurate in the past • Previous studies on speed dating has shown that activity in selected regions of the brain is correlated with dating interest in a target Psychological predictors of stated and displayed preferences in online dating Mira Nencheva, Brian Knutson Department of Psychology I Stanford University Central Research Questions: 1. Can we predict choice from BOLD signal in selected regions of interest? 2. Can we predict BOLD signal from features of the stimulus • Effect of choice of bandwidth on success of SVM algorithm for 3 types of models</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

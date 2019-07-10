@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Finding Your Way, Courtesy of Machine Learning</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chaitanya</forename><surname>Asawa</surname></persName>
+							<email>casawa@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Computer Science</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Palo Alto</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Marcus</forename><surname>Gomez</surname></persName>
+							<email>mvgomez@stanford.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Mathematics</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Palo Alto</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Viraj</forename><surname>Mehta</surname></persName>
+							<email>virajm@stanford.edu</email>
+							<affiliation key="aff2">
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>94305</postCode>
+									<settlement>Palo Alto</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Finding Your Way, Courtesy of Machine Learning</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In this paper, we consider the multi-label, multi-class prediction problem in the context of classifying undergraduate education requirements at Stanford University -namely, given a course's description, determining what general education requirements it satisfies. Given the extremely tough challenge of using a small dataset, we opt to consider models and make modifications that are able to handle multiple classes and produce multiple labels with very limited training examples. We present a slightly modified version of Naive Bayes, an application of BoosTexter, and several iterations of linear classification techniques. Then, we explore the performance of techniques from deep learning including RNN, LSTM, and GRU.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Motivation</head><p>We believe that there is a flaw in the undergraduate graduation requirements: if a student makes the interesting choice of fulfilling his/her Formal Reasoning WAYS Requirement with "Lie Algebra," as of now, he/she will not be able to graduate. Clearly, the WAYS requirements are currently not assigned completely and/or sufficiently.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Background</head><p>For undergraduates, Stanford requires completion of a series of requirements known as Ways of Thinking/Ways of Doing (WAYS). Undergraduates must take 11 courses across 8 different WAYS. These 11 courses are not fixed, and multiple courses can fulfill a given WAY. A course can also fulfill multiple WAYS.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Problem</head><p>The problem we would like to explore is as follows: given a course's description, if we know that the course satisfies at least one WAY, can we predict the WAY(S) that it satisfies? This is a multi-label, multi-class problem as the multiple WAYS represent multiple classes, and the multiple WAYS a course could satisfy represent multiple labels.</p><p>As the WAYS system has only been recently introduced, not all courses have been approved to or marked as satisfying a WAY. We believe that this could be of interest as a tool for the Registrar and may take steps to make it available to them as part of a maturing WAYS program.</p><p>In our particular case, this problem is extremely challenging in that we have very little data (our motivation is to help more data of this form be possible), and yet, we need to be able to predict multiple classes and labels with limited training knowledge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Related Work</head><p>To our knowledge, no group has worked on this problem with this dataset. Additionally, to date, multi-label+multi-class problems have not been extremely well-researched due to complexity. There are a few modern standards for said problem class. Schapire and Singer developed BoosTexter [1], an extension of AdaBoost (well-studied boosting algorithm). Elisseeff and Weston developed a generalized version of SVMs that minimizes a rank-based loss instead of pairwise binary losses <ref type="bibr" target="#b1">[2]</ref>. Zhang and Zhou developed a multilabel generalization of KNN (dubbed ML-KNN) that identifies neighbors and chooses a label set using maximum a posteriori (MAP) estimation <ref type="bibr" target="#b2">[3]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Data</head><p>Our data will come from Stanford's ExploreCourses, which for a given course, provides both a full course description and a list of WAY(S) that it satisfies. We were granted access to this dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Generalizability</head><p>Part of the motivation for studying the multi-class, multi-label classification problem in this setting (using only a course description and not necessarily all other tags) was that we would be able to explore the problem in a generalizable manner that we could then use for other problems. In order to create a more general multi-class, multi-label text classification module, we restrict our analysis to descriptions, using word frequency features only. Later, we describe some potential improvements from using dataset-specific features as mentioned in section 11. Since we were interested in studying the multiclass, multi-label problem in general, adding hand-engineered features would decrease the portability of the models and especially the neural models attempt to gather that information as a part of the process.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Motivation</head><p>We believe that there is a flaw in the undergraduate graduation requirements: if a student makes the interesting choice of fulfilling his/her Formal Reasoning WAYS Requirement with "Lie Algebra," as of now, he/she will not be able to graduate. Clearly, the WAYS requirements are currently not assigned completely and/or sufficiently.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Background</head><p>For undergraduates, Stanford requires completion of a series of requirements known as Ways of Thinking/Ways of Doing (WAYS). Undergraduates must take 11 courses across 8 different WAYS. These 11 courses are not fixed, and multiple courses can fulfill a given WAY. A course can also fulfill multiple WAYS.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Problem</head><p>The problem we would like to explore is as follows: given a course's description, if we know that the course satisfies at least one WAY, can we predict the WAY(S) that it satisfies? This is a multi-label, multi-class problem as the multiple WAYS represent multiple classes, and the multiple WAYS a course could satisfy represent multiple labels.</p><p>As the WAYS system has only been recently introduced, not all courses have been approved to or marked as satisfying a WAY. We believe that this could be of interest as a tool for the Registrar and may take steps to make it available to them as part of a maturing WAYS program.</p><p>In our particular case, this problem is extremely challenging in that we have very little data (our motivation is to help more data of this form be possible), and yet, we need to be able to predict multiple classes and labels with limited training knowledge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Related Work</head><p>To our knowledge, no group has worked on this problem with this dataset. Additionally, to date, multi-label+multi-class problems have not been extremely well-researched due to complexity. There are a few modern standards for said problem class. Schapire and Singer developed BoosTexter <ref type="bibr" target="#b0">[1]</ref>, an extension of AdaBoost (well-studied boosting algorithm). Elisseeff and Weston developed a generalized version of SVMs that minimizes a rank-based loss instead of pairwise binary losses <ref type="bibr" target="#b1">[2]</ref>. Zhang and Zhou developed a multilabel generalization of KNN (dubbed ML-KNN) that identifies neighbors and chooses a label set using maximum a posteriori (MAP) estimation <ref type="bibr" target="#b2">[3]</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Data</head><p>Our data will come from Stanford's ExploreCourses, which for a given course, provides both a full course description and a list of WAY(S) that it satisfies. We were granted access to this dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Generalizability</head><p>Part of the motivation for studying the multi-class, multi-label classification problem in this setting (using only a course description and not necessarily all other tags) was that we would be able to explore the problem in a generalizable manner that we could then use for other problems. In order to create a more general multi-class, multi-label text classification module, we restrict our analysis to descriptions, using word frequency features only. Later, we describe some potential improvements from using dataset-specific features as mentioned in section 11. Since we were interested in studying the multiclass, multi-label problem in general, adding hand-engineered features would decrease the portability of the models and especially the neural models attempt to gather that information as a part of the process.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Preliminary Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.1">Data Processing</head><p>We have collected the course descriptions and WAYS of 14336 courses from ExploreCourses.</p><p>Out of these 14336 courses, only 1571 unique courses had WAYS. (When we say unique courses, we only took one course from a set of courses with the same description, to avoid biasing the data with duplicates).</p><p>These courses collectively satisfy 2085 WAYS, meaning for courses that do satisfy WAYS, they satisfy on average 1.33 WAYS.</p><p>As the unlabeled courses could qualify for satisfying some WAY, but are currently not marked as such, we have not included them in our data, and focused only on courses that do have WAYS.</p><p>Then, we removed stop words (frequent words) as they typically do not provide any insight into the text due to their high frequency and presence in every class. We also converted all words to lowercase and removed all punctuation. To assure that all words with the same stem but different suffix were treated similarly (as they have the same intention for the most part), we also stemmed our data. The data was not stemmed for the deep learning models, in which we do not stem the words since we are using word vectors as inputs. Finally, we tokenized the data, because our models work on the word-level at the moment.</p><p>We then performed a random 90/10 split of the formatted data to constructed a training set and dev/test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.2">Error Metrics</head><p>There are two error metrics that we have been using to gauge our performance in a loss-function-independent manner between classifiers. We use the first metric only for baseline methods, when we have multiple classifiers. The second metric, the Hamming distance, is the metric we will use to ultimately evaluate all classifiers.</p><p>The first, the False Negative Metric, is a naive approach that is useful for independent classifier methods but is too simple for the multi-label concept. We train an independent classifier for each WAY. For each training example, there are 1 or more WAY labels. For each given test label, we run the relevant classifier. If the classifier misclassifies the example, we increment the error count. The metric is then given by D n = number of misclassified labels number of labels</p><p>The second metric is Hamming Distance, calculated as follows. Take a training example x (i) . Let A (i) be the set of true WAYS of the example and let B (i) be the set of labeled ways by our classifier(s). Then the Hamming distance D (i) h is computed as</p><formula xml:id="formula_0">D (i) h = 1 − |A (i) ∩ B (i) | |A (i) ∪ B (i) | .</formula><p>The average of these D (i) h over all training examples is our overall metric.</p><p>By using two metrics, we have a complete picture of the performance of our classifiers on a single-label and multi-label classification test. In addition, the two-metric system allows us to dig deeper into the methods that are inherently multi-label as opposed to those that use a combination of binary classifiers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.3">Baseline Models</head><p>In our baseline, we decided to construct models which involve developing a binary classifier for every single WAY. This would mean we have 8 classifiers, each indicating whether or not a course satisfies a particular WAY. We would train the classifiers individually. Then, at test time, we would run each classifier over a course description, and determine which WAYS the course satisfies. We have constructed three such sets of models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.3.1">Linear Classifier</head><p>We constructed a standard linear model, using word frequency counts from descriptions as features.</p><p>We were able to achieve 0.0039 False Negative metric on a training set and 0.0466 error on a dev/test set. Additionally, using the aforementioned Hamming Distance we achieved 0.311 as our error.</p><p>To better understand our performance, we performed a finegrained analysis over how each WAY classifier was doing. We found that some of the more STEM-oriented WAYS (such as Formal Reasoning (FR), Applied Quantitative Reasoning (AQR), and Scientific Method Analysis (SMA)) had better performance than other WAYS.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.3.2">Naive Bayes 7.3.2.i Word2Vec Style Subsampling</head><p>We constructed a Naive Bayes model from scratch. To account for the small amount of training data and the skewed proportions of the positive and negative examples, we constructed an analog of the negative subsampling method used by Mikolov et. al in their loss function for word2vec <ref type="bibr" target="#b3">[4]</ref>. In particular, we randomly sampled the negative training examples so that there was an equal number of positive and negative examples in each class when training. We performed this subsampling for a few iterations, and then we averaged the parameters determined by the Naive Bayes algorithm. Though this is not a standard part of the Naive Bayes procedure, and we could not find any literature examples of this being done to improve performance, this gave us a significant improvement in both error categories (on the order of 30%).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>7.3.2.ii Results</head><p>We were able to achieve 0.0068 False Negative error on a training set, and 0.0214 False Negative error on a dev/test set. Using the Hamming Distance metric of error, we achieved an error of 0.487. This (in addition to the proceeding figure) seems to indicate we have a series of reasonably good single-WAY classifiers, but their combined performance is not as well.</p><p>To better understand our performance, we performed a finegrained analysis over how each WAY classifier was doing. We see that WAY-ER and WAY-ED perform exceptionally poorly, whereas all the other WAYS perform reasonably the same.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.3.3">Support Vector Machines</head><p>In addition to the baseline models, we leveraged the previous baseline approach using support vector machines (SVMs) <ref type="bibr" target="#b4">[5]</ref>. In particular, we used a linear kernel of the form:</p><p>K(x i , x j ) = x T i x j and a radial basis function kernel of the form</p><formula xml:id="formula_1">K(x i , x j ) = exp(− ||x i − x j || 2 2 2σ 2 )</formula><p>For the linear kernel, we achieved a training error of 0.000, and a test error of 0.823 (error here is average hinge loss); for the RBF kernel, we achieved a training error of 0.000 and a test error of 1.000. The models we implemented here seem to indicate that SVMs are a poor model for the multi-class multilabel problem. As further, evidence, we show the ROC curves below (left is linear, right is rbf). The macro-average ROC curve is generated by considering the average of the ROC over each class; the micro-average curve is generated by considering all positives and negatives as a collective single set. Note importantly that for both the macro-and micro-average ROC curves, the area under said curves is less than 0.7 and in the micro-average case, the curve is effectively linear; this is a strong indicator that in general, the SVMs are not expected to rank a randomly chosen positive and randomly chosen negative sample any differently (i.e. the SVM test is effectively random/worthless).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Dimensional Reduction via Principal Components Analysis</head><p>Work by Robles et. al. indicates that both for general text-classification tasks and for specifically multi-label textclassification tasks, dimensionality reduction techniques may help reduce model variance and improve overall performance, especially in the context of high vocabulary/feature size (in our case, V ≈ 9000) <ref type="bibr" target="#b5">[6]</ref>. Thus, we used Principal Components Analysis (PCA) to reduce the number of features. As shown below, we explain most of the variance with around 1000 features, or 1/9th of the dataset Running feature reduction, however, did not yield significant improvements in overall model efficacy; after the first 10 principal components, for both hamming error and average perclass testing error error plateaus and no additional components yield large decreases in error.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Class Independence Assumption</head><p>In the OneVsRest style models, we make the assumption that the classes are all independent. However, this assumption may not be true, and inter-class dependence may yield important interactions not accounted for by just the descriptions. In particular, consider the correlation matrix of WAYS frequencies shown below (obtained using Graphical Lasso since the dataset is fairly small) </p><formula xml:id="formula_2">A-II AQR CE ED ER FR SI SMA A-</formula><note type="other">II 1.0 −0.178 −0.121 0.012 0.024 −0.168 −0.367 −0.264</note></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10">BoosTexter</head><p>We noticed the clear interclass correlations and nonlinearity of features, suggesting we try something that can easily capture these nonlinearities. BoosTexter is an extension of Adaboost that is well-suited to multi-class/multi-label learning and text classification <ref type="bibr" target="#b6">[7]</ref>. At a high level, BoosTexter swaps the decision stumps which return a binary value for a series of realvalued weak learners that allow for a ranked list of label likelihoods. In particular, we used a modified version of the icsiboost framework <ref type="bibr" target="#b7">[8]</ref>.</p><p>We found that boosting methods exhibit the standard behavior of overfitting on our dataset. It seems that we need more data so that we can have better test performance. At the point where the training and test errors diverge, we have a hamming loss of 0.56. We believe that the other reason boosting doesn't perform well is that there isn't a way to encode prior knowledge of the terms in the text. (As an example, 'Kant' is a term that would immediately lead one to an Ethical Reasoning label, but our software is unlikely to have learned such an association.)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="11">Improvement with Domain-Specific Features</head><p>Although we restricted ourselves to word frequencies to create a general use tool, for this particular dataset, there were some features independent of raw text that could have some predictive power. As an example, below we show result of adding the course department as a feature in addition to the first 10 principal components in a linear classifier. Similar results were seen for other methods as well.</p><p>Another feature we could have added was the old DB, EC, or IHUM requirement labels, but we considered that this was not a useful feature for future data. It also would make our classifiers highly nonportable to other problems.</p><p>By using only descriptions for multi-label, multi-class classification, we focused on experimentation with models that could hopefully apply generally, rather than hand-engineering features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="12">Neural Sequential Models</head><p>As our other models were working on the token level, they were not able to necessarily capture the non-linear interactions between words. To handle this, we experimented with Neural Sequential Models. These models generally take a sequence of inputs and try to somehow capture properties about the sequential nature of the data.</p><p>A general recurrent neural network, where the bottom layer of nodes are inputs, the middle layer are hidden states, and the top layer are output states.</p><p>We experimented with 3 sequential models with Keras <ref type="bibr" target="#b8">[9]</ref>: -RNN: Recurrent Neural Network -LSTM: Long-Short Term Memory Network -GRU: Gated Recurrent Network</p><p>In all of these models we applied a RELU layer followed by a softmax layer on the last output of the sequential model. The output vector of the softmax layer served as a probability distribution for each of the 8 possible WAYS, and we tuned a parameter that would determine some probability threshold for whether or not a course deserved a particular WAY label. We used binary cross entropy loss for our loss function.</p><p>We used word vectors released by Stanford that were created using the GloVe method as inputs to our sequential models <ref type="bibr" target="#b9">[10]</ref>.</p><p>For the 3 models experimented with, we plot their loss over time:</p><p>It seems that a simple RNN did not change the loss over time.</p><p>One hypothesis for this is a Vanishing Gradient problem, as described by Bengio et. al <ref type="bibr" target="#b10">[11]</ref>. In particular, since the number of inputs to the RNN is the number of words in a course description, and in our data descriptions consist of 53 words on average, the RNN consist of 53 hidden states.</p><p>After seeing the superior performance of the GRU, we focused on tuning the GRU. One hyperparameter we tuned was the output size of the GRU, before applying the softmax layer.</p><p>We found that changing the output size, at small sizes, had little effect on accuracy. We hypothesize that despite there being many inputs, the GRU does not utilize too much information and hence does not have a much different accuracy with higher dimensional embeddings. A high dimensional output, however, seems to harm performance, potentially due to more unnecessary parameters.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="13">Conclusion</head><p>We compare the performance of all of our models:</p><p>We see that of all our classfiers, the best two were the linear classifier and the Gated Recurrent Network. The GRU performed slightly better than our linear classifier. While in practice GRUs tend to typically have superior performance to linear classifiers, we believe the dearth of data prevented the GRU from learning its plethora of parameters well.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="14">Forward Steps</head><p>We believe that our most limiting factor was the lack of data available to us. We believe that with more examples available (as they will be over time as the WAYS program matures), our various methods will be able to increase their effectiveness.</p><p>Beyond research, we also reached out to the registrar for their potential interest in such a tool, as the WAYS program matures.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>there are clearly non-trivial inter-class correlations (e.g. SI (Social Inquiry) and A-II (Artistic and Aesthetic In- quiry) are anti-correlated, SMA (Scientific Method and Anal- ysis) and A-II are anti-correlated) that simply do not get ac- counted for in the OneVsRest models.</figDesc></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p>Thank you ExploreCourses for giving access to course data.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Boostexter: A boostingbased system for text categorization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">E</forename><surname>Schapire</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Singer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Machine Learning</title>
+		<imprint>
+			<date type="published" when="2000" />
+			<biblScope unit="page" from="135" to="168" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A kernel method for multilabelled classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Elisseeff</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2001" />
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="681" to="687" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Ml-knn: A lazy learning approach to multi-label learning</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M.-L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Z.-H</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Pattern Recogn</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="2038" to="2048" />
+			<date type="published" when="2007-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Distributed representations of words and phrases and their compositionality</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><forename type="middle">S</forename><surname>Corrado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Dean</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in neural information processing systems</title>
+		<imprint>
+			<date type="published" when="2013" />
+			<biblScope unit="page" from="3111" to="3119" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Pedregosa</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Varoquaux</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Gramfort</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Thirion</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Grisel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Blondel</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Prettenhofer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Weiss</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Dubourg</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Vanderplas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Passos</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Cournapeau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Brucher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Perrot</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Duchesnay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Feature selection for multi-label naive bayes classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><forename type="middle">J M</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Min-Ling</forename></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><surname>Robles</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="volume">179</biblScope>
+			<biblScope unit="page" from="3218" to="3229" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Boostexter: A boostingbased system for text categorization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">E</forename><surname>Schapire</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Singer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Machine learning</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="135" to="168" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Icsiboost</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Favre</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Hakkani-Tür</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Cuendet</surname></persName>
+		</author>
+		<ptr target="http://code.google.come/p/icsiboost" />
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Keras</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Chollet</surname></persName>
+		</author>
+		<ptr target="https://github.com/fchollet/keras" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Glove: Global vectors for word representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EMNLP</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="1532" to="1543" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Learning longterm dependencies with gradient descent is difficult</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Simard</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Frasconi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="157" to="166" />
+			<date type="published" when="1994" />
+		</imprint>
+	</monogr>
+	<note>Neural Networks</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

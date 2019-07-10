@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:18+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Method for Modifying Facial Features Motivation Methodology Results and Discussion</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Computer Science Jing</roleName><forename type="first">Bo</forename><surname>Yang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Final Project</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Boning</forename><surname>Zheng</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Final Project</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Meixian</forename><surname>Zhu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Final Project</orgName>
+								<orgName type="department" key="dep2">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Method for Modifying Facial Features Motivation Methodology Results and Discussion</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>For this task, we would like to learn mapping functions between two domains X and Y (original and disguised faces) given training samples and . The Cycle-GAN by Zhu et.al. <ref type="bibr" target="#b0">[1]</ref> presents a method of learning the two mappings simultaneously using a forward GAN and backward GAN. The network architecture is presented below:</p><p>jingboy, b7zheng, mxzhu @stanford.edu Facial recognition systems rely on original faces, but people's facial features, including beard and glasses, change frequently. A system capable of recovering the original human face or reconstructing disguise will be helpful for officers who need to manually verify ID photos and for assisting witnesses identify criminals with modified facial features.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>This project primarily uses two datasets: the dataset obtained by Wang and Kumar and the popular CelebA dataset.</p><p>Wang and Kumar's dataset consists of 2460 images of 410 different celebrities. The images are nicely aligned and cropped facial images pre-processed into gray scale along with multiple annotations.</p><p>The CelebA dataset is a large-scale face attributes dataset with more than 200K celebrity images. Approximately 10K images with appropriate beard/glasses tags were selected for this project. We used OpenCV to identify and then crop facial image to achieve similar samples as previous.</p><p>We can obtain higher image quality using more sophisticated network structure. There also exists methods that can numerically evaluate quality of generated images, such as Inception Score. It is also desirable to support more facial features. Potentially make use of semisupervised or unsupervised methods to enable training with unlabeled data.   Images generated using a basic GAN by Goodfellow <ref type="bibr" target="#b2">[3]</ref> performs poorly in terms of preserving non-relevant facial features. Generated images are also blurred, potentially due to complex residual structure. In contrast, reconstruction losses and identity losses encourages CycleGAN to preserve features not affected by our manipulation. Decreasing combined GAN losses when individual component losses have plateaued could mean the network is refining image details. In addition, notice that reconstruction quality is higher for single feature difference training (higher quality beard/mustache for beard-only versus glasses and beard). Added glasses depend on "type" of human. Old celebrities tend to get classic looking glasses whereas young celebrities often get sunglasses. We also want to point out that addition of features seems to be easier, likely because it hides details, compared to detail "creation" task of glasses and beard removal. We could attribute these details to the network making a choice based on characteristics of the training population.</p><p>In addition to the adversarial loss functions, we have an additional cycle-consistency loss to preserve the individual identities through the generation process:</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig 1 .</head><label>1</label><figDesc>Two datasets used for this project.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig 2 .</head><label>2</label><figDesc>First half of CycleGAN. Forward generator constructs desired images while backward generator is trained for preserving the original image. Fig 4. Losses of generator, discriminator and combined GAN for black and white beard removal/addition task.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig 5 .</head><label>5</label><figDesc>Images generated using a simple ResNet-based GAN.Fig 3.Images generated using CycleGAN</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Unpaired image-to-image translation using cycle-consistent adversarial networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jun-Yan</forename><surname>Zhu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Neural network ensembles</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lars</forename><surname>Hansen</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><surname>Kai</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Salamon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE transactions on pattern analysis and machine intelligence</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="993" to="1001" />
+			<date type="published" when="1990" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Advances in neural information processing systems</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ian</forename><surname>Goodfellow</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+	<note>Generative adversarial nets</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

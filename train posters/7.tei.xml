@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:19+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">HIKNet: A Neural Network for Detecting Head Impacts from Kinematic Data 3. RESULTS and DISCUSSION BACKGROUND and MOTIVATION 1. DATASET 2. NEURAL NETWORK ARCHITECTURE</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">HIKNet: A Neural Network for Detecting Head Impacts from Kinematic Data 3. RESULTS and DISCUSSION BACKGROUND and MOTIVATION 1. DATASET 2. NEURAL NETWORK ARCHITECTURE</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>§ Mild Traumatic Brain Injury (mTBI) is a serious health concern, especially in contact sports such as football, and can cause acute and long term debilitating symptoms 1,2 § The Camarillo Lab at Stanford has developed and deployed an instrumented mouthguard that records linear acceleration and angular velocity of head impacts 3 § Device must be able to accurately classify between real impacts or false positives (e.g. spitting, chewing, etc.) to be useful § In previous work, sequential feature selection was used to determine the most important classifier features, and these were used to train a SVM classifier 4,5 § We propose to use a neural net, which will automatically extract important features to distinguish between real and false impacts to a high degree of accuracy </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUTURE WORK REFERENCES</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stanford Instrumented Mouthguard</head><p>• Used Keras and Tensorflow in Python to create a deep convolutional neural network • Baseline architecture modeled off of PerceptionNet 6 and ConvNet 7 , two CNN's used for Human Activity Recognition from time series data • The 1D convolutional layers "extract" features and feed into a late 2D convolution which classifies the data into impact and no impact • The 2D convolution is late in the architecture to prevent overfitting</p><p>• Develop a neural network that classifies between multiple classes such as head impacts, body impacts, and no impact.</p><p>• Apply neural net to a larger mouthguard dataset as more data is collected • Analyze positive head impacts and classify them as resulting in concussion vs.</p><p>no concussion (KOCNet)</p><p>• Tested a number of architectures (e.g. U-Net) but found the PerceptionNet architecture to have highest accuracy on evaluation set • Tuned our Net using a "greedy" optimization scheme for number of 1D conv layers, number of 2D conv layers, and type of final layer • Parameter sweep to find optimal filter size, kernel width, and dropout thresholds • Optimal dropout threshold 0.4, kernel width of 15, and filter size of 150 • Low parameter neural network worked surprisingly well and out performed other more complex architectures as well as existing SVM classifier Image adapted from <ref type="bibr" target="#b3">[4]</ref> Final HIKNet Performance Metrics:</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Michael Fanton † , Nicholas Gaudio ‡ , Alissa Ling ‡ † Department of Mechanical Engineering, Stanford University, ‡ Department of Electrical Engineering, Stanford University § 527 examples of 6 time traces (linear acceleration and angular velocity in x, y, z axes) each of length 199 § 264 real impacts and 263 false impacts § Each impact has 100ms of data sampled at 1000 Hz § Dataset was randomly split 70%/30% into a training and</figDesc><table>Mechanical Engineering 
+
+ENGINEERING 
+
+evaluation set 
+ § Generally, true impacts have lower frequencies content 
+(20-30 Hz), whereas false impacts are comprised of 
+higher frequency content 
+
+A representative example of a real and false impact: 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">The Journal of head trauma rehabilitation21</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jean</forename><forename type="middle">A</forename><surname>Langlois</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<biblScope unit="page" from="375" to="378" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jaime</forename><surname>Ramos-Cejudo</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><forename type="middle">B</forename><surname>Camarillo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annals of biomedical engineering</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="1939" to="1949" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lyndia</forename><forename type="middle">C</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Biomedical Engineering</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="2659" to="2668" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Lyndia</forename><forename type="middle">C</forename><surname>Wu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific reports</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">855</biblScope>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Panagiotis</forename><surname>Kasnesis</surname></persName>
+		</author>
+		<title level="m">Proceedings of SAI Intelligent Systems Conference</title>
+		<meeting>SAI Intelligent Systems Conference<address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Charissa</forename><surname>Ronao</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Ann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Systems with Applications</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page" from="235" to="244" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

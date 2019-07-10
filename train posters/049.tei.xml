@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Selection:</head><p>In our initial analysis, we collected over 130 financial data series for companies currently listed on the S&amp;P 500 index for the time period between Q1 2006 and Q4 2015. We were interested in including granular income statement and balance sheet items, above and beyond common items such as revenue, earnings, cash stock, etc. We also collected six macroeconomic features to include, including GDP growth, and 10-year treasury interest rates.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data Cleaning:</head><p>In the cleaning process, we excluded 33 features, and six companies due to lack of sufficient data. Many of the data series contained missing values. We chose to approach this problem with "dummy variable adjustment"; we substituted missing values with the same arbitrary value in all cases (0), and included "dummy" 0-1 indicator vectors as features. This process represents an agnostic stance on the values of the missing data points.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Modeling Choices: We chose to model each feature as a random variable. We assumed independence of these random variables between companies. To make this assumption more realistic, we transformed all features to standard units for each company. With an autoregressive model on our dependent variables, future consensus analyst recommendation and future stock price, we determined the present recommendation was significant in determining the next period (one-step ahead)) recommendation. We included the present recommendation and stock price as features.</p><p>Note: (We discretized the consensus recommendation for classification analysis. A recommendation of 4 was the most common label. Stock price exhibited strong right skew. )</p><p>• A large number of traders conduct market research through Bloomberg terminals. Bloomberg is the market leader in distributing financial data. Bloomberg's market power is so substantial that the UK government had to postpone a major sovereign debt buyback when the Bloomberg network went offline briefly in 2015.</p><p>• For public equities, Bloomberg offers a consensus analyst recommendation from 1-5 (strong sell to strong buy) that reflect the aggregate opinion of equity analysts. Prior research on how these recommendations impact the market suggests that they may actually move markets in the opposite direction (fueled, perhaps, by a perception that others with the same information will move in the direction of the recommendation).</p><p>Regardless of direction, researchers agree that such recommendations have a major impact on market perceptions and prices.</p><p>• We take a novel approach to applying supervised learning to financial modeling. In addition to forecasting the price of an equity in the future, which we treat as a regression problem, we also forecast Bloomberg consensus analyst recommendations, as a classification problem. (Analyst recommendation categories between 1-5)</p><p>• These consensus numbers have tremendous power to shape market perceptions and are associated with detectable movements in the value of the stock. Prior studies have forecasted price, but little to nothing has been published on forecasting analyst recommendations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Modeling approach Models used for prediction</head><p>Results: Classification Acknowledgements Challenges/ Future Work</p><p>• Regression: Further evaluate all regression based methods for stock price forecasting • Time series component: Future studies can use more than one quarter of prior information to improve forecasts. We can also approach movement from current analyst consensus as a survival problem and explore hazard models. This is salient given that analyst consensus tends to move irregularly and somewhat uncommonly.</p><p>• Weighted Approach: Some training classes for classification are imbalanced. Eg.</p><p>Analyst ratings of class 2 were less represented in the data. This resulted in poor sensitivity overall. Measure impact of weighting vs non-weighting approach.</p><p>• Interactions: Although some of our features captured this information, we did not explicitly look for interactions arising from the type of industry a firm is in or where the company is within its growth cycle. Both factors impact the assumptions analysts use in pricing companies.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation</head><p>• We would like to thank Dr. Kay Giesecke (MS&amp;E) for his insights and feedback on our project. • What features were most predictive: Fifty-one features were selected by the Lasso procedure. These features included items such as "total assets", "accounts payable", "goodwill", and the 10-year treasury interest rate.</p><p>• Relevant to practitioners: Interviews with stakeholders (including former equity analysts and public equity investors) suggest that investors can benefit from forecasting analyst sentiments in advance. They can use this information to anticipate how markets will react to the analyst recommendations.</p><p>• Relevant to ML in finance: We found no prior literature forecasting consensus analyst recommendations. Our initial work suggests that common classification approaches can be applied to this problem.</p><p>• Logistic Regression </p><formula xml:id="formula_0">• Random Forests • SVM • Decision Trees Data Classification • KNN Reg • Random Forests • SVR • Linear</formula></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc>• CS229 Staff: Dr. John Duchi, TA's and fellow classmates • Huang, Wei, Yoshiteru Nakamori, and Shou-Yang Wang. "Forecasting stock market movement direction with support vector machine." Computers and Operations Research 32.10: 2513-2522 (2005). • Lu, Chi-Jie, Tian-Shyug Lee, and Chih-Chou Chiu. "Financial time series forecasting using independent component analysis and support vector regression." Decision Support Systems, 47.2 : 115-125 (2009).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>training to evaluate model performance.• To improve model performance, we tuned several parameters for each model. • Feature Selection: Used Lasso method for selecting features.• We used grouped-lasso penalty on all K coefficients of particular variables. This makes them zero or non-zero together.• The above plot shows the the cross validation curve along the lambda sequence.• Lambda's which give the min CV deviance and corresponding coefficients are selected by the model Background and Motivation Results: Regression • The above plots show the shrinkage of coefficients with respect to lambda values for Ridge(right) and Lasso (left). • In case of ridge, the penalty term lambda shrinks the coefficients towards zero whereas in Lasso, the penalty term actually forces some coefficients to be zero. • RMSE (Lasso): 0.331, RMSE (Ridge): 0.3851 Lasso coefficients as a function of Lambda Cross Validated Multinomial Deviance of Lasso Fit Ridge coefficients as a function of Lambda</figDesc><table>Regression with 
+regularization 
+• Bagging, Boosting 
+
+Regression 
+
+Analyst Recommendation Forecasting 
+Stock Price Forecasting 
+
+• Our mean classification accuracy was near 
+83% for all methods, with high specificity 
+but lower sensitivity i.e. we have many false 
+negatives in our predictions. 
+• Overall, random forests was the best 
+performing classifier 
+
+• We split the data randomly as 80% train and 
+20% test and performed 10 fold cross validation 
+on the </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<title level="m">NPV: TN/(TN + FN) based on predictions on the test data TP := True positives, TN:= True negatives, FN= False negatives, FP:= False positives</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

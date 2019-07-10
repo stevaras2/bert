@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:13+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Household Energy Disaggregation based on Difference Hidden Markov Model Disaggregation Algorithm Motivation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ali</forename><surname>Hemmatifar</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Mechanical Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manohar</forename><surname>Mogadali</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Energy Resources Engineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Household Energy Disaggregation based on Difference Hidden Markov Model Disaggregation Algorithm Motivation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>(1) Armel, K. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Carrie, et al. "Is disaggregation the holy grail of energy efficiency? The case of electricity." Energy Policy 52 , 2013. (2) Oliver Parson, et al. "Non-Intrusive Load Monitoring Using Prior Models of General Appliance Types", 2012. (3) Arthur, David, and Sergei Vassilvitskii. "k-means++: The advantages of careful seeding." Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms. Society for Industrial and Applied Mathematics, 2007.• Potentially~10% of household energy consumption can be saved by Non- Intrusive Appliance Load Monitoring (NIALM) techniques [1] • Accurate NIALM can lead to better energy policy deployment • Promising due to advent of smart meters (high/low frequency data collection) • Proliferation of smart devices and Internet of Things (IoT) • Appliance state transition is modeled as a Markov Chain with a finite set of states • Individual appliance power load curve as input • Difference HMM algorithm outputs parameters (A, , ) which work as the signature of the appliance • Each state emission modeled as a Gaussian distribution of power usage • Prior distribution of the states ( ), transition matrix (A), and emission matrix ( ) are produced from the curve • Viterbi Algorithm used to determine the most probable sequence of states for each appliance • Disaggregation based on a "Difference" HMM [2] x: Input vector (Total load) y: Hidden variable (Differential load) z: Appliance load • Pecan Street database with +600 household data is used • K-Means++ [3] is used for clustering the consumers into k clusters (k = 5 gives best results) • Successfully clustered households based on energy usage behavior • Recommendations can be given by comparing users from the same cluster after disaggregation task shown above</figDesc><table>" Energy Policy 52 , 2013. 
+(2) 
+Oliver Parson, et al. "Non-Intrusive Load Monitoring Using Prior Models of General Appliance Types", 2012. 
+(3) 
+Arthur, David, and Sergei Vassilvitskii. "k-means++: The advantages of careful seeding." Proceedings of the eighteenth annual 
+ACM-SIAM symposium on Discrete algorithms. Society for Industrial and Applied Mathematics, 2007. 
+
+• Potentially~10% of household energy consumption can be saved by Non-
+Intrusive Appliance Load Monitoring (NIALM) techniques [1] 
+• • Appliance state transition is 
+modeled as a Markov Chain 
+with a finite set of states 
+• Individual appliance power 
+load curve as input 
+• Difference HMM algorithm 
+outputs parameters (A, , ) 
+which work as the signature of 
+the appliance 
+• Each state emission modeled as 
+a Gaussian distribution of 
+power usage 
+• Prior distribution of the states 
+( ), transition matrix (A), and 
+emission matrix ( 
+) are 
+produced from the curve 
+
+• Viterbi Algorithm used to determine the most probable sequence 
+of states for each appliance 
+• Disaggregation based on a "Difference" HMM [2] 
+x: Input vector (Total load) 
+y: Hidden variable (Differential load) 
+z: Appliance load 
+
+• </table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appliance Modeling</head><p>Results and Discussion</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Clustering the consumers</head></div>			</div>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

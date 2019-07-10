@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><surname>Hu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Department</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shagun</forename><surname>Goel</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">CS Department</orgName>
+							</affiliation>
+						</author>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>CS 229 Autumn 2018: AI is the New Electricity</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>As the world evolves in the direction of renewable energy sources, one key limiting factor is their dependency on climate conditions. Our goal is to use past weather and energy production data to determine the efficiency of implementing solar panels and wind farms at given locations. In particular, given a target location, our model estimates and compares the energy production of photovoltaic cells and wind turbines per unit area and determines the form of renewable energy that maximizes the output. .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>❖ Weather data: Synoptic</head><p>APIs. Input: timespan and coordinates. Output: Weather data as JSON. ❖ Solar data: National Renewable Energy Laboratory. Labelled solar output for particular locations over an year. ❖ Wind data: US Wind Turbine Database. Labelled wind output for particular locations over an year.</p><p>For our baselines, we used linear regression with batch gradient descent with batch sizes of 1000 and 100 for solar and wind energy, respectively. Optimal learning rate in either case was 5e-10. The mini-batch gradient descent update rule was:</p><p>❖ Raw input features: wind speed, air temperature, relative humidity, and pressure from the weather data. ❖ SVM models: Gaussian kernel since weather features potentially interact with each other in a multitude of ways. Thus infinite dimensional projection could reveal valuable insights.</p><p>For our project, we implemented, for each of solar and wind energy, a linear regression model (baseline), an SVM model, a neural network, and a generalized additive model (GAM). See the comparisons in the rightmost column.</p><p>We implemented an SVM using the Gaussian Kernel and L-1 regularization. For solar energy, optimal results were found for C = 1 and epsilon = 0.1 for all features. For wind energy, optimal results were found for C = 7 and epsilon = 0.05 for all features.</p><p>The architecture of our FCNN is shown below. The activation function for both hidden layers is the sigmoid function. The output layer uses ReLU as the activation function since energy outputs are non-negative. The optimal learning rate in either case was 5e-7 and the algorithm was run for 1000 epochs with a batch size of 10000 for solar and 100 for wind.</p><p>GAMs are smooth models trying to predict:</p><p>by assuming that:</p><p>In our case, we assumed the exponential distribution to be Gaussian, the link function to be linear, and each of the function forms f_i to be spline terms. The errors were measured using the root mean squared error (RMSE) metric. Both for solar and wind energy, the GAM model demonstrated the least error. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Solar Energy Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Wind Energy Results</head><p>❖ Looking at the RMSE errors in the previous tables, it is clear that the GAM models are best suited for energy output predictions. ❖ The performance of neural networks was unexpectedly bad, while linear regression managed to far surpass its original position as a simple baseline. ❖ In particular, the neural network updates slowed down to a snail's pace after 500 epochs. ❖ On the other hand, GAMs are extremely interesting in that their additive nature allows us to explore and interpret individual features by holding others at their mean. The graphs to the right show the original relationship between each individual feature and the energy output.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Original relationship (solar) Original relationship (wind)</head><p>❖ Partial dependency plots are really useful since we can infer the dependence of the output on isolated features easily. ❖ For example, from the diagrams for example, it is clear that an increase in relative humidity leads to a decrease in solar output. ❖ The jagged nature of some of these plots leads to the conclusion that we should smooth over some of these functions. ❖ The graphs to the left show the relationship between input features and the output after we smoothed some of the functions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>After smoothing (solar)</head><p>After smoothing (wind) </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head></head><label></label><figDesc>❖ Synoptic APIs, "Mesonet API" ❖ NREL, "Solar Power Data for Integration Studies" ❖ USWTDB, "Geospatial Web Services" ❖ Pablo Oberhauser, "pyGAM : Getting Started with Generalized Additive Models in Python"❖ Maximum power output does not always imply the optimal location. Our next step is to incorporate topographical, demographic and economic data into the learning process. ❖ To improve performance, we could continue to adjust our architecture for FCNN and GAM (e.g. more hidden layers for FCNN or smoother functions for GAM).</figDesc><table>Data Collection 
+
+Feature Selection 
+
+Models 
+
+Future Work 
+
+References 
+
+Results 
+
+Discussion 
+
+Linear Regression (Baseline) 
+
+Support Vector Machines 
+
+Fully Connected Neural Network 
+
+Generalized Additive Model (GAM) </table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

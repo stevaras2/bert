@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:45+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Pump it or Leave it? A Water Resource Evaluation in Sub-Saharan Africa</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-13">December 13, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><roleName>Marios</roleName><forename type="first">Jacqueline</forename><forename type="middle">Fortin</forename><surname>Flefil</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andreas</forename><surname>Galanis</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vladimir</forename><surname>Kozlow</surname></persName>
+						</author>
+						<title level="a" type="main">Pump it or Leave it? A Water Resource Evaluation in Sub-Saharan Africa</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-13">December 13, 2018</date>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Abstract</head><p>In Sub-Saharan Africa, an estimated 184 million people rely on hand pumps for their water supply <ref type="bibr" target="#b0">[1]</ref> . The goal of this study is to develop an algorithm that can predict hand pump sustainability in low-income countries based on a minimum of data collected on the field. Predicting the sustainability of a hand pump at a given point in time can help shorten the time for NGOs to provide support and organize targeted maintenance operations in remote areas. Using the Taarifa dataset, we trained, compared and optimized different machine learning algorithms to predict three categorical features of the dataset that were identified as possible indicators of hand pump sustainability: functionality of the hand pump, quantity of water delivered, and quality of water delivered. Logistic Regression, Gaussian Discriminant Analysis, Support Vector Machine, Decision Trees and Neural Networks algorithms were tested on our dataset. We then optimized Logistic Regression, Random Forest, and Neural Networks, ultimately combining them with a Voting Ensemble Classifier. The Random Forest algorithm had the best performance when looking at F1 and MCC scores. However, the Voting Ensemble method yielded better distributed results across all classes.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Introduction</head><p>Our project is a tool for development agencies and governments to understand the state of water resource infrastructures in underdeveloped and vulnerable regions of the world. In 2015, an estimated 184 million people living in Sub-Saharan Africa relied on hand pumps for their water supply <ref type="bibr" target="#b0">[1]</ref> and more than 300 million people lacked access to an improved water source <ref type="bibr" target="#b1">[2]</ref> . Historically, development agencies have been supporting those populations by providing infrastructures, such as hand pumps, but very little attention had been directed to their sustainability and their maintenance <ref type="bibr" target="#b2">[3]</ref>, <ref type="bibr" target="#b3">[4]</ref> . Functionality rate of hand pumps in selected Sub-Saharan countries was 36% in 2009, and is respectively 15% and 25% one year and two years after construction in 2016 <ref type="bibr" target="#b5">[5]</ref> . Our goal is to apply machine learning techniques to evaluate the sustainability of a water scheme using data that is already being collected by managing agencies. We look at different aspects of sustainability, including whether a water point is functional or not, the quantity of water it outputs, and its water quality. These predictions can shorten the time required for agencies to provide support and organize maintenance operations. Ideally, this project can inform the water sector and help improve the lives of those that rely on such hand pumps for daily tasks and basic human needs.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Introduction</head><p>Our project is a tool for development agencies and governments to understand the state of water resource infrastructures in underdeveloped and vulnerable regions of the world. In 2015, an estimated 184 million people living in Sub-Saharan Africa relied on hand pumps for their water supply <ref type="bibr" target="#b0">[1]</ref> and more than 300 million people lacked access to an improved water source <ref type="bibr" target="#b1">[2]</ref> . Historically, development agencies have been supporting those populations by providing infrastructures, such as hand pumps, but very little attention had been directed to their sustainability and their maintenance <ref type="bibr" target="#b2">[3]</ref>, <ref type="bibr" target="#b3">[4]</ref> . Functionality rate of hand pumps in selected Sub-Saharan countries was 36% in 2009, and is respectively 15% and 25% one year and two years after construction in 2016 <ref type="bibr" target="#b5">[5]</ref> . Our goal is to apply machine learning techniques to evaluate the sustainability of a water scheme using data that is already being collected by managing agencies. We look at different aspects of sustainability, including whether a water point is functional or not, the quantity of water it outputs, and its water quality. These predictions can shorten the time required for agencies to provide support and organize maintenance operations. Ideally, this project can inform the water sector and help improve the lives of those that rely on such hand pumps for daily tasks and basic human needs.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Related work</head><p>The Taarifa dataset that we used in this study, and variants of it, has been extensively explored in the field of access to Water Sanitation and Hygiene services in developing countries. Most of those studies however do not use machine learning methods to analyze the dataset. A recent study from 2017 <ref type="bibr" target="#b6">[6]</ref> used a Bayesian network to analyze correlations in the data. Some groups have used Machine Learning methods but did so for other purposes: a study from 2013 <ref type="bibr" target="#b7">[7]</ref> used STATA to perform Multivariate Logistic Regression but only looked at relationships between features and non-functionality of the hand pump.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Dataset</head><p>The dataset used in this study was collected by the Tanzania Ministry of Water, aggregated by Taarifa, and downloaded through Kaggle.com. <ref type="figure" target="#fig_0">Figure 1</ref> shows the features that will be classified. This dataset contains data for 59,400 hand pumps, each with 40 features. Some of the features are binary/categorical, and some numerical. These include the location of the water pump, water source type, date of construction, the population it serves, and whether there were public meetings for the point. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Dataset Split</head><p>To train and test our algorithms, we initially split the dataset by randomly assigning 25% of it to the test set and 75% of it to the training set. However, by doing so we became aware that there was a class imbalance problem, where some of the classes for all three classification problems had a relatively small number of points (less than 10% of the total for functionality which has three classes). We therefore decided to apply the synthetic minority over-sampling technique (SMOTE), as described in <ref type="bibr" target="#b8">Chawla et al. (2002)</ref>  <ref type="bibr" target="#b8">[8]</ref> , on the training set to ensure our algorithms would have enough training data from each class.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Data Processing</head><p>We first performed a feature screening and decided to use only 24 of the 40 features. Our screening process excluded 16 features for the following reasons:</p><p>• Irrelevance: some of the features were deemed irrelevant to our project and we decided to exclude them to reduce the computational cost of our algorithm.</p><p>• Redundancy: some of the categorical features had exact or almost exact duplicates and we decided to only keep one out of the two or three identical features. In these cases, we kept the most granular feature. In particular, this reduced the number of geographical features. We then transformed most of the remaining categorical features into binary variables through a One Hot Encoding (OHE) process. Finally, we imputed values where data was missing, and replaced those data points with the mean (continuous) or mode (categorical/binary) of the feature that was missing. This allowed us to keep over 24,000 data points that were missing at least one feature.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Methods</head><p>We tested the following algorithms on each of the three classification problems tackled, and performed them both for the original train/test split (with class imbalance), and the SMOTE resampled split. Ultimately, all models were trained on the set that was resampled from 75% of the original data, and tested on the remaining 25%. We tested Logistic Regression (LR), Gaussian Discriminant Analysis (GDA), Support Vector Machine (SVM), Decision Trees (DT) and Neural Networks (NN) algorithms. Based on preliminary results, both in terms of computational time and accuracy of the results, we decided to only optimize the LR, DT and NN algorithms. Models were optimized using grid search cross-validation (5-fold) to fine tune hyperparameters and final results were obtained using 5-fold cross validation on the test set. Algorithms were evaluated and optimized based on the micro F1 score and on the Matthews Correlation Coefficient (MCC) because of the class imbalance of our test set. The voting ensemble method was used to optimize our final results. LR, DT, NN and VC algorithms optimization is described below:</p><p>• Logistic Regression (LR): Logistic regression was chosen because it is a robust learning algorithm that makes few, and usually reasonable, assumptions about the data. The penalty factor and the type of regularization were optimized. Best performance for this algorithm on all three classification tasks was achieved for an L2 regularization with penalty factor of 1.0.</p><p>• Decision Trees (DT): A decision tree model seemed a particularly promising idea given the number of features used in our algorithm, especially after the OHE process. Having many features, none of which have an obvious effect on the output alone, means that the causal relationship between the features and the output might come from different combination of the features that cannot be modelled well by algorithms that rely on assumptions about data distributions. We tried the Random Forest (RF), AdaBoost, and Bagging and after tuning the parameters of each algorithm, RF performed the best.</p><p>• Neural Networks (NN): Our last algorithm was a NN because of the NN's ability to generalize and to respond to unexpected patterns. During training, different neurons are taught to recognize various independent patterns and then the combination of all the neurons manages to capture all those different patterns and combine them in one final output node. Since our dataset likely contained unexpected and difficult interactions, this was a promising choice.</p><p>• Voting Ensemble Classifier (VC): None of the methods discussed above provided exceptional accuracy for all classes, so the last optimization step was to combine the best three methods (RF, NN, LR) into one ensemble method, the Voting Classifier, which provided great results. We mostly used "hard" voting (i.e. majority class), but for water quantity we used "soft" voting, which averages output probabilities from the three input models. The parameters involved in our final models are as follows: </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Results and Discussion</head><p>All three of our classification algorithms provided us with probabilities of the samples being classified into one of the classes. Since we are dealing with multiclass classification outputs, our algorithms assign each point to the class that holds the highest probability. In order to evaluate our models' performances, we produced confusion matrices to compare predicted and true values. Since the class imbalance was preventing our algorithms from learning the characteristics of less represented classes well enough to predict them, we found the SMOTE resampled dataset to produce better results than the regular dataset split. The results are presented in three forms: confusion matrices which give an idea of how the accuracy of the predictions is distributed between classes, and an evaluation of the prediction through two scores that balance precision and recall. Precision and recall are defined by: precision = T rueP ositives T rueP ositives + F alseP ositives</p><p>(1) recall = T rueP ositives T rueP ositives + F alseN egatives <ref type="bibr" target="#b1">(2)</ref> Results of the three Voting Classifiers are presented in <ref type="figure" target="#fig_2">Figure 3</ref>. In order to evaluate our predictions taking into account the imbalance of our test set (unlike the training set, it was not modified by the SMOTE method), we decided to use the micro F1 score instead of the macro F1 score. The micro F1 score is the harmonic mean of the precision and recall of all examples. It thus takes into account equally the prediction obtained for each example, disregarding classes. The macro F1 score on the contrary, is the harmonic mean of the F1 score of each class and thus weights each class (but not each example) equally.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Figure 4: Micro-averaged F1 Scores for train and test datasets</head><p>While the micro F1 score is a good measure of the overall accuracy of our predictions, it is not a good evaluation metric for the less represented classes. To deal with this problem, we decided to use the Matthews Correlation Coefficient (MCC) as defined below for the multiclass case:</p><p>Because it takes into account the ratios of the four confusion matrix categories (true/false positives, true/false negatives) the MCC is a good evaluation metric for imbalanced datasets. Upon evaluating the MCC for all our algorithms, we found a similar pattern to the micro-averaged F1 score in that RF always had the highest scores, followed by the voting classifier, as shown in in <ref type="figure" target="#fig_3">Figure 5</ref>. Overall, the micro F1 score provided a good evaluation of the tested algorithms in terms of number of good predictions but the MCC is a better evaluation metric for the distribution of those predictions across classes. Our results showed that the Voting Ensemble Classifier consistently yielded the highest results for all classes, which we considered more valuable than excellent performance in some classes but poor performance in others. Therefore, the Voting Ensemble Classifier was our chosen final algorithm for all three output predictions. For all cases, we were happy to verify that our algorithm performed significantly better than a random classifier (corresponding to a MCC of 0).  <ref type="figure" target="#fig_4">Figure 6</ref> shows the spatial distribution of correct (blue) and incorrect (red) predictions for the three outputs. For functionality and water quantity, there does not seem to be a clear relationship between geographic location and accuracy, however it seems that qualitatively the water points closer to bodies of water have a higher probability of being incorrect. For water quality, there is a more clear relationship in that the water points in the Northwest and East Coast seem to be misclassified more often, whereas points in the middle of Tanzania and further Southwest seem to be better classified.</p><formula xml:id="formula_0">(a) (b) (c)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Future work</head><p>There is definitely a lot to be done to keep improving the performance of these classification tasks. One possible future step would be to keep optimizing our models using specific strategies: trying different activation functions for each layer in the NN, performing feature selection for RF, testing more kernels for SVM, or using a nonlinear combination of the features for LR as these might increase the accuracy of our predictions. Because of time constraints, we were only able to search a grid of parameters that were reasonably but arbitrarily chosen for each algorithm, so given more time we would likely implement a more consistent and formulaic way of choosing a grid to search for optimal parameters. Furthermore, it would be useful to explore the input features some more and see which ones contribute the most to a successful prediction. A summary of how much variance is explained by each feature would help decide which measurements are crucial for future work. Another path would be to look at differences in predictions between countries or geographic regions to test the robustness of our algorithm. We also think there is value in going deeper into the results and seeing where (other than geographically) the algorithm fails, i.e. see if there are similar characteristics for the examples for which we are predicting incorrectly.</p><p>Finally, adapting the model to predict when a pump will fail would make it a more applicable tool for managing agencies. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Team Member Contributions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9">Project Code</head><p>The project code can be found on https://github.com/jackieff/cs229project</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Maps of Tanzania's hand pump (a) functionality, (b) water quality, and (c) quantity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Optimized parameters for (a) RF and (b) NN models per output task</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Classification algorithm results for Voting Classifiers.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 5 :</head><label>5</label><figDesc>MCC for all algorithms</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 6 :</head><label>6</label><figDesc>Maps of correct and incorrect classifications for (a) Functionality, (b) Water Quality, and (c) Water Quantity.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Strategy development: Team effort. Data processing: Team effort. Prediction of functionality: Jacqueline Fortin Flefil. Prediction of the quality of water: Marios Andreas Galanis. Prediction of the quantity of water: Vladimir Kozlow. Debugging: Team effort. Final report: Team effort.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Macarthur</surname></persName>
+		</author>
+		<title level="m">pump Standardisation in Sub-Saharan Africa: Seeking a Champion. RWSN Publication 2015-1</title>
+		<meeting><address><addrLine>RWSN , St Gallen, Switzerland</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<title level="m">Progress on sanitation and drinking water: 2015 update and MDG assessment</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>WHO/UNICEF Joint Water Supply, &amp; Sanitation Monitoring Programme. World Health Organization</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Beyond &apos;functionality&apos; of hand pump-supplied rural water services in developing countries</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">C</forename><surname>Carter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Ross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Waterlines</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="94" to="110" />
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><forename type="middle">B</forename><surname>Fisher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">F</forename><surname>Shields</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><forename type="middle">U</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Christenson</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><forename type="middle">D</forename><surname>Cronk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Leker</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Samani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Apoya</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Lutz</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Understanding hand pump sustainability: Determinants of rural water source functionality in the Greater Afram Plains region of Ghana</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Bartram</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Water resources research</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="8431" to="8449" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">What&apos;s Working, Where, and for How Long: A 2016 Water Point Update</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Brian</forename><surname>Banks</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Sean</forename><surname>Furey</surname></persName>
+		</author>
+		<idno type="doi">10.13140/RG.2.2.31354.49601</idno>
+		<imprint>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Factors influencing water system functionality in Nigeria and Tanzania: a regression and Bayesian network analysis. Environmental science technology</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Cronk</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Bartram</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="11336" to="11345" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Predictors of Sustainability for Community-Managed hand pumps in Sub-Saharan Africa: Evidence from Liberia</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Foster</surname></persName>
+		</author>
+		<idno type="doi">10.1021/es402086n</idno>
+		<ptr target="https://doi.org/10.1021/es402086n" />
+	</analytic>
+	<monogr>
+		<title level="j">Sierra Leone, and Uganda. Environmental Science Technology</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<biblScope unit="page" from="12037" to="12046" />
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">SMOTE: synthetic minority over-sampling technique</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">N</forename><forename type="middle">V</forename><surname>Chawla</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">W</forename><surname>Bowyer</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><forename type="middle">O</forename><surname>Hall</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">P</forename><surname>Kegelmeyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of artificial intelligence research</title>
+		<imprint>
+			<biblScope unit="page" from="321" to="357" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of machine learning research</title>
+		<imprint>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Matplotlib: A 2D Graphics Environment</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>John</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Hunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing in Science Engineering</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="90" to="95" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">A guide to NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Travis</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Oliphant</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Trelgol Publishing</publisher>
+			<pubPlace>USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wes</forename><surname>Mckinney</surname></persName>
+		</author>
+		<title level="m">Data Structures for Statistical Computing in Python&quot; Proceedings of the 9th Python in Science Conference</title>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="51" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

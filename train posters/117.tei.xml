@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Conference Paper Acceptance Background and Motivation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">William</forename><surname>Jen</surname></persName>
+							<email>wjen@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Shichang</forename><surname>Zhang</surname></persName>
+							<email>shichang@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Muyun</forename><surname>Chen</surname></persName>
+							<email>muyunc@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Predicting Conference Paper Acceptance Background and Motivation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background and Motivation</head><p>The explosion of scientific research in machine learning has led to the rapid growth of paper submissions to top conferences. Can we predict whether a machine learning paper will be accepted using machine learning methods? <ref type="bibr">Kang, et. al. published</ref> initial work on this topic in April 2018 with the public release of PeerRead, a dataset that collects research papers from AI/ML conferences.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head><p>We reproduced the models from Kang's paper together with some other models.</p><p>• Logistic regression with L2/L1 regularization.</p><p>• Random Forest • SVM with RBF kernel</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>• AdaBoost</head><p>• We used 50 weak classifiers.</p><p>• Neural Network • We used ReLU activation function and 20 different network structures.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Result</head><p>The first row shows the accuracy of the baseline model of predicting by majority, which in this case is reject all the papers. Our best models outperform Kang's best model, which has 65.3% test accuracy on average.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Datasets and Features</head><p>We took all the 427 papers submitted to ICLR 2017 as our dataset. There are 172 accepted and 255 rejected papers. For each paper, we extracted 18 features of numerical and Boolean values.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reference</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>Our work focused on the ICLR dataset, which has limited examples. Similar studies can be done on other conferences with more submissions, like NIPS, or for the same conference but with submissions across years. The challenging part is parsing and featurizing the large number of papers, which is computationally expensive.</p><p>[1] D.Kang, W.Ammar, B.Dalvi, M.vanZuylen, S.Kohlmeier, E.Hovy, and R.Schwartz, "A data set of peer reviews (peerread): Collection, insights and nlp applications," </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>] T. Hastie, R. Tibshirani, and J. Friedman, The Elements of Statistical Learning, ser. Springer Series in Statistics. New York, NY, USA: Springer New York Inc., 2001. Important Features Whether abstract contains deep, neural, embedding, outperform, outperform, novel, or state_of_the_art Number of figures, tables, sections, equations, theorems Number of references Bag-of-words in abstract Average of GloVe word embeddings in abstract</figDesc><table>in 
+Meeting of the North American Chapter of the Association 
+for Computational Linguistics (NAACL), New Orleans, USA, 
+June 2018. 
+[2Important Features 
+
+Whether abstract contains 
+deep, neural, embedding, 
+outperform, outperform, 
+novel, or state_of_the_art 
+Number of figures, tables, 
+sections, equations, 
+theorems 
+Number of references 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

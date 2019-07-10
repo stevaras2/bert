@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Classification of News Dataset</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Olga</forename><surname>Fuks</surname></persName>
+							<email>ofuks@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Classification of News Dataset</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset</head><p>• News data from the past 5 years obtained from HuffPost </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head><p>• Word binary and word count features (5,000 most common words)</p><p>• Word-level TF-IDF scores (10,250 most common words)</p><p>• Word embeddings (30,000 most common words, truncated each example to a maximum length of 50 words)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Traditional ML Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural Networks</head><p>We used an Embedding layer of Keras to learn word embeddings, then applied convolutional layers and/or LSTM [2] layer. We also tried using pretrained GloVe embeddings <ref type="bibr" target="#b0">[3]</ref> but the accuracy was lower then when learning embeddings from data. Surprisingly, the accuracy on dev dataset achieved by NN models <ref type="table">(Table 2</ref>) was about the same as of logistic regression. We believe there are a few reasons for such model performance: 1) Class imbalance 2) Combination of categories in one news 3) Overlap of some news categories (e.g Politics and World news). That is why we also looked at the top 3 labels predicted by each model -in this case, maximum accuracy was 88.72% on the dev set. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization of Word Embeddings</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion &amp; Future Work</head><p>We have built a number of models to predict the category of news from its headline and short description -using methods both from traditional ML and deep learning. Our best model (ensemble of four NN models) achieves on the dev set 68.85% accuracy, if considering top 1 label, and 88.72%, if considering top 3 labels predicted by the model. It is interesting how the news dataset is extremely hard to classify for even the most complex models. We attribute this to the subjectivity in category assignment in the data. However, in the future work we will also try to train character-level language models based on multi-layer LSTM or learn embeddings for the whole news descriptions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>[ 1 ]</head><label>1</label><figDesc>• After preprocessing113,342 examples and 25 classes • Headline + short description 20-30 words • Preprocessing: removal of stop words, punctuation; stemming of each word</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Train/dev/test split: 80/10/10 (90,673/11,335/11,334 examples)</figDesc><table>Confusion matrix for 
+logistic regression 
+with TF-IDF features 
+
+Input 
+Embedding 
+Conv 
+Max 
+pool 
+LSTM 
+Output 
+
+With TF-IDF we selected 
+representative words for 
+each news class, extracted 
+their pre-trained GloVe 
+vectors and visualized them 
+in 2-D with t-SNE. In the 
+future, this may also be 
+useful for classification (for 
+example, applying kNN 
+method) 
+
+Typical architecture of the constructed neural network models 
+
+Typical model accuracy and loss curves (train and dev) 
+
+Data statistics 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Glove: Global Vectors for Word Representation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Pennington</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">D</forename><surname>Manning</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EMNLP</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="1532" to="1543" />
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

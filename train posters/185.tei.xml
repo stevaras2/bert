@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Results We aggregated the results from our algorithms and found that the LSTM did 1% better than both AdaBoost or Logistic Regression on the test set.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Text Generation</head><p>Our final goal was to generate texts of different complexity levels. In this project, we focused on grammar and sentence/document structure as the primary indicator of complexity. In particular, we used an LSTM to model where represents the POS tag of the t th word. We then sample from this probability distribution to generate sequences.</p><p>By sampling from the model periodically during training, we tracked its progress in learning. One example generated sentence segment was:</p><p>DET NOUN VERB DET NOUN ADP DET NOUN ADP DET NOUN….</p><p>Below is a sample Level 2 sentence that we filled in parts of speech using its level 4 equivalent:</p><p>The Giants founded the dog team with the help from a local animal shelter.</p><p>Given a sentence, we generated a simple sentence equivalent, and then populated each POS tag in order to make a sentence more 'simple'. Though this gave mixed results (often finding nonsensical sentences), we did find several promising simplified sentence structures like the one above. Finally, we used our LSTM classification models to predict the resulting difficulty.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion &amp; Future Directions</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data &amp; Features</head><p>We are using the Weebit Dataset [1], which has 2226 texts (each ranging from 1 to 5 paragraphs) separated into 3 different reading levels (2, 3, and 4). We split the data 80/10/10 for training, dev, and test sets. The features that we experimented with were:</p><p>• Word Count -Fixed length vector of word counts.</p><p>• Tf-Idf -Fixed length vector of word counts.</p><p>• Natural Language Features -Part of speech tag counts, average sentence length, etc.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Algorithms</head><p>• Our baseline model predicted results based on the probability of each complexity appearing.</p><p>• Logistic Regression was very successful, with the highest accuracy on the validation set.</p><p>• Given the relatively high results we obtained from using only average sentence length, the AdaBoost ensemble also achieved a similar accuracy to Logistic Regression.</p><p>• Other classifiers performed well, but overfitted even after hyperparameter tuning.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Recurrent Neural Network</head><p>One key drawback in our document representation was that all sequential information was lost in the feature encoding. However, sequential relationships likely play a key role in determining the text's complexity. Thus, we used Recurrent Neural Networks to allow for arbitrary length inputs.</p><p>Focusing on grammatical structure, we encoded each document as a sequence of POS tags to allow the model to generalize better to unseen texts. We achieved our best results with: batch size 16, embedding dim 64, hidden dim 128, and learning rate 0.01. We tried methods such as dropout to prevent overfitting, but did not find any higher results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Text Complexity</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>The goal of our project is to explore text complexity in the context of machine learning:</p><p>• What features of the text are most relevant to complexity classification?</p><p>• To what extent can learning methods be used to classify the complexity of a document?</p><p>• How can we build a model to generate or transform text into different levels of complexity?</p><p>This project aims to enhance the quality of education, as text at understandable difficulty levels encourages more widespread knowledge, approachable from different fields and backgrounds.  We determined that the texts could not be described simply by text or average sentence length.</p><p>• Our learning algorithms classify the different levels of complexity in the Weebit corpus with 80% accuracy.</p><p>• Moving forward, we plan to use more kinds of texts (fiction, biographical) and use additional features such as individual word complexity. • Our generation model's biggest weakness was finding methods of re-inserting words into our generated sentence structure.</p><p>• We may try setting certain POS words ahead of time to remove ambiguity in filling in parts of speech, thus improving readability.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 3 :Figure 1 :</head><label>31</label><figDesc>Generation</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

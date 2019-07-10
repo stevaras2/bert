@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Satellite-Based Prediction of Fire Risk in Northern California</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Caroline</forename><surname>Famiglietti</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Natan</forename><surname>Holtzman</surname></persName>
+							<email>nholtzma@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jake</forename><surname>Campolo</surname></persName>
+							<email>jcampolo@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Satellite-Based Prediction of Fire Risk in Northern California</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1016/j.rse.2017.06.027</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In recent decades, climate change has drastically influenced key characteristics and patterns of wildfire across the global land surface 1 . In California, wildfires are increasing in magnitude, scale, frequency, and duration, thus heightening risks to human populations and ecosystems 2 . A clearer understanding of the patterns of fire development and spread in California, including the spatial distribution of vulnerability to disturbance, is vital in adaptively managing land and resources. To model the development and spread of wildfire in Northern California, we have applied logistic regression with forward stepwise selection, decision trees with gradient boosting, and a multilayer perceptron to a robust dataset of ecological, hydrological, and meteorological variables derived largely from remote sensing 3 . While we were able to predict non-fire more accurately than fire, predictions for the latter retained 75 -80% overall accuracy. Our work demonstrates the strong potential of using remote sensing assets to preemptively identify fire risk and inform prevention efforts in the coming decades.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data &amp; Features</head><p>Fire occurrence is partially controlled by the local vegetation and climate conditions, e.g. an area experiencing dryness/drought is more fire prone. We selected a variety of climate and reflectance variables to characterize pre-disturbance conditions impacting the probability of fire. For each variable, we computed at most 4 variations:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>-1-day lagged average -1-week lagged average -1-month lagged average -3-month lagged average</p><p>Sampling strategy:</p><p>-On each day from 2001 to 2017, we extracted all variables at all "fire" pixels and at an equal number of randomly selected "non-fire" pixels.</p><p>-"Fire" / "non-fire" labels were derived from the Terra MODIS presence of fire product, which maps fires based on their preand post-fire infrared signals ("burn index"). Can we use projections of future climate to infer expected wildfire dynamics in the region in the coming decades?</p><p>Can we predict post-disturbance effects on impacted areas? (e.g. economic impacts/costs of damages)</p><p>Using climate model outputs such as RCP 4.5 / 8.5, which forecast climate change from now to 2100, we could apply our models to these predicted data to assess future changes in fire risk over the next century.</p><p>We could compile spatially-explicit population, infrastructure, and economic data in order to extrapolate potential costs and damages from fires predicted by our model, which would be useful for policymakers in conducting cost benefit analysis of fire prevention.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>In recent decades, climate change has drastically influenced key characteristics and patterns of wildfire across the global land surface 1 . In California, wildfires are increasing in magnitude, scale, frequency, and duration, thus heightening risks to human populations and ecosystems 2 . A clearer understanding of the patterns of fire development and spread in California, including the spatial distribution of vulnerability to disturbance, is vital in adaptively managing land and resources. To model the development and spread of wildfire in Northern California, we have applied logistic regression with forward stepwise selection, decision trees with gradient boosting, and a multilayer perceptron to a robust dataset of ecological, hydrological, and meteorological variables derived largely from remote sensing 3 . While we were able to predict non-fire more accurately than fire, predictions for the latter retained 75 -80% overall accuracy. Our work demonstrates the strong potential of using remote sensing assets to preemptively identify fire risk and inform prevention efforts in the coming decades.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data &amp; Features</head><p>Fire occurrence is partially controlled by the local vegetation and climate conditions, e.g. an area experiencing dryness/drought is more fire prone. We selected a variety of climate and reflectance variables to characterize pre-disturbance conditions impacting the probability of fire. For each variable, we computed at most 4 variations:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Models</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>-1-day lagged average -1-week lagged average -1-month lagged average -3-month lagged average</p><p>Sampling strategy:</p><p>-On each day from 2001 to 2017, we extracted all variables at all "fire" pixels and at an equal number of randomly selected "non-fire" pixels.</p><p>-"Fire" / "non-fire" labels were derived from the Terra MODIS presence of fire product, which maps fires based on their preand post-fire infrared signals ("burn index"). Can we use projections of future climate to infer expected wildfire dynamics in the region in the coming decades?</p><p>Can we predict post-disturbance effects on impacted areas? (e.g. economic impacts/costs of damages) </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model hyperparameter choices</head><p>We used cross-validation techniques to determine "optimal":</p><p>-Logistic regression feature selection -Number of trees in ensemble -Neural network architecture</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prediction accuracy</head><p>Unmeasured causes of fire ignition are potential sources of error in our models. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ROC curves</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Future References 1</head><label>References</label><figDesc>Pechony O, ShindellDT (2010). Driving forces of global wildfires over the past millennium and the forthcoming century. PNAS, http://www.pnas.org/content/107/45/19167. 2 Westerling AL, Hidalgo HG, Cayan DR, Swetnam TW (2006). Warming and Earlier Spring Increase Western U.S. Forest Wildfire Activity. Science, http://science.sciencemag.org/content/313/5789/940.full.3 Hawbaker TJ, Vanderhoof MK, Beal Y-J, Takacs JD, Schmidt GL, Falgout JT, Williams B, Fairaux NM, Caldwell MK, Picotte JJ, Howard SM, Stitt S, Dwyer JL (2017). Mapping burned areas using dense time-series of Landsat data. Remote Sensing of Environment, https://doi.org/10.1016/j.rse.2017.06.027.</figDesc><table>2 
+
+Westerling AL, Hidalgo HG, Cayan DR, Swetnam TW (2006). Warming and Earlier 
+Spring 
+Increase 
+Western 
+U.S. 
+Forest 
+Wildfire 
+Activity. 
+Science, 
+3 
+
+Reflectance variables 
+
+-Reflectance (R, G, B, near-infrared, 
+shortwave infrared 1 &amp; 2) 
+-Normalized difference vegetation index 
+-Normalized difference moisture index 
+-Normalized difference wetness index 
+-Tasseled cap greenness 
+-Tasseled cap wetness 
+
+Climate variables 
+
+-Land surface temperature 
+-Evapotranspiration 
+-Precipitation 
+-Drought severity index 
+-Soil moisture (4 depths) 
+-Wind speed 
+
+Data sources: 
+
+-MODIS instrument aboard the Terra satellite 
+(italicized variables) 
+-GLDAS and CHIRPS assimilation datasets 
+(non-italicized variables) 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3" validated="false"><head></head><label></label><figDesc>✳ For conciseness, only statistics for boosted trees are shown above. Results for the other models are similar.Fire risk map (Average for June-August 2017)✳ Risk derived using coefficients from logistic regression (C, R).</figDesc><table>Using climate model outputs such as RCP 4.5 / 8.5, which forecast climate change from now to 2100, we 
+could apply our models to these predicted data to assess future changes in fire risk over the next century. 
+
+We could compile spatially-explicit population, infrastructure, and economic data in order to 
+extrapolate potential costs and damages from fires predicted by our model, which would be useful for 
+policymakers in conducting cost benefit analysis of fire prevention. 
+
+Trees with gradient boosting 
+
+"Write out the basic math 
+formulas and clearly note any 
+modifications or additions" 
+
+Trees with gradient boosting 
+Multi-layer perceptron (MLP) 
+
+(Predicted) 
+No Fire 
+(Predicted) 
+Fire 
+
+(Actual) 
+No Fire 
+
+26,453 
+1,930 
+
+(Actual) 
+Fire 
+
+6,502 
+2,802 
+
+Fire: 
+Precision: 0.592 
+Recall: 0.301 
+F1: 0.399 
+
+No Fire: 
+Precision: 0.803 
+Recall: 0.932 
+F1: 0.863 
+
+⇒ 
+⇒ 
+
+Confusion matrix 
+
+Activation: ReLU 
+f(x) = max(0, x) 
+
+Optimization: 
+Stochastic gradient 
+descent 
+
+Fire Fire risk (%) 
+0 
+75 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4" validated="false"><head>- Anthropogenic :</head><label>Anthropogenic</label><figDesc>crop residue burning, smoking, fireworks, electrical failure, campfires, arson -Natural: lightningFeature importances -Variations in error between (C), (R),and (C,R) subsets were minimal, suggesting our dataset had more variables than were needed.-Logistic regression: LC, GCVI, SWIR, ET -Boosted trees: LC, precipitation, LST, WS ✳ Forward selection of 4 features reduces AUC on test set from 0.74 to 0.68.</figDesc><table>-</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Quick, Draw! Doodle Recognition</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kristine</forename><surname>Guo</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">James</forename><surname>Woma</surname></persName>
+							<email>jaywoma@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Eric</forename><surname>Xu</surname></persName>
+							<email>ericxu0@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution" key="instit1">Stanford University</orgName>
+								<orgName type="institution" key="instit2">Stanford University</orgName>
+								<orgName type="institution" key="instit3">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Quick, Draw! Doodle Recognition</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Doodle recognition has important consequences in computer vision and pattern recognition, especially in relation to the handling of noisy datasets. In this paper, we build a multi-class classifier to assign hand-drawn doodles from Google's online game Quick, Draw! into 345 unique categories. To do so, we implement and compare multiple variations of k-nearest neighbors and a convolutional neural network, which achieve 35% accuracy and 60% accuracy, respectively. By evaluating the models' performance and learned features, we can identify distinct characteristics of the dataset that will prove important for future work.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p>In November 2016, Google released an online game titled Quick, Draw! that challenges players to draw a given object in under 20 seconds. However, this is no ordinary game; while the user is drawing, an advanced neural network attempts to guess the category of the object, and its predictions evolve as the user adds more and more detail.</p><p>Beyond just the scope of Quick, Draw!, the ability to recognize and classify hand-drawn doodles has important implications for the development of artificial intelligence at large. For example, research in computer vision and pattern recognition, especially in subfields such as Optical Character Recognition (OCR), would benefit greatly from the advent of a robust classifier on high noise datasets.</p><p>For the purposes of this project, we choose to focus on classification of the finished doodles in their entirety. While a simpler premise than that of the original game's, this task remains difficult due to the large number of categories (345), wide variation of doodles within even a single category, and confusing similarity between doodles across multiple categories.</p><p>Thus, we create a multi-class classifier whose input is a Quick, Draw! doodle and whose output is the predicted category for the depicted object.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Related Work</head><p>Similar to our task, Google engineers Ha and Eck used the Quick, Draw! online dataset to train their Recurrent Neural Network (RNN) to learn sketch abstractions. <ref type="bibr" target="#b3">[3]</ref> Their goal, however, was to learn to reconstruct, expand, or finish sketches based on input unfinished sketch images rather than to classify sketches. A major strength of their model is their RNN architecture that incorporates ordinal information, which we did not consider for our models.</p><p>Kim and Saverese experimented with SVM and KNN performance on image classification, specifically on airplanes, cars, faces, and motorbikes. <ref type="bibr" target="#b4">[4]</ref> They found that SVM performed better than KNN, but only because of the KNNs poor performance on car classification. Moreover, they found that the performance for these generative algorithms relied heavily on the characteristics of the data classified, so we attempt to extend KNN to perform better on image classification.</p><p>Lu and Tran architected a Convolutional Neural Network (CNN) to tackle sketch classification. <ref type="bibr" target="#b5">[5]</ref> Unfortunately, various representations of the same category are indistinguishable for their model, namely sketches of a panda bear either as just the body or as just the face. Our KNN model addresses this issue by using separating out our categories into 5 different representational centroids. Lu and Tran also found that in general, deeper CNNs with moderate dropout to reduce overfitting perform better than shallower networks. We borrow the idea of including dropout, but we do not train very deep CNNs due to the limit of time.</p><p>The state-of-the-art as of 2017 comes from a CNN developed by Seddati et al. with their DeepSketch 3 model for sketch classification. <ref type="bibr" target="#b8">[8]</ref> Originally attaining a Mean Average Precision (MAP) of 77.64% on the TU-Berlin sketch benchmark from their first DeepSketch model, by adding residuals, they have increased their models performance to 79.18% on the TU-Berlin sketch benchmark as well as 93.02% on the sketchy database. <ref type="bibr" target="#b7">[7]</ref> These performance levels are much higher than human MAP of 73% on the TU-Berlin sketch benchmark.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Data</head><p>Google publicly released a Quick, Draw! dataset containing over 50 million images across 345 categories. There are multiple different representations for the images. One dataset represents each drawing as a series of line vectors, and another contains each image in a 28x28 grayscale matrix. Because we focus on classification of the entire doodle in this project, we use the latter version of the dataset. We treat each 28x28 pixel image as a 784 dimensional vector. To test our models, we split the data into three different folds: 70% for training, 15% for validation, and 15% for testing. To reduce computation time and storage of the data, we decided to create a smaller subset of the original dataset by randomly sampling 1% of the drawings from each category.</p><p>As a result, we obtain approximately 350,000 examples for the training set and 75,000 examples each for the validation and testing set. Furthermore, the number of drawings in each category is balanced, so this leaves approximately 1000 examples per category in the training dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">1-Closest Centroid (1-CC)</head><p>For our baseline, we intuitively assume that all the images in a particular category should look relatively similar. Based on this assumption, one way we could determine which category a given drawing belongs to is by looking at which training examples are the most "nearby" to the doodle under test.</p><p>This intuition corresponds with the K-Nearest Neighbors (KNN) algorithm. The vanilla KNN algorithm computes the k training examples that are closest in L 1 or L 2 distance to our current drawing. Then it predicts the category that occurs the greatest number of times among those k neighbors. However, because we have 350k training examples and 75k validation examples, this algorithm requires at least (3.5 × 10 5 )(7.5 × 10 4 )(784) &gt; 2 × 10 13 operations to evaluate the entire validation set, which is too slow.</p><p>Consequently, we propose a less computationally expensive variant of KNN, which we call 1-Closest Centroid (1-CC). At a high level, 1-CC equivalent to supervised kmeans clustering, in which we compute a centroid for each category c using the training dataset and classify test examples according to the closest categories.</p><p>In more detail, for each category c, we calculate a "centroid" vector, v c , by taking the average of all of the vectors belonging to category c. Then, to classify a given vector u, we compute arg min c ||u − v c || 2 , which seeks to minimize the squared difference in pixel values between the two images. Effectively, we are choosing the category whose mean representation vector is closest in Euclidean distance to our given vector u. This reduces the number of points we look at for each u to only 345 (one per category).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">KNN with K-Means++</head><p>1-CC makes the simplifying assumption that all doodles in a category will be similar to each other. However, in reality, there are many different ways to draw a given object. For example, "bear" can be drawn with multiple representations as seen in <ref type="figure" target="#fig_1">Figure 2</ref>. Thus, one common type of misclassification comes from categories with multiple versions of the object. To remedy this, we hypothesize that creating not one but multiple clusters per category will be able to capture the different variations within a category. To do so, we run kmeans clustering on each category's training examples to create 5 sub-centroids per category. In particular, we initialize the centroids using k-means++ initialization to ensure that the final centroids are as different as possible <ref type="bibr" target="#b1">[1]</ref>. Then, we follow the KNN algorithm to compare each test example with every generated centroid. Since there are now multiple clusters per category, we determine the final top three classifications using the majority vote of the k closest centroids to a given example, where k is a tunable hyperparameter. We name this method KNN++ for short.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3.">KNN with K-Means++ and Weighted Voting</head><p>We noticed that voting in KNN often ended up with ties. To mitigate ties, we further extend KNN to not only utilize multiple clusters per category, but also to use a weighted voting schema when tallying for final predictions. We name this method KNN++ (weighted) for short.</p><p>Intuitively, we wish to count votes from closer centroids more than votes from more distance centroids. Thus, we experiment with two different weighting schemas.</p><p>Distance weighting. With distance weighting, each cen-troid's c's weighted vote w i is equal to</p><formula xml:id="formula_0">w i = 1/||x i − c|| 2</formula><p>where x i is the vector representation of the test example. Rank weighting. With rank weighting, we first sort all centroids by increasing distance to the test example. Within this sorted order, the centroid c i at rank i has a weighted vote equal to</p><formula xml:id="formula_1">w i = 1/ √ i</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.4.">Convolutional Neural Network</head><p>As a comparison against the above KNN methods, we implement a convolutional neural network (CNN), a stateof-the-art model known for being able to recognize and quickly learn local features within an image.</p><p>To achieve the best results, we perform data preprocessing. First, we calculate the mean µ across all training examples as well as the standard deviation σ. We then for each example (training, validation, and test) subtract µ and divide by σ. To account for division by zero errors when dividing by σ, we add an offset of 10 to σ beforehand <ref type="bibr" target="#b2">[2]</ref>. Thus, the training data now has zero mean and unit variance, while the validation and test set are shifted so that they are both centered according to the training example distribution.</p><p>The model architecture is shown in <ref type="figure" target="#fig_2">Figure 3</ref>. For a 28 × 28 × 1 doodle, we first run the image through three convolutional filters of size 3 × 3 × 5 with stride one. Furthermore, we add zero padding border around the image so that the resulting outputs have the same width and height. Thus, the dimension of the result after the three convolutional layers is 28 × 28 × 5. The output then goes through a max pooling layer with a kernel size of 2 × 2, reducing the output to size 14 × 14 × 5. Following this, we flatten the tensor so that it becomes a 980-dimensional vector. Finally, we feed the result through three fully-connected or dense layers. Each layer uses the ReLu activation function as well as dropout. The output then goes through one more affine transformation to produce logits of dimension 345 (number of categories) before we apply softmax to generate probabilities for each class. For training the model, we use cross-entropy loss.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.5.">Evaluation Metric</head><p>While raw accuracy is a good measure of a model's performance, it penalizes harshly for an incorrect prediction (wrong predictions receive 0 points and right predictions receive 1 point). Since we have so many categories, including some that are extremely similar such as "cake" and "birthday cake", we evaluate our methods not only with raw accuracy but also with a scoring metric that is more lenient of incorrect predictions.</p><p>Thus, predictions are evaluated using Mean Average Precision @ 3 (MAP@3):</p><formula xml:id="formula_2">M AP @3 = 1 U U u=1 min(n,3) k=1 P (k)</formula><p>where U is the number of drawings in the test set, P (k) is the precision at cutoff k, and n is the number of predictions per drawing. Put more intuitively, the equation considers the top 3 predictions (P 1 , P 2 , P 3 ) that the model makes for a given drawing. It then assigns a score of 1 i if P i is the correct label for the image and a score of 0 if the correct label is not in the top 3 guesses. Note that MAP@1 is equivalent to singleprediction accuracy. <ref type="table">Table 1</ref> shows the respective MAP@1 and MAP@3 scores for each model. The best KNN model achieves almost 35% MAP@3 accuracy while the CNN model outperforms all of the other methods with a MAP@3 score of 62%. However, it is worth noting that all methods significantly outperform randomness. Predicting a category uniformly at random would achieve a MAP@3 score of 345(1 + 1 2 + 1 3 ) ≈ 0.5% and a MAP@1 score (singleprediction accuracy) of approximately 0.3%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results and Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1.">1-CC and KNN++ Analysis</head><p>As seen in <ref type="table">Table 1</ref>, creating multiple centroids for each category and using KNN created an increase of 4.1% for the classifier's MAP@3 score. However, both still cannot achieve greater than 30% accuracy. For analyzing why this is, we first computed the MAP@3 scores per category. We can then compare the computed centroids for those categories.</p><p>1-CC performed best on the categories stairs, circle, and door. KNN++ performed best on the categories stairs, The Eiffel Tower, and bowtie. For these categories, the centroids are either simplistic (circle, door) or are distinct in shape (stairs, The Eiffel Tower, bowtie), which causes the doodles to have less variance. Thus, the centroids are generally contain a clear outline of the object.</p><p>On the other hand, 1-CC performed worst on the categories "flip flops", "garden hose", and "wrist watch", and KNN++ performed worst on "dog", "string bean", and "peas". The centroids for these bottom 3 categories are much more vague. For example, "dog" was often confused with other four-legged animals, such as "horse" and "cow".</p><p>Furthermore, some categories produced nearly identical centroids, such as "circle" and "octagon" in <ref type="figure" target="#fig_3">Figure 4</ref>, making it difficult to classify drawings by only comparing pixels with L 2 distance in KNN. While creating multiple clusters per category did boost performance, the model still achieved a misclassification rate. To evaluate what types of misclassifications the classifier was making now, we ran a confusion analysis that grouped together categories that were often guessed for each other. For example, one group of categories was "apple", "blueberry", "and onion", all of which had generally circular shapes <ref type="figure" target="#fig_4">(Figure 5</ref>). From analyzing these groups and the category centroids, we deduce that KNN++ was able to generally differentiate between the general structures of doodles, but the local details that differentiated the objects within those groups were often lost, which kept the MAP@3 score lower.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.">KNN++ Weighted Analysis</head><p>KNN++ with weighted votes by rank produced the highest MAP@3 and MAP@1 scores out of all the KNN++ models. <ref type="figure" target="#fig_5">Figure 6</ref> shows the distribution of per-category accuracies running KNN++ with rank weighting and k = 29, which is the value of k that gave the highest MAP@3 score on the validation set. Inspecting this distribution, we notice that the distribution is skewed left. Comparing the two weighting schemas, KNN++ with rank weighting outperformed KNN++ with distance weighting. In particular, <ref type="figure" target="#fig_6">Figure 7</ref> shows the MAP@3 scores of KNN++ with both weighting schemes for multiple values of k. As seen, KNN++ with rank weighting produces better, more stable performance at high values of k. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3.">CNN Analysis</head><p>To achieve the best performance for the CNN model, we tuned various hyperparameters including the number of units in each dense layer, dropout rate, and learning rate. Overall, we found that the model producing the best MAP@3 score on the validation set had three dense layers with 700, 500, and 400 units with each layer having a dropout rate of 0.2. Furthermore, we trained our model with learning rate of 1 × 10 −3 and batch size of 32 across 20 epochs. The end architecture fits the data well, as we see from the loss plot in <ref type="figure" target="#fig_7">Figure 8</ref> that the training loss has more or less converged by the 16th epoch. In addition, validation loss slowly begins to increase beginning after the 10th epoch, suggesting that the model has started to overfit the training set. This is further reinforced by <ref type="figure" target="#fig_0">Figure 10</ref>, in which we see that the training MAP@3 score plateaus while the validation MAP@3 begins to drop after 12 epochs.</p><p>Inspecting the accuracy distribution across individual category, we note from <ref type="figure" target="#fig_0">Figure 10</ref> that most of the classes have relatively high MAP@3 scores with the median class accuracy being closer to 70%. As a result, the weight of the distribution is shifted towards the right and there is a longer lower tail which drags down the average MAP@3 score to around 62%. Two categories for which the CNN produced very low MAP@3 scores are "garden hose" and "raccoon". For the category "garden hose", the model still predicted "garden hose" as most often, but the two other common guesses were "snake" and "snail". This suggests that while the model learned that a coil is perhaps an important feature for "garden hose", it was still unable to find more subtle features. Similarly, the CNN commonly predicted "tiger" and "cat" for "raccoon", implying that it discovered having stripes as a local feature. But given that doodles may be poorly drawn, other distinguishing features of a raccoon are difficult to discern even for a human eye. Nevertheless, we observe that our CNN model recognizes some local features that help correctly classify doodles. Recall that the KNN models only learn a general shape of each category; in the case of apples, blueberries, and onions, it looks for a circle shape. However, looking at the saliency maps <ref type="bibr" target="#b6">[6]</ref> produced by the neural net for examples in those three categories in <ref type="figure" target="#fig_0">Figure 11</ref>, we see that the CNN learns the stem of the apple, flatter top of the blueberry, and the lines drawn within the circle for the onion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusion and Future Work</head><p>We found that our CNN outperformed our extended KNN++ algorithm with MAP@3 values of 62.1% and 34.4% respectively, although both algorithms perform much better than random guessing of 0.5% but lower than human guessing of 73.0%. Although KNN++ was able to identify multiple representations of the same category, which increased accuracy compared to 1-NN, KNN++ still came short compared to our CNN due to its inability to recognize features and distinguish between apples and blueberries due to the presence of a stem.</p><p>For future work, we would like to experiment with advanced CNN architectures such as VGG-Net and ResNet, which have already reached state-of-the-art levels of image classification performance, although not for sketches in particular. Additionally, we have only used approximately 1% of the total Quick, Draw! dataset, and we believe training our models on the complete dataset would improve accuracy, as well incorporating stroke order information and extract features such as velocity and acceleration. Finally, we believe that ensembling techniques are interesting, particularly for lighterweight methods such as KNN.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Sample doodles of a sock, elbow, and carrot (left to right) from the training dataset.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc>Two of the centroids created by running k-means cluster- ing using k-means++ initialization on the bear training examples.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc>CNN Architecture</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc>Centroids for the circle and octagon categories.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc>Centroids for apple, blueberry, and onion (left to right).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc>KNN++ (rank weighting, k = 29) MAP@3 score distri- bution by category.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc>MAP@3 scores plotted against different values of k for KNN++ with weighted voting (rank, distance).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc>CNN loss.Figure 9. CNN MAP@3.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 10 .</head><label>10</label><figDesc>CNN MAP@3 score distribution by category.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 11 .</head><label>11</label><figDesc>Saliency maps for apple, blueberry, and onion exam- ples.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Centroid calculation, kmeans++, weighted voting, confusion and accuracy analysis James WoMa: KNN for kmeans++, categories dictionary, related work Eric Xu: KNN for kmeans, CNN, evalution metrics and analysis</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kristine</forename><surname>Guo</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">k-means++: The advantages of careful seeding</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Arthur</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Vassilvitskii</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms</title>
+		<meeting>the eighteenth annual ACM-SIAM symposium on Discrete algorithms</meeting>
+		<imprint>
+			<date type="published" when="2007-01" />
+			<biblScope unit="page" from="1027" to="1035" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Learning Feature Representations with Kmeans</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Coates</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Ng</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Ha</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Eck</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.03477</idno>
+		<title level="m">A neural representation of sketch drawings</title>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Comparing image classification methods: K-nearest-neighbor and support-vectormachines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><forename type="middle">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Savarese</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<biblScope unit="volume">1001</biblScope>
+			<biblScope unit="page" from="48109" to="2122" />
+			<pubPlace>Ann Arbor</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Free-hand Sketch Recognition Classification</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Tran</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Deep inside convolutional networks: Visualising image classification models and saliency maps</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Simonyan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Vedaldi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Zisserman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1312.6034</idno>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Deepsketch: deep convolutional neural networks for sketch recognition and similarity search</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Seddati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Dupont</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Mahmoudi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Content-Based Multimedia Indexing (CBMI), 2015 13th International Workshop on</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2015" />
+			<biblScope unit="page">16</biblScope>
+		</imprint>
+	</monogr>
+	<note>14th International Workshop on</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Seddati</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Dupont</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Mahmoudi</surname></persName>
+		</author>
+		<idno type="doi">10.1007/s11042-017-4799-2</idno>
+		<ptr target="https://doi.org/10.1007/s11042-017-4799-2" />
+		<imprint>
+			<date type="published" when="2017" />
+			<publisher>Multimed Tools Appl</publisher>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page">22333</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

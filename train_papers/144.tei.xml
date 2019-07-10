@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:46+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Isolating single cell types from co-culture flow cytometry experiments using automated n-dimensional gating for CAR T-based cancer immunotherapy</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Victor</forename><surname>Tieu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Bioengineering</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<settlement>Stanford</settlement>
+									<region>CA</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Isolating single cell types from co-culture flow cytometry experiments using automated n-dimensional gating for CAR T-based cancer immunotherapy</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Category: Life Sciences</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Flow cytometry is a method of single cell analysis where cells are encased in individual microfluidic droplets and run through a series of lasers. The lasers excite either fluorescent proteins within the cell or antibody probes bound to cell markers, and the scattering and intensity of the emitted light is recorded-each cell has a distinctive cell signature comprised of how the cell scatters light (which represents the size of the cell, granularity of the cell surface, and overall cell viability) and the intensity of different colors of emitted light (which represent the relative level of labeled proteins of interest that are present). Filters specific to a range of wavelengths collect light into discrete "channels" with photomultiplier tubes that convert light intensity into voltage readouts, which can be stored by the computer.</p><p>Flow cytometry experiments are ubiquitous within the field of cancer immunology, since researchers frequently probe the effect of certain stimuli on gene expression levels, protein expression levels, surface marker expression, etc. of single immune cells, since these properties often determine their downstream activity and function. To analyze flow cytometry data, researchers plot single cells on a 1-or 2-dimensional plot (histogram/dot plot, respectively) and "gate" on a specific cell population of interest by manually drawing linear/polygonal boundaries. (Importantly, these populations usually follow a Gaussian-like distribution.) However, these gates are often arbitrarily drawn, which can lead to inconsistencies in data analysis if researchers are not fully aware of which populations they are selecting, and how they are selecting them. For example, a positive gate that is too stringent might lead to many false-negatives, while a positive gate that is too inclusive might lead to many false-positives. Furthermore, while the use of flow cytometry is straightforward for populations of a single cell type, researchers are often interested in collecting single cell data from mixtures of cell types in order to investigate cell-cell interactions.</p><p>However, gating flow data with mixed cells is challenging, since unique cell "markers" must be present in order to differentiate cell types. In co-culture functional/killing assays that mix CAR T cells (a specific type of immune cell that is artificially engineered to target and kill tumor cells) with tumor cells, the levels of these unique markers often change due to cell-cell interactions (i.e. cells no longer "look" like the unmixed control populations). As a result, if two cell types are not distinctive enough in their fluorescent readout for a given channel, their populations may overlap significantly, making traditional gating impossible <ref type="figure" target="#fig_0">(Fig 1)</ref>.</p><p>In summary, there is a need for a more reliable gating strategy in flow cytometry data analysis that does not involve manually drawing boundaries in plottable dimensions to isolate populations of interest, which is both limited in its effectiveness at separating semi-distinct cell types, and problematic in its arbitrary nature. A machine learning approach, while not entirely immune to researcher bias, provides a more rigorous and consistent definition of gating cell populations of interest. It follows that an unsupervised learning algorithm that utilizes data across all n channels is appropriate to identify clusters within flow data that represent a single cell type where no reliable ground truth exists.</p><p>Previously, researchers have trained unsupervised models to identify distinct, potentially novel cell subpopulations within image 1,3 and flow 2,3,4 data. However, there remains an unmet need to "unmix" already-known cell types in coculture experiments for single-cell analysis after cell-cell interactions have already changed their signature from that of the ground truth. In this project, I evaluated the ability of k-means clustering and Gaussian mixture models, in combination with PCA, to isolate these single cell types, and trained a semi-supervised EM algorithm to do so.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset and features</head><p>To train the model, I utilized an unpublished flow cytometry dataset that I collected in lab from a functional assay with mixed primary human CAR T cells and K562 leukemia cells (target cells). I recorded 10000 events (single cell data points) per condition and ran each condition in triplicate (30000 total events per condition). I partitioned the dataset to have 10000 examples (1/3 replicates) for training the unsupervised learning algorithm and tuning hyperparameters, and 20000 (2/3 replicates) for testing. In addition to the co-culture conditions, I also took samples of unmixed human primary T cells and tumor cells to serve as controls for the ground truth labels. All cells were stained using fluorescent antibodies in two colors (anti-CD19 APC and anti-CD8 AF405), and the CAR T cells express mCherry and EGFP through a lentiviral vector. With the forward scatter (FSC-H height, FSC-A area) and side scatter (SSC-A area) lasers, each single cell is represented by a feature vector with seven channels of interest (n = 7).</p><p>Raw FCS files were converted to CSV using an open-source script provided by GenePattern 5 and the Broad Institute at MIT. The CSV files were then read and manipulated as dataframe objects using the Python pandas library. Each row in the design matrix represents a single cell (example), and each column represents one of seven channel features from the raw input data. Derived features include PCA projections of the input for visualization and clustering due to correlation between channels. Unmixed cells were used as the ground truth-labeled dataset. Simple data preprocessing included shifting all values by the min and taking the log10 of color channels, since the distribution of fluorescence intensity is log10-normal (the distribution for scattered light intensity is Gaussian-like on the linear scale).</p><p>For PCA, the mean and variance of the dataset were set to 0 and 1, and the eigenvectors used for projection of the unlabeled dataset were also used for the labeled dataset.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods and implementation</head><p>In order to train the model to assign cluster labels to each cell, I first reduced the dimensionality of the labeled dataset from seven to two dimensions using principal components analysis (PCA). To calculate the covariance matrixΣ:</p><formula xml:id="formula_0">Σ = 1 � ( ) ( ) =1</formula><p>Then, the projection of the design matrix to the -dimensional PCA subspace = , where is the × array of the top eigenvectors 1 , 2 , … , of Σ sorted by the corresponding eigenvalues. Following PCA, I qualitatively evaluated two unsupervised learning algorithms (k-means clustering and the unsupervised/semi-supervised EM algorithm for Gaussian mixture models) on the ability to cluster single cell types in comparison to the manual gating strategy implemented by hand. For k-means clustering, I initialized centroids μ at random training examples, shifted the centroid to the average of the closest proximal training examples, assigned these new centroids as labels ( ) to the closest examples to draw linear separation boundaries for clusters, and iterated until convergence:</p><formula xml:id="formula_1">≔ ∑ { ( ) =1 = } ( ) ∑ { ( ) =1 = } ( ) ≔ argmin � ( ) − μ � 2</formula><p>For the un/semi-supervised EM algorithm, I calculated the weights (probabilities) ( ) of each training example belonging to each of Gaussian distributions in the E-step and updated the parameters , , in the M-step by maximizing the log-likelihood with respect to each of the parameters, iterating until convergence (the supervision term for the labeled dataset is weighted by ) and assigning examples to the most probable Gaussian:  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Qualitatively, unsupervised EM outperforms k-means clustering in comparison to the manual gates set for T cells and K562 cells-this is unsurprising, since (like hand-drawn gates) linear boundaries do not separate cell clusters as well as multivariate Gaussian fits. Quantitatively, the k-means algorithm converges much quicker and with little correlation to principal component number or cluster number, whereas for unsupervised EM, smaller PCA subspace dimension and greater cluster number seem to slow algorithm convergence, though this performance trade-off results in improved clustering quality <ref type="figure">(Fig 3A, B)</ref>. To improve convergence rate and stability, I introduced a supervised term into the EM algorithm using unmixed, ground-truth labeled cells. However, semi-supervision does not work as well in this model, since interactions between mixed cell populations change how each cell compares to the ground truth in the PCA subspace (note differences in PCA plots in <ref type="figure">Fig 2, 3C</ref>). Trying out a range of alpha values resulted in varied clustering quality and convergence rate <ref type="figure">(Fig 3D, E)</ref>. Interestingly, α = 0.00004 resulted in the same clusters as the unsupervised case, which suggests that giving the algorithm a very small hint about what the unmixed cells should look like in the PCA subspace helps improve stability and convergence rate, when similar outcomes derived from an unsupervised run may be more susceptible to noise and randomness between runs on identical replicates (high variance). On the other hand, since unmixed cells do not greatly resemble mixed cells, too large of a weighting on the supervised term results in poor quality clustering <ref type="figure">(Fig 3E)</ref>. Indeed, despite the improved stability and convergence rate of the semi-supervised EM algorithm, clustering on the test sets showed noticeable variance-algorithm performance on test set 2 was remarkably good, though somewhat average on test set 1 <ref type="figure">(Fig 4)</ref>. The hyperparameters chosen during training (principal component number = 2 , cluster number = 4, supervision coefficient α = 0.00004 ) which resulted in overall best performance when evaluated on clustering quality and convergence rate may slightly overfit to the training dataset, however, it is also worth noting that the eigenvectors generated by the initial PCA projection are inherently high variance and are most likely responsible for much of the variation observed between runs on replicates of identical experimental conditions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion and future work</head><p>I proposed a machine learning approach to automated gating of single cell types. Though mixed cells show large deviations from their unmixed counterparts, through empirical testing I found that the inclusion of a very small weighted supervised term in the EM algorithm successfully improved training performance based on clustering quality and convergence rate. The clustering results on two test sets were highly variable-one converged quickly with impressive clustering, while the other was more lackluster, most likely a result of PCA instability. Performance might be improved by kernelizing, reducing dimensionality with tSNE, or including a skewing factor within the GMM, since many of these shifted distributions are skew-normal <ref type="bibr" target="#b4">5</ref> . In the long term, it would be useful to train/test the model with mixtures of different cell types to see whether clustering is generalizable beyond a single experimental condition. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>2D dot plot of flow cytometry data. Each dot represents a single cell. The two axes represent light intensity of a particular color/channel (log10 scale). The overlap in cell populations shown in the middle and right plots makes traditional manual gating using polygonal boundaries impossible, despite clear, visually-distinct populations. (From Victor Tieu, Qi Lab, Stanford University, unpublished data).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>Then, I reassigned the cluster labels in the PCA subspace to the same cells in the original 7-dimensional representation, plotting on a 2D FSC-A/SSC-A dot plot to qualitatively evaluate clustering in comparison to my manual gating strategy (this workflow is shown inFig 2 below).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .Figure 4 .</head><label>24</label><figDesc>Schematic of workflow. Raw 7-dimensional data for the mixture of T cells and target cells (left, plotted in two- dimensions as FSC-A/SSC-A) is projected onto a two-dimensional subspace by PCA (middle) and clustered using k-means or unsupervised EM (right). Each dot represents a single cell training example. PCA labels are reassigned to original 7-D data (far right) and compared with the manual gating strategy (polygonal boundary drawn by hand) on the original dot plot. Results Figure 3. A. Clustering results for k-means and unsupervised EM with k=4 clusters and varying PCA subspace dimension. B. Number of iterations until convergence for both models, varying the number of PCA principal components or cluster number. C. 2D PCA projection of the labeled dataset using eigenvectors generated from the unlabeled set for semi-supervised EM. D. Number of iterations until convergence is plotted against varying alpha coefficients for the labeled ground truth examples. E. Clustering results for different alpha values (cluster number k=4). Top row: 2D PCA projection; bottom row: 7-D original data.A B C D E Figure 4. Clustering on the test set. Result of semi-supervised EM clustering on two test datasets (10000 examples each) using the hyperparameters set by the training set (α = 0.00004, = 2, = 4).</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Intelligent Image-Activated Cell Sorting</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Nitta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">175</biblScope>
+			<biblScope unit="page" from="266" to="276" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Transfer Learning for Auto-gating of Flow Cytometry Data</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">JMLR: Workshop and Conference Proceedings</title>
+		<imprint>
+			<date type="published" when="2012" />
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="155" to="166" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Diagnostic Potential of Imaging Flow Cytometry</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Doan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends in Biotechnology</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="649" to="652" />
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Misty Mountain clustering: application to fast unsupervised flow cytometry gating</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Sugár</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">502</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">GenePattern 2.0</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Reich</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Genetics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="500" to="501" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">How does flow cytometry express Gaussian distributed biological information?</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Watson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Immunological Methods</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="321" to="330" />
+			<date type="published" when="1985" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Numpy Travis E, Oliphant. A guide to NumPy</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">John</forename><forename type="middle">D</forename><surname>Hunter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Computing in Science &amp; Engineering</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="90" to="95" />
+			<date type="published" when="2006" />
+			<publisher>Trelgol Publishing</publisher>
+		</imprint>
+	</monogr>
+	<note>Matplotlib: A 2D Graphics Environment</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Data Structures for Statistical Computing in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Wes</forename><surname>Pandas</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Mckinney</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 9th Python in Science Conference</title>
+		<meeting>the 9th Python in Science Conference</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+			<biblScope unit="page" from="51" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

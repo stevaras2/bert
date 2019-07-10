@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:49+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Multi-Objective Autonomous Spacecraft Motion Planning around Near-Earth Asteroids using Machine Learning 1 Problem Statement</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tommaso</forename><surname>Guffanti</surname></persName>
+							<email>sunetid:tommaso@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Multi-Objective Autonomous Spacecraft Motion Planning around Near-Earth Asteroids using Machine Learning 1 Problem Statement</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Category: Physical Sciences</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>A spacecraft (SC) capable to autonomously plan its motion while accounting for conflicting mission objectives in a Pareto optimal way would permit to accomplish complex mission tasks around highly uncharacterized celestial bodies such as near-Earth asteroids (NEAs). The two most common conflicting objectives of a space exploration mission are the maximization of the scientific output and the minimization of the control effort, i.e. the propellant required on board. If the targeted celestial body is sufficiently known and has a predictable orbital environment, both numerical and analytical tools can be leveraged on-ground to design spacecraft motion plans that account for the trade-off. On the contrary, if the celestial body and its orbit environment are largely uncertain, all plans elaborated on-ground may fail dramatically when implemented in space. A clear example are missions around NEAs having relevant dynamics parameters (i.e. mass, shape, rotation axis orientation and gravity coefficients) largely uncertain. In these missions, a spacecraft should be capable of autonomously plan its motion when an updated knowledge of the NEA environment is provided by the sensors and the navigation filter. In addition, the generated motion plan should account for the trade-off science-output vs. control-effort in an optimal sense.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Solution Approach using Machine Learning</head><p>To provide a spacecraft with such Pareto optimal autonomous planning capabilities is a huge challenge. In this project, the solution approach to the problem combines machine learning (both reinforcement and supervised) and numerical multi-objective optimization. In particular, assuming a value for the NEA dynamics parameters, an heuristic multi-objective optimization algorithm is used to generate a Pareto front describing the trade-off offered by various motion plans according to two conflicting cost functions. The two cost functions to be minimized provide metric of: 1) the control effort required to realize the motion plan (J ∆V ), 2) the inverse of the quality/quantity of scientific output perceivable through realization of the motion plan (J science ). The Pareto front obtained relies on the assumption of the NEA dynamics parameters, when these parameters are changed different Pareto fronts are obtained. To identify a specific point on a Pareto front, which corresponds to a specific trade-off between the two conflicting costs, the multi-objective problem can be scalarized <ref type="bibr" target="#b0">[1]</ref> as J = λ · [J ∆V , J science ] T = λ 1 J ∆V + λ 2 J science , where λ = [λ 1 , λ 2 ] and λ 1,2 ∈ (0, 1). λ 1 and λ 2 represent the relative weigths associated to the two objectives.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Problem Statement</head><p>A spacecraft (SC) capable to autonomously plan its motion while accounting for conflicting mission objectives in a Pareto optimal way would permit to accomplish complex mission tasks around highly uncharacterized celestial bodies such as near-Earth asteroids (NEAs). The two most common conflicting objectives of a space exploration mission are the maximization of the scientific output and the minimization of the control effort, i.e. the propellant required on board. If the targeted celestial body is sufficiently known and has a predictable orbital environment, both numerical and analytical tools can be leveraged on-ground to design spacecraft motion plans that account for the trade-off. On the contrary, if the celestial body and its orbit environment are largely uncertain, all plans elaborated on-ground may fail dramatically when implemented in space. A clear example are missions around NEAs having relevant dynamics parameters (i.e. mass, shape, rotation axis orientation and gravity coefficients) largely uncertain. In these missions, a spacecraft should be capable of autonomously plan its motion when an updated knowledge of the NEA environment is provided by the sensors and the navigation filter. In addition, the generated motion plan should account for the trade-off science-output vs. control-effort in an optimal sense.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Solution Approach using Machine Learning</head><p>To provide a spacecraft with such Pareto optimal autonomous planning capabilities is a huge challenge. In this project, the solution approach to the problem combines machine learning (both reinforcement and supervised) and numerical multi-objective optimization. In particular, assuming a value for the NEA dynamics parameters, an heuristic multi-objective optimization algorithm is used to generate a Pareto front describing the trade-off offered by various motion plans according to two conflicting cost functions. The two cost functions to be minimized provide metric of: 1) the control effort required to realize the motion plan (J ∆V ), 2) the inverse of the quality/quantity of scientific output perceivable through realization of the motion plan (J science ). The Pareto front obtained relies on the assumption of the NEA dynamics parameters, when these parameters are changed different Pareto fronts are obtained. To identify a specific point on a Pareto front, which corresponds to a specific trade-off between the two conflicting costs, the multi-objective problem can be scalarized <ref type="bibr" target="#b0">[1]</ref> </p><formula xml:id="formula_0">as J = λ · [J ∆V , J science ] T = λ 1 J ∆V + λ 2 J science , where λ = [λ 1 , λ 2 ]</formula><p>and λ 1,2 ∈ (0, 1). λ 1 and λ 2 represent the relative weigths associated to the two objectives.</p><p>Casting this problem into a reinforcement learning (RL) setting, the state (s) is defined as</p><formula xml:id="formula_1">s = [p N EA , λ] ∈ R ns (1)</formula><p>where p N EA are the uncertain NEA dynamics parameters. In this project</p><formula xml:id="formula_2">p N EA = [m N EA , R N EA , G N EA , α N EA ]<label>(2)</label></formula><p>where, m N EA is the NEA mass, R N EA is the NEA mean radius, G N EA are the NEA most relevant gravity coefficient, α N EA are the NEA orientation parameters with respect to the inertial frame. The policy (π) is defined as</p><formula xml:id="formula_3">π = oe SC ∈ R 5<label>(3)</label></formula><p>where oe SC = [a SC , e SC , i SC , Ω SC , ω SC ] are the spacecraft orbit elements around the NEA, i.e., a way to parameterize the spacecraft position a velocity around the NEA <ref type="bibr" target="#b1">[2]</ref>. In this project, the goal will be limited to predict just 3 of the 5 components of oe SC , in particular, the orbit semi-major axis, a SC , the orbit eccentricity, e SC , and the orbit inclination, i SC . The RL algorithm should match a given state s (i.e., NEA dynamics parameters and defined trade-off control effort-science output) with the corresponding optimal policy π * (s), which represents the optimal spacecraft orbit configuration around the NEA given the specified trade-off. In order to do so it has to maximize a reward function -R(s, π) -defined as</p><formula xml:id="formula_4">R(s, π) = −J(s, π) = −λ · [J ∆V (p N EA , π), J science (p N EA , π)] T<label>(4)</label></formula><p>Therefore, the optimal policy is defined as</p><formula xml:id="formula_5">π * (s) = oe * SC (s) = arg max π R(s, π) = arg min π J(s, π) = arg min π λ · [J ∆V (p N EA , π), J science (p N EA , π)] T (5)</formula><p>Ideally, this optimization problem should be solved on-line, in order to obtain the optimal spacecraft motion plan (oe * SC ), given the updated p N EA (passed by the navigation filter) and the selected tradeoff (λ) . Practically, this is not possible, since solving Eq.5 entails: 1) to run the numerical multiobjective optimization algorithm with input p N EA , which embeds the simulation of the spacecraft nonlinear dynamics around the NEA and evaluates control effort and science cost functions, 2) to get the Pareto front and identify the Pareto point corresponding to the trade-off λ. This is a non-convex problem which entails considerable computational effort, out of the possibility of any spacecraft CPU. Therefore, there is the need to leverage as much as possible off-line on-ground computation, and limit the on-line part implemented on the spacecraft computer as (ideally) a lookup table which given the current state provides the policy.</p><p>Here comes into play Supervised Learning (SL). By performing m−runs of the multi-objective optimizer for various NEAs dynamics parameters, a database of paired couples: dynamics parameters-Pareto fronts</p><formula xml:id="formula_6">p (i) N EA , P F (i) , for i = 1, .</formula><p>. . m, is generated. Each P F (i) is discretized in n P F Pareto points, each one corresponding to an optimal policy π * (i)</p><formula xml:id="formula_7">k (p (i) N EA ) = oe * (i) k,SC (p (i) N EA ) associated to the trade-off λ (i)</formula><p>k , for k = 1, . . . n P F . Therefore, from the i − th run of the multi-objective optimizer, n P F state-policy pairs are generated as:</p><p>[</p><formula xml:id="formula_8">p (i) N EA , λ (i) k ], π * (i) k for k = 1, . . . n P F<label>(6)</label></formula><p>Finally, after m−runs of the multi-objective optimizer, n P F × m state-policy pairs are generated as:</p><formula xml:id="formula_9">[p (i) N EA , λ (i) k ], π * (i) k for k = 1, . . . n P F for i = 1, . . . m<label>(7)</label></formula><p>The n P F × m state-policy pairs can be partitioned in a training set, a development set, and a test set. A neural network (NN) is trained on the training set to then make predictions on the test set, the NN hyperparameters are optimized looking at the results achieved on the development set. The trained NN learns the functional relationship between states and policies. The trained NN can be then implemented on-board the spacecraft and used on-line between the navigation filter and the spacecraft controller as an autonomous motion planning unit <ref type="figure" target="#fig_0">(Fig.1)</ref>. This unit takes as input the most recently estimated p N EA and the selected trade-off λ, and outputs the optimal spacecraft orbital configuration: π * = oe * SC . This output is passed to the controller which takes action to reach this target configuration. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset Generation</head><p>The multi-objective optimizer used is the Multi-Objective Particle Swarm Optimization (MOPSO), which is shown in literature to provide high level performances in terms of time of convergence and full reconstruction of the global Pareto front <ref type="bibr" target="#b2">[3]</ref>. The Pareto front resulting from a single run of the multi-objective optimizer (P F (i) ) is presented in <ref type="figure" target="#fig_2">Fig.2</ref>. The control cost (J ∆V , x-axis) is expressed in control effort (velocity variation ∆V ) required to maintain the orbital configuration oe * (i) k,SC , which corresponds to a single point on P F (i) , associated to the trade-off λ (i) k . J ∆V is therefore an index of orbit stability, and is evaluated by propagating the spacecraft trajectory starting at the nominal configuration oe * (i) k,SC for 10 orbital periods under the effect of the NEA non-linear orbital dynamics associated to p (i) N EA <ref type="bibr" target="#b3">[4]</ref>[5] <ref type="bibr" target="#b5">[6]</ref>, and computing the control cost required to keep the nominal orbital configuration <ref type="bibr" target="#b6">[7]</ref> <ref type="bibr" target="#b7">[8]</ref>. The science cost (J science , y-axis) is expressed in camera resolution (meter/pixel) modified to account for the NEA coverage achievable from oe * (i) k,SC . The camera model used takes inspiration from the XCAM C3D CubeSat Camera <ref type="bibr" target="#b8">[9]</ref>. In general terms, to minimize the science cost (i.e., to maximize the science output quality) the spacecraft should go closer to the NEA (to increase the resolution) and at higher orbit inclinations (to increase the coverage). On the other hand, the closer to the NEA the more control action is required to maintain the orbit due to the more intense dynamics. Therefore there is a trade-off, and as a consequence a Pareto Front, P F (i) , of non-dominated optimal orbital configurations each identified by a specific λ (i) k <ref type="figure" target="#fig_2">(Fig.2)</ref>.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Results</head><p>The neural network (NN) weights have been trained on the training set using a mean square error (MSE) loss function. The NN hyperparameters have been tuned and optimized according to the performances provided on the development set <ref type="bibr" target="#b9">[10]</ref>. Inputs and outputs of the NN have been normalized, the inputs between −1 and 1 (since they can be negative), the outputs between 0 and 1 (since they are all positive). The normalization factors are the maximum considered values of the various inputs and outputs. Initially, a randomized search varying number of layers and activation functions has been performed to identify a suitable NN configuration. This initial search made the NN model to converge to a configuration with four hidden layers: three layers with hyperbolic tangent activation function, plus one layer with sigmoid activation function. Justification regarding these activation functions is found in the fact that the normalized inputs have value comprised in (−1, 1), whereas the normalized outputs have value comprised in (0, 1). As mentioned previously, in this project the focus is on predicting a subset of the optimal spacecraft orbit elements, i.e., semi-major axis, a SC , eccentricity, e SC , and inclination, i SC . To do so, a possible way to go is to train a single NN (with three output neurons) to minimize the global MSE on the prediction of a SC , e SC and i SC . Another way to go is to design 3 separated NN, each one trained to minimize the prediction MSE of either a SC or e SC or i SC . More accurate results on each of the three outputs are obtained pursuing the second path, therefore 3 NN have been trained. For each NN an hyperparameters optimization procedure has been carried out, focusing on the number of neurons per layer and on the batch size. For each NN, results of the hyperparameters optimization procedure are reported in <ref type="figure" target="#fig_4">Fig.3</ref>, where the contour plots of the root mean square error (RMSE) obtained on the development set are represented. The number of epochs considered for each training is always 10000 with and early stopping tolerance of 1000 epochs (i.e. the training is interrupted if the loss function does not improve after 1000 epochs). The optimizer used is Adam <ref type="bibr" target="#b10">[11]</ref>. Looking at <ref type="figure" target="#fig_4">Fig.3</ref> on the top left, the lowest RMSE(a SC ) is obtained with a 150 neurons per hidden layer and using at each epoch a batch size of one third of the training dataset. Looking at <ref type="figure" target="#fig_4">Fig.3</ref> on the top right, the lowest RMSE(e SC ) is obtained with a 175 neurons per hidden layer and using at each epoch a batch size of half of the training dataset. Looking at <ref type="figure" target="#fig_4">Fig.3</ref>   <ref type="figure" target="#fig_0">90, 180)</ref>deg. An improvement of approximately one order of magnitude in both a SC , e SC and i SC would be needed to make the NN predictions exploitable on-board a spacecraft. The first way to follow is surely to enlarge the dataset, which up to now is limited to only 96 possible NEA dynamics parameters configurations.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Conclusions and Way Forward</head><p>This project explores the use of neural networks (NN) to provide a spacecraft with autonomous multiobjective motion planning capabilities around a near-Earth asteroid (NEA). The trained NN has been shown to provide interesting but still moderate accuracy results. To improve the performances, the first way to follow is to enlarge the dataset. In addition, future work will explore ways to leverage information about the covariance of the estimated state, that the navigation filter outputs. In this sense, a possible way to go is to reformulate the problem as a stochastic Markov Decision Process.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Autonomous spacecraft motion planning.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc>The multi-objective optimizer has been run m = 96 times (∼ 48 hours), therefore capturing 96 possible NEA dynamics parameters configurations (p(i) N EA for i = 1, . . . 96). Taken uniformly through the whole spectrum of p N EA , 6 sample configurations have been extracted as the development set and 5 as the test set. This results in approximately 3400 state-policies pairs for the training set, 200 for the development set and 200 for the test set.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Pareto Front.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head></head><label></label><figDesc>on the bottom, the lowest RMSE(i SC ) is obtained with a 75 neurons per hidden layer and using at each epoch a batch size of on tenth of the training dataset. The dependency of the accuracy results from the batch size can be justified with the fact that batches of different size contain information about a different number of possible p N EA . Finally, results of prediction accuracy of the three optimized NN on the test set are reported in Tab.4 (last column), these are compared with the accuracy shown by the same NN on the training and development sets. The three NN show interesting Page 4 Tommaso Guffanti CS 229: Final Project but still moderate accuracy results. To provide a way of evaluation, around NEA of different size, typical a SC values are comprised in (10, 70)km, typical e SC values are comprised in (0.01, 0.4) and typical i SC values are comprised in</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 :</head><label>3</label><figDesc>Hyperparameters tuning -a SC NN (top left), e SC NN (top right), i SC NN (bottom).</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>RMSE train RMSE dev RMSE test a SC [km] 2.36 4.77 3.13 e SC [-] 0.044 0.075 0.074 i SC [deg] 0.39 3.00 2.43 Table 1: Accuracy results.</figDesc><table>2.36 
+4.77 
+3.13 
+e SC [-] 
+0.044 
+0.075 
+0.074 
+i SC [deg] 
+0.39 
+3.00 
+2.43 
+
+</table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p>I have developed this project advised by Prof. Simone D'Amico. The topic of this study has been motivated by the on-going research project: "Autonomous Nanosatellite Swarming using Radio Frequency and Optical Navigation", developed at Stanford's Space Rendezvous Laboratory in collaboration with NASA Ames Research Center and sponsored by NASA SSTP (Small Spacecraft Technology Program).</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Boyd</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Vandenberghe</surname></persName>
+		</author>
+		<title level="m">Convex Optimization</title>
+		<imprint>
+			<publisher>Cambridge University Press</publisher>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">A</forename><surname>Vallado</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><forename type="middle">D</forename><surname>Mcclain</surname></persName>
+		</author>
+		<title level="m">Fundamentals of Astrodynamics and Applications, Space Technology Library</title>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Handling Multiple Objectives with Particle Swarm Optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">C</forename><forename type="middle">A</forename><surname>Coello</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G. Toscano</forename><surname>Pulido</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Salazar Lechuga</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Evolutionary Computation</title>
+		<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">J</forename><surname>Scheeres</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Orbit Mechanics About Asteroids and Comets</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2012-06" />
+		</imprint>
+	</monogr>
+	<note>Journal of Guidance, Control, and Dynamics</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">New State Transition Matrices for Spacecraft Relative Motion in Perturbed Orbits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">W</forename><surname>Koenig</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Guffanti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>D&amp;apos;amico</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Guidance, Control, and Dynamics</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1749" to="1768" />
+			<date type="published" when="2017-09" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Long-Term Analytical Propagation of Satellite Relative Motion in Perturbed Orbits</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Guffanti</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>D&amp;apos;amico</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Lavagna</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">27th AAS/AIAA Space Flight Mechanics Meeting</title>
+		<meeting><address><addrLine>San Antonio, Texas</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The TerraSAR-X Precise Orbit Control -Concept and Flight Results</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Kahle</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>D&amp;apos;amico</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">24th International Symposium on Space Flight Dynamics</title>
+		<meeting><address><addrLine>Laurel, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2014-05-09" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Impulsive Maneuvers for Formation Reconfiguration Using Relative Orbital Elements</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Gaias</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>D&amp;apos;amico</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Guidance, Control, and Dynamics</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1036" to="1049" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">XCAM C3D CubeSat Camera Datasheet</title>
+		<imprint>
+			<date type="published" when="2018" />
+			<pubPlace>Northampton, United Kingdom</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+				<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<title level="m">Machine Learning Yearning</title>
+		<editor>deeplearning.ai</editor>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Adam: A Method for Stochastic Optimization</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Ba</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Conference for Learning Representations</title>
+		<meeting>the 3rd International Conference for Learning Representations<address><addrLine>San Diego</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

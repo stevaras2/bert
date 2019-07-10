@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:17+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Training a Playlist Curator Based on User Taste</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Amel</forename><surname>Awadelkarim</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kevin</forename><surname>Coelho</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Training a Playlist Curator Based on User Taste</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Playlist curation is time consuming and difficult with few tools available for avid music listeners. Spotify's playlist recommendations rely on similarity (collaborative filtering), but these recommendations lack the novelty and creativity of an individual creator's taste. We hope to produce a tool trained at a smaller scale that will capture more interesting traits of each user. Problem Statement. Given a group of K unfinished playlists, and a set of unclassified songs, S, can we sort song s ∈ S into the best playlist k ∈ K?</p><p>(a) Jacob's playlists (b) Myles' playlists <ref type="figure" target="#fig_1">Figure:</ref> User playlists, mapped to two dimensions via PCA.</p><p>Users have a variety of strategies for creating playlists; many users put similar sounding songs together, some make playlists solely from one artist, others generate heterogeneous mixes spanning multiple genres, eras, and soundscapes. Our problem increases in difficulty as playlist moods become less concrete and/or separable (see above <ref type="figure">figure)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>We started with data we perceived to be most separable, a "toy set" of Spotify-curated playlists such as "Spread the Gospel" and "Celtic Punk". We wanted to test in an ideal setting, then generalize a successful model to real user data. The best performing algorithms so far have been SVM(with RBF Kernel) and Neural Network(with 1 hidden layer).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Datasets</head><p>Our "toy set" composed 13 of Spotify's own precurated playlists (1044 tracks). For our "user set", we hand selected 116 of our friends playlists which broadly represented unique moods/styles (5721 tracks). For each track, we gathered audio features, genres, and artists from Spotify's public API. Audio features include things like "danceability", "energy", and "tempo". For categorical data like genre and artist, we started with one-hot vector representations and plan to try other methods like node2vec and word2vec.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Perceptron &amp; SVMs</head><p>We compared Perceptron with Polynomial, Sigmoid, and RBF kerneled SVMs, with and without the preprocessing step of rescaling the features, on the toy dataset. We performed k-fold cross validation with k = 5 and obtained the following results:   We explored many architectures and ultimately found that a neural network, minimizing NLL loss, with one hidden layer of neurons, and a LogSoftmax output layer performs best on the toy set.   </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion &amp; Future Work</head><p>• The NN achieved highest accuracy. This may be because SVMs are less suited to understanding relationships between classes • The NN struggled on the user set. May be improved with: -larger labeled datasets (bigger user playlists) -better playlist selection (choosing more separable) -different algorithm, such as decision trees -better feature selection • Features we hope to explore: -node2vec representation of Spotify's "related artists" and our own collection of related genres (each artist and genre is a node on a "related graph") -user-generated tags (via a companion app) We have gathered related artists data and computed 128-dimensional node2vec artist embeddings. See below for a two-dimensional visualization of the clustering via PCA. The representation successfully captures artist similarity. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure :</head><label>:</label><figDesc>RBF kerneled SVM reliably performed the best with preprocessed data. Tuning the penalty parameter on the error term, we obtain an accuracy of 0.80 ± 0.05 and the following precision, recall, f-score, and support results:A B C D "Swagger" 0.65 0.62 0.64 76 "Spread the Gospel" 1.00 0.93 0.96 40 "'90's Baby Makers" 0.74 0.79 0.76 47 "Tender" 0.75 0.36 0.49 33 "Have a Great Day!" 0.69 0.83 0.75 100 "Dance Rising" 0.85 0.94 0.89 99 "Sad Vibe" 0.71 0.83 0.77 42 "Afternoon Acoustic" 0.79 0.80 0.80 76 "Kitchen Swagger" 0.49 0.43 0.46 75 "All The Feels" 0.85 0.88 0.86 65 "Jazz Vibes" 0.92 0.92 0.92 118 "Celtic Punk" 1.00 0.94 0.97 49 "Country by the ..." 0.95 0.84 0.89 49 Table: A: Precision, B: Recall, C: F1-score, D: Support NN Results Figure: Results of training neural network with one hidden layer (sigmoid activation) and LogSoftmax output layer, minimizing NLL loss with L 2 regularization.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure :</head><label>:</label><figDesc>2D node2vec data on related artists.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table : Test</head><label>:</label><figDesc>Accuracy: # correct/total # samples. Trained and tested with audio feature data + one-hot genres.</figDesc><table></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table :</head><label>:</label><figDesc>Train and test accuracy on the toy dataset for various architectures (activation functions in parentheses).</figDesc><table>Train 
+
+Test 
+
+Jacob 
+
+100% 
+
+90% 
+
+Kevin 
+
+94% 
+
+78% 
+
+Miz 
+
+62% 
+
+40% 
+
+Myles 
+
+64% 
+
+15% 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table :</head><label>:</label><figDesc>Train and test accuracy on various users using final architecture.</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

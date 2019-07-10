@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:47+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Protein Interactions of Intrinsically Disordered Protein Regions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Benjamin</forename><surname>Yeh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Stanford University</orgName>
+								<address>
+									<postCode>229, 2018</postCode>
+									<settlement>Project</settlement>
+									<region>CS, Autumn</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Predicting Protein Interactions of Intrinsically Disordered Protein Regions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Project Category: Life Sciences SUNet ID: bentyeh</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Recent research has increasingly demonstrated the ubiquity and functional importance of intrinsically disordered proteins (IDPs). Characterized by fluctuations through large conformational space, IDPs engage in dynamic protein-protein interactions (PPIs) that have not been well-understood through current structure-based analyses. We build on previous work on IDP PPI prediction solely using sequence information and analyze the performance of various machine learning algorithms. We achieve top performance on a previously published IDP PPI dataset by using new featurization and data augmentation techniques. However, the results are difficult to interpret in terms of concrete protein pair characteristics that are favorable for interactions, and more work still needs to be done towards improved feature considerations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Over the last two decades, many algorithms have been developed to predict regions of disorder (where there is no stable secondary or tertiary structure) within protein sequences 1,2,3,4 . However, less is known about how these disordered regions interact with other proteins. Such research is important for several reasons: 1) a recent estimate 5 suggests that over a third of human proteins are intrinsically disordered; and 2) these intrinsically disordered proteins (IDPs) have widespread roles in cellular processes, such as cell signaling and regulation <ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7</ref> . While there are many protein-protein interaction (PPI) prediction algorithms 8 , they are largely based on knowledge from curated databases or models of energetically favorable interactions, both of which tend to rely on known protein structures. IDPs thus pose a unique challenge for PPI prediction.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Over the last two decades, many algorithms have been developed to predict regions of disorder (where there is no stable secondary or tertiary structure) within protein sequences <ref type="bibr" target="#b0">1,</ref><ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b3">4</ref> . However, less is known about how these disordered regions interact with other proteins. Such research is important for several reasons: 1) a recent estimate <ref type="bibr" target="#b4">5</ref> suggests that over a third of human proteins are intrinsically disordered; and 2) these intrinsically disordered proteins (IDPs) have widespread roles in cellular processes, such as cell signaling and regulation <ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7</ref> . While there are many protein-protein interaction (PPI) prediction algorithms <ref type="bibr" target="#b7">8</ref> , they are largely based on knowledge from curated databases or models of energetically favorable interactions, both of which tend to rely on known protein structures. IDPs thus pose a unique challenge for PPI prediction.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p>Many protein-protein interaction prediction programs have been developed in the past, utilizing various heuristic methods as well as standard machine learning algorithms such as support vector machines and random forest (RF) algorithms. <ref type="bibr" target="#b8">9</ref> However, much of the available training data comes from structural interactions, such as those found in the Protein Data Bank (PDB). <ref type="bibr" target="#b9">10</ref> In July 2018, Perovic et al. <ref type="bibr" target="#b10">11</ref> published an analysis of "intrinsically-disordered protein" (IDP)-specific interaction predictors. They found an RF predictor to be the best among the models they tested, including gradient boosting machines, SVMs, and other linear models. They achieved an area-under-thereceiver-operating-curve (AUROC; a plot of true-positive versus false-positive rates at different binary decision thresholds) of 0.745, which at the time was the highest score achieved so far, with other algorithms all scoring below 0.7. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset and Features</head><p>The labeled dataset was borrowed from Perovic et al., consisting of 90253 unique proteinprotein pairs where at least one protein was considered "intrinsically disordered" by the DisProt protein disorder database. <ref type="bibr" target="#b11">12</ref> Within this dataset, 19796 (22%) pairs were considered to be interacting (positive) and 70457 (78%) to be non-interacting (negative) based on the highly curated Human Integrated Protein-Protein Interaction rEference (HIPPIE) database. <ref type="bibr" target="#b12">13</ref> (Non-interaction is difficult to validate experimentally, but it is commonly assumed that most proteins do not interact at any significant level. Therefore, for this dataset, non-interaction is defined as a lack of experimentally observed interaction.) This dataset was then filtered for proteins with length greater than 50 amino acids to avoid trivial length-dependent auto-correlative feature descriptors.</p><p>Each protein-protein interaction pair was featurized by concatenating the feature vectors of its constituent proteins. Individual proteins were featurized based on techniques used by Perovic et al. and additional methods available in the protr 14 R package. These features can be broadly classified into length-independent features and length-dependent features. The length-independent features describe compositional distributions, such as included amino acid, dipeptide, and transition frequencies. The length-dependent features describe distribution of amino acid properties along the sequence, including (amphiphilic) pseudo-amino acid composition (PAAC) descriptors and several auto-correlative measures. In total, this yields a 2449-dimensional vector for each protein; thus a single protein-protein pair is represented as a 4898-dimensional vector. Note that the dataset was also readily augmented: since whether two proteins interact should not depend on the order of the proteins, both orderings of concatenation of the individual protein feature vectors were included. Therefore, the fully-featurized augmented dataset was a 176548-samples by 4898-features matrix.</p><p>All data were normalized as z-scores (0 mean, 1 variance) then visualized through PCA plots to understand how well featurization separated the binary-labelled data. To reduce the feature complexity, only the top 446 principal components (corresponding to singular values &gt; 1) were retained. Finally, the dataset was renormalized as z-scores and split 60-20-20 into training, validation, and test sets. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p>The PCA plots ( <ref type="figure" target="#fig_1">Figure 2</ref>) did not reveal any clear linear decision boundary. However, since PCA merely looks for high-variance dimensions without specifically attempting to separate the data, there still could be other linear boundaries that would separate the data. Therefore, both linear and nonlinear models were tested. The Python package scikit-learn <ref type="bibr" target="#b14">15</ref>  . A higher value of C will therefore result in higher accuracy on the training set but with potentially worse generalization performance. In this project, was varied 100-fold between 0.1 and 10.</p><p>The non-linear models tested included random forest (RF) classifiers, Gaussian-(or radial-basis function)-kernel SVMs, and neural networks. RFs are ensemble classifiers that average a large number of (relatively high-variance) decision trees (here, 10-100), each trained over a bootstrapped sample of the original data and a subset of the features (here, the top √ features ). Enforcing maximum depth (here, 5-50, or unconstrained) and minimum leaf size (here, 5) constraints further reduces variance. The Gaussian-kernel ( , ) = exp (− || − || <ref type="bibr" target="#b1">2</ref> 2 2 ) SVMs were regularized similarly to the linear SVMs. The neural networks were setup with a 100-node hidden layer, ReLU activation, and parametrized by L2-regularization strengths between 0.01 and 0.0001, a constant learning rate, and a batch size of 200.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>Interestingly, the linear models consistently demonstrated less variance (overfitting) than the nonlinear models, with the exception of the Gaussian-kernel SVMs, which failed to converge within 50 iterations. (The maximum number of iterations was imposed due to time constraints and the quadratic time complexity of the algorithm used.) <ref type="bibr" target="#b14">15</ref> Nonetheless, the RF models, which fit the training data very well and demonstrated low bias (but higher variance), performed very well. The model that achieved the highest AUROC score on the validation set was a random forest classifier of 100 trees and a max depth of 50. To analyze how well it likely generalizes to unseen data, the model was re-run on an unseen test set on which it achieved an AUROC score of 0.8268, very similar to its performance on the validation set.</p><p>The results were not surprising, given that the PCA plots failed to show strong evidence of linear decision boundaries, therefore suggesting an advantage for non-linear models. Furthermore, Perovic et al. had recorded their top performance with an RF model as well. However, the AUROC achieved here (0.8268) was higher than that reported in their paper (0.745), which is likely due to data augmentation described previously.</p><p>Unfortunately, interpreting the performance result of the top RF model is difficult. This is in part due to the ensemble nature of the RF model and even more so due to the PCA dimensionality-reduction step prior to training. It is therefore almost impossible to concretely explain what protein pair characteristics are favorable for interactions versus non-interactions.   <ref type="table">Table 1</ref>: Results for all models tested. *Did not converge after 1000 iterations. **Did not converge after 50 iterations.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Work</head><p>The moderate prediction accuracies achieved through this project demonstrate large potential for improvement. There are several simple extensions of the current project that deserve more attention. First, more (or all) of the original features could be considered, rather than the dimensionality-reduced set of 446 features along the principal components, which was enforced largely due to time and computational constraints. In addition, more advanced neural networks may also be capable in identifying better nonlinear decision boundaries, and by using more granular software packages (like Tensorflow or PyTorch), it would be possible to output loss gradients with respect to individual features to produce saliency maps, thereby allowing improved feature analysis. Finally, finer hyperparameter tuning would almost certainly yield better predictions on the training and validation sets. Many of the non-linear models demonstrated significant overfitting, which could be curbed through different regularization techniques: stricter (larger) minimum leaf sizes for the Random Forest Classifiers; early-stopping criteria and larger L2-regularization penalties (alpha) for the neural networks.</p><p>Different data sources could also be incorporated. The human proteome consists of over 20,000 proteins. Given that a third of them are predicted to be disordered, and disordered proteins participate in an average of over 100 PPIs each, there are a lot more PPIs that can be studied (and predicted). Proteomes from other species (especially well-studied model species like mice, yeast, and fruit flies) can contribute even more data. Many different databases have been set up to capture data produced by protein-protein interaction experiments and computational analyses. BioGRID, for example, currently contains 353,521 human PPIs <ref type="bibr" target="#b15">16</ref> , while STRING boasts 1.38 billion PPIs across over 2000 organisms. <ref type="bibr" target="#b16">17</ref> Data quality, however, is still a major concern, especially since studies of PPIs often miss non-structured interactions. However, by filtering for biochemical techniques that are more likely to identify disordered PPIs (such as cross-linking mass spectrometry), more balanced datasets can be curated.</p><p>Finally, new featurization strategies appear to be crucial to improving prediction. Current techniques of featurizing individual proteins and then concatenating their feature vectors as a representation of a potential protein-protein interaction have been unsuccessful in producing visual separation of the binary data. Some possible future considerations include incorporating co-evolution information and energy models. Specifically, some disordered domains are known to stabilize upon interactions with other proteins; 18 such information can be matched with predicted or known protein surface geometries to improve predictions. Even more recently, a paper from September this year explores embeddings of protein complexes derived from PPI networks. <ref type="bibr" target="#b18">19</ref> Ultimately, improved understanding of disordered PPIs has the potential to elucidate many complexities of gene regulation, signal transduction, and other cellular processes. Such information can be invaluable for therapeutic development and further biomedical research.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc>Comparison of disorder prevalence between transcription factors and control (random) sequences from the human genome. A motivating example in the study of disordered PPI's is the difference in percent disorder between transcription factors (TFs) and random sequences in the human genome. TFs are thought to recruit transcriptional complexes (such as mediator) via their disordered domains.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>Projection of training and validation data onto first 2 principal components. The symmetry of the plots is a likely consequence of data augmentation procedures.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc>was used to build and train the models and evaluate their accuracy. Following Perovic et al., we used AUROC as the primary metric of comparison. The linear models tested included L2-regularized logistic regression and support vector machines (SVM). L2-regularized logistic regression aims to minimize logistic loss over all training examples loss logistic ( ( ) , ( ) ; , ) = 1 2 || || 2 2 + log(exp(− ( ) ⊤ ( ) ) + 1) by taking negative gradient steps towards the global minimum. SVMs solve the optimization problem min , , 1 2 || || 2 2 + ∑ =1 s.t. ( ) ( ⊤ ( ) + ) ≥ 1 − , ≥ 0, = 1, … , For both logistic regression and SVMs, the coefficient trades off the objectives of regularizing the weight vector w and accurately classifying the training examples (for SVMs, specifically with functional margin at least 1</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>ROC curves across training and validation datasets for the best-performing (on the validation dataset) model of each model type. The ROC curve for the overall best-performing model is also shown for the test dataset. AUROC values in the legend correspond to performance on the validation dataset.</figDesc></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Sequence complexity of disordered protein</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Pedro</forename><surname>Romero</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins: Structure, Function, and Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="38" to="48" />
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Length-dependent prediction of protein intrinsic disorder</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kang</forename><surname>Peng</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">208</biblScope>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">PrDOS: prediction of disordered protein regions from amino acid sequence</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Takashi</forename><surname>Ishida</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Kengo</forename><surname>Kinoshita</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="460" to="464" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The pairwise energy content estimated from amino acid composition discriminates between folded and intrinsically unstructured proteins</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zsuzsanna</forename><surname>Dosztanyi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Molecular Biology</title>
+		<imprint>
+			<biblScope unit="volume">347</biblScope>
+			<biblScope unit="page" from="827" to="839" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">High-throughput discovery of functional disordered regions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Muhammad</forename><surname>Ali</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ylva</forename><surname>Ivarsson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Systems Biology</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">8377</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Intrinsically Disordered Proteins in Cellular Signalling and Regulation</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Peter</forename><forename type="middle">E</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><forename type="middle">Jane</forename><surname>Dyson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Reviews Molecular Cell Biology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="18" to="29" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Intrinsic Disorder in Transcription Factors</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jiangang</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biochemistry</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="6873" to="6888" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Struct2Net: a web service to predict protein-protein interactions using a structure-based approach</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Rohit</forename><surname>Singh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="508" to="515" />
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Flaws in evaluation schemes for pair-input computational predictions</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yungki</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Edward</forename><forename type="middle">M</forename><surname>Marcotte</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature methods</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">1134</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The protein data bank</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Helen</forename><forename type="middle">M</forename><surname>Berman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic acids research</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="235" to="242" />
+			<date type="published" when="2000" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">IDPpi: Protein-Protein Interaction Analyses of Human Intrinsically Disordered Proteins</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Vladimir</forename><surname>Perovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">10563</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">DisProt 7.0: a major update of the database of disordered proteins</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Piovesan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Damiano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Nucleic acids research45.D1</title>
+		<imprint>
+			<date type="published" when="2016" />
+			<biblScope unit="page" from="219" to="227" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">HIPPIE: Integrating protein interaction networks with experiment based quality scores</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Martin</forename><forename type="middle">H</forename><surname>Schaefer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">31826</biblScope>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">protr/ProtrWeb: R package and web server for generating various numerical representation schemes of protein sequences</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nan</forename><surname>Xiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="1857" to="1859" />
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Scikit-learn: Machine learning in Python</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Fabian</forename><surname>Pedregosa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="2825" to="2830" />
+			<date type="published" when="2011-10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">The BioGRID interaction database: 2017 update</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Andrew</forename><surname>Chatr-Aryamontri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic acids research</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="369" to="379" />
+			<date type="published" when="2017" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The STRING database in 2017: quality-controlled protein-protein association networks, made broadly accessible</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Damian</forename><surname>Szklarczyk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic acids research</title>
+		<imprint>
+			<biblScope unit="page">937</biblScope>
+			<date type="published" when="2016" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">ANCHOR: web server for predicting protein binding regions in disordered proteins</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zsuzsanna</forename><surname>Dosztányi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Bálint</forename><surname>Mészáros</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">István</forename><surname>Simon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="2745" to="2746" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Identifying protein complexes based on node embeddings obtained from protein-protein interaction networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xiaoxia</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page">332</biblScope>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

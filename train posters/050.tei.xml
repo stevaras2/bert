@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:12+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Topic Retrieval and Articles Recommendation Motivation</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yu</forename><surname>Wang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Xinyu</forename><surname>Shen</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jinzhi</forename><surname>Wang</surname></persName>
+						</author>
+						<title level="a" type="main">Topic Retrieval and Articles Recommendation Motivation</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Paper selection by machine -Higher efficiency &amp; accuracy</head><p>An example of a paragraph before and after processing will be:</p><p>Welcome to CS 229! This course provides a broad introduction to machine learning and statistical pattern recognition. Topics include: supervised learning ( generative / discriminative learning… welcome course provid broad introduc machine learn statistic pattern recogni topic include supervis learn generat discriminat learn</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methodology</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training</head><p>Setting cluster number to 20</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>K--means:</head><p>• Obtain topic assignment on each document</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Latent Dirichlet Allocation(LDA):</head><p>• Obtain topic assignment on each word Analyzing  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Data source: 2011 ~ 2015 CS229 course project reports Number of documents Total words Unique words Dictionary size 1,298 2.4 million 6,522 39,588 For each document • Convert format from PDF to txt • Remove non-English words (i.e. numbers, symbols, signs etc.) • All words to lowercase • Word suffix removal (word stemming) [obtained dictionary] • Trivial words removal (i.e. the, and, was, we) Vectorize the selected feature into w columns and the documents into d rows. And thus we have the text feature matrix X.</figDesc><table>Number of 
+documents 
+
+Total words Unique words Dictionary 
+size 
+
+1,298 
+2.4 million 
+6,522 
+39,588 
+
+For each document 
+• Convert format from PDF to txt 
+• Remove non-English words (i.e. numbers, symbols, signs etc.) 
+• All words to lowercase 
+• Word suffix removal (word stemming) [obtained dictionary] 
+• Trivial words removal (i.e. the, and, was, we) 
+X i,j is the time of appearance of a specific word j in document i. 
+Remove non-common words like names or rare jargons, we filter out words 
+with times for time of appearance &lt; 3 [obtained unique words]. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>• Matrix Y: Labeling Matrix for documents • Matrix Z: Labeling Matrix for words • Convert Matrix X / Z to matrix of topic distribution over documents in k-means / LDA method. Testing • Add a row vector representing the word composition over the test document and plug into k-means / LDA method.Analyzing Testing Matrix X ．Every doc has unique word combination Doc 1 Doc 2 Doc 3 Doc 4 … … … … … Doc i Word 1 Word 2 …… Word j For each doc , by cosine distance Refer to Mat. Y . . . Distribution of topics on Doc i Topic1 ….. Topic 10 ..… Topic 20 Doc 1 Doc 2 … … Doc i Test doc If testing, add a row vector of word composition over one doc Dist. of topics on test doc Matrix Z ． Describing which topic/cluster a word belongs to Topic1 Topic2 Topic3 …… Topic20 word 1 word 2 word 3 word 4 … … … … word j The doc topic is the highest cluster among all Topic1 Topic2 Topic3 …… Topic20 Doc 1 Doc 2 Doc 3 Doc 4 … … … … Doc i Test doc Refer to word composition of each doc For each doc Dist. of topics on test doc If testing, compare to test vector of word composition over one doc Results Reading List Machine Learning Applied to the Detection of Retinal Blood Vessels Supervised DeepLearning For MultiClass Image Classification Top 3 Recommendation List K--means LDA Implementing Machine Learning Algorithms on GPUs for Real--Time Traffic Sign Classification Pedestrian Detection Using Structured SVM Equation to LaTeX FarmX: Leaf based disease identification in farms Object classification for autonomous vehiclenavigation of Stanford campus Identifying Gender From Images of Faces Comparison Distribution Relation between topic and paper (K-means) Word frequency for each topic (LDA) • Documents recommended by k-means mothod have a very similar distribution with the readling list papers compound distribution • Distribution of documents recommended by LDA deviate more. This may indicate more variance error. Clusters for k-means &amp; unique words Other Other Matrix X Set the Number of Clusters/Labels Doc 1 Doc 2 … … … … … Doc i K--means LDA Doc 1 Doc 2 … … … … … Doc i Cluster/Topic word 1 word 2 … … … … … … … … … word j Topic1 Topic2 … 1 2 3 1 … … … 2 30% 12% … 5% 47% ... 18% 27% ... … … … … … … … … 71% 9% ...</figDesc><table>Analyzing 
+Testing 
+
+Matrix X 
+
+．Every doc has unique 
+word combination 
+
+Doc 1 
+Doc 2 
+Doc 3 
+Doc 4 
+… 
+… 
+… 
+… 
+… 
+Doc i 
+
+Word 1 Word 2 
+…… 
+Word j 
+
+For each doc  , by 
+cosine distance 
+
+Refer to Mat. Y 
+
+. 
+. 
+. 
+Distribution of topics on Doc i 
+
+Doc 1 
+
+Doc 2 
+
+… 
+
+… 
+
+Doc i 
+
+Test doc 
+
+． Describing which 
+topic/cluster a word belongs 
+to 
+
+Topic1 Topic2 Topic3 
+…… Topic20 
+word 1 
+word 2 
+word 3 
+word 4 
+… 
+… 
+… 
+… 
+word j 
+
+The doc topic is the highest 
+cluster among all 
+
+Topic1 Topic2 Topic3 
+…… Topic20 
+Doc 1 
+Doc 2 
+Doc 3 
+Doc 4 
+… 
+… 
+… 
+… 
+Doc i 
+
+Test doc 
+
+Refer to word 
+composition of 
+each doc 
+
+For each 
+doc 
+
+Dist. of topics on test doc 
+
+If testing, compare to test vector 
+of word composition over one doc 
+
+Results 
+
+Reading List 
+
+Machine Learning Applied  to the  Detection of Retinal Blood Vessels 
+
+Supervised  DeepLearning For MultiClass Image Classification 
+
+Top 3 Recommendation List 
+K--means 
+LDA 
+
+Implementing Machine Learning 
+Algorithms on GPUs for Real--Time Traffic 
+Sign Classification 
+
+Pedestrian Detection Using Structured SVM 
+
+Equation to LaTeX 
+FarmX:  Leaf based disease identification in 
+farms 
+
+Object classification for autonomous 
+vehiclenavigation of Stanford campus 
+Identifying Gender From Images of Faces 
+
+Comparison 
+
+Distribution 
+
+Relation between topic and paper 
+(K-means) 
+
+Word frequency for each topic 
+(LDA) 
+
+Clusters for k-means &amp; unique words 
+
+Other 
+Other 
+
+Matrix X 
+
+Set the Number of 
+Clusters/Labels 
+
+Doc 1 
+Doc 2 
+… 
+… 
+… 
+… 
+… 
+Doc i 
+
+K--means 
+LDA 
+
+Doc 1 
+Doc 2 
+… 
+… 
+… 
+… 
+… 
+Doc i 
+
+Cluster/Topic 
+
+word 1 
+word 2 
+… 
+… 
+… 
+… 
+… 
+… 
+… 
+… 
+… 
+word j 
+
+Topic1 Topic2 … 
+
+1 
+2 
+3 
+1 
+… 
+… 
+… 
+2 
+
+30% 12% … 
+5% 47% ... 
+18% 27% ... 
+… 
+… 
+… 
+… 
+… 
+… 
+… 
+… 
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:52+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Novel Approaches to Sentiment Analysis for Stock Prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Chris</forename><surname>Wang</surname></persName>
+							<email>chrwang@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Yilun</forename><surname>Xu</surname></persName>
+							<email>ylxu@stanford.edu</email>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Qingyang</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Novel Approaches to Sentiment Analysis for Stock Prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Stock market predictions lend themselves well to a machine learning framework due to their quantitative nature. A supervised learning model to predict stock movement direction can combine technical information and qualitative sentiment through news, encoded into fixed length real vectors. We attempt a large range of models, both to encode qualitative sentiment information into features, and to make a final up or down prediction on the direction of a particular stock given encoded news and technical features. We find that a Universal Sentence Encoder, combined with SVMs, achieves encouraging results on our data.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Stock market predictions have been a pivotal and controversial subject in the field of finance. Some theorists believe in the efficient-market hypothesis, that stock prices reflect all current information, and thus think that the stock market is inherently unpredictable. Others have attempted to predict the market through fundamental analysis, technical analysis, and, more recently, machine learning. A technique such as machine learning may lend itself well to such an application because of the fundamentally quantitative nature of the stock market. Current machine learning models have focused on technical analyses or sentiment as a single feature. But since the stock market is also heavily dependent on market sentiment and fundamental company information, which cannot be captured with a simple numeric indicator, we decided to create a machine learning model that takes in both stock financial data and news information, which we encode into a fixed-length vector. Our model tries to predict stock direction, using a variety of techniques including SVMs and neural networks. By creating a machine learning model that combines the approaches of technical analysis and fundamental analysis, we hope our model can paint a better picture of the overall market.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related Work and Analysis</head><p>Sentiment analysis and machine learning for stock predictions is an active research area. Existing work to predict stock movement direction using sentiment analysis includes dictionary based correlation finding methods, and sentiment "mood" detection algorithms. Several papers, such as Nagar and Hahsler <ref type="bibr" target="#b0">[1]</ref>, propose building a corpus of positive and negative words commonly used in financial news, and using the counts of each of these words in news headlines to get a NewsSentiment value for each input news; they then model the relationship between NewsSentiment and the stock movement. Bollen et al. <ref type="bibr" target="#b1">[2]</ref> focuses on using Twitter sentiment and Google's Profile of Moods Algorithm to train a machine learning model to categorize snippets into one of several sentiment categories, before using the category as a feature in a Self Organizing Fuzzy neural network. The related work showed us significant promise in using sentiment to predict stock movement. However, we were concerned that a single sentiment value was inadequate to capture the complexities of the news and company information. Thus, we decided to design a model to take in news data more robustly, namely by encoding news to real vectors, and feeing the entire vector to a classification model. Past work that encodes text to vectors uses various skip-gram algorithms <ref type="bibr" target="#b2">[3]</ref>, such as Google's Universal Sentence Encoder (Cer et al. <ref type="bibr" target="#b3">[4]</ref>), though we could not find an existing application to financial stock predictions.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Dataset and Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Data sources</head><p>Our dataset is composed of trading, macro, technical and news data related to 20 NASDAQ companies, from 2013 to 2017. We used the Yahoo Finance API to extract trading-related information on each stock ticker, including price and volume, on a daily basis. We also extracted overarching macro-data including quarterly GDP, CPI, and daily Libor from the Fed website. In addition, we computed technical indicators including CCI, RSI and EVM from trading data. Finally, we scraped daily news headlines and snippets for each ticker from New York Times and Google News.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Data preprocessing</head><p>We used a few approaches to merge and preprocess the data. To match quarterly macro data (e.g., GDP) with other daily data, we assumed the macro features to be constant throughout the same quarter. We processed the news data using text representation and sentiment analysis models, which will be discussed in detail in section 4, before merging it to the full data set. For tickers which have multiple news for certain dates, we averaged the sentiment/ encoded vectors for Google news and used the top 1 news for New York times because New York times ranks top articles. For tickers which don't have news articles on certain dates, we replaced the missing value with the latest available news. We choose not to normalize the data to avoid destroying correlations of the sparse matrix. Furthermore, we classified the 1-day (next-day) stock movement into a binary label Y , where Y = 1 if adj. close price ≥ last adj. close price and Y = 0 if adj. close price &lt; last adj. close price. Finally, we built two datasets using news from New York Times and Google, respectively, each of which contains 24K entries and 70 features. We split all samples before 2017 into the training set and hold out the rest as test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Data visualization</head><p>We plotted label Y on the first two principal components of news data. The plot reveals the complicated nature of the features, implying that high-dimension classifiers are required for the dataset. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Model overview</head><p>In general, the problem is a supervised-learning problem, i.e., we are predicting the next-day movement of the stock by taking in the trading information about the stock, and the information from the ticker-specific daily news. The task can be split into two parts, namely, to represent the news as a fixed-length real scalar or vector, and to use the news, together with trading information, technical indicators, and macro data, to make the prediction. In order to capture the semantic information of the text and represent it in a vector space, we eventually decided to use a Google Universal Sentence Encode (USE) as the encoder (section 4.2). In terms of the stock prediction model, which is trained to take in all of the technical and encoded features to make the prediction, we used Logistic Regression, Random Forest, SVM, and a variety of neural networks (section 4.3).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Text representation</head><p>The text representation model is required to convert news sentences and snippets to real-value fixed-length scalar or vector representations that can be used in the stock movement prediction model. The goal is to have the model best capture fine-grained semantic and syntactic information. One method we tried was to directly extract a sentiment signal scalar from a given sentence vector. Dictionary based approaches use statistical information of word occurence count to extract useful information. We used a "SentimentAnalysis" package from R with a financial dictionary, similar to the one mentioned in related work, to get a scalar sentiment score for each of our sentences. We also tried using a pre-trained sentiment LSTM model (which was trained using labeled data from CNN News [5]) to extract the sentiment from the headline and snippet text. However, neither of the methods mentioned above achieved a reasonable accuracy in making the overall prediction, and a plausible reason is that the high-level sentiment information is not sufficient in representing the text. Thus, we used sentence embeddings to produce a vector space with a more meaningful substructure to represent the news, and fed the entire vector embedding into our classification model. Recent methods of finding fixed length real vector representations of words and sentences have succeeded in a wide range of tasks from sentiment analysis to question and answering. These models can be broadly divided into word encoding methods and sentence encoding methods. To evaluate each of these models to choose one for us to use, we took several sentences, and compared the results of the encoding to see if the encoders captured the similarities and differences between sentences. Word encoding strategies include Word2Vec, ELMo, GloVe, and FastText. These models use the bag of words technique, which detect how often words appear in similar context of other words to get a vector representation of each word (though the FastText actually goes character by character). We noticed that one problem with using one of these word encoding strategies on our sentences is that it does not consider the words of the sentence together, and we are unsure about how to composite the words to the sentence. Thus, we decided to choose a method that encoded entire sentences such as Skip-Thoughts (similar to Word2Vec but with sentences instead), InferSent (looks at pairs of sentences), or a Universal Sentence Encoder. The USE consists of a Deep Average Network (DAN) structure-although this structure also takes an average of words, there are layers of dropout that allow important words to be highlighted. There was also another variant of the USE that used a transformer module, a novel neural network architecture based on a self-attention mechanism of context; this method achieves the best in detecting sentence similarities, however, we found this technique to be too slow on our data. Eventually, we decided to use the pre-trained Google DAN USE as our sentence representation because of its ability to detect features in a large range of sentence types, including our news, large pretrained corpus, and dropout technique. <ref type="bibr" target="#b3">[4]</ref> We also use Principal Component Analysis, which projects the data to the dimensions where it has most of its variance, to reduce the dimensions of the output of the DAN from 512 to 20, in order to enhance the computational efficiency.</p><p>The PCA is based off of all of the seen vectors in the training set, and the principal components stay the same for the test set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.3">Stock movement prediction</head><p>Logistic Regression is used as a baseline to map the features to stock movement.</p><p>Random Forest which constructs a multitude of decision trees at training time and outputs the class that is the majority vote of the individual leaves, is widely used for classification and regression. We tuned depth of the tree and leaf size to regularize the model. Support Vector Machines are mentioned in previous research <ref type="bibr" target="#b4">[6]</ref> to be effective in stock prediction applications. The RBF kernel captures the high-dimensional nature of stock movement. We can regulate the model by using different costs C.</p><formula xml:id="formula_0">L(Θ) = 1 n n i=1 max(0, 1 − y (i) (Θ T φ(x) + b)) + C||Θ|| 2 2</formula><p>Fully-Connected Neural Networks are composed by interconnected neurons whose activation functions capture the non-linear relationship between the variables and the binary result. We tuned the model on different parameters and the best-performance model structure consists of two hidden layers (50/2 or 10/10) with ReLU activation and a learning rate of 1e-3, although it did vary based on dataset.</p><p>Convolutional Neural Networks have been widely used for image processing. We thought it might be effective to do convolutions over the sentence embeddings because of their structure; however, we also acknowledge that because of the PCA and the way the Google USE DAN works, the adjacent features may not be relevant to each other. Two 1D-conv layers, each followed by a pooling layer, are included before the final fully connected layer. We picked the learning rate with which the model converges most effectively-1e-3.</p><p>Recurrent Neural Networks are proven to be effective in dealing with sequential data, with the output being dependent on the previous computations <ref type="bibr" target="#b5">[7]</ref>. The hidden layer captures information about what has been calculated so far. x t is the input at time step t, which is the feature variable mentioned above. s t is the hidden state at time step t, the memory of the network. s t is calculated based on the previous hidden state and the input at the current step:</p><formula xml:id="formula_1">s t = f (U x t + W s t−1 )</formula><p>. We are training separate RNNs for each ticker. The learning rate is 1e-4.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiments/Result/Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Experiments and results</head><p>To examine the model stability, we trained each model on the two datasets using NY Times and Google news separately with a learning rate mentioned in 4.3 respectively. The mini-batch size selected was the largest possible value to fit into CPU; for RNN the mini-batch is all data for each ticker. We evaluate the model using mainly test accuracy. Meanwhile, we also monitor the f-1 score to ensure balanced performance on both 0 and 1 labels. As shown in table 1, SVM with RBF kernel is the best performing model on both datasets. Neural network and CNN also achieved decent performance. However, results from logistic regression and random forest are not satisfactory. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Discussion</head><p>Best model: SVM with RBF kernel is able to project the features onto a high-dimensional space and effectively separate the labels. We tuned the cost parameter to prevent overfitting. Precision and recall rates of the best performing models on Google News and NY Times are shown in table 2. Although we attempted to achieve a balanced performance on 0 and 1 labels, the selected model still outputs a relatively imbalanced confusion matrix. We believe that such issue is raised by our loss function, which is designed to maximize the overall accuracy but not to ensure the performance on both labels. Bias: Data visualization reveals that our dataset is not separable in a low-dimension space, which explains why random forest and logistic regression, with simple structure, are not working well.</p><p>Variance: Random forest shows the overfitting problem even after regularization. Our dataset contains features which might be positively or negatively correlated with each other, e.g., vectors representing news headlines. Selecting a subset of such features may not be able to reduce the variance efficiently. Stability: As mentioned before, for the RNN, in order to capture the time-series nature of each stock, we split the dataset by ticker before running the model, which in turn shrunk the data size. Additionally, some of the tickers had relatively sparse unique news data. Furthermore, it is probable that the deep structure of the model caused the gradient update to be inefficient. We also found that the RNN is very sensitive to the initialization of the hidden state, which shed some light on the inefficacy of back-propagation. To fix this, we might change the structure of hidden state or use a different activation function. These are some possible reasons the RNN outputs a high proportion of 1s or 0s on some of the subsets and cannot be used as a stable model for future predictions.</p><p>To gain better understanding of the model performance, we plotted the true and predicted stock movement of Facebook in 2017 as follows, where the same color on the same day indicates correct predictions. Examining the predictions closely, we found that the best performing model (SVM) is more able to detect major up / downs than smaller changes. 6 Conclusion/Future Work</p><p>In conclusion, we think stock-specific news might help in predicting next-day stock movement. However, it is hard to turn such informational edge into a profitable trading strategy given that we are merely predicting ups and downs. In addition, our model seems to be more able to detect major movements than smaller ones. We believe the following steps can be taken to improve model performance in the future:</p><p>• Customized loss function: We think achieving high accuracy and balanced performance on 1 and 0 labels are both important in stock movement prediction. However, the second goal was not built into the loss function of our models. As the next step, we can customize the loss function (e.g., as binary cross-entropy) to obtain a more balanced performance.</p><p>• Enhance data quality: To make the project usable in real life, we built the dataset using news we scraped from the internet. Such data might include irrelevant or inaccurate news which increases noise. In the future, we think adding more cleaning techniques and including models to detect unhelpful news may help.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Contributions</head><p>Our team spent 50 percent of our time on collecting and preprocessing data, 20 percent on text representation and 30 percent price movement modelling and debugging. Given the challenging nature of our topic, three of us worked closely during the whole process. Chris contributed primarily to collecting the trading data, working on sentiment signal modelling using text representations, and applying the models to New York Times data. Yilun contributed primarily to collecting sentiment data, and testing and debugging the RNN and CNN models. Iris contributed primarily to collecting sentiment and trading data, data preprocessing, and applying the models to Google News data. We would like to thank the entire CS 229 teaching staff, including our mentor Atharva Parulekar, for providing invaluable feedback thorughout the course of the project.</p><p>8 References/Bibliography</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Label vs. two principal components of news 4 Methods</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc>The general model structure</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc>Prediction of Facebook stock movement in 2017</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head>Table 1 :</head><label>1</label><figDesc></figDesc><table>Experiments and results 
+Google News 
+NY Times 
+
+Training acc. Test acc. Training acc. Test acc. 
+
+LR w/o news 
+0.5280 
+0.5169 
+0.5280 
+0.5169 
+LR w/ news 
+0.5337 
+0.5046 
+0.5308 
+0.5185 
+Random Forest 0.7770 
+0.4870 
+0.7601 
+0.5006 
+SVM (RBF) 
+0.5650 
+0.5430 
+0.6005 
+0.5414 
+NN 
+0.6172 
+0.5273 
+0.5881 
+0.5259 
+CNN 
+0.5816 
+0.5100 
+0.5464 
+0.5204 
+RNN 
+0.4931 
+0.4809 
+0.4832 
+0.4695 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table>Precision/recall of SVM on test set 
+Google News 
+NY Times 
+
+Precision Recall Precision Recall 
+
+Y = 0 0.48 
+0.24 
+0.47 
+0.33 
+Y = 1 0.56 
+0.78 
+0.57 
+0.71 
+
+</table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Github link: https://github.com/Beehamer/cs229stockprediction</note>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Using Text and Data Mining Techniques to extract Stock Market Sentiment from Live News Streams</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Nagar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Hashler</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Twitter Mood Predicts the Stock Market</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Bollen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Science</title>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Paper Summary: Evaluation of sentence embeddings in downstream and linguistic probing tasks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">H</forename><surname>Heidenrich</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Daniel</forename><surname>Cer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018" />
+		</imprint>
+		<respStmt>
+			<orgName>Universal Sentence Encoder. Google Research</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Predicting Stock Price Direction using Support Vector Machines</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Madge</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Bhatt</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+	<note>Independent Work Report Spring</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Stock price prediction using LSTM, RNN and CNN-sliding window model</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Selvin</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Vinayakumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><forename type="middle">A</forename><surname>Gopalakrishnan</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">V</forename><forename type="middle">K</forename><surname>Menon</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">P</forename><surname>Soman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Computing, Communications and Informatics (ICACCI</title>
+		<imprint>
+			<publisher>IEEE</publisher>
+			<date type="published" when="2017-09" />
+			<biblScope unit="page" from="1643" to="1647" />
+		</imprint>
+	</monogr>
+	<note>2017 International Conference on</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+				<ptr target="https://github.com/Beehamer/cs229stockprediction" />
+		<title level="m">Github repository</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

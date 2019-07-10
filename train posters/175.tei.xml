@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">School-Specific Estimates of Returns to Increased Education Spending in Massachusetts</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Isaac</forename><surname>Kasevich</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zane</forename><surname>Kashner</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ethan</forename><surname>Oro</surname></persName>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Motivation</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">School-Specific Estimates of Returns to Increased Education Spending in Massachusetts</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• At the state level and the district level concern is given to the optimal funding of public education • Social Science studies examine returns to increased spending using naïve methods • We seek to model school performance using spending, school-level data and zip-codelevel demographic data using machine learning methods learned in CS229 </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Extension of this analysis to elementary and middle schools • Estimate the effects of small changes to input features on output metric • Approximate the gradient of this change using linear regression Data Visualization • Attempt to model scholastic achievement using both exogenous and unchangeable input features • Back-out the effects of spending changes on performance using Causal Inference Modeling Scholastic Achievement; Methods Problem Definition Data Sources • Massachusetts individual school level data was from a Kaggle dataset from the Mass. Department of Education • The zip code level demographic, education, and employment data was scraped from towncharts.com which aggregates data from the Census, American Community Survey, Bureau of Labor Statistics, US Geological Survey, Medicare and Medicaid, Common Core of Data and more Processing • Preprocessed features, zero-centered mean and normalized variance to one Principal Components Analysis • Considering only non-exogenous features (e.g. demographic data), derive top two principal components • For each example, plot in 3D Avg. Spending and Principal Components • Color each point by output metric • Experimented using 9 different machine learning models • Modeled metrics of scholastic achievement, including % Graduated, % Attending College and Composite SAT Challenges Analyzing 12 combinations of changed feature/output metric to visualize correlations!</figDesc><table>Future Work 
+
+• Difficulty finding a suitable performance metric 
+• Inexperience and lack of exposure to causal 
+inference methods 
+• High variance and over-fitting due to limited 
+number of data examples 
+
+• Numerically solve the constrained 
+optimization problem of optimally allocating a 
+state's education budget to maximize 
+achievement 
+• Data Visualization 
+
+• Attempt to model scholastic achievement 
+using both exogenous and unchangeable 
+input features 
+• Back-out the effects of spending changes on 
+performance using Causal Inference 
+
+Modeling Scholastic Achievement; Methods 
+
+Problem Definition 
+
+Data 
+
+Sources 
+
+• Massachusetts individual school level data 
+was from a Kaggle dataset from the Mass. 
+Department of Education 
+• The zip code level demographic, education, 
+and employment data was scraped from 
+towncharts.com which aggregates data from 
+the Census, American Community Survey, 
+Bureau of Labor Statistics, US Geological 
+Survey, Medicare and Medicaid, Common 
+Core of Data and more 
+
+Processing 
+
+• Preprocessed features, zero-centered mean 
+and normalized variance to one 
+
+Principal Components Analysis 
+
+• Considering only non-exogenous features (e.g. 
+demographic data), derive top two principal 
+components 
+• Challenges 
+
+</table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

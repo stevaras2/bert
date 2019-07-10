@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:16+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Music Composition with Machine Learning Naive Bayes LSTM RNN</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">David</forename><surname>Kang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Jung</forename><surname>Youn</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Kim</surname></persName>
+						</author>
+						<title level="a" type="main">Music Composition with Machine Learning Naive Bayes LSTM RNN</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Our main sources of data were: • Online MIDI-libraries • Youtube videos This gave us a time series data with numbers indicating the piano key. One song can have as many as 10,000 keys pressed.</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>(jyk423), Simen Ringdahl (ringdahl)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predicting</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>References</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Features</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Future Discussion Data</head><p>Our goal is to train a machine to generate music. We use classification algorithms such as various neural networks and Naive Bayes, and we use the power of Recursive Neural Nets to model sequential data in a similar way to how text is modeled. We feed the algorithm sequences of music, and train it to make new sequences that the human ear would consider to be good music.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Our goal is to train a machine to generate music. We use classification algorithms such as various neural networks and Naive Bayes, and we use the power of Recursive Neural Nets to model sequential data in a similar way to how text is modeled. We feed the algorithm sequences of music, and train it to make new sequences that the human ear would consider to be good music.</p><p>Our main sources of data were:</p><p>• Online MIDI-libraries • Youtube videos This gave us a time series data with numbers indicating the piano key. One song can have as many as 10,000 keys pressed.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Naive Bayes LSTM RNN</head><p>We used a Naive Bayes-like approach for determining which notes should be pressed for a certain chord. By training on many songs, we could find which keys are pressed more commonly for a given chord. Hence we could recreate a song based on these probabilities.</p><p>Although we are able to compute or estimate various features from the data, the only two explicit features are the pitch quality and duration of the notes. The pitch quality is given as a number representing which key on the piano was pressed: There are two main ways in which we can interpret the data. Based on the accuracy of the algorithms, we can certainly see that they are able to predict the next note to a good degree of accuracy, as well as a distinct musical quality. The Naive Bayes approach demonstrated harmony, while the neural network had a higher degree of repetition of notes. However, music is and always have been subjective, so it will naturally be hard to judge.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model</head><p>As we see that our models are promising we wish to extend the project:</p><p>• Add more parameters to our model to determine what factors contribute to make a good song.</p><p>• Find a better way of determining how successful the generated music is. This is likely to need a completely different model.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>TL;DR</head><p>Have you ever listened to a great song and thought "I could make even better songs"? Neither have we, so we wanted to give that job to a computer.</p><p>Our algorithms learn from downloaded songs and attempt to make new songs.</p><p>One algorithm looks at chords and notes separately and learns which melodies are common for a given chord. Other algorithms will predict the next key pressed in a melody based on previous keys pressed.</p><p>Do you want to listen to computer-made music? See if you can tell the difference between a musical piece made by a human and a piece made by our algorithm.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Encoder-Decoder</head><p>i and f are input and forget gate controllers which handles the parts to be added and erased in the longterm state. The input gate decides which part of g should be added to the long-term state. o is an output gate controller. Lastly, the main layer outputs g and with the results of the other three layers, LSTM cell outputs c and h which corresponds to a long-term state and a shortterm state respectively to the next. For the activation functions, we use sigmoid and hyperbolic tangent functions.</p><p>To further expand on the RNN and LSTM, we have used the encoder decoder model with gated recurrent units to try to make music sequence at a time. Instead of having one note as an input as in LSTM, the model takes in multiple notes and outputs multiple notes. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Structure of LSTM-RNN cell</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>December 11th 2018</head><p>Results of survey asking whether the computergenerated music was made by humans or a computer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Train Eval</head></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

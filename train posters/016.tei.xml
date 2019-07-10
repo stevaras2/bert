@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:09+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Predicting Closing Prices on Opendoor Housing Data in McKinney, TX</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nadin</forename><surname>El-Yabroudi</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Paul</forename><surname>Harrison</surname></persName>
+						</author>
+						<title level="a" type="main">Predicting Closing Prices on Opendoor Housing Data in McKinney, TX</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>• Goal was to develop a model for homeowners to price their houses once placed on the market</p><p>• Giving homeowners a 'second opinion' of house' s market price by learning on close price</p><p>• Using Opendoor's open-sourced real estate data in McKinney,TX mostly applicable to that specific town (due to town specific features e.g. block location)</p><p>• Given training data spanning two years (late '14 to mid '15) our objective was still to model and predict on most recent houses</p><p>• Training data was fairly small (m≅1100) yet still dimensionality not that high even after preliminary feature processing (order of ~10 : 1 observations to features)</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data</head><p>• Cleaned data of irrelevant features to our prediction scenario before placing on market i.e. To account for time we added a time feature to our dataset indicating the amount of time since the house was placed on the market. This could account for market differences in time.</p><p>• Results below show that for both regression and classification, the time features helped our models make better predictions. In classification randomized data performed worse than chronological data, but the time feature data set performed better than both. In regression, randomized data performed better than chronological data and the time feature helped find a midpoint between these.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Interaction Terms</head><p>• Added interaction terms between features to second degree to explore how the dependence of features could help our model with prediction.</p><p>• The addition of an important amount of terms meant that a more aggressive regularization was necessary to avoid overfitting. • For both regression and classification we see that interactions terms do better than the dataset without interaction terms.</p><p>• This confirms that the dependence between variables is important to our modelling. </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1" validated="false"><head></head><label></label><figDesc>Interaction terms show exponential increase in accuracy as regularization was increased to avoid overfitting. • Non-interaction terms seemed to do best with moderate regularization (c=0.7) • Interaction terms required higher levels of regularization than non-interaction terms. Regression • Regularizing with lasso, we varied the strength of regularization using different alpha-values. • Interaction terms show how adding small amounts of regularization increase model's performance tremendously • Again see similar result without interactions yet far less regularization needed i.e. 0.0001 instead of 0.4 due to underfitting • For both models lasso (L1) regularization performs far better than ridge (L2) due to more aggressive L1 penalty ensuring model does not overfit Alpha-values vs. Mean Squared Percentage Error for Non-Interaction Terms</figDesc><table>Classification 
+Regression 
+
+Interaction Terms 
+0.4922873809 
+0.007814019143 
+
+No Interaction Terms 
+0.4802815793 
+0.01050023212 
+
+Regularization 
+
+C-values vs. Accuracy for Interaction 
+Terms 
+
+C-values vs. Accuracy for non-
+Interaction Terms 
+
+Alpha-Values vs. Mean Squared 
+Percentage Error for Interaction 
+Terms 
+
+Classification 
+
+• 
+Regularizing with L1, we varied the strength of the 
+regularization using different c-values, inversely 
+proportional to regularization. 
+• 
+Regression 
+
+• 
+Regularizing with lasso, we varied the strength of regularization 
+using different alpha-values. 
+• 
+</table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Remarks</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Testing and Conclusion</head><p>• Achieved strong model using lasso linear regression with aggressive regularization, including interaction terms, and predicting on the log value of the closing price.</p><p>• Residual plot shows model performance does best on middle range of values, and performs worse at extreme values</p><p>• To try to improve model attempted linear regression with kernels, and random forests, both of which performed similar to best linear regression model.</p><p>• Again found our NLP modelling to have little to no impact on model performance, which remarks are unreliable </p></div>			</div>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

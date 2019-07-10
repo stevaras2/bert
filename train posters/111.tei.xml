@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:14+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Learning About Learning: What Leads to a &quot;Successful&quot; Education</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Manisha</forename><surname>Basak</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Machine Learning</orgName>
+								<orgName type="department" key="dep2">Department of Edu. Public Data</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ip</forename><forename type="middle">Chun</forename><surname>Chan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Machine Learning</orgName>
+								<orgName type="department" key="dep2">Department of Edu. Public Data</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Zoe</forename><surname>Pacalin</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">CS229 Machine Learning</orgName>
+								<orgName type="department" key="dep2">Department of Edu. Public Data</orgName>
+								<orgName type="institution">Stanford University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Learning About Learning: What Leads to a &quot;Successful&quot; Education</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<note>Predicting Modelling Dataset &amp; Features Results College Scorecard data from the US Department of Education: • 4770200 tertiary educational institutions • 1899 features, include location, student body demographics and finances, admissions criteria , area of study distribution, graduation rate, future earnings • timeseries: annual data from academic years 1996 to 2016 note: we did not use it as time series Acknowledgements: CS229 teaching staff,</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Education is often an expensive gatekeeper to earning potential and, more generally, quality of life as a consequence. As such, we were interested to better understand what factors determine a successful education, using future earnings as a metric of success and statistics about one's tertiary education institution (college) as inputs.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Our first logistic model was designed to predict above or below the mean (for mean earnings 10 years post entry.) Our second logistic model predicted above or below the 80th percentile for the same metric. (see <ref type="figure">Figure left)</ref> cluster mean calculation:</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>Error analysis of our early linear regression model revealed the error was greatest for higher earners. On our early logistic model, predicting above/below the mean, about 18% of errors were under predictions, balanced out the cost incurred by the far more numerous over-predictions. We added more features, namely proportions of students in different areas of study, and modified our logistic criteria to be above/below 80th percentile (average earnings). High earners remained difficult to predict. Of the mistakes that were made, the average salary was at the 94th percentile of all earnings. We also noticed, through clustering, that the larger fraction of part time students a school has the more likely the students at that school are to "less successful," suggesting student body culture impacts future earning potential.</p><p>The highest earning brackets are the most difficult to learn because (1) there are, definitionally, fewer highest earning schools and therefore less data to learn from, in addition to the fact that the scale of differences grows as earnings increase and (2) we did not have data at the individual student level, only at institution level, which we suspect we would need to capture the determinants of the highest earners. With more time and resources, we would be interested to gather this information and with it be able to better predict earnings at all income levels.</p><p>Further Study</p></div>		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

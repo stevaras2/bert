@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-20T09:18+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Model Processing and Results</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<title level="a" type="main">Model Processing and Results</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>• Began with three classical machine learning models:</p><p>(Logistic Regression, K-means, and SVM) using sci-kit learn <ref type="bibr">[</ref> </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Diagnostics (part 1)</head><p>• Computed bias vs variance curve (see plot below)</p><p>• Set-up: Tensorflow-for-Poets. Transfer learning using Inceptionv3 CNN network trained on ImageNet, adding a fully connected layer and softmax. GradientDescent with a learning rate of 0.01 (Gradient Descent led to noisy accuracy plots below, hence we later switched to AdamProp). Batch size of 100 with 4000 iterations.</p><p>• Clearly a bias issue (although the final accuracies could also be higher). This pointed to training the CNN on additional layers. • Used trained Inceptionv3 CNN network to predict 1000 test images, using 4000 images to train.</p><p>• Confusion matrix: 448 86 117 349 • Checked manually through several hundred images to determine patterns in correct images, false negatives, and false positives.</p><p>•  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Objective</head><p>• Motivation: assess seismic risk of a structure or gather statistics within an area of damage after an earthquake. • In particular:</p><p>₋ Build effective image classification models using a variety of machine learning techniques ₋ Accurately classify structural damage given an image</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p>• Convolution Neural Networks performed the best in our model.</p><p>• Bias could be managed by training more layers of the CNN • Training more layers of the CNN can lead to overfitting • Overfitting can be managed by adding random images to the data Next Steps and Future Work Layer 300 is a convolutional layer with 393,216 parameters. Layers 301-310 have 512 trainable parameters.</p><p>• The bias vs. variance curve has a bias issue when a fullyconnected layer is added to Inceptionv3 <ref type="figure" target="#fig_0">(Figure [4]</ref>).</p><p>• Experiments with training more layers of Inceptionv3 to help with bias. Moved to Keras rather than Tensorflow for Poets.</p><p>• Found overfitting issues with move to Keras <ref type="figure">(Figure [8]</ref>).</p><p>• We find that we can reduce the variance by feeding slightly different versions of the training images on each iteration. These images were obtained by randomly flipping and shiting images in our training set, so the model never saw the exact same image more than once, making it harder to overfit <ref type="figure">(</ref>  </p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 4 .</head><label>4</label><figDesc>Number</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>•</head><label></label><figDesc>More controlled experimentation to manage bias vs variance • Improve validation accuracy by managing the data ₋ Check mislabeled data ₋ Add actual images similar to false positives or false negatives ₋ Cropping irrelevant features ₋ Understand differences in texture/pattern vs. damage ₋ Wide-angle vs. close-up and effect on classification • Ensemble averaging of different modelsPutting it all together• We focused on Inceptionv3 (CNN). Inceptionv3 has 310 layers.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 7 :</head><label>7</label><figDesc>Original and Augmented ImagesFigure 8</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 9</head><label>9</label><figDesc>Figure 9</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0" validated="false"><head></head><label></label><figDesc>Non-relevant objects included (e.g., people, curtains, telephone lines, tree branches) ₋ Mixture of damage type ranging from cracks to leveled buildings ₋ Some images difficult to label (previously repaired damage, paint or mortar cover-up, blur); several images incorrectly labeled</figDesc><table>Ref 2] 
+• Results of training and validation accuracies shown in Table 1 
+• Examples of Convolutional Neural Networks (CNN) 
+such as MobileNetv1.0 and Inceptionv3 performed best, 
+as expected 
+• Moved to Convolution Neural Networks using 
+Tensorflow-for-Poets [Ref 3] 
+• Performed diagnostics to guide next steps 
+• Focused on Inceptionv3 
+
+Structural Damage Classification with Machine Learning 
+
+CS 229 Final Project 
+
+Minnie Ho 1 , Jorge Troncoso ,2 
+
+1 minnie.ho@intel.com, Intel Corporation 
+2 jatron@google.com, Google LLC 
+
+Dataset 
+
+• 5913 images (224x224 RGB): 2727 damaged (46%), 3186 
+undamaged (54%), 1479 unlabeled [Ref 1] 
+
+• 
+Image characteristics: 
+₋ Mixture of close-ups (section of a wall) and wide-shots (an 
+apartment building) 
+₋ Preprocessing of Data 
+
+• Scaling (normalization) and centering (zero mean) of the images 
+• No effort to reduce blur, de-noise, or fix incorrect labels 
+(possible future steps) 
+• Ensured that ratio of damaged vs. undamaged stayed constant 
+(46/54) regardless of training sample size. 
+
+Compute Resources 
+
+• We used a Google Cloud Deep Learning VM instance for most 
+simulation runs, with optimized Tensorflow (using Intel MKL and 
+NVIDIA CUDA), a NVDIA P100 GPU and Intel Skylake 8-core CPU. 
+• We discovered an instance optimized for NVDIA was faster on 
+CNNs, but instance optimized for Intel was faster for scipy. 
+
+References 
+
+[1] Pacific Earthquake Engineering Center. 2018. PEER Hub ImageNet 
+Challenge. https://apps.peer.berkeley.edu/phichallenge/detection-
+tasks/ 
+[2] Scikit-learn. 2007. https://scikit-learn.org/ 
+[3] TensorFlow for Poets. 
+https://codelabs.developers.google.com/codelabs/tensorflow-for-
+poets/#0 
+
+Acknowledgments 
+
+Guidance from Fantine Huot and Mark Daoust gratefully 
+acknowledged. 
+
+</table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2" validated="false"><head>Table 1 :</head><label>1</label><figDesc>Models and Accuracies</figDesc><table></table></figure>
+		</body>
+		<back>
+			<div type="references">
+
+				<listBibl/>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 /home/lopez/grobid/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<encodingDesc>
+			<appInfo>
+				<application version="0.5.5-SNAPSHOT" ident="GROBID" when="2019-03-19T09:44+0000">
+					<ref target="https://github.com/kermitt2/grobid">GROBID - A machine learning software for extracting information from scholarly documents</ref>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Question Answering with Neural Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Ye</forename><surname>Tian</surname></persName>
+							<email>yetian1@stanford.edu</email>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Nicholas</forename><surname>Huang</surname></persName>
+						</author>
+						<author>
+							<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Tianlun</forename><surname>Li</surname></persName>
+							<email>tianlunl@stanford.edu</email>
+						</author>
+						<title level="a" type="main">Question Answering with Neural Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abstract</head><p>Question Answering (QA) is a highlyversatile and challenging task towards real artificial intelligence. It requires machines to understand context knowledge and the question query, and provides an answer. The recent achievements of Neural Networks, or deep learning, in encoding and decoding very complicated information encouraged us to apply them to QA. In this paper, we design and implement a memory network model and compare its performance with LSTM-based models. Our experiments show the memory network model outperforms LSTM-based models by a comfortable margin in almost every task.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p>Question Answering (QA) has enjoyed much academic interest due to its flexibility. But with this flexibility also comes great challenge. In this project we focused on questions based on finite amount of information. The system will rely on NLU and some small amount of reasoning to answer the questions. The tasks are discussed in Section 3.</p><p>In this project we implemented a family of LSTM and a Memory Network model for QA task. LSTM has been applied successfully on the sequence modeling tasks. Memory Network <ref type="bibr" target="#b10">(Weston et al., 2014;</ref><ref type="bibr">Sukhbaatar et al., 2015</ref>) is a new model that incorporates an external memory representation. A technique to improve NN performance on long sequences is attention mechanism. Attention Mechanism allows NNs to "attend to" different parts of the sequences. In our project we implemented attention mechanism for LSTM, described in full details in Section 4. Finally, we combine the Memory Network and LSTM to form a new kind of model, which we call LSTM Endto-End Memory Network (LSTMMemN2N ).  designed the bAbI task set for evaluating QA "skills" of a system. The bAbI task set consisting of various simple tasks that focus on one aspect of intelligence, and will be discussed in details in Section 3. <ref type="bibr" target="#b10">Weston et al. (2014)</ref> presented the Memory Network which learns by combining a short-term inference component and a long-term memory component. This was later followed by <ref type="bibr">Sukhbaatar et al. (2015)</ref>, who proposed the End-to-End Memory Network MemN2N variant which is a differentiable version of what <ref type="bibr">Weston et al. designed</ref>. This model can be trained automatically with optimization methods. <ref type="bibr">Sukhbaatar et al. (2015)</ref> evaluated MemN2N system on the bAbI task set <ref type="bibr" target="#b10">(Weston et al., 2014)</ref> and recorded performances surpassing LSTM and weakly supervised version of Weston's Memory Network by a wide margin.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Related work</head><p>Attention mechanism mitigates the long termdependency problem in traditional LSTM by enabling the system "attend to" different parts of internal representation <ref type="bibr" target="#b0">(Bahdanau et al., 2014)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3">Data</head><p>We used the bAbI dataset by  1 . The dataset consists of context-question paragraphs in 20 different tasks. Each answer is designed to be a single word. The dataset can provide insights into different aspects of a QA system. The vocabulary, however, only measures at 150 words and prevents the dataset from being more realistic.  <ref type="table">Table 1</ref>: Accuracies of scores of each task for the models</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4">Models</head><p>In a general setting, we define a QA problem as a collection of "context-question-answer" tuples. In our project we are only concerned with questions that base solely on the context. For each contextquestion tuple, we want the machine to supply an answer.</p><p>To work with neural networks, we encode each word in the context and question by a word index in the vocabulary. Therefore we encode contexts c as integer matrix where c ij is the word index of the j-th word in the i-th sentence in the context. Similarly, we encode question q as a vector of word indices and answer is a single word index.</p><p>All of our models first summarize (c, q) to a vector g(c, q), and then compute the probability distribution of a given (c, q) as</p><formula xml:id="formula_0">p(a|c, q) = softmax(W g(c, q))</formula><p>where W is a learned weight matrix. Now we introduce our models.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">End-to-End Memory Networks (MemN2N )</head><p>A MemN2N contains a memory store of contexts. Each word in a conetxt sentence is embedded with an embedding matrix A. We denote the result of embedding as c A . Then we combine word vectors into a sentence representation with combination function f c . Similarly we embed question q as with an embedding matrix B as f c (q B ).</p><p>Finally we embed the contexts with yet another embedding matrix C to extract a candidate word for answer. With all the embeddings, we evaluate an attention score over each context sentence as f s (c A , u). By default the scoring function is simply a cosine distance function. Finally the output word is chosen among the candidate words by a softmax on the attention score. In a k-hops version, the output of previous hop is fed into the next layer. This can be stacked for multiple layers with little additional computation complexity. <ref type="bibr">(Sukhbaatar et al., 2015)</ref> also introdueced techniques called Position Encoding and Temporal Encoding that takes the order of words and sentences into account during encoding</p><p>In addition, we also experimented with the idea of using a whole LSTM as the combinator function. We call this variant a LSTM End-to-End Memory Network or LSTMMemN2N . Another improvement we attempted was replacing cosine distance function f s with a multilayer perceptron architectures. We name this variant MLP End-toEnd Memory Network or MLPMemN2N.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">LSTM family</head><p>RNNs, especially LSTMs, are very useful tools to model sequence data. We can use LSTMs to encode a g(c, q) representation. Attention is a powerful mechanism for long sequence, such as how contexts in our problem can be. In these LSTM models, we still embed context sentences The major difference between variants of LSTM models is the design of encoding function for contexts f r .</p><p>There are two problems with a traditional LSTM model. On one hand, LSTM tends to forget the data it receives a long time ago. One the other hand, it doesn't take the question representation into account when it encodes context sentences.</p><p>To mitigate the first problem, one solution is to implement a Pyramid structure, where we feed every the result vector after reading each sentence into another LSTM and get a more stable and longterm representation.</p><p>Attention mechanism can address both problems. Attention mechanism comes in many different flavors. The basic attention mechanism called token-level global attention. computes the attention scores with a multilayer perceptron. The attention mechanism can also combine with the pyramid structure.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5">Experiment</head><p>We implemented our model with Theano 2 and trained on babi/en and babi/en-10k task sets. The results show memory networks perform well against the baseline LSTM in almost all the tasks. One exception Task 18: Size reasoning is hard for Memory Networks using Bag-ofWord combination, likely because of many noncommutative relations in the text. But Position Encoding and LSTMMemN2N overcame this issue. The results are shown in <ref type="figure" target="#fig_0">Figure 1</ref> and <ref type="table">Table 1</ref>.</p><p>We also trained MemN2N on 20 tasks jointly, reaching a mean test accuracy of 75%.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Analysis</head><p>By comparing the results in <ref type="table">Table 1</ref>, we see that on this relatively simple dataset, MemN2N performs extremely well on most of the tasks. MemN2N is computationally simple, which makes it easy to train and mitigate overfitting. For a k-hops MemN2N , it only contains O(k) matrix-vector multiplications and O(k) softmax nonlinearities. Secondly a MemN2N is statistically flexible, at least for this QA task, which helps it fit the training data very well. But the original MemN2N encodes sentences in a relatively naive bag-of-words fashion and can lose information about word and sentence orders. Position Encoding and Temporal Encoding in terms have shown to significantly boost the performance in relevant tasks. For comparison, LSTMMemN2N uses a LSTM as an even more flexible sentence encoder, and thus beats a plain MemN2N on some tasks such as task3 and task18. LSTMMemN2N is also able to overfit some tasks which MemN2N cannot, such as task 3 and task 18. So we can say more flexible sentence encoder does help.</p><p>Variants of LSTM models don't perform as well as MemN2N . There are larger gaps between training accuracies and test accuracies, and they are more computationally complex, which makes them harder to train and generalize. Also, all the attention-based LSTM models only conduct single hop reasoning. It may help by increase the number of hops, which will unfortunately worsens the computational complexity.</p><p>Some of the tasks are clearly hard no matter which model we use. We think these factors contribute to the difficulty of a QA task: the number of supporting facts involved, the complexity of the relation itself, and the length of the context. The number of supporting facts needed to formulate an answer is an important factor. For example, Task 1, 2, 3 need one, two, and three supporting facts respectively. There is a clear decrease in performance from Task 1 to Task 3 for each model. There may be a number of reasons behind this. The straightforward one is the limited expression power of a fixed-length vector. Since in our training process, we apply the same hyperparameters to all 20 tasks for a model, some tasks with more supporting facts becomes hard to fully encode with the hyperparameter chosen.</p><p>The second factor is the complexity of the relation within and between the supporting facts. For example, our experiments show no model produces an accuracy higher than 20% for Task 19: path finding, where the system needs to encode sentences describing the relative positions between two points. In the end, the question asks about a "path" (more precisely, a general direction) going from some point A to another pont B. The machine needs to be able to connect A and B through a few intermediate steps, which requires more sophisticated representation than simple matching. Another example is Task 18: size reasoning, which predominantly features relations that are non-commutative ("A is smaller than B"). In these sentences, the order of word A and B is very important. As we have discussed previously, this requires the use of Position Encoding and other sophisticated encoding. In our experiments, LSTMMemN2N achieves a test accuracy of 98.8%, beating all the other models.</p><p>The third factor contributing to difficulty is the length of the context. Context length in Task 3: three supporting facts is unusually long compared to other tasks. Whereas other tasks commonly have 10 to 20 context sentences, Task 3 can have up to a total of 249 such sentences! The performance on this task turns out very poor for all the models. For LSTMs, large context length translates to very long-term dependency, which can results in undesired phenomena like gradient vanishing or gradient exploding, which causes the LSTM to forget relevant facts <ref type="bibr" target="#b5">(Hochreiter et al., 2001)</ref>. For MemN2N , larger context length means a larger number of candidate in the memory to choose from. LSTMMemN2N is somehow able to overcome this issue partially and outperforms all the other models in Task 3.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7">Future Work</head><p>Two main areas of future remains to be explored. First, we can improve the model performance on the bAbI task set. Second, we can generalize the current model to more complicated tasks.</p><p>Currently, MemN2N achieves nearly perfect training accuracies for most tasks. But among these tasks some show a low test accuracy, showing the sign of overfitting. We should design proper regularization to better generalize on the test data and shrink the gap between training and validation accuracies.</p><p>Other task sets we can test our system on include the Children Book Test (CBT) task set 3 <ref type="bibr" target="#b3">(Hill et al., 2015)</ref> and the CNN-Daily Mail QA Corpus 4 <ref type="bibr" target="#b2">(Hermann et al., 2015)</ref>. Whereas the vocabulary size of bAbI is limited to 150, the vocabulary of CBT task set has about 53,628 words; the vocabulary sizes of CNN part of the corpus and Daily Mail part of corpus both measure in one to two hundres of thousands.</p><p>For MemN2N , the complexity of the model comes in the forms of number of hops. But because the necessary complexity of the model can vary tremendously by tasks, it would be useful to design a MemN2N model which can learn to control and regulate its own number of hops. Moreover, a better sentence encoder may also help the performance.</p><p>The main problem facing the LSTM models is long-term dependency. Explicit memory representation like those used in MemN2N may help mitigate this issue. Another possible approach to tackle the long-term dependency issue is an idea called Neural Turing Machine <ref type="bibr" target="#b1">(Graves et al., 2014)</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Conclusion</head><p>We experimented with MemN2N and LSTMs as the two major QA solutions. In our experiments, MemN2N outperform LSTM models. But the combination of the two models, LSTMMemN2N , achieves even higher test accuracies. Since language is a sequential data by nature, however, we think LSTM models also have a large potential to be explored.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc>Test accuracies of each model on the bAbI/en-10k task set, with 10,000 questions per task. Legend: i. LSTM with Attention, ii. Pyramid LSTM, iii. MemN2N , iv. LSTMMemN2N and question with embedding matrix A and B and feed the vector respresentation to LSTMs sequen- tially. Denote the output of the LSTM with re- spect to input q B as u = f u (q B ). Similarly we denote the output with respect to the context as r = f r (c, q). Then g(c, q) can be defined as a sim- ple concatenation of the two g(c, q) = u r</figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Available https://fb.ai/babi</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">Available at https://github.com/tyeah/ NeuralCraft</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3">Available at http://www.thespermwhale.com/ jaseweston/babi/CBTest.tgz 4 Available at https://github.com/deepmind/ rc-data/</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgement</head><p>Professor Chris Potts and Professor Bill MacCartney helped us defining our project.</p><p>Jiwei Li helped us debug the model when it wouldn't converge.</p><p>The LISA-Lab Deep Learning Tutorial 5 gave us a great head start with the LSTM model.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Neural machine translation by jointly learning to align and translate</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><surname>Bahdanau</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<idno>abs/1409.0473</idno>
+		<imprint>
+			<date type="published" when="2014" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Neural turing machines. CoRR, abs/1410</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Graves</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Wayne</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Danihelka</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/" />
+		<imprint>
+			<date type="published" when="2014" />
+			<biblScope unit="volume">5401</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">K</forename><forename type="middle">M</forename><surname>Hermann</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Kociský</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">E</forename><surname>Grefenstette</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">L</forename><surname>Espeholt</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">W</forename><surname>Kay</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">M</forename><surname>Suleyman</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Blun</surname></persName>
+		</author>
+		<ptr target="http://arxiv.org/abs/1506.03340" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">The goldilocks principle: Reading children&apos;s books with explicit memory representations</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">F</forename><surname>Hill</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bordes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chopra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+		<idno>abs/1511.02301</idno>
+		<ptr target="http://arxiv.org/abs/1511.02301" />
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Long shortterm memory</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural computation</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1735" to="1780" />
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Gradient flow in recurrent nets: the difficulty of learning long-term dependencies</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Frasconi</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Schmidhuber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Ask me anything: Dynamic memory networks for natural language processing</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">O</forename><surname>Irsoy</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Bradbury</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>English</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">B</forename><surname>Pierce</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Ondruska</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">I</forename><surname>Gulrajani</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Socher</surname></persName>
+		</author>
+		<idno>abs/1506.07285</idno>
+		<ptr target="http://arxiv.org/abs/1506.07285" />
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">Sequential thought processes in pdp models</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">D</forename><forename type="middle">E</forename><surname>Rumelhart</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">P</forename><surname>Smolensky</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><forename type="middle">L</forename><surname>Mcclelland</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1986" />
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="3" to="57" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Weakly supervised memory networks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Sukhbaatar</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Szlam</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">R</forename><surname>Fergus</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><surname>Corr</surname></persName>
+		</author>
+		<idno>abs/1503.08895</idno>
+		<ptr target="http://arxiv.org/abs/1503.08895" />
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chopra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bordes</surname></persName>
+		</author>
+		<idno>abs/1410.3916</idno>
+		<ptr target="http://arxiv.org/abs/1410.3916" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Towards ai-complete question answering: A set of prerequisite toy tasks</title>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">J</forename><surname>Weston</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">A</forename><surname>Bordes</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">S</forename><surname>Chopra</surname></persName>
+		</author>
+		<author>
+			<persName xmlns="http://www.tei-c.org/ns/1.0"><forename type="first">T</forename><surname>Mikolov</surname></persName>
+		</author>
+		<idno>abs/1502.05698</idno>
+		<ptr target="http://arxiv.org/abs/1502.05698" />
+		<imprint>
+			<date type="published" when="2015" />
+			<publisher>CoRR</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

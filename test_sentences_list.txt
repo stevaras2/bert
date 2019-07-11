@@ -1,0 +1,1160 @@
+first sentence
+last sentence
+we aim to develop a hybrid evolutionary reinforcement learning algorithm and apply it to a classic control problem to prove its superiority over the standalone algorithms 
+abstract
+we implement a policy gradient algorithm advantage actor critic a2c and an evolutionary algorithm es for the cartpole problem on openai gym 
+subsequently we combine a2c with es for the cartpole problem to show that it performs better than the standalone algorithms 
+reinforcement learning is a form of policy search algorithms which given an environment aims to find the actions to be taken to maximize cumulative rewards 
+introduction
+deep reinforcement learning drl algorithms use neural networks to solve control problems which have high dimensional state and action spaces by learning to map the state action space to their corresponding rewards 
+while these algorithms proved to be effective in applications such as robotics control and in games such as go they are known to suffer from some difficulties such as high sensitivity to hyperparameter settings and limited feature space exploration 
+a class of search algorithms which addresses these problems of drl is the evolutionary strategies es 
+these algorithms fall under blackbox optimization which estimate the parameters of the policy neural network to optimize the cumulative rewards with no regards to the given environment 
+while es algorithms are more stable than drl and can explore the feature space better they suffer from low exploitation of the environment feedback signals and tend to have poor performances in most applications due to their high sample complexity 
+some of the main challenges that deep reinforcement learning algorithms including policy gradient algorithm tend to suffer from are temporal credit assignment with sparse rewards lack of exploration and extreme sensitivity to hyperparameters tuning 
+related work
+evolutionary strategies tend to overcome these challenges by probabilistically selecting promising candidate out of a population of candidates thus allowing more exploration 
+this paper similarly in the work of finally
+a pole is attached to a cart which moves along a frictionless track 
+environment
+the system is controlled by moving the cart right or left 
+the pole starts upright and the goal is to prevent it from falling over 
+the objective of this task is to keep the cartpole upright continuously for 200 timesteps which corresponds to a reward of 200 
+we implement an advantage actor critic a2c policy gradient algorithm for the cartpole problem 
+advantage actor critic
+we get a probability distribution for the actions for each state and we choose actions sampled from that distribution 
+the advantage is calculated by finding the difference between an estimated average future reward and the average current value of the state 
+these advantages are used to scale our current predictions directly into our policy gradient figure 2 actor critic architecture
+for the policy gradient we output a policy to take an action given a specific set of states 
+policy gradient
+this policy gradient algorithm will learn a set of weights for each action based on the observations within the environment 
+we minimize the negative of the logarithm of probabilities of each action weighted by the advantages 
+this process is done using tensorflow and the loss is minimized using adamoptimizer for backpropagation 
+for the value gradient we learn parameters that compute the advantage of taking a particular action given an observed state 
+value gradient
+we minimize the least squared error between future reward value estimations and current average reward value estimations then update the weights for our value gradient neural network for calculating our current advantage estimations 
+new values are calculated by using a discounted monte carlo simulation which will place importance on short term reward rather than long term reward using a discount factor 
+once we can compute an advantage we can then feed this directly back into our policy gradient 
+for a single observation we utilize a hidden layer with 10 neurons with the relu activation function and then its output is subtracted from the dmc discounted monte carlo value of that state and we obtain an output representing the advantage 
+we spawn instances of the parameters which are jittered by random noise 
+evolutionary strategies
+one episode of cartpole is run with each parameter instantiation and the total reward at the end of the episode is calculated 
+this is computationally efficient because we can parallelize the code to run each episode with its parameter instantiation one way of creating an offspring of parameters is to weight the noises of each parameter instanti another way is to choose the parameters corresponding to the maximum reward obtained by that parameter instantiation at the end of that episode 
+in the first plot
+we combine es and a2c iteratively in a sequence 
+vanilla e a2c
+each iteration of algorithm spawns parameters and makes an update by choosing the best candidate
+we use the weighted combination of parameters proportional to the rewards obtained on the episode for this combination 
+preliminary experiments
+the performance evaluation parameter we use for the comparison of these algorithms is the number of episodes it takes to reach a reward of 200 which implicitly means that the weights have undergone sufficient training to produce a satisfactory total reward 
+the number of instances of parameters we spawn noises we generate is set to 50 we used a noise standard deviation of 0 1 and a learning rate of 0 001 for the es algorithm 
+we expect the es algorithm to take the longest time to reach a reward of 200 and expectedly so it takes 1160 episodes to reach a reward of 200 averaged over 100 different training sequences 
+the a2c algorithm takes 266 episodes to reach a reward of 200 averaged over 100 different training sequences 
+our vanilla evolutionary a2c algorithm takes 226 episodes to reach a reward of 200 averaged over 100 different training sequences and we observe that it performs better than both the standalone algorithms 
+in our final combination es spawns a population of parameters and a2c updates each member of the population by performing a series of gradient descent updates 
+evolutionary a2c
+finally es chooses the best parameter vector based on the rewards obtained in the population and injects noise onto this parameter vector to generate the new population we inject noise in the parameters of the policy gradient function which contain the information of the action choices for all of the 200 states for a given episode 
+a2c trains for 5 episodes in each epoch we have plotted the rewards for 
+we extended our algorithm to the mountain car environment
+mountain car environment
+the training converges when the average reward reaches 200 consistently 
+results
+a2c reaches this state at around 75 epochs the code for each of these algorithms is attached herewith https drive google com open id 19ouh2 rywr97rslumfc t labirb ytey5
+we conclude that our combined evolutionary actor critic algorithm is most efficient at the cartpole task compared to the standalone algorithms we ve chosen 
+conclusions and future work
+we observe that es instantiating a population of policy gradients is effective in that it explores better and uses the environment signals to arrive at the optimal solution quickly 
+we could explore combinations of proximal policy optimization with a similar evolutionary strategy to solve tasks on mujoco 
+literature study of previous work on combining policy gradient algorithms with es fatma implementing a standalone a2c kaushik ram implementing a standalone es devang vanilla combination of a2c and es devang and fatma final combination of a2c and es devang and kaushik ram extending combined algorithm to the mountain car problem devang writing the report kaushik ram and fatma
+contributions
+reinforcement learning has been at the core of many of the most exciting recent developments in ai 
+i introduction
+for example while computers have been relatively successful at playing chess for many years notably the computer deep blue was able to defeat the reigning world chess champion garry kasparov in 1996 the game of go was considered much harder it wasn t until reinforcement learning techniques were used in 2015 that the program alphago was finally able to beat a professional human go player here we use deep q learning to train an agent to learn the arcade game lunar lander a game where the goal is to steer a landing module and successfully land it on the surface of the moon 
+after understanding how to apply this model to lunar lander we then use this same technique to a less conventional application of reinforcement learning techniques investing in the stock market 
+we rephrase stock market investment as a game where states involve data such as recent change and volatility of a stock and discretize the possible investment amounts in order to create a finite set of actions at each state 
+in this way we apply our deep q learning algorithm from our lunar lander model to the problem of stock market prediction 
+reinforcement learning techniques have already been applied to the lunar lander game 
+ii related work
+garza implements a policy gradient descent model in predicting stock prices based on past stock data is appealing for obvious reasons 
+there is even a competition this work was not supported by any organization 1 department of mathematics stanford university sunetid stanton1 2 department of mathematics stanford university sunetid jupiterz released on kaggle starting september 25 2018 and ending january 8 2019 by the company two sigma related to stock prediction this seems to be a common feature for current applications of machine learning to the stock market most models wish to predict stock prices and not directly tell us an investment strategy 
+for instance in
+the lunar lander environment was provided by openai gym https gym openai com there are four actions allowed at any given point in the game firing the main engine firing the right engine firing the left engine or doing nothing 
+iii data a lunar lander environment
+there are rewards for landing with feet down and penalties for wasting time landing far away from the pad and wasting fuel 
+we used iexs api to download 5 years worth of stock data from apple and google 
+b stock dataset
+this included the daily price opening closing high and low of the stock 
+to simplify our model we just considered the closing price of the stock on any given day 
+we also wanted to predict stock prices on a slightly longer time scale so we restricted to looking at stock prices each week choosing the closing price on the previous friday as the stock s price at the beginning of the following week we did however save some data about how the stock changed in the lead up to a given week 
+we added a feature corresponding to the volatility of the stock price in the previous three weeks 
+more precisely for week n the volatility feature for that week is equal to the standard deviation of the daily stock prices from weeks n 3 through n 1 divided by the mean of the stock price during this range 
+normalizing by the mean price ensures that this feature is independent of scaling the stock price as this shouldn t impact how much we choose to invest we also added three features which we call delta1 delta2 and delta3 that correspond to the weekly net change in stock price from the three preceding weeks 
+so in total our data each row corresponding to one week in our 5 year span contains 7 features the volatility of the stock delta1 delta2 delta3 the price of that stock at the beginning of the week i e 
+the closing cost from the previous friday our current cash on hand and the value of the stock we own 
+our initial state consists of our first line of processed stock data and the fact that we have 0 in cash and 0 invested into the stock to make our situation similar to the finite action state from lunar lander we imposed only a finite number of actions that our agent can take when playing the stock market 
+specifically at any given moment in time we are allowed to do a hard buy or sell a soft buy or sell or do nothing our default values of hard and soft were 100 and 10 respectively though we did test different soft values later while keeping hard fixed see section v c for details 
+by letting hard and soft correspond to the amount we invest in the stock market on a given week and not to the number of shares we ensure that our model is independent of the average price of the stock our model just cares about how the stock price fluctuates from week to week and not the absolute price of the stock 
+notice also that for simplicity of our model we allow negative cash and negative stock value in our portfolio 
+some of this even makes sense for instance negative cash could correspond to taking out a loan so as to invest more in the stock market our reward function is just the change in portfolio value each week 
+for both lunar lander and the stock market we used deep q learning to train our agent 
+a deep q learning
+the goal here is to learn the q function which gives our total maximum expected reward if we start at state s and take action a 
+thus q should satisfy the optimal bellman equation where s is the state after taking action a from s and is the discount factor intuitively it parametrizes how much we value future versus current reward for deep q learning we use a neural network to learn the q function 
+specifically our network takes in a state s and outputs a vector of length equal to the number of actions where each entry corresponds to q s a for that particular action 
+since q corresponds to net reward in order to implement a trained network at state s we would take action a which corresponds to the largest entry in our output from the neural network 
+in order to train our model we need a loss function 
+b loss function
+given a state s and an action a our loss is just the difference between what our model predicts and what the optimal bellman equation should give 
+in other words if we letq be our target function generated vi our loss is then given by 
+for the lunar lander model we used a fully connected neural network of shape input 
+a training
+our base line model as in
+b result
+all other experiments are conducted around the above base model 
+c hyper parameter choices experiments
+here is what we have tried i 
+soft buy sell tweaking as we listed out the actions from our base model after training we realized that our model has a very strong preference for soft actions 
+in other words the agent is risk averse 
+ii 
+less competitive stock testing when training on apple and google stock we noticed that the agent chose soft buy the vast majority of the time 
+part of the issue here might be that google and apple are relatively stable stocks and have an upward long term trend in price 
+in order to really exhibit the predictive capabilities of our model it made sense to apply it to stocks that are more volatile and which maybe don t have such an obvious long term trend 
+staying in the tech realm three additional stocks we looked at were facebook twitter and nvidia 
+using just our baseline model with 500 epochs since more volatile stocks take longer to converge this is how we performed on each of these stocks as compared to always performing soft buy as our action we can see that our model performs better than naively performing soft buy for facebook performs similarly for twitter and performs worse for nvidia 
+we don t currently know what is causing these discrepancies but we think it s likely that our model is too risk averse 
+for example for nvidia a highly volatile stock our model is usually doing nothing or performing a soft buy 
+iii 
+exploration rate tweaking having random exploration is important in learning a game like lunar lander so that the agent can experience different states of the game and handle various situations 
+in the lunar lander game our agent in fact grows more curious and explores more as time goes on 
+however we felt this is unnecessary in a stock prediction situation and thus we have experimented with various fixed exploration rates 
+the result can be seen in figure vii 
+one can see that unlike the box2d games having a reasonable exploration rate like 5 percent actually negatively influences the training 
+this is probably due to the fact that the process of stock prediction is much more formulated and deterministic 
+unlike other games where various actions could lead to different states that could still achieve optimal outcome if the price is going up a hard buy is just the absolute best action 
+thus for the best training outcome one should stick to a minimal exploration rate exploration rate goog aapl iv 
+sadqnbold the risk rewarding experiment and tuning as we observed our agent is highly riskaverse 
+even though it can forecast stock behaviour in the long run it will still choose the soft action instead of the hard one 
+to encourage our agent to take risks we have implemented a new model called sadqnbold 
+sadqnbold has the extra two parameters the volatility weight is a variable that currently associates reward with volatility using the formula reward profit 1 volatility thus making a riskier profit more rewarding 
+the exploration hard chance or ehc puts a different weight on hard actions when sampling for an action in the exploration part of training 
+with a bigger probability of taking hard actions the agent will see more of the benefits of hard actions 
+note that when 0 and ehc 0 2 we have the baseline model 
+another related parameter is the discount factor in the bellman equation for generating ourq 
+making this number closer to 0 will make the agent more short sighted thus taking bolder actions 
+in experiments we found that lowering or increasing and ehc will indeed encourage more hard actions 
+on the other hand it makes the agent highly unstable with respect to different stocks 
+more volatile stocks could lead to an unprofitable agent in the experiment as in figure viii on the stock of aapl the actions consist primarily of hard buy and sell 
+the final portfolio value is around 12 000 dollars 
+vi 
+conclusion and future directions conclusion by drawing connections between the game of lunar lander and stock investment we have established a baseline structure of a stock predicting agent using the model of deep q learning 
+the model is demonstrated to be rather risk averse but can master long term investment strategy with reasonably volatile stocks future directions shot term vs long term in our data split there is a mismatch as we are training on approximately 5 years of data and trying to test the agent on 10 weeks of data 
+however what the agent picks up from the base model is a long term strategy and is not optimal on a 10 week basis 
+thus we tried to implement stockagentdqnshort 
+this agent instead of training the whole 5 year period trains on several episodes of 10 consecutive weeks or whatever the test data length randomly selected from the training data 
+but as one can observe from figure ix the randomness we introduced is giving the model a hard time converging and thus the reward graph is highly fluctuating 
+one explanation why this approach failed is that though we match the data with train and test this is not the traditional way humans predict stock 
+the historical data is always there for reference whenever one makes a prediction in real life so somehow restricting our model to training on 10 weeks of data is not a realistic solution to this data mismatch problem one possible solution is to strengthen the model so that it includes more than 3 weeks of data in the past thus resulting a network that has more input features and thus more complexity in general 
+another solution which is closer to human prediction is to include real world events to help short term prediction
+the code for this project is available at https github com zhubeite cs 229 rl project 
+code
+we would like to thank our mentor mario srouji for his guidance throughout this project 
+acknowledgment
+contributions caitlin contributed code for pre processing data transition reward functions and downloading stock data contributed to write up jupiter wrote tensorflow code to train our neural networks created overall code architecture tested hyperparameters contributed to write up
+in this project four different reinforcement learning rl methods are implemented on the game of pool including q 
+over the last few years deep reinforcement learning drl techniques have seen great success in solving many sequential decision problems involving high dimensional state action spaces 
+deep learning dl techniques allow reinforcement learning rl agents to better correlate actions and delayed rewards by modeling the relationship between states actions and their long term impact on rewards leading to better agent generalization the goal of this project is to build a rl agent for playing the game of pool 
+it is an interesting topic to explore in that when considering a hit we may not simply want to hit a ball into the pocket but also want the next ball position to be convenient for future hits the problem is formulated as a markov decision process mdp and solved with four different rl methods including q one of the team members noah katz completed this project for cs229 and cs229a 
+rl was not taught in cs229a however the applied use of neural networks and the skills needed to understand and debug issues with neural networks were covered in the coursework of 229a and have been helpful in this project the code for the project can be found on github 1 
+one of the most notable areas of research in rl is in building agents to play games 
+games provide a simplified environment that agents can quickly interact with and train on 
+in the case of pool plenty of work has been done in applying rl or other ai techniques to the game 
+traditional ai techniques used include search
+the problem is formulated as an mdp with the following set of state action and reward definitions where m is the number of balls x 1 and y 1 are the x and y positions of the white ball x i and y i are those of the i th ball r is the angle of the cue within range 0 1 f r is the force applied to the cue within range 0 1 is the relative reward weight between hitting no ball and pocketing one ball and numballs s returns the number of balls still in play at state s s 2 m is the list of elements in s other than the first element i e 
+problem formulation
+the positions of all balls other than the white ball 
+in other words negative reward is assigned if no balls are hit zero reward is assigned if the white ball makes contact but does not produce a pocketed ball and a positive reward is assigned if some balls are pocketed 
+in this project is set to 5 normalization is applied to state and reward in the deep methods to be introduced below i e 
+dqn and a3c to stabilize training 
+the game simulation engine is modified from an open source pool game implemented in python 2 
+the following modifications are made to fit this project 1 
+created an interface to modify game parameters 
+2 
+created an interface for the rl algorithm to interact with 
+3 
+set game graphics up so that they can be turned off for faster training or turned on for visualization of the training process 
+4 
+optimized the game engine by removing unnecessary functions there is only one player our software agent in this game 
+in addition instead of applying the complete pool game rule the experiments are conducted in a simplified setting with a small number of balls and the goal is simply to pocket the balls disregarding the order 
+a two ball scenario would prove that the model can learn how to pocket a ball or how to setup a subsequent shot so that it can pocket a ball later 
+the four ball scenario would prove that the model can have some extra understanding of how the balls interact with additional balls that may be in the way in the learning an episode is a game with a set maximum number of trials 
+each episode is automatically concluded when all balls have been pocketed or the maximum number of trials have been reached 
+in order to solve the mdp three algorithms are implemented including q table deep q networks dqn and asynchronous advantage actor critic a3c 
+methods
+for a3c it is implemented with both continuous action and discrete action 
+whereq s a is the current estimate of the q value s is the current state a is the current action r is the reward received by taking action a at state s s is the transitioned next state is the learning rate and is the discount factor of the rewards q table implements q learning using a look up table to keep the q value for each discrete state action pair we use the epsilon greedy method as our exploration strategy where at each time step there is a probability of selecting a random action and probability 1 of selecting the optimal action from the current estimate of the optimal q function 
+q 
+q tables work well on small number of states and actions but for continuous states and actions that need to be discretized much information is lost and the learning becomes inefficient 
+deep q networks dqn 
+in dqn a neural network is used to approximate the q function by taking the state values as input and predicting the q value for each potential action 
+the parameters of the q network are then updated using optimization algorithms such as stochastic gradient descent and backpropagation in the dqn implementation a neural network with 2 hidden layers is used with continuous state values as input and a discrete action as output 
+the dimension of the 2 hidden layers are 64 and 256 each 
+the output layer yields the q values for each action at the input state which are then fed through a softmax function to create probability distribution for taking each discrete action choice 
+actions are then sampled from this probability distribution a replay buffer is used to hold all experiences obtained in an episode which are then shuffled for training 
+this helps to reduce correlation between experiences improve convergence and improve data efficiency by allowing us to reuse data for training aside from the original network used for training a second network called target network is used as the estimate of the optimal value function 
+the target network is updated every several iterations as the weighted sum of the parameters of the two networks with the use of a target network the q values will not be chasing a moving target the network parameters are trained with the following equations where w is the parameter of the model is the learning rate l is the mse loss s i is the state of the i th experience in the batch f is the output of the original network and f tar is the output of the target network 
+a3c consists of a global network that approximates both the value function and the policy and several workers that interacts with the environment asynchronously to gain independent experiences and send them to the global network for a global update every few actions in this algorithm the benefits of both policy iteration and value iteration are combined and the policy can be updated more intelligently with the value estimate 
+asynchronous advantage actor critic a3c 
+in addition multiple agents learning asynchronously on different threads speeds up the overall training 
+continuous action values are chosen by sampling from a normal distribution with the mean and variance predicted from the network 
+continuous action
+the variance itself serves as the exploration factor discrete action the same as in dqn discrete actions are chosen based on the q values predicted for each action 
+four algorithms q table dqn a3c with continuous action and a3c with discrete action are first evaluated in the simplest environment with two balls i e 
+experiments
+one white ball hitting another ball 
+each algorithm is trained for 1000 episodes each episode allowing a maximum of 25 hits 
+the trained models are then run through an evaluation over 100 episodes with exploration strategies turned off and the model performance is represented by the average reward per episode 
+the two a3c algorithms are then trained in an environment with four balls to evaluate their generalization ability to a larger state space 
+while other settings remain the same the maximum hits allowed are increased to 50 in q table the state is discretized into 50 buckets for both x and y positions the angle into 18 buckets and the force into 5 buckets 
+in both dqn and a3c with discrete actions the angle is discretized into 360 buckets while the maximum force is always chosen to interpret the numerical values of the rewards note that the minimum reward is 1 max hits per episode for not hitting any ball at all during the episode and the maximum is 5 num balls for pocketing all balls a random policy is also evaluated and serves as the baseline for other algorithms all experiments are conducted on a machine with 16 gb of memory and an 8 core 6th gen intel i7 processor running at 2 60 ghz 
+two ball environment the moving average rewards received over the training period of all five algorithms is shown in
+the training results are shown in
+four ball environment
+overall a3c with discrete action is considered the more ideal choice for this problem considering all trade offs 
+analysis
+it is scalable with state space the training is stable and efficient and the performance is acceptable 
+however in an environment with simpler settings and with potentially unlimited resources q table has the advantage of being the simplest implementation and having the best performance q table has produced a particularly interesting result in that at the end of its learning it repeatedly executed an exact set of moves that will complete an episode in 6 moves for a total reward of 4 
+this is an acceptable solution given the problem but it would be better if it learned how to pocket the ball in one hit 
+this might be solved with a lower gamma value to discount the non immediate rewards more harshly or by more random exploration from the experiments several additional observations have been made 1 
+sparse rewards may affect training efficiency 
+in the design of reward model positive rewards are only given when a ball is pocketed which is difficult to achieve at the beginning of training 
+more timesteps are required for the model to learn a good action which makes the training inefficient 
+normalization is essential in stabilizing the training in neural networks 
+without normalization to the inputs it is found that the values tend to explode as the inputs are forwarded to the end of the network and it became difficult for the output values to be tuned back to its normal range hence the output actions are mostly clipped at 1 or 0 
+the game of pool has been formulated into a mdp and solved with four different algorithms q q in the future the poor scalability of the models in an environment with more balls should be addressed first 
+conclusion and future work
+the game can further be made more challenging by enlarging the table size adding rules etc 
+to evaluate the true ability of the models they should be compared with human performance 
+finally the model can be integrated with hardware as a pool robot for entertainment and educational purpose 
+noah katz modified the game simulator so that it could be interfaced with our algorithms set up the environment for running the training and evaluation and handled running the tests needed to gather results 
+he also implemented the worker class in the a3c method peiyu liao created the environment wrapper for mdp and implemented the q nick landy worked on implementing and refining dqn 
+he also conducted all the experiments and analysis related to the model 
+he also worked on optimizing the simulator to improve model training speed 
+he is also the major writer of the report all team members worked together on the report 
+recent academic literature has demonstrated that deep learning models for image classification are often highly sensitive to small perturbations in input images we were particularly interested in this project due to its timely political relevance facial recognition has proven a cornerstone of new deep learning mass surveillance applications and journalists technology executives and think tanks have recently argued that facial recognition should be regulated or controlled by the government prior to this project neither of our group members had any exposure to training or testing deep learning models 
+in completing this project we hoped to make a novel and timely contribution to analyzing adversarial perturbations while learning how to perform deep learning research 
+generating adversarial examples to confuse dnns has become a fast growing field within deep learning 
+ii literature review
+ian goodfellow s 2014 paper explaining and harnessing adversarial examples outlined the fast gradient sign method fgsm for perturbing sample images this paper also relied on random perturbations as control experiments for comparing performance 
+since then researchers have released open source software for generating adversarial images such as the library cleverhans as attack mechanisms have become increasingly sophisticated other papers have proposed defenses 
+in 2018 the paper pixeldefend leveraging generative models to understand and defend against adversarial examples written by yang song and stefano ermon proposed a method for using a generative model to detect and purify perturbations
+our facial recognition model is trained on the labeled faces in the wild lfw dataset which contains over 13 000 images of over 5 000 individuals
+iii data
+we began by developing a facial recognition model that could be used for testing adversarial inputs 
+iv facial recognition model
+we found that modifying a model developed by cole murray the learning step of the model takes the preprocessed image and uses it to update weights in order to classify individual faces 
+this is done by generating 128 dimensional embeddings for each face 
+in order to create these embeddings we use the inception resnet v1 a convolutional neural network that is similarly complex to inception v3 but requires less computing power when using a batch size of 128 
+this was desirable to us since the ability to use batch norm on the auxiliary classifiers was favorable to our facial recognition task primarily for the purpose of regularization as we wanted to avoid overfitting especially towards the end of our training process classification is subsequently performed by using 128 dimensional image embeddings as inputs to the scikit learn svm classifier 
+the classifier uses a linear kernel and outputs a probability for each person i e 
+each class in our dataset 
+the model then chooses the highest probability class as its final prediction 
+these steps are shared with cole murray s facial recognition model however we have experimented with modifications to the svm classifier such as using a different kernel function and modifications to the input and preprocessing steps we tried switching from the cmu to the opencv facial cropper which did not perform as well 
+in
+v attack methods
+we wrote a script that adds random noise to images 
+a random noise
+we experimented with two types of noise gaussian noise which perturbs images at a given location based on sampling from a gaussian distribution and salt and pepper noise which recolors randomly chosen pixels as white or black 
+ultimately we decided to use a modification of salt and pepper noise as our baseline attack mechanism in this algorithm pixels are randomly chosen and recolored as solid red green or blue 
+as outlined in
+this more sophisticated attack mechanism requires two steps identifying facial landmarks in an input image using a dnn and then using random noise to perturb these landmarks 
+b obscured facial landmarks
+below we provide greater detail about each step in this process 1 identifying facial landmarks we experimented with multiple dnns to identify facial landmarks in the kaggle facial keypoints dataset including using 1d and 2d convolution layers 
+ultimately we saw the best performance including reasonable training times from a network that uses one max pooling layer a flattening layer two pairs of fully connected and dropout layers and an additional fully connected layer 
+this model results in an average loss of 2 99 pixels from predicted to actual facial landmark locations 
+however we also found that this network configuration particularly our use of dropout layers allowed our model to generalize well it achieves relatively low test error on the kaggle dataset as well as good results on images from the lfw dataset 
+we discuss the performance of our facial landmark dnn further in the results section 
+2 perturbing facial landmarks our facial landmark identifying dnn outputs a list of points p x 1 y 1 
+
+x n y n that represent bounds for facial features for example three points define each eyebrow and four points outline an individual s mouth 
+we then made a modification to our random noise generator in order to generate noise clustered around these points 
+the facial landmark noise generator used a multivariate gaussian with a scaled identity covariance matrix 
+we generated the noise by sampling gaussian noise from this distribution 
+adversarial training one technique for defending dnns against perturbed inputs
+a adversarial training
+our facial recognition model was able to achieve an overall accuracy of 94 6 across all classes 
+vii results
+we used a 0 7 0 3 train test split on the lfw dataset and the model was trained using the google cloud compute engine on a machine equipped with tensor processing units tpus 
+below we present model performance on adversarial inputs 
+we begin by discussing the performance of our model trained on imbalanced classes i e 
+viii discussion
+the results in one explanation for this attack s limited effectiveness is our use of different datasets to train and test our facial landmark recognizer 
+while the facial landmark dnn was trained on the kaggle facial keypoint dataset given the relatively small drop in accuracy for george w bush when testing on obscured facial landmarks we also hypothesized that classes with a higher number of training samples such as george w bush would not be as susceptible to attack 
+to test this hypothesis we decided to retrain our model on only 20 images per class 
+in finally it is important to emphasize the difference between high classification accuracy and highly confident predictions 
+while classification accuracy may be relatively high in some cases our model s confidence in each prediction as reported in
+when initially planning our project we hoped to examine whether clustering algorithms such as k means could provide effective defenses against random perturbations 
+ix future work
+however as k means has a relatively high and inefficient runtime we chose to focus on developing additional attack mechanisms and testing adversarial training 
+however this could provide an additional method of defending against the attacks tested in this paper although we sought to study black box attacks testing our model on inputs generated with fgsm may have permitted a closer examination of whether adversarial training can defend facial recognition dnns 
+however while this is a promising direction for future research we chose not to focus on fgsm attacks given our desire to understand how an individual could undermine facial recognition without knowledge of a model s internal parameters thus given the political relevance of this topic we also hoped to explore the possibility of creating a physical adversarial patch that could be worn to confuse facial recognition dnns 
+as our results suggest that facial landmarks are relevant to classification and particularly so for models with less training data perhaps an individual could wear a patch near their nose or mouth to evade recognition x 
+link to github repository our github repository is available at https github com amilich face 
+a good policy search algorithm needs to strike a balance between being able to explore candidate policies and being able to zero in on good ones 
+in this project we propose and implement hybrid policy search algorithms inspired by proximal policy optimization ppo and natural evolutionary strategies es in order to leverge their individual strengths 
+we compare these methods against ppo and es in two openai environments cartpole and bipedalwalker 
+the standard reinforcement learning framework is modelled by a markov decision process m s a p r where at each time step t the agent takes an action a t a at a state s t s and as a result transitions to a new state s t 1 according to p and receives a reward r t according to r the objective of policy search is to determine a policy s a 0 1 parameterized by in our case that specifies how the agent should act at each state s ie 
+a s pr a t a s t s we want to maximize the expected returnwhere r t t 0 t r t is the return from following a specific trajectory under two types of policy search algorithms are policy gradients like proximal policy optimization ppo and evolutionary strategies or derivative free optimization es 
+policy gradient methods leverage the problem structure by estimating j and incorporates it into stochastic gradient descent methods in order to arrive at a potential solution quickly 
+however they are said to face a lack of exploration in the space of policies due the greediness of their updates 
+evolutionary strategies in contrast are able to exhibit better exploration by directly injecting randomness into the space of policies via sampling 
+however they make use of less information and thus require more time and samples to perform well 
+a natural extension is to construct a hybrid method that leverages the strengths of both types of methods 
+we test out 3 hybrid methods combining ppo and es that make use of the gradient and involve stochastic sampling of 
+we compare these methods to the original ppo and es in cartpole cp and bipedalwalker bw 
+the code for this project is available at https github com jshe cs229project git 
+the family of policy gradient methods stems from the original reinforce algorithm by evolutionary strategies in contrast have traditionally been used outside of reinforcement learning 
+a recent paper by a recent paper which can be approximated by taking the gradient of samplesppo increases sample efficiency by reusing trajectories from past policies old and improves training stability by ensuring that updates at every iteration are small 
+at each iteration trajectories are sampled under old for a total of h state action pairs 
+we then use mini batch samples of these pairs s t a t of to update 
+is updated using a modification of 3 where log a t s t is replaced by a ratio at st old at st to allow for this type of sampling and the ratio is clipped if it falls outside of some range 1 1 to increase stability 
+this results in the objectivewhere is sampled using old the advantage function t r t v s t where r t t t t t t r t is a modification of r calculated using a learned value function v 
+v is updated along with using an additional lossan entropy termcan also be optionally added to the objective to encourage exploration in a t 
+combining
+in evolutionary strategies or derivative free policy optimization the function j is treated as a black box the general framework of evolutionary strategies involves at each step sampling candidate parameters 1 k from some distribution and using these i s based on their performance in terms of j to update a recent variant called natural evolutionary strategies where is updated using an approximation of the gradient e j derived by rewriting it as e n 0 i log p j and approximating this using the samples
+evolutionary strategies es 
+instead of sampling i naively as in es we propose running ppo with each of these samples as initializations to obtain new samples i 
+es ppo
+we then update by 8 with returns from these new samples and modified perturbationsthe general idea of this algorithm is summarized in
+instead of using the update 8 as in es ppo we directly set to i with the highest returnwe conjecture that this method would work well despite its apparent greediness because i are likely to be decent solutions as a result of the ppo updates 
+max ppo
+we alternate between es and ppo iterations by running es every j iterations with in order to inject stochasticity 
+alt ppo
+the objective of cp see for es in this setting we represent bywhere f is a fully connected neural network fc 4 100 relu fc 100 1 sigmoid 1 
+cartpole v0 cp 
+for all other methods we usewhere g is a fully connected neural network fc 4 100 relu fc 100 100 relu fc 100 1 sigmoid 
+we also parameterize v by fc 4 100 relu fc 100 100 relu fc 100 1 where the first fullyconnected layer is tied with g 
+we perform hyperparameter search for each method to obtain the best configuration and describe the details below 
+the results are shown in
+we choose k 5 among 5 10 20 as it seems to be sufficient for cp and results in the fastest training time 
+es
+we also set 2 0 1 among 0 1 0 001 0 0001 with learning rate 0 001 among 0 0001 0 0025 0 001 
+the objective of bw is to maneuver the walker to the rightmost side of the environment without falling 
+bipedalwalker v2 bw 
+the agent receives for moving forward for a total of 300 on the walker reaching its destination 
+the agent also receives 100 for falling 
+the episode ends when the walker reaches its destination or falls 
+s r 24 and a 1 1 4 represent the various states and actions of the walker and its components hips knees etc for es in this setting we again represent by 9 where f is a fully connected neural network fc 24 100 relu fc 100 4 tanh 
+for all other methods we usewhere g is a fully connected neural network fc 24 100 relu fc 100 100 relu fc 100 4 tanh 
+we also parameterize v by fc 24 100 relu fc 100 100 relu fc 100 1 without tied layers this time because we need more parameters in a more complex setting 
+we perform hyperparameter search for each method to obtain the best configuration under the constraints of our compute which we detail below 
+we use the same setting as ppo in the case of cp except we increase h to 2048 and batch size to 64 and make use of the entropy term with c ent 0 0001 
+ppo
+from the results above we believe that in order for a hybrid method to achieve better performance than ppo and es it needs to combine them in a more clever way 
+conclusion
+one potential idea to try is to somehow adaptively modify the variance of using gradient information so that only closer i are sampled when has a relatively good return another potential direction is to investigate how we can better leverage large scale parallel compute in order to speed up methods like es ppo and max ppo in the case of ppo it would also be interesting to look into the trade offs between sample efficiency and training stability and see whether sampling from instead of old can reduce this instability lastly it may be more effective to compare these methods in more complex environments where there exist obvious local minima and ppo should fail 
+we thank mario srouji for the project idea and help during the project 
+acknowledgements
+the world models paper
+what is the nature of excellence 
+is it the envisioning of a task in one s mind over and over again or perhaps is it incremental improvement over repeated practice 
+think of how an athlete trains daily while also envisioning her future success 
+in this paper we propose our adversarial learning framework amore to help ascertain whether these ideas can be applied to a reinforcement learning framework 
+we initially conducted tests using openai s racecar setup because it has a simple world with a clear distinction between reward and penalty areas 
+dataset and features
+afterwards we tested our algorithm in sonic the hedgehog levels using openai s retro contest dataset 
+because the levels in sonic are long and complex our method of informing the vae and lstm using previous policies helped it pick out salient features over a constantly changing game environment 
+sonic levels are also be a good test for the gan dreams given that its worldspace is much more complicated than the racecar setting and is thus also more likely to benefit from prior experience 
+because different sonic levels can be used for the training and test sets this dataset is also be useful to see whether or not our algorithm lends itself well to our method of iterative training across experiments 
+1 
+perform initial rollout using the jerk algorithm just enough retained knowledge 6 
+repeat the process using the generated policy to inform rollouts of the next iteration using a gan to generate and discriminate dream states helps prevent compounding errors in the image generation as shown in we made the entire process iterative across experiments sampling using policies from past iterations to perform rollouts for the current iteration 
+this allowed the vae to optimize its encoder and decoder to better recognize features that are more useful to scoring well 
+the tricky part is ensuring that the iterations do not create a policy that is stuck in a local minima and this will largely depend on how policies are sampled during the rollout phase 
+because the cma es generates samples from a gaussian distribution one can vary the sigma value to get a larger variety of outcomes depending on your performance needs 
+the vae is used to encode and decode frames 
+that is it takes a frame as input and maps it to a distribution in a lower dimensional space in our case using a 4 layer convolutional neural network and a 200 dimensional encoding space 
+encodings from the frames went to the lstm while the decoder was used primarily to train the encoder and for visualization purposes 
+it used 5 deconvolutionary layers as in the original code a vae is normally trained to jointly minimize two things one the kl divergence between the encoded real data and a prior distribution 1 two a reconstruction loss corresponding to negative log likelihood of the decoder producing the data given the prior distribution 
+the vae is a special variant of the vae that has a parameter weighting the kl divergence term to tune a balance between latent channel capacity and independence constraints with reconstruction accuracy 
+for our adversarial predictor we used two longshort term memory lstm networks which output a mixture of gaussian distributions 
+adversarial future generation focus of cs236 
+lstms maintain a gated memory representation across different items in a sequence with its updated memory accessible to the next state 
+in addition mdn rnns are a type of lstm which output a distribution as a mixture of gaussians rather than a single prediction with a weight mean and variance for each gaussian 
+while the choice to treat the discriminator as generating a probability density may seem strange this was the first approach to convergence that yielded a model which didn t experience exploding or vanishing gradients in the generator 
+the loss used for the generator was partially inspired by the loss used in a vae accounting for both the likelihood of the predicted next frame 2 and an adversarial loss corresponding to how effectively it tricked the discriminator 
+the controller is a simple single layer neural network with a sigmoid activation it takes in 3 the encoding of the current frame as well as the hidden state and previous output of the lstm which took in the previous action and frame encoding and outputs an action with the same dimension as the action space 
+controller
+the action is a t w c z t h t b c for controller c at timestamp t we experimented with varying the complexity of this policy but found that it made it more difficult to update from new levels 
+it is likely that a joint training model that is one which trains on all the levels at the same time would be more compatible with this approach 
+cma es for covariance matrix adaptation evolution strategy 
+cma es
+to encourage cma es to choose explorative policies while not included in the final reward we added an exploration reward for cma es since variational autoencoders put similar frames closer together we simply kept the most recent several seconds of frame encodings adding a small reward corresponding to the minimum euclidean distance of the encoding of the current frame from the existing frames 
+exploration reward
+one interesting side effect of this was the tendency for sonic to take the long route around levels exploring dead ends and sometimes finding very non obvious rewards due to it like hidden ledges that required jumping while going down a waterfall in labyrinthzone act3 of the first sonic 
+it was also amusingly a fan of spectacle choosing to watch an explosion instead of proceeding 
+this is reminiscent of
+initially an interesting issue came up we were at the time letting the anticipator choose moves every time it ran since it went through all of the possible actions but often not moving had the same reward as the controller making its move since the controller would eventually accomplish whatever the best action accomplished 
+anticipator
+the consequence was that the anticipator often did nothing when it didn t think it could contribute 
+we solved this first by discounting future rewards with an impatience term an exponential drop off in the value of future rewards 
+one accidental effect was that the anticipator accidentally created short sighted loops if in alert mode like repeatedly hitting a 10 point bumper 
+we updated alertness to only activate if the controller performed badly 
+for our initial experimental round we use the jerk method to perform rollouts 
+the iterative architecture then uses policies generated from the previous experimental round as rollouts for the next experimental round which should improve the training of both the vae and the gan as they will be training on frames that score higher balanced with some exploration 
+we started with the code provided by openai for their world models experiment but have since modified it to implement our own algorithm 
+experiments results discussion
+we rewrote the procedure to be iterative and to reuse previous policies during rollouts as well as adding gan capacity and some features to action selection in the code 
+we carried out our experiments in openai gym experimenting on levels sampled from sonic the hedgehog 1 3 
+our results were successful in that our model outperformed the original paper and openai baseline scores 
+for this particular challenge your agent must achieve a score of 3000 to consider the level solved and our agent received an average score of 3600 across many levels 
+upon inspection the agent adapted novel behaviors such as one instance where the agent jumped on a button over and over as the optimal action 
+using the gan model certainly improves the agent s ability to generate estimated future world states while the iterative model provided superior rollouts for each experiment while also allowing the entire algorithm s architecture to be more in line with how we think science and cognition function 
+our goal for this paper was to improve upon the original world models architecture and in that sense we think we succeeded 
+conclusion future work
+we learned that our algorithm could solve the sonic levels which opens up some avenues of additional research questions 
+for one there are certainly more cognitive principles that could further inspire our algorithm s architecture 
+additionally varying gan architectures and models could probably enhance the performance further as could using metalearning to tune parameters and hyperparameters before the actual training begins 
+perhaps the most compelling future improvement is a stochastic update to the the lstm and vae with every new experiment alongside the per epoch training we introduced 
+for an nyc taxi driver being at the right place at the right time is often what makes or breaks a day 
+one may naively assume that the right spot corresponds to a place where demand is high for instance the new york financial district at the end of a work day 
+however this may not necessarily be the best place to be 
+taxi drivers might find themselves spending the whole day stuck in traffic traveling far away from the high activity zone thereby reducing overall profits for the day 
+sometimes a better option might be for the driver to go to an area that is slightly less popular where people are making many short local trips which would accumulate to a handsome sum over the course of the day to assist drivers in deciding where to be we used nyc yellow taxi data provided by the nyc taxi and limousine commission tlc in this paper we discuss the design and results for each of these approaches and outline the next steps that would lead to a successful tool 
+a few groups have tried to predict nyc taxi activity and fares with a variety of features 
+ii related works
+one group used random forest regressors and k nearest neighbors regression to predict pickup density using 440 million trips recently there was a kaggle competition that attempted to solve the fare prediction problem using features such as pickup drop off locations in lat long time date and number of passengers 
+some of the approaches used include lgbm the problem we are attempting to solve does not have much literature and most of the approaches we used have not been tested before 
+the nyc taxi and limousine commission tlc provides a large amount of trip data covering over a billion trips from the years 2009 to 2018 
+a raw data description
+each trip sample contains a lot of information from which we chose pickup date and time pickup location drop off date and time drop off location fare amount and trip distance 
+for data prior to july 2016 referred to as older data the pickup and drop off locations are reported as latitude and longitude while for data july 2016 onward referred to as newer data they are reported as location ids ids that correspond to larger geographic regions 
+other than this the data is consistent over the years 
+due to computational and storage constraints we used a sample of the full data set from july 2014 to june 2018 which amounted to 2 million trips 
+b data pre processing
+for each of the models we used a 90 5 5 split for training validation and testing respectively 
+1 obtaining activity to derive the activity feature from the provided data we aggregated the trips for each location day of week and time interval and repeated for each week over the entire sampled data set 208 weeks 
+this resulted in 208 data points of activity for each location day of week and time interval 2 label bucketing to convert this problem into a classification task we discretized each of the labelsfare activity and trip distance into buckets 
+we first attempted to do this using k means clustering however this resulted in a non ideal spread of clusters in which some groups would be clumped too close together 
+this did not practically make sense since it would be more useful to a driver to split some of the larger clusters into smaller buckets 
+instead we used the k means clusters as a guide to discretizing the labels into bins 
+feature extraction is divided into two steps constructing non time series set for the random forest and fcnn models and constructing time series set for the lstm model 
+c feature extraction
+1 constructing non time series data in this case since every time we are inputting data at a single time point so we simply used each data piece as an example and splitted them into different subsets 2 constructing time series data by using sequential model we hope our model can discover a relationship timewise so we loop through the data and put the next seq len data pieces as one single example only when these seq len pieces and the following one piece are of the same location id 
+here seq len is a hyper parameter which denotes the length of input sequence and through cross validation we set it to 5 
+the corresponding output label for that example is the label fares activity or trip distance of the next one data piece right after all seq len pieces 
+our work employed various data pre processing and modeling techniques 
+iv methods
+we go over the methodologies in this section 
+we cluster our location ids into 10 smaller clusters to increase the granularity of the model 
+a k means clustering and non uniform distribution
+in the newer data set the pickup drop off locations are specified by large location ids defined by the ny taxi commission 
+however the regions the commission chose were quite large and we wanted to reduce the area to a few blocks 
+k means algorithm works as follows 1 randomly assign cluster centroids in a given location id 
+2 iteratively compute the cluster centroids to minimize the cost function 
+for every cluster i compute for each j set clustering works by first randomly assigning cluster centroids and then iteratively computing the cluster centroids to minimize the l2 norm between all the points in the data set and their respective centroid 
+this approach works well for our case because we are attempting to clump pickups by their spatial locations 
+this allows us to roughly estimate activity in a few blocks rather than a large neighborhood 
+example outputs are shown in
+we used random forest classifiers with varying hyper parameters to predict fare activity and trip distance 
+b models 1 random forest classifier 
+random forests construct an ensemble of decision trees that randomly compare features and assign a classification to a given input by calculating the mode classification from the outputs of the decision trees the gini criterion tries to minimize the missclassification loss and is generally less computationally expensive than the entropy criterion 2 fully connected neural network for the case of activity prediction we used a fully connected layer consisting of 4 hidden layers and 1 output layer while the hidden layers contain 6 10 6 and 12 hidden neurons respectively see 3 long short term memory network a lstm network is a variant of recurrent neural networks rnn which was proposed by hochreiter and schmidhuber in 1997 since in our case we assume there is some relationship across time we decided to adopt a sequential model and used the widely adopted lstm 
+for the example of activity prediction we used a long short term memory network lstm consisting of 4 lstm layers and a final dense layer on top 
+the output size for all lstm layers is 128 
+like the fcnn we used cross entropy loss as the loss function equation 4 
+a hyperparameter tuning 1 random forests we tuned the hyperparamaters of our model with the validation set 
+v results and discussion
+some of the parameters we tweaked include number of trees tree depth and loss criterion 
+in our final models we used 40 trees the gini criterion and tree depths of two for activity prediction and three for fare and distance predictions 
+we tuned these hyperparameters on the validation set 
+2 fcnn lstm 
+c accuracy
+b k means clustering output
+with the predictions we were able to produce heatmaps for each of the models to visualize how they vary with region for a given day of week and time interval 
+d heat maps
+from however we have carried out some error analysis steps to analyze the poor performance of the models 
+e discussion
+first we analyzed the k means clustering non uniform distribution used for distributing the newer data into the cluster ids 
+we assumed that the clustering would have a low error but after seeing our results we tested it 
+we split 5 of the older data into a validation set and compared the cluster ids assigned to them using location id and non uniform distributions versus their ground truth cluster ids we got this by directly mapping their lat long to cluster id 
+after running tests the accuracy of our k means algorithm was only 11 
+in order to test the effect of this poor performance on our prediction model we further trained the model using only newer data i e location id rather than cluster id 
+however the results turned out to be approximately the same as with cluster id 
+this suggests that our prediction model inherently doesn t do well 
+we attribute the poor performance of our prediction model mainly to two aspects 
+first our models only use three features to tackle the problem and this might not be enough 
+second since we sampled 1 of the data from each month uniformly due to computation issues the time buckets may be too sparsely distributed 
+this sparse distribution may be causing models such as lstm to not capture the temporal pattern in the data 
+in this project we approached the problem of forecasting nyc taxi fares activity and trip distance for taxi drivers 
+vi conclusion and future work
+specifically we applied k means to increase the granularity of our data implemented different models such as random forest fully connected neural network and long short term memory network to do the prediction 
+then we generated heatmaps using the predictions for taxi drivers 
+we also carried out error analysis steps to help diagnose the focus of our future work 1 extract more related features for our prediction model 
+2 currently our loss function penalizes all misclassifications equally 
+however some misclassfications may be better than others 
+a weighted loss function could help improve our model s accuracy 
+these weights could be determined by the distance between the actual classification and the predicted classification 
+3 even though yellow taxis are allowed to operate in all the boroughs of new york there are regions where the taxis do not frequently pickup customers from 
+in a future iteration of our model we could disregard those regions where the taxis do not pick up from frequently 
+that way our model has plenty of data for a given location id 
+patterns of 5 boroughs may be infeasible 
+4 using one model to understand the taxi pickup
+we are making an assumption that the behaviors of people across all the boroughs can be predicted using one model 
+a possible future implementation could focus a single model on one of the boroughs 
+this may improve performance 
+5 sample more data 
+online display advertising is a marketing paradigm utilizing the internet to show advertisements to the targeted audience and drive user engagement 
+billions of display ad impressions are purchased on a daily basis through public auctions hosted by real time bidding rtb exchanges 
+while the digital ads business plays an increasingly important role in the market how to spend the budget from the advertiser in an effective way becomes one of the essential challenges 
+pacing is a strategy to ensure that the budget spends evenly over the schedule of advertiser s ad set 
+here we present two reinforcement learning approaches dqn and ddpg to smooth the daily budget spending 
+since 2009 real time bidding rtb has become popular in online display advertising 1 when a user visits an ad supported site each ad placement triggers an ad request to the ad exchange 
+reinforcement learning as a framework for sequential decision making has attracted the attention of researchers since many years ago
+since the company data is confidential and there is no public dataset available for ads auction simulation the link of our previous choice ipinyou dataset
+we implemented a simulator that simulates the ads auction environment 
+simulator
+to be more similar to the real world we use time of day pattern to simulate the traffic 
+with traffic ups and downs it makes the environment varies in different time steps 
+it also brings difficulty in algorithm training which is good 
+the simulator is implemented approximately following the convention in gym package
+it is well known that optimal bidding can be formulated as an mdp problem
+deep q learning q learning is a straightforward off policy learning algorithm it basically builds a q table which gives the reward function for state action pairs and update it while exploring the environment 
+proposed solution
+the optimal policy on the other hand can be generated by taking greedy actions at each state according to q table 
+deep q learning uses neural network to approximate the q function 
+the algorithm of dqn with experience replay can be found in 1 so it s omitted here in the interest of space ddpg deep deterministic policy gradient is a model free off policy actor critic algorithm 
+it can be regarded as a combination of dpg
+since we generate a random amount of impressions in each time slot to mimic the actual traffic the environment input is entirely different every time 
+experiment results
+for pacing it s hard to qualitatively compare the performance between two different algorithms 
+we look at two quantitative criterions a the overspending or underspending should be small at the end of a day b the pacing signal should be as smooth as possible 
+evaluation metric 
+we could alternatively use the cost function in section 4 1 to compare rl based algorithm and baseline which is defined to quantify the above heuristic 
+we use a multiplicative feedback control algorithm as our baseline 
+baseline
+it s a closed loop control system similar to that of
+the action space is discretized into a finite number of bins we experimented with 10 12 15 and 20 then found 10 performs best 
+dqn
+as to state space we tried both discretized and continuous and found their results are comparable so we used continuous version for simplicity 
+the dqn is implemented with experience replay for the discounted cost we set discount factor to 0 99 and we used td 0 to compute the loss for optimization we used adam 
+in the beginning we attempted to use a series of neural network layers and its result turned out very unstable 
+to avoid overfitting we simplified the architecture of the neural network in code using only one hidden layer with 16 neurons 
+results shown in
+for ddpg the action space is continuous so that we won t see the stairs like pacing signal curve as in dqn 
+ddpg
+however our algorithm still needs improvement because the training is not stable sometimes the network can generate results like in
+overall we explored the possibility of applying reinforcement learning to ads budget pacing problem 
+on simulated ads auction data our dqn algorithm shows promising results comparing with the baseline algorithm 
+it not only achieves the goal of budget delivery but also maintains the pacing rate relatively smooth 
+we also implemented ddpg but it needs further performance tuning to improve its stability 
+in the future we ll also consider the following directions for performance improvement 1 adding more features e g features extracted from time series 2 explore other network structures 
+3 try alternative cost function and regularization 
+regarding the project we can also have the training on some company data if the data security team grants permission 
+and intra day budget spending could be another interesting topic for us to explore code path https github com yingchen cs229
+from amazon web crawl data we obtain a network of labels where the weight of an edge between two nodes is determined by how many books have both labels 
+while the labels are organized into a hierarchy by amazon it contains numerous redundancies and uninteresting labels which reduce the useability as a user facing shopping tool 
+to address this problem we propose a method of exploring and visualizing the label graph so that a more effective organization can be implemented 
+we use node2vec 3 to compute feature representations of the nodes and then apply clustering to identify improvements that should be made to the labeling system 
+we concluding by discussing findings involving anomaly detection identification of redundant or closely associated labels and label hierarchical organization 
+in a massive online store such as amazon keywords to describe books can easily be acquired by either seller input or automatic searching of the text 
+introduction 1 motivation
+however the size and organization of the set of labels can quickly become intractable making it difficult to assign a clean and concise categorization hierarchy 
+our goal is to determine how a set of labels applied to a set of books should be organized into a categorization system we implement an algorithmic and application based project to analyze data from amazon web crawl data of books and their categorizations 
+we interpret this as a network in which category label strings are nodes 
+edges of the network indicate which labels appear together for each pair of labels shared by a book we add an edge between the labels 
+here we take a novel approach of applying clustering techniques to achieve our goal 
+1 2 1 graph clustering 
+recent work on labeled graph clustering includes using node identifiers and community prior for graph based classification zhou et al 
+liu et al 
+other works applying node2vec include node2vec in telco an application of the novel feature learning method for predictions in call networks extensions of node2vec include metapath2vec
+applications and extensions of node2vec 
+we analyze the relationships between labels of books using node2vec node embeddings and clustering methods 
+the node2vec algorithm generates real valued feature vectors for each node in the graph for some selected dimension d we then perform clustering on these points in d dimensional space to determine groupings of nodes 
+the parameters of node2vec allow us to emphasize either the structural similarity or connectivity of nodes 
+thus by analyzing multiple embeddings by applying clustering we can learn which labels are similar in both role and actual meaning 
+labels in the original amazon dataset can be described as a forest and there are multiple trees to which a book may belong 
+dataset
+for example one book in the original dataset belongs to two trees with labels 1 
+books subjects arts photography photography photo essays and 2 
+amazon web store categories camera photo photography books photo essaysthese categories are somewhat redundant and one of the goals of our model will be to detect categories which can be merged or used to provide additional recommendations to a user 
+the main idea of node2vec is that we want to represent the vertices of the graph such that vertices close together have similar representations where this closeness is some mixture of proximity in the graph and similarity in role or neighborhood structure 
+node2vec
+the node2vec algorithms samples a set of random walks and then performs stochastic gradient descent on the feature representation of the vertices where the loss function is the similarity of the pairs of representations given the vertices appear together 
+we first describe how embedding is set up as a stochastic gradient descent method 
+let f v r d be mapping to features representation i e 
+f is v d parameter matrix 
+for u v n s u v is neighborhood with sampling strategy s maximize objective function max f u v log pr n s u f u 
+conditional independence is assumed such that this becomes since the network is un directed relationships between nodes are symmetric 
+thus the maximum function simplifies tonode2vec allows for random walks to be selected between depth first search and breadth first search strategies 
+this is accomplished by using parameters which weight the probability of a
+above we discussed the motivation for an algorithm from which we use clustering techniques to improve the modularity of a given network based on co purchasing data 
+clustering methods
+in this section we dive deeper into the clustering algorithms implemented 
+in each iteration as discussed above we use node2vec and then k means to determine optimal modules 
+before discussing the setup in algorithm 1 we provide the pseudo code for the k means algorithm 
+k means runs with o n k t where n is the number of iterations k the cluster number and t the number of data points 
+throughout the process the clusters of smallest radii indicate groups of labels which may be similar enough to combine into one category 
+outliers indicate labels which are not closely related to any others in practice these are labels which do not need to be included in a user facing system or simply the lowest level i e 
+most specific labels 
+since we do not have a ground truth into how labels should be interpreted our tool is designed to present options for improving the label set to a user who would not be able to parse through the massive label set any other way 
+the main result of our system is a visualization of the label space 
+analysis methods
+while we use the full dimensionality of the embedding to cluster and identify outliers numerically by distance from cluster center our system is also useful as a user facing tool 
+we use pca to select two dimensions for plotting 
+we compared this to 3 dimensional plots and plots of other dimensions besides the principal ones but the 2 dimensional pca plots conveyed the full structure of the point set while being much more concise 
+we present visualizations of the label space created using two variations of our workflow 
+we use euclidean distances of points from k means centroids to detect outliers as seen in the table below 
+anomaly detection and removal
+we can directly remove these outliers from the plots but we hypothesized that removing outliers from the graph and re embedding before re plotting would produce more cohesive clusters 
+as seen in
+after two iterations of embedding and clustering we see that groups are mostly made up of labels which are redundant or closely related 
+nested label associations
+the first pass on embedding and clustering show in europe united states regions professional science medicine professional technical guidebook guidebook series 
+we have shown that our method produces a visualization tool for understanding the label set including anomalous and redundant labels 
+while mostly accurate some labels did appear in unexpected clusters most likely due to books which fit multiple categories and thus add edges between very different labels 
+the next step that should be taken with these results is to establish a ground truth based on crowd sourced human preferences for labels since the end goal is human readability 
+further research could also examine optimization of node2vec parameters including search strategy 
+parameter tuning could also be applied to k means clustering and outlier thresholds 
+additionally further research could look at the necessary number of nested label clustering steps and re embedding steps to find all redundancy 
+and finally similar methods could be applied to financial transaction networks telecommunication networks and healthcare data 
+code can be found at https github com aporter468 embedandcluster note that the necessary node2vec library is not included it can be found at https github com aditya grover node2vec tree master src b appendix contributions friedman experimented with different combinations of dbscan k means pca and colors to create visualizations 
+a appendix code
+helped write motivation section and ran preliminary data characterization to help create graph interpretation of dataset porter implemented code for converting web crawl data into a graph selecting subgraphs induced by sets of labels computing cluster distances and constructing label lists for plots 
+ran node2vec embeddings and analyzed results 
+performed literature review 
+rickman researched and tested different clustering algorithms and devised a scheme to apply dbscan and k means in sequence as a potential means to achieve our categorization goal described above 
+optimized clustering parameters to improve performance and visualization 
+we are living in a world which is rapidly adopting digital payments systems 
+credit card and payments companies are experiencing a very rapid growth in their transaction volume 
+in third quarter of 2018 paypal inc a san jose based payments company processed 143 billion usd in total payment volume an effective fraud detection system should be able to detect fraudulent transactions with high accuracy and efficiency 
+while it is necessary to prevent bad actors from executing fraudulent transactions it is also very critical to ensure genuine users are not prevented from accessing the payments system 
+a large number of false positives may translate into bad customer experience and may lead customers to take their business elsewhere a major challenge in applying ml to fraud detection is presence of highly imbalanced data sets 
+in many available datasets majority of transactions are genuine with an extremely small percentage of fraudulent ones 
+designing an accurate and efficient fraud detection system that is low on false positives but detects fraudulent activity effectively is a significant challenge for researchers in our paper we apply multiple binary classification approaches logistic regression linear svm and svm with rbf kernel on a labeled dataset that consists of payment transactions our goal is to build binary classifiers which are able to separate fraud transactions from non fraud transactions 
+we compare the effectiveness of these approaches in detecting fraud transactions 
+several ml and non ml based approaches have been applied to the problem of payments fraud detection 
+ii relevant research
+the paper
+in this project we have used a kaggle provided dataset the pca decomposition of transfer transactions shows a high variability across two principal components for non fraud and fraud transactions 
+iii dataset and analysis
+this gave us confidence that transfer dataset can be linearly separable and our chosen algorithms logistic regression and linear svm are likely to perform very well on such a dataset 
+in the results section we ll see that this is indeed the case 
+our goal is to separate fraud and non fraud transactions by obtaining a decision boundary in the feature space defined by input transactions 
+each transaction can be represented as vector of its feature values 
+we have built binary classifiers using logistic regression linear svm and svm with rbf kernels for transfer and cash out sets respectively 
+logistic regression is a technique used to find a linear decision boundary for a binary classifier 
+a logistic regression
+for a given input feature vector x a logistic regression model with parameter classifies the input x using the following hypothesis h x g t x 1 1 e t x where g is known as sigmoid function 
+for a binary classification problem the output h x can be interpreted as a probability of x as belonging to class 1 
+the logistic loss function with respect to parameters can be given as
+support vector machine creates a classification hyperplane in the space defined by input feature vectors 
+b support vector machine
+the training process aims to determine a hyper plane that maximizes geometric margin with respect to labeled input data 
+svms optimization problem can be characterized byin this project we use two variants of svm linear svm and svm based on rbf kernel 
+an svm based on rbf kernel can find a non linear decision boundary in input space 
+the rbf kernel function on two vectors x and z in the input space can be defined as
+we assign different weights to samples belonging fraud and non fraud classes for each of the three techniques respectively 
+c class weights based approach
+such an approach has been used to counter data imbalance problem with only 0 13 percent fraud transactions available to us 
+in a payments fraud detection system it is more critical to catch potential fraud transactions than to ensure all non fraud transactions are executed smoothly 
+in our proposed approaches we penalize mistakes made in misclassifying fraud samples more than misclassifying nonfraud samples 
+we trained our models for each technique using higher class weights for fraud samples compared to non fraud samples we fine tune our models by choosing class weights to obtain desired optimal balance between precision and recall scores on our fraud class of samples 
+we have chosen class weights such that we do not have more than around 1 percent of false positives on cv set 
+this design trade off enables us to establish a balance between detecting fraud transactions with high accuracy and preventing large number of false positives 
+a false positive in our case is when a non fraud transaction is misclassified as a fraudulent one 
+in this section we describe our dataset split strategy and training validation and testing processes that we have implemented in this work 
+v experiments
+all software was developed using scikit learn 7 ml library 
+we divided our dataset based on different transaction types described in dataset section 
+a dataset split strategy
+in particular we use trans fer and cash out transactions for our experiments since they contain fraud transactions 
+for both types we divided respective datasets into three splits 70 percent for training 15 percent for cv and 15 percent for testing purposes 
+we use stratified sampling in creating train cv test splits 
+stratified sampling allows us to maintain the same proportion of each class in a split as in the original dataset 
+details of the splits are mentioned in tables ii and iii 
+we employed class weight based approach as described in previous section to train our each of our models 
+b model training and tuning
+each model was trained multiple times using increasing weights for fraud class samples 
+at the end of each iteration we evaluated our trained models by measuring their performance on cv split 
+for each model we chose the class weights which gave us highest recall on fraud class with not more than 1 percent false positives finally we used the models trained using chosen set of class weights to make predictions on our test dataset split 
+in the next section we elaborate on our choice of class weights based on their performance on cv set 
+we also discuss their performance on train and test sets 
+in this section we discuss results obtained in training validation and testing phases 
+vi results and discussion
+we evaluated performance of our models by computing metrics like recall precision f1 score area under precision recall curve auprc 
+in our experiments we used increasing weights for fraud samples 
+a class weights selection
+we initially considered making class weights equal to imbalance ratio in our dataset 
+this approach seemed to give good recall but also resulted in very high number of false positives 1 percent especially for cash out 
+hence we did not use this approach and instead tuned our
+in this section we discuss results on train and test sets using chosen class weights 
+b results on train and test sets
+similarly logistic regression and linear svm have similar performance and hence similar linear decision boundaries and pr curves 
+svm with rbf gives a higher recall but with lower precision on average for this set of transactions 
+a possible reason for this outcome could be non linear decision boundary computed using rbf kernel function 
+however for all three algorithms we can obtain high recall scores if we are more tolerant to false positives 
+in the real world this is purely a design business decision and depends on how many false positives is a payments company willing to tolerate 
+overall we observe that all our proposed approaches seem to detect fraud transactions with high accuracy and low false positives especially for transfer transactions 
+with more tolerance to false positives we can see that it can perform well on cash out transactions as well 
+in fraud detection we often deal with highly imbalanced datasets 
+for the chosen dataset paysim we show that our proposed approaches are able to detect fraud transactions with very high accuracy and low false positives especially for transfer transactions 
+fraud detection often involves a trade off between correctly detecting fraudulent samples and not misclassifying many non fraud samples 
+this is often a design choice business decision which every digital payments company needs to make 
+we ve dealt with this problem by proposing our class weight based approach we can further improve our techniques by using algorithms like decision trees to leverage categorical features associated with accounts users in paysim dataset 
+paysim dataset can also be interpreted as time series 
+we can leverage this property to build time series based models using algorithms like cnn 
+our current approach deals with entire set of transactions as a whole to train our models 
+we can create user specific models which are based on user s previous transactional behavior and use them to further improve our decision making process 
+all of these we believe can be very effective in improving our classification quality on this dataset 
+github code link https github com aadityaoza cs 229 project viii 
+appendix
+acknowledgement i would like to thank professor ng and entire teaching staff for a very well organized and taught class 
+in particular i would like to thank my project mentor fantine for her valuable insights and guidance during the course of this project 
+in the job marketplace the supply side represents the job postings posted by job posters and the demand side presents job seekers who would like to apply for suitable jobs 
+in the platforms of job marketplace like linkedin indeed and etc it is crucial for these job posting platforms to recommend desirable jobs to job seekers based on their career interests to deliver high value for both job posters and seekers to become qualified matches and ultimately serve a reliabled ecosystem of job markeplace themselves in the recommender system there are two general approaches to provide recommendations 
+consider the job marketplace 
+one approach is based on content where job seekers preferences are predicted depending on how their explicit skills titles industries and etc 
+match the jobs 
+it involves extensive data from job seekers and jobs so that features can be complicated 
+another approach is consider jobs preferred by similar job seekers via collaborative filtering which leverages less data 
+in collaborative filtering one way to obtain similar job seekers is through clustering in the follow sections first i will briefly discuss related work on co clustering and the data set to use in this project 
+second i will introduce two co clustering methods i experimented to deal with job applications 
+third i will discuss the validation process compare the performances of co clustering methods with the baseline algorithm k means and demonstrate visual comparision 
+at the end is the conclusion 
+there are many co clustering approaches that simultaneously clustering rows and columns of a given matrix experimented on clustering documents and words 
+some of them are representative while the others more or less extend their ideas as they use different methodologies but acheive the the goal 
+to explore co clustering jobs and job seekers via job application in this project intuitively 
+the data set is from careerbuilder s competition https www kaggle com c job recommendatio n data 
+data set and preprocessing
+it contains job applications lasting for 13 weeks 
+for each application record each row in the original data set contains userid applicationdate and jobid 
+applicationdate is not considered in the project when splitting the data set into training and testing sets though it seems more fair to use job applications happened later to test against clusters trained on previous job applications due to the fact that job postings are usually posted in a limited period of time and receives the majority of all applications as soon as they are posted and as a result jobs applied in the training set will hardly appear in the testing set if splitted by applicationdate which leads to insufficient and less representative testing datapoints 
+therefore i extracted userid and jobid for each application from the raw data removed duplicated applications shuffled them randomly and transformed to 0 1 valued user job matrices whose rows represent unique users columns represent unique jobs and entries represent whether the user applies for the job since both of the two co clustering methods take an input of user job matrix one concern is that the original user job matrix is very sparse which contains non trivial noise for co clustering 
+so i also filtered out jobs whose job has less than certain number of job applications to reduce the sparsity 
+so the general preprocessing steps are 1 
+create two data sets of job applications from the original data set by filtering on different number 75 and 100 of job applications per job 
+for each data set generated above split into 5 partitions and create 5 pairs of training set and testing set for 5 fold cross validation 3 
+for each training set convert it into 0 1 user job matrix for clustering 
+two data sets yield user job matrices with different densities 
+the sizes of training and testing set for each density is in
+the baseline clustering method is one way clustering on users using k means 
+one way clustering k means
+each user is represented by a vector u where u i 1 if the user applies to the ith job 0 otherwise k means will cluster these user vectors based on the euclidean distance 
+this method is proposed in if imposing orthogonality on both f and g the objective is as shown in where f is the cluster indicator matrix of row clusters and g is the cluster indicator matrix of column clusters because as described in since our user job matrices contain 0 valued entries when the corresponding user row doesn t apply to the corresponding job column i replaced 0 with a small fractional number 0 01 which can be distinctive from the 1 valued entries before running this method then implemented the following algorithm to minimize the objective function and obtain f and g algorithm nmtf initialization 1 
+co clustering nonnegative matrix tri factorization
+run k means of columns to obtain column cluster centroids as g 2 
+run k means of rows to obtain row cluster centroids as f 
+let s f t xg update rules then the cluster membership of rows and columns are extracted from f and g 
+this method is from it is proved in
+co clustering spectral co clustering
+since there are no labels for either jobs or users the way to validate the trained clusters and generate usefuly metrics is to verify job applications in the testing set against the trained clusters 
+preprocessing the testing set
+since we shouldn t verify the same job applications in the testing set as the training set and are unable to verify jobs and users in the testing set that are unseen in the training set i preprocessed the testing test to extract unseen job applications whose corresponding jobs and users were involved in the training set 
+due to lack of label the metrics to verify the effectiveness of clustering algorithms are recall accuracy and f1 score 
+metrics
+to compute them we need to compute the metrices true positive a job applied by a user in the testing set is in the same cluster of this user in the trained clusters false positive a job not applied by a user in the testing set is in the same cluster of this user in the trained clusters true negative a job not applied by a user in the testing set is not in the same cluster of this user in the trained clusters false negative a job applied by a user in the testing set is not in the same cluster of this user in the trained clusters in practical the ways to determine the cluster which a job belongs to are different for different clustering methods k means any cluster if any user in this cluster applies to this job in the training set nmtf though it is co clustering jobs and users the cluster labels of jobs and users in the same co cluster are different 
+so follow the k means way spectral co clustering since if jobs and users are in the same co cluster their cluster labels are same 
+so use the job cluster label the metric to determine the optimal number of cluster is silhouette score 
+the silhouette score for each user i isis the dissimilarity to the user s cluster and b i is the minimum dissimilarity to other clusters where the disimilarity to a cluster for a user is defined by 1 of jobs applied in this cluster by this user total of jobs applied by this user the average of the cluster silhouette score i e the average of the user silhouette score in this cluster will be used to determine the optimal number of clusters 
+the recall accuracy and f1 score are computed on different number of clusters for two data sets with different densities 
+performance
+the results are illustrated in we can see although the recall of k means is not bad since the jobs are overlapping in different clusters it can provide many true positives 
+by running 5 fold cross validation and computing silhouette scores on different number of clusters for two data sets with different densities the result is by observing the coordinates where the silhouette scores start to drop for the first data set which is larger and more sparse the optimal number of cluster is 80 
+silhouette analysis for number of clusters
+for the second one which is smaller and more dense the optimal number is 50 
+the figures a b and c visualize example clustering results using k means nonnegative matrix tri factorization and spectral co clustering on user job matrix we can observe some straightforward facts that 1 
+visual comparision
+spectral co clustering produces more balanced co clusters of users and jobs as its algorithm is designed for while nonnegative matrix tri factorization may result in one big cluster while the others are relatively small 2 
+nonnegative matrix tri factorization allows specifying different numbers of clusters on rows and columns though normally they are specified as same 
+then it requires extra steps to corresponding the user cluster to the job cluster if they actually represent the same cocluster as their cluster labels are different which is not as convenient as spectral co clustering 3 
+like nmtf one way clustering using k means produces inbalanced clusters 
+more importantly unlike the coclustering methods from the visualization we can tell in the big cluster the jobs applied by the users in the same cluster overlap heavily with the ones in other clusters which will introduce many noises for job recommendation while the users in the rest small clusters are matched so accurately that it might miss potential suitable jobs to recommend 
+it is shown that simultaineously clustering users and jobs based on merely job applications using different co clustering methods can produce exclusive clustering of jobs which improves the accuracy as jobs with potentially higher apply rate can be recommended compared to one way clustering 
+in addition spectral co clustering is designed to construct more balanced clusters which is more ideal for recommendation by supplying more accurate pools of jobs to recommend in the future since both co clustering methods are slow because they leverage matrix decomposition it s beneficial to explore more scalable co clustering methods so that we can co cluster efficiently on more sparse data set 
+all is done by myself 
+the source code is in https github com qingyunwan cs229 project 
+github
+for the past 60 years the anxiety and depression medications are prescribed to patients based on the hamilton depression rating scale hdrs 
+i abstract
+healthcare professional prescribes antidepressant medications to patients based on two scores hdrs
+ii introduction
+the dataset is small so we looked into relevant papers that discusses prediction techniques for small dataset 
+iii related w ork
+the paper regression shrinkage and selection via the lasso by robert tibshirani
+the small dataset has 128 patient ids and 13 attributes one of three antidepressants taken by them age gender years of education hdrs score sofas social and functioning assessment scale score 5 attributes from amygdala cluster insula clusters and nac clusters since this is a very small dataset with just 128 patient information we need to employ a few algorithms that fit small data set better 
+iv data set and f eatures
+as part of exploratory data analysis we will build a few supervised and unsupervised models 
+unsupervised model will help to understand the similarity among the brain attributes obtained from mri images and we can use this prior information to build supervised model in order to associate connections between antidepressants and 5 brain attributes our medical data is scarce so we need a method to make sure the model trained on this dataset will predict with similar accuracy on new patients we split the dataset as follows we kept 20 percent dataset aside for test and 80 percent for training and validation set 
+we use kfold cross validation with k 10 1 
+randomly split dataset s into k disjoint subsets of m k data in each mixture model in order to understand the association between hdrs sofas score and the structure of each of the brain scan data we deep dive further using mixture models here we assume f 1 f 2 f k follow gaussian 
+in the above f a complete stochastic model first we pick a distribution with probabilities given by the mixing weights and then generate one observation according to that distribution 
+symbolically we ran different gaussian mixture models using hdrs sofas baseline score and brain data 
+factor analysis works on small dataset where it helps to captures the correlations in the data 
+factor analysis
+assumption dataset x i is generated by sampling a k dimension multivariate gaussian z i a latent random variable k 13 where is 13 is the no of features in our dataset 
+we like to model the dataset with a joint distribution p and z are independent 
+x z x i has the covariance noise z is the k dimensional af f ine subspace of r n 
+1 given the guesses for z that the e step finds m step estimates the unknown linearity relating the x s and z s 2 in the final m step update for it captures the covariance x i z i for the posterior distribution p x i z i 
+3 we declare the convergence when the increase in likelihood l in successive iterations is smaller than the tolerance parameter 
+4 we choose the maximum of l out of all obtained by k fold cv 
+we choose a laplace prior for the parameter 
+bayesian regression with laplace prior
+the idea behind choosing laplace prior is that laplace distribution is symmetric around zero and it is more strongly peaked as grows 
+assumption 1 2 is known 2 all s are independent with laplace density 3 with this prior the map estimator is the same as the lasso solution this sparse solution is useful because we have five feature variables for brain structure and we would like to establish the functional connectivity between antidepressants and brain structure so we would like to have some of the s zero 4 we search for a choice of that minimizes the objective function5 the output of bayesian linear regression on a new test point x is the posterior predictive distribution
+we built several models using several variations of feature variables from our small dataset 
+vi results and f indings
+since dataset is small it is to our advantage that we can iterate several algorithms as well as permutations of several functions of the feature variables to pinpoint which one improve accuracy of the prediction average test set misclassification error based on validation set is chosen as a metric for logistic regression in order to predict the sofas logistic outcome measure it s a binary classification 1 or 0 
+lowest misclassification error on validation set 0 3379138 and on test set we get misclassification error of 41 
+sensitivity and specificity of the roc receiver operating characteristic curve and auc area under the curve are used to understand the model performance for logistic regression 
+in the picture below left hand side contains the roc curve with auc of 67 percent for logistic regression without excluding any of the feature variables and the right hand side contains the rmse values for different regression that summarizes the different techniques of supervised learning based on the rmse values and the plots above for supervised learning ridge regression performs the best 
+hence hdrs and sofas scores statistically connect antidepressants to brain scan data to get more insight we fit gaussian mixture model using hdrs score and amygdala clus 1 2 brain data as well as hdrs score and nac clus 1 2 brain data however based on the plot below the representation seems unintelligible and requires further analysis 
+in factor analysis we transform the current set of variables into an equal number of variables such that each new variable is a combination of the current ones through some transformation 
+factor analysis output
+here data gets transformed in the direction of each eigenvector and represent all the new variables or factors using the eigenvalues 
+an eigenvalue more than 1 means that the new factor explains more variance than the original variable 
+output of our factor loadings shows that all 11 feature variables 3 antidepressants age gender education 5 brain scan attributes adequately represent the factor categories for this medical data set svm classifier is tested using three different kernels 
+here are the test errors for different types of kernels 
+linear kernel 0 3745 radial kernel 0 34125 p olynomial kernel of degree2 0 37825 usage of kernel depends on the data set 
+the linear kernel works best if the dataset is linearly separable but if there is non linearity then radial or polynomial kernel will produce better results 
+radial kernel worked the best among all three kernels 
+this might seem obvious because it is very likely to expect non linearity among hdrs sofas all social attributes like age gender education and 5 brain attributes in higher dimensions 
+auc for radial kernel 0 4840278
+we would like to enhance our gaussian mixture model with regression and sparsity
+vii f uture enhancements
+between the unprecedented rise in human migration and the impact of globalization over the last two centuries local cuisines around the world have fuzed 
+a chef s use of internationally infused ingredients has enhanced cuisines while retaining local identities 
+our goal is to predict a recipe s country of origin given only a list of ingredients 
+in this multiclass classification problem we hope to gain insights into the factors and ingredients that distinguish a country s cuisine 
+this was a 2017 kaggle competition 
+the public leaderboards top entry has 82 78 accuracy 
+the public dataset is from the kaggle competition what s for dinner
+several feature engineering challenges emerge from the fact that some of the ingredients are commonly used across multiple cuisines for example salt oil and water 
+feature engineering
+a high level analysis of the data reveals the necessity of data cleansing 
+the following list includes some examples of data clean up that we will address in subsequent sections 1 
+misspelled ingredient names 
+singular vs plural i e 
+onion vs onions 
+preparatory step included in the ingredient name i e 
+diced tomatoes vs chopped tomatoes 
+we used binary encoding to extract the ingredients as individual elements and mapped the ingredients to dictionaries 
+initial design matrix
+the m n design matrix employs a sparse representation of each unique ingredient 
+the matrix consists of zeros and ones to indicate if an ingredient exists in the recipe 
+in this design matrix n 6700 or the number of unique ingredients second we created a corresponding m 1 matrix with values ranging from 0 19 to represent the country of origin for each recipe in the dataset 
+lastly we split the data into 37 785 examples for training and 1 989 examples for test this is a roughly 95 5 split 
+we trained the training set on seven multi class classification algorithms optimized the model hyperparameters for some of the potential winners by grid search performed cross validation check on the tuned models and then made predictions on the test data set 
+subsequently we visualized the model performance through multiple evaluation matrices cross validation score testing score and confusion matrix 
+we analyzed the errors and made the necessary adjustments to previous processes and structures 
+as shown in subsequent sections the change from a binary encoding to tf idf vectorizer design matrix was only applied after witnessing the tf idf design matrix resulted in much better testing accuracy 
+algorithms
+logistic regression binary classification algorithm using sigmoid function i e 
+by using one vs rest ovr scheme and cross entropy loss we are ableto solve multi class problems 
+multiple naive bayes successful classifier based upon the principle of maximum a posteriori map 
+given a problem with k classes with prior probabilities we can assign the class label to an unknown example with features such that3 
+multi layer perceptron classifier multi layer feedforward neural networks provide a natural extension to the multiclass problem 
+support vector machine maximize the minimum distance from the separating hyperplane to the nearest example 
+we used linearsvc one vs rest ovr scheme and svc one vs one scheme to solve multi class problems 
+5 
+passive aggressive classifier family of online learning algorithms 
+similar to perceptron except pa classifiers do not require a learning rate 
+however contrary to the perceptron they include a regularization parameter c we used squared hinge as loss function 6 
+decision tree classifier non parametric supervised learning method used for classification and regression the goal is to create a model that predicts the value of a target variable by learning simple decision rules inferred from the data features 
+7 
+random forest meta estimator that fits a number of decision tree classifiers on various sub samples of the dataset and uses averaging to improve the predictive accuracy and control over fitting 
+the sub sample size is always the same as the original input sample size but the samples are drawn with replacement if bootstrap true default 8 
+k nearest neighbors measures the distance from an example to every other training example identifies k smallest distances to each class and outputs class label based on the most represented class in these k classes 
+since running this algorithm with sparse features becomes very time consuming after a couple of trials we did not implement this algorithm 
+to train this model we used binary encoding to create the design matrix and implemented a neural network using the tensorflow and kera packages in colab using google s tpu 
+initially we implemented a simple one layer neural network outlined below to output a baseline model and understand the data 
+the results were very encouraging but not optimal 
+the training accuracy of the nn was approximately 97 and the test accuracy was roughly 78 
+the model overfitted the training data 
+our initial error analysis revealed 
+baseline neural network
+data cleanup opportunity 
+in particular remove extra words that do not add value to learning from ingredients 
+these extra words erroneously make non unique ingredients appear distinct 
+tune the nn and address the high variance 
+apply additional multiclass classification algorithms for comparison 
+rethink about binary encoding 
+we felt that this was not the optimal way to extract text data from documents and also ideally we would like to reduce the number of features so that it will be more efficient for algorithms like svm 
+with a foundational understanding of the data we shifted our focus to cleaning the input data 
+further experiments
+we concentrated on stemming the words such that olives would become olive since the plural should not lead to two different ingredients 
+similarly words like low fat and low fat should have the same meaning 
+after these preprocessing steps we tested with few algorithms but this instead reduced our testing score by 1 2 
+ultimately we decided to put the data cleaning aside for now and moved on toward redesigning the design matrix 
+we implemented tf idf vectorizer to extract a bag of words from the recipe data by setting stop words to english and binary to true 
+design matrix revisited
+second derived the m n tf idf design matrix which returns a normalized count of ingredients based on how many times an ingredient appears across all recipes 
+with the tf idf vectorizer n 3000 
+this is much less than the n value found in binary encoding 
+we used tf idf because we figured having an indication of the frequency of a certain ingredients would provide additional information as opposed to simply binary encoding 
+when we began this problem we did not pre process any of the data 
+our initial results had accuracies ranging from 64 to 79 
+after analyzing the errors we tried to homogenize the ingredients but found it did not help performance 
+then we implemented the tf idf vectorizer tested again and gained 0 5 to 1 0 improvement on the testing score 
+this increase to a testing score of 81 moved us within top 50 on kaggle public leaderboard 
+finally we decided to tune our model and ran a grid search over the hyperparameters especially the regularization parameters 
+we received our best testing score of 82 from the support vector machine 
+this result is within the top 10 on the kaggle public leaderboard we used a support vector machine with c 10 gamma 1 and kernel rbf to obtain our highest accuracy of 82 
+the logistic regression classifier and the multilayer perceptron neural network both produced accuracies of 80 
+the passive aggressive classifier using a squared hinge loss function resulted in 79 accuracy 
+with multiple naive bayes and a smoothing parameter of 0 1 we achieved 74 accuracy 
+the decision tree and random forest with information gain entropy had the lowest accuracy of 64 and 66 respectively 
+these scores are reflected in
+we evaluated the classification accuracy by computing the confusion matrix 
+confusion matrix
+each row corresponds to the true cuisine label 
+we normalized the results by dividing by the number of recipes for each cuisine in the test data 
+the diagonal elements represent the proportion of samples for each cuisine whose predicted label was equal to the true label while off diagonal elements were mislabeled by the classifier 
+in other words the higher the diagonal values of the confusion matrix the better since this indicates a greater number of correct predictions 
+one of the key observations from analysis was the similarity in accuracy scores between training performance and test performance 
+figure 4
+this indicates a relatively low variance 
+to put it another way the model was not overfitting 
+this observation lead to our questioning ways to further reduce the bias 
+we considered two options 1 
+extended feature vectors 
+hyperparameter optimization 
+we extended our feature vector considerably through collecting additional player statistics as mentioned in the feature engineering section 
+we also applied grid search over various hyper parameters on several of our models 
+future work
+we used a tf idf to extract a bag of words by setting stop words to a sentinel but ideally we could analyze the recipe data and create our own list of stop words in order to extract a bag of ingredients 
+this would be a good next step to improve our results 
+another avenue of further work would be to use stemming and lemmatization to reduce inflectional forms 
+manish pandit research analysis coding and documentation 
+annie pitkin research analysis coding and documentation 
+hengkai qiu research analysis coding and documentation 
+marketing strategies directed to random customers often generate huge costs and a weak response 
+sometime such campaigns tend to unnecessarily annoy customers and make them less likely to react to any communication 
+uplift modelling has turned out to be very successful technique in understanding difference between the behaviour of a treated and a control population and this has been used as the basis for targeted direct marketing activity 
+uplift modelling has wide applications in customer relationship management for up sell cross sell and retention modelling 
+it has also been applied to political election and personalized medicine 
+we tried to approach this problem with 2 different perspective predictive response modelling and uplift modelling 
+for predictive response modelling and uplift modelling we used 4 models logistic regression with and without bagging three layered neural network along with decision tree to apply on a real world example 
+three layered neural network demonstrated significant advantages of uplift modeling over traditional response based targeting 
+in this section we will talk about introduction to uplift modelling 
+consider a direct marketing campaign where potential customers receive some advertisement and a typical application of machine learning techniques in this context will involve selecting a small group who received such advertisement and then build classifier for that group 
+in such techniques we will figure out which customers are most likely to buy after the campaign and they will be selected as target 
+unfortunately this is not optimum strategy as there are some customers who would do the sale regardless of the campaign and there are some who will be annoyed by the campaign 
+targeting them results in unnecessary costs 
+the result is a loss of a sale or even a complete loss of the customer 
+uplift modeling techniques provides a solution to this problem implying that we should only target customers who will buy because of the campaign i e those who are likely to buy if targeted but unlikely to buy otherwise 
+uplift modelling is a predictive response modelling technique which models the incremental effect of a treatment on a target group 
+this measures the incremental gains of a particular treatment on a population 
+more precisely to measure uplift effect we divide the population into two groups control and exposed 
+exposed group is exposed to the treatment whereas control group is suppressed from the treatment 
+the difference in their responses is used to gauge the uplift effect also as said earlier uplift modelling is unique in the sense that it s only concerned with incremental effect i e p r purchase treatment p r purchase no treatment 
+here treatment implies watching the ad and no treatment implies not watching the ad 
+there has not been many machine learning papers studying similar problems but learning effectiveness of marketing campaign along with identification of target group has always been a hot topic 
+traditional response modelling techniques
+we used hillstrom email dataset 1 3 were randomly chosen to receive an email campaign featuring women merchandise 1 3 were randomly chosen to not receive an e mail campaign each record in the dataset can be described as in conversion 1 customer purchased merchandise in the following two weeks spend 1 customer dollars spent in the following two weeks we realized that dataset has categorical features like segment history segment channel etc 
+dataset feature
+so we have to preprocess the data before feeding it to the model 
+data preprocessing is explained in later section 
+we tackled this problem from two different perspective predictive response modelling and uplift modelling 
+algorithms used
+response modelling tries to predict the probability of purchase or a visit or conversion in our example based on the input features 
+here input also includes the email campaigns 
+uplift modelling on the other hand models the incremental probability of purchase visit or conversion respectively based on exposure to the email campaign before discussing the algorithms used we will briefly talk about data sanitization step 
+all the feature were either real values or enums 
+data preprocessing
+for enums we decided two different approaches directly encode it as an ordinal corresponding to each of the enum 
+encode it as a one hot vector 
+when a feature was represented as a one hot vector the final feature vector was the concatenation of all the one hot feature vectors and other real values features 
+when using the one hot representation each training data was encoded as a 20 dimensional vector 
+we experimented with two different models logistic regression with and without bagging decision tree and three layer neural net logistic regression lr model fully connected fc layer followed by sigmoid activation layer logistic regression with bagging bblr same as logistic regression but with bagging decision trees dt since many feature were based on enum values we decided to create decision tree with gini criteria 3 layer neural network 3nn fc followed by relu followed by fc followed by relu followed by fc followed by sigmoid activation all the models were trained independently once for all three output variables visit conversion and spend 
+prediction model details
+we decided to use adam optimizer instead of gradient descent since it gave better accuracy 
+loss function used was cross entropy for logistic and neural network and gini impurity for decision tree 
+we did a batch size optimizer and used a batch size of 32 
+we ran the algorithm for 5 epochs the increment in accuracy after 5 epochs was neglible and the model was beginning to overfit 
+we will now discuss how to model incremental ad effectiveness 
+uplift modelling
+the major problem with uplift modelling is we do not have training data for incrementality a user has either seen or not seen the ad 
+it can not both see and not see the ad to tackle this we will create two different models one for computing probabilities when a user was not exposed to an ad campaign and the other when the user was exposed to the ad campaign 
+both of models would output the probability of e g visit 
+please refer to 3 below for getting visual representation of uplift modelling with 2 models 
+to get the incremental effect we take the difference of the two probabilities p r visit is driven by ad p r purchase ad p r purchase no ad 
+evaluation also suffers from the same problem one single test data can not both see and not see the ad 
+evaluation
+as such we can not directly compare predicted uplift of a test data to the actual ground truth for a test data since there s no notion of ground truth here to solve this we will look at roc curves for logistic regression and their extension into the realm of uplift modelling 
+roc curve is a plot of tpr true positive rate versus false positive rate fpr 
+a sample roc curve is shown in we will extend this idea to uplift modelling evaluation as well 
+since a single test data can not have ground truth for uplift value we look at overall uplift value by bucketing test data 
+we bucket the test data based on similar categorial features test data whose enums features have the same values go into the same bucket 
+for a single bucket we look at overall uplift rate by looking at differences in visit rate for the set of users of that bucket who saw the ad campaign and the set of users in the same bucket who didn t see the ad campaign 
+note that in this case we can not compute normal logistic regression metrics like sensitivity recall f score etc 
+because the output variables are not 0 1 indicator variables 
+instead they are uplift probabilities 
+we will extend roc curve and define a variant of roc curve qini like curve which plots tpr and fpr for both the cases where an incremental visit happened due to ad and existing visit stopped due to ad perhaps because the ads are annoying qini curve sorts these buckets in descending order based on predicted uplift rate and plots it against number of users targeted 
+in this case there is a chance that some users who actually intended to visit might actually get annoyed and end up not visiting after seeing the ad 
+as such there can be a dip in the graph as well 
+see
+we did the analysis of both logistic regression and neural networks using tensorflow library on a google compute engine powered backend using a nvidia tesla k80 gpu 
+in coming sections we will focus on results of both predictive response and uplift modelling
+we split the whole data into a 60 20 20 split 
+predictive response modelling
+60 for training 20 for validation and the remaining 20 for testing 
+overall three layer neural network achieved better results than both decision tree and logistic regressions model 
+however the different in quality was not very large between neural networks and logistic regression 
+we first experimented with encoding enum based feature as a single dimensional discrete feature 
+however the accuracy on validation set in this approach was only 60 
+based on this we decided to adopt a one hot vector approach for representing input data 
+the accuracy shot up to 85 using one hot vector representation the detailed results are in refer
+we also plotted roc curve for the neural net based models lr bblr and 3nn for visit 
+model
+we did this by plotting tpr true positive rate against fpr false positive rate 
+as shown in
+we had multiple features in our dataset and tried computing the weightage of each of the metric 
+ablative analysis
+we tried to evaluate the importance of various feature by using logistic regression by looking at drop in accuracy by selectively removing each feature 
+as described in section 5 3 1 we look at a variant of qini curve by discretizing the predicted uplift rates for email campaign 
+uplift modelling results
+our experiments confirm the usefulness of uplift modeling in ad campaigns 
+here are important observations which we noted we experimented with 4 different models for predictive response and neural network gave best f score out of 4 models 
+decision tree overfits the training data and predicts poorly on test set 
+we recorded appreciable difference between training and test f score for decision tree uplift modelling allows us to better target the intended set of users compared to random targeting as seen in qini curve beyond a certain point there is a dip 
+these user are annoyed by the email campaign and might end of not purchasing the merchandize when they could have otherwise 
+this illustrates the possibility of achieving more incremental effect by targeting a smaller group 
+in our case group size comes out to be 80 of total population ablative analysis for both the models predictive response and uplift modelling indicates that men merchandize purchase is the most potent signal for ad targeting as future work we would like to experiment with more complicated and advanced neural net architectures 
+one approach we would like to experiment with is layered approach instead of having two separate nn the neural network for control also feeds into the neural network for exposed there may be some common weights between control and exposed to learn 
+we would also like to explore dynamic uplift modelling where data gathered can be from multiple instances of time we have uploaded all our code here
+both of us worked together collaboratively on almost all aspects 
+so there is no clear distinction in the contributions 
+our project developed models for the task of assigning one of three end marksperiods question marks or exclamation points to variable length english sentences 
+our models were trained with a labeled data set extracted from english novels and scored using labeled examples from the same set 
+we tested logistic regression na ve bayes random forests and svms and found them all to be more effective than our baseline proportional guessing and less effective than our oracle human level 
+we found that random forests had the strongest performance of the developed models although the similarities in performance make it impossible to conclude that they outperform the other models for this task 
+practically all of our mobile devices use some form of autocorrect predictive typing or dictation to complete our sentences for us 
+yet if you open your phone and type a sentence your device will almost certainly punctuate it if at all with a period whether it s talk to you later 
+come over 
+or you up 
+we present results and analyses of our experimentation with several different methods for predicting the terminal punctuation of a sentence the terminal punctuation or end mark of a sentence provides important semantic and syntactical information about a sentence 
+in the question what is that 
+for instance we don t think of what as some subject that is existing is as some object that 
+without the knowledge that this is a question however it can be much more difficult for a computer to determine this information 
+the question of end marks also poses a simple problem given a sentence classify it as ending with either a period question mark or exclamation point 
+we limited our exploration to consider only english language sentences and only these three end marks the goal of our project is to be able to correctly punctuate variable length english sentences with one of three end marks periods question marks or exclamation marks denoted period qmark expoint in this poster 
+we want to punctuate sentences drawn from the distribution of english sentences so we did not re weight our data to have equal proportions of each punctuation mark deep learning for punctuation restoration in medical reports by wael salloum greg finley erik edwards mark miller and david suendermann oeft it is clear that the state of the art for a problem like this is an rnn 
+it is also clear from reading these papers that this is a difficult problem even for humans given both the complexity and subjectivity of assigning punctuation 
+almost all of the paper ran into the issue that text corpuses extracted from novels and online sources are written by human authors who often deviate from standard punctuation rules 
+two identical text segments may be punctuated differently when written by different authors 
+this in turn suggests that algorithms may do better when trained on a single source which is promising for applications such as smart keyboards and speech to text engines 
+our goal was to be able to correctly punctuate variable length english sentences with one of three end marks periods question marks or exclamation marks denoted period qmark expoint in this poster 
+we want to punctuate sentences drawn from the distribution of english sentences so we did not re weight our data to have equal proportions of each punctuation mark we drew data from 10 of the top english language books available at project gutenberg available for free use 
+we wanted to ensure that we could extract usable examples even from complex grammar structures such as dialogue and clauses 
+additionally to maximize the number of question mark and exclamation point samples we needed to ensure that we could extract standalone sentences within quotations eg how are you 
+said frankenstein 
+our definition for a sentence was a sequence of space separated words starting with a capital word ending with an end mark and unbroken by any single or double quotation marks 
+we wrote a parser to extract sentences from the texts according to this definition we then tokenized the dataset with tokens for each of the top 20 000 words from the google trillion word dataset with five special use tokens number comma semicolon proper unknown to handle important cases not counted in this dictionary 
+commas and semicolons were made into their own words in the parsing stage so they could be captured by the tokenizer 
+we made this decision because of the valuable structural information these non terminal punctuation provide about the sentence they are in we merged this tokenized data and then vectorized each tokenized sentence in a number of different ways including binary vectors bag of word vectors and tfidf transformed bag of word vectors 
+because this is a relatively unexplored problem there isn t a well established baseline for a na ve algorithm 
+random guessing would given an unfairly low benchmark as the vast majority of the data belongs to the period class we started by looking at the results of guessing all periods one metric it scored very poorly on however was macro averaged even weighted f1 score macro f1 
+the macro average is helpful as the fact that it evenly weights each class regardless of number of examples exacts a significant penalty on models that over predict the period class 
+using f1 score ensures that we are taking both precision and accuracy into account the 0 30 macro f1 from guessing all periods doesn t serve as a good benchmark to evaluate our models against 
+to set a lower bound macro f1 we used proportional guessing
+we evaluated five different classes of models logistic regression na ve bayes svm random forests and fully connected neural networks and compared their performance 
+experiments and results
+each model was evaluated over matching 90 5 5 train dev test splits and scored using standard classification metrics 
+a standard multiclass logistic regression was run with 20005 features 
+logistic regression
+we tested both binary and bag of words feature vectors and found binary feature vectors to be our strongest logistic regression model 
+we trained two multinomial na ve bayes models one trained on bag of words vectors and the other on term frequency inverse document frequency tfidf transformed bag of word vectors one bernoulli model on binary vectors and one gaussian model on bag of word vectors 
+na ve bayes
+of the four the bernoulli model achieved the highest macro f1 
+this potentially indicates that word frequency without any data conveying their order is a noisier or just worse representation of sentence structure than just the presence of a word 
+we started by training a random forest with aggregation by averaging of 100 decision tree estimators using gini loss on bag of words vectors with a max tree depth of 5 
+random forests
+while this model trained very quickly it predicted that everything was a period 
+we increased the max depth to 5 10 and then 50 to try to get better classifications but even with a depth of 50 the forest still only predicted periods 
+finally we tried allowing the constituent trees to branch until total leaf purity 
+this model took much longer to train and while we worried that allowing this depth would result in a model with excessive variance 
+on the contrary the bagging kept the model from overfitting and it performed very well on macro f1 score 
+overall this random forest was the highest performing model statistical model we tested on the test set
+each of the support vector machines svms were trained on bag of words vectors 
+support vector machines
+we started by training two non linear kernel support vector classifiers svcs a radial basis function rbf and a polynomial kernel 
+both of these models took so long to train that we trained them on a random subsample of the train set but they then predicted all periods 
+with more compute we could have tweaked the hyper parameters on these models including outputting probabilities instead of hard classification to achieve better metrics but given their poor results and the time they took to train we decided our time would be better spend experimenting with other models 
+we also tested a stochastic gradient descent sgd classifier with a linear kernel 
+we found that this last model performed best in class for svms
+though the random forest classifier out performed the other statistical models on the test set it did so by only a few percentage points of macro average f1 score 
+this is not significant enough for us to conclude that a random forest is the optimal model for this problem we found not surprisingly that all of our models had stronger performance on qmark sentences than expoint sentences 
+this matches our intuition questions can be identified by the presence of question words ex who when will while exclamatory sentences are more easily confused with declarative sentences 
+we see this in the confusion matrix for our oracle we also found that logistic regression and na ve bayes seemed to overpredict period while random forests and svms were more willing to predict qmarks and expoints 
+all of our models outperformed our baseline but were not able to outperform our oracle demonstrating that machine learning methods provide a reasonable solution to this problem but can still be improved 
+still the poor absolute performance precision of 70 on questions and exclamations means that none of our models would be appropriate to include on a keyboard and dictation applications we strongly anticipate that incorporating knowledge about the length of the sequences the order of the words and the related context can greatly improve our performance 
+in particular we believe that order can improve performance on questions which start clauses with common question words who is when how 
+additionally sentences such as is it now question and it is now declaration or exclamation are vectorized identically by our models so incorporating order will allow our feature vectors to more accurately represent our input phrases 
+we believe that sentence length and context can help with exclamations which are often shorter that period sentences and grouped together one way we could do this is by appending a series of binary vectors to our feature vector representing a one hot of the first word a one hot of the last word a binary vector of words that begin clauses and a 150 binary vector where the nth element is 1 if there at least n tokens in our sentence 
+another approach we would like to try is a true sequence based model such as an rnn 
+to do this we would likely need to find a word embedding to reduce our feature space 
+to incorporate context we would also consider using a bidirectional rnn finally we envision these models having applications on keyboard and dictation apps on mobile devices so we would like to train our models over a more representative corpus of text 
+eric worked on the na ve bayes random forest na ve bayes and oracle models 
+he also set up the development environment and preprocessing scripts 
+jonathan worked on the logistic regression and baseline models 
+he also worked on the vectorizer and tokenizer 
+we would like to acknowledge professor ng and the cs 229 course staff for teaching us the material necessary to create these models and for looking over providing feedback on our work 
+acknowledgments
+we would also like to acknowledge project gutenberg for providing us with a completely free to use corpus of text and google for providing the free to use trillion word corpus 
+the concerted action of sequence specific transcription factors onto cis regulatory elements in dna is the core mechanism through which gene regulation is accomplished in most eukaryotes 
+mechanistic dissection of the logic of these interactions is therefore of critical importance for understanding cellular responses to external and internal stimuli in a wide variety of contexts such as organismal development and disease 
+however despite many decades of intensive studies the goal of mapping out this cis regulatory logic is still far from achieved 
+massively parallel reporter assays mpra are a potentially extremely powerful tool that can be applied for this purpose but extracting cis regulatory interactions from their output is not trivial for the human eye 
+here we apply deep learning approaches to mpra datasets to understand the individual contribution to gene expression activity of transcription factor tf motifs and the relationships between them and show that convolutional neural networks cnns are capable of learning both aspects of cisregulatory logic 
+we then build on our cnn models and develop generative adversarial networks gans that can produce novel regulatory sequences with particular gene expression activities 
+gene regulation in most eukaryotes is driven by the action of sequence specific transcription factors which recognize specific dna sequence motifs binding sites tfbss within larger cis regulatory elements cres and act in concert to affect the expression of their cognate genes 
+these cres typically contain multiple binding sites for several different transcription factors it is the integration of the activity of all these factors within an individual cre that determines its activity and the integration of the activity of all cres that together act on a gene that drives changes in its expression 
+the complexity of cis regulatory logic is considerable each human gene is associated with on average about a dozen putative cres two technological and analytical developments hold great promise for resolving that challenge the first one is the development of mpras which allow the regulatory activity of many thousands of both endogenous as well as synthetic dna sequences to be assayed simultaneously on a large scale the second advance involves the application of deep learning techniques to discerning gene regulatory logic with the hope that machine learning will prove to be more effective where humans have not succeeded so far 
+deep learning approaches have already demonstrated remarkable performance on a wide variety of problems in genomics 6 such as predicting transcription factor binding accessible chromatin regions nucleosome positioning rna splicing outcomes and many others and they have more recently also seen initial applications to mpras involving endogenous 7 and random sequences beyond the simple development of predictive models another highly promising deep learning based approach in this area is the generation of novel dna sequences following the what i cannot create i do not understand principle the activity of which can subsequently be tested in an mpra 
+initial work in this area has shown the ability of generative deep learning methods to generate dna sequence de novo
+initial applications to mpras involving endogenous 7 and random sequences 8 have shown that deep learning frameworks are capable of capturing the underlying regulatory grammars encoded in dna sequences 
+more broadly approaches applying deep learning to dna sequence are at this point well developed in the literature 
+here we present a novel framework for end to end generation of sequences to minimize any developer defined loss function on a set of dna sequences with associated scores for some property s of interest 
+the backbone of this project is an end to end sequence generation pipeline that takes a set of sequences and some corresponding property s to learn then trains a gan that can generate sequence designed to exhibit the given property s 
+throughout this paper we examine this pipeline in the con 
+we used two mpra datasets in this study 
+mpra datasets and data preprocessing
+the first one 11 was carried out in the budding yeast saccharomyces cerevisiae and includes testing the activity of 5 000 synthetic sequences containing defined numbers of tfbss for factors known to be important in regulating gene expression upon changes in nutrient availability 
+regulatory activity was measured under a range of six different increasing amino acid concentrations 
+the sharpr mpra dataset 17 is significantly larger containing 500 000 endogenous 145 bp long human sequences that tile 15 000 putative regulatory regions at 5 bp intervals 
+these sequences were assayed in two different human cell lines the erythroid k562 and the hepatic hepg2 with two different promoters dna sequences were one hot encoded following established practices 
+we also log transformed the regression targets so we could use the relu non linearity as the output of our regression networks 
+the first part of the pipeline involves building a neural net that learns to predict the effects on gene expression of a given set of regulatory sequences 
+predicting gene expression
+we largely follow cnn based approaches previously developed to tackle such tasks because it is not a priori clear exactly which architecture is best suited for a given prediction task we implement a random search training 100 models with random numbers of convolutional and dense layers randomly sized kernels and random numbers of hidden units
+the deeplift framework 9 was used to assign feature importance scores of mpra prediction models to each nucleotide in input sequences 
+feature importance scoring
+to de novo generate regulatory sequences we start with the improved wasserstein gan 14 18 the core architecture of which we modify for our purposes in two ways 
+generating regulatory sequence
+first in addition to the random seed z we also input a continuous vector t with the same shape as the output from the regressor trained in the previous phase 
+the vector t is drawn from a normal distribution fit to the distribution of expressions in the mpra dataset being trained on 
+the generator outputs a one hot encoded sequence vector making use of the gumbel softmax activation function to remain differentiable 
+the discriminator is trained in classic wgan gp fashion feeding examples from both real sequences from the mpra dataset and generated ones from the generator 
+formally this loss is calculated as 1 where we update the discriminator by maximizing with respect to l d 
+for the generator we feed the generated sequence into both the discriminator and the regressor from the previous phase and the generator is updated by minimizing with respect to a weighted average of the two losses 
+these losses are weighed with a tunable term as follows 3 5 
+evaluating generated sequences
+the simplest way to evaluate generated sequences is to check whether they contain tfbss known to be relevant for gene regulation under the conditions tested in the training set 
+motif counts
+to do this we can simply count frequency of each motif or motif combination in generated sequences and compare it to either the real data or randomly generated sequence 
+the best method for evaluating the quality of a generated distribution given an actual distribution is to do calculate the loo leave one out accuracy of a 1 nn algorithm in a learned feature space 
+1 nearest neighbor
+to ensure that the generated sequences are not simply overfitting the regressor network used to train the generator we use an ensemble of several of the next best regressors produced by the random architecture search to predict the expression of the generated sequences and compare it to the initial target expression t 
+predicting expression
+throughout training we used the default hyperparameters for the adam optimizer the default hyperparameters for the wgan gp algorithm 
+hyperparameters
+after random architecture search on the yeast mpra dataset we arrived at an optimal model with a test mse of 0 0266 to confirm that the neural net s models are not just learning to predict expression but are also identifying the key regulatory sequences driving we applied deeplift featue importance scoring 9 on the input sequences 
+yeast mpra
+the relevant motif indeed tend to be the most highly scoring sequences with two examples shown in
+the sharpr mpra dataset is significantly more difficult to predict than the yeast mpras as it exhibits poor reproducibility between the experimental replicates 7 and the between replicate correlation sets an upper limit on the achievable model performance 
+sharpr mpra
+we are still in the process of identifying the optimal performing models for this dataset 
+here we show using the yeast mpra dataset that first our cnn regression architecture is capable of learning regulatory activity from mpra datasets and even surpasses the baseline established by van dijk using physical models and second that our proposed modified wgan deep learning architecture is capable of de novo generating dna sequence using the measured regulatory activities of known sequences as input 
+conclusions
+as the sharpr mpra dataset is much larger and more difficult to predict we are still in the process of finding the optimal approach for predicting and generating sequences on it and this is where the next steps for this project are primarily oriented towards 
+training wgan with various values and annealing the parameter over time are among the strategies we are focusing on next additionally the suite of evaluation tools we have built can be applied to any generated dna sequences and comparing against existing sequence generation approaches
+optimal real value generated 1 nn loo 0 5 0 89 predicted expression mse 0 0 64324 5176 ation based on the promise such approaches have shown in the language generation literature 
+metric

@@ -9,6 +9,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras import backend as K
 from keras.utils.vis_utils import plot_model
+from sklearn.externals import joblib
 
 
 def f1(y_true, y_pred):
@@ -68,12 +69,13 @@ def get_embeddings(sentences_list,layer_json):
 
     return sentence_emb
 
-def train_classifier(sentences_list,layer_json,dataset_csv):
+def train_classifier(sentences_list,layer_json,dataset_csv,filename):
     '''
 
     :param sentences_list: the path o the sentences.txt
     :param layer_json: the path of the json file that contains the embeddings of the sentences
     :param dataset_csv: the path of the dataset
+    :param filename: The path of the pickle file that the model will be stored
     :return:
     '''
 
@@ -141,6 +143,9 @@ def train_classifier(sentences_list,layer_json,dataset_csv):
     log = LogisticRegression(random_state=0, solver='newton-cg', max_iter=1000, C=0.1)
     log.fit(X_train, y_train)
 
+    #save the model
+    _ = joblib.dump(log, filename, compress=9)
+
     predictions = log.predict(X_val)
     print("###########################################")
     print("Results using embeddings from the",layer_json,"file")
@@ -202,8 +207,8 @@ def visualize_DNN(file_to_save):
 
 if __name__ == '__main__':
 
-    layer_1 = train_classifier('sentences_list.txt','layer_-1.json','train_sentences1.csv')
-    layer_2 = train_classifier('sentences_list.txt','layer_-2.json','train_sentences1.csv')
-    layer_3 = train_classifier('sentences_list.txt','layer_-3.json','train_sentences1.csv')
-    layer_4 = train_classifier('sentences_list.txt','layer_-4.json','train_sentences1.csv')
+    #layer_1 = train_classifier('sentences_list.txt','output_layer_-1.json','train_sentences1.csv')
+    #layer_2 = train_classifier('sentences_list.txt','output_layer_-2.json','train_sentences1.csv')
+    #layer_3 = train_classifier('sentences_list.txt','output_layer_-3.json','train_sentences1.csv')
+    layer_4 = train_classifier('sentences_list.txt','output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
 

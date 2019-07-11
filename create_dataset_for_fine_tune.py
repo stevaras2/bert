@@ -31,7 +31,7 @@ def get_text_per_section(train_papers):
 
 def create_dataset(train_papers,dataset_path):
 
-    sections_per_text = get_text_per_section('train_papers')
+    sections_per_text = get_text_per_section(train_papers)
 
 
     train_dataset = dict()# dictionary that will be use for the fine-tune of the BERT model in our data.
@@ -72,7 +72,7 @@ def create_dataset(train_papers,dataset_path):
 
         clipping_id += 1
 
-    dataset = pd.read_csv('train_sentences1.csv')
+    dataset = pd.read_csv(dataset_path)
 
     dataset_sentences = dict()
     labels_list = list()
@@ -99,7 +99,10 @@ def create_dataset(train_papers,dataset_path):
     dataset_for_fine_tune['clipping'] = clip_sections
     dataset_for_fine_tune['sentence'] = sentence_list
 
-    print(dataset_for_fine_tune)
+    dataset_for_fine_tune.iloc[:, :].to_csv(os.path.join("PG", "full_dataset.tsv"), index=None, sep="\t")
+    dataset_for_fine_tune.iloc[:8000,:].to_csv(os.path.join("PG","train.tsv"),index=None,sep="\t")
+    dataset_for_fine_tune.iloc[8001:9500,:].to_csv(os.path.join("PG","dev.tsv"),index=None,sep="\t")
+    dataset_for_fine_tune.iloc[9501:, :].to_csv(os.path.join("PG", "test.tsv"), index=None, sep="\t")
 
 
-a = create_dataset(0,0)
+create_dataset('train_papers','train_sentences1.csv')

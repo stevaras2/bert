@@ -207,8 +207,8 @@ def visualize_DNN(file_to_save):
 
 if __name__ == '__main__':
 
-    #layer_1 = train_classifier('sentences_list.txt','output_layer_-1.json','train_sentences1.csv')
-    #layer_2 = train_classifier('sentences_list.txt','output_layer_-2.json','train_sentences1.csv')
-    #layer_3 = train_classifier('sentences_list.txt','output_layer_-3.json','train_sentences1.csv')
+    #layer_1 = train_classifier('sentences_list.txt','output_layer_-1.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
+    #layer_2 = train_classifier('sentences_list.txt','output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
+    #layer_3 = train_classifier('sentences_list.txt','output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
     layer_4 = train_classifier('sentences_list.txt','output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
 

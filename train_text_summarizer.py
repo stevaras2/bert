@@ -10,6 +10,7 @@ from keras.layers import Dense, Dropout
 from keras import backend as K
 from keras.utils.vis_utils import plot_model
 from sklearn.externals import joblib
+import time
 
 
 def f1(y_true, y_pred):
@@ -89,7 +90,6 @@ def train_classifier(sentences_list,layer_json,dataset_csv,filename):
     next_list = list()
     section_list = list()
     label = list()
-    # print(np.zeros(768).shape)
     errors = 0
     for row in dataset.iterrows():
         sentence = row[1][0].strip()
@@ -184,6 +184,104 @@ def train_classifier(sentences_list,layer_json,dataset_csv,filename):
     print(np.mean(f1_results))
     print("###########################################")
 
+
+def parameter_tuning_LR(sentences_list,layer_json,dataset_csv):
+    '''
+
+    :param sentences_list: the path o the sentences.txt
+    :param layer_json: the path of the json file that contains the embeddings of the sentences
+    :param dataset_csv: the path of the dataset
+    :return:
+    '''
+
+    dataset = pd.read_csv(dataset_csv)
+    bert_dict = get_embeddings(sentences_list,layer_json)
+
+
+    length = list()
+    sentence_emb = list()
+    previous_emb = list()
+    next_list = list()
+    section_list = list()
+    label = list()
+    errors = 0
+    for row in dataset.iterrows():
+        sentence = row[1][0].strip()
+        previous = row[1][1].strip()
+        nexts = row[1][2].strip()
+        section = row[1][3].strip()
+
+        if sentence in bert_dict:
+            sentence_emb.append(bert_dict[sentence])
+        else:
+            sentence_emb.append(np.zeros(768))
+            print(sentence)
+            errors += 1
+
+        if previous in bert_dict:
+            previous_emb.append(bert_dict[previous])
+        else:
+            previous_emb.append(np.zeros(768))
+
+        if nexts in bert_dict:
+            next_list.append(bert_dict[nexts])
+        else:
+            next_list.append(np.zeros(768))
+
+        if section in bert_dict:
+            section_list.append(bert_dict[section])
+        else:
+            section_list.append(np.zeros(768))
+
+        length.append(row[1][4])
+        label.append(row[1][5])
+
+    sentence_emb = np.asarray(sentence_emb)
+    print(sentence_emb.shape)
+    next_emb = np.asarray(next_list)
+    print(next_emb.shape)
+    previous_emb = np.asarray(previous_emb)
+    print(previous_emb.shape)
+    section_emb = np.asarray(section_list)
+    print(sentence_emb.shape)
+    length = np.asarray(length)
+    print(length.shape)
+    label = np.asarray(label)
+    print(errors)
+    features = np.concatenate([sentence_emb, previous_emb, next_emb,section_emb], axis=1)
+    features = np.column_stack([features, length])
+    print(features.shape)
+
+    X_train, X_val, y_train, y_val = train_test_split(features, label, test_size=0.33, random_state=42)
+
+    C = [0.1,1,2,5,10]
+    solver = ['newton-cg','saga','sag']
+    best_params = dict()
+    best_score = 0.0
+    for c in C:
+        for s in solver:
+            start = time.time()
+            log = LogisticRegression(random_state=0, solver=s, max_iter=1000, C=c)
+            log.fit(X_train, y_train)
+
+            predictions = log.predict(X_val)
+            print("###########################################")
+            print("LR with C =",c,'and solver = ',s)
+            print("Results using embeddings from the", layer_json, "file")
+            print(classification_report(y_val, predictions))
+            f1 = f1_score(y_val, predictions)
+            if f1 > best_score:
+                best_score = f1
+                best_params['c'] = c
+                best_params['solver'] = s
+            print("F1 score using Logistic Regression:",f1)
+            print("###########################################")
+            end = time.time()
+            running_time = end - start
+            print("Running time:"+str(running_time))
+
+
+
 def visualize_DNN(file_to_save):
     '''
     Save the DNN architecture to a png file. Better use the Visulize_DNN.ipynd
@@ -207,8 +305,10 @@ def visualize_DNN(file_to_save):
 
 if __name__ == '__main__':
 
+
+    tuning = parameter_tuning_LR('sentences_list.txt','output_layer_-3.json','train_sentences1.csv')
     #layer_1 = train_classifier('sentences_list.txt','output_layer_-1.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
     #layer_2 = train_classifier('sentences_list.txt','output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
     #layer_3 = train_classifier('sentences_list.txt','output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
-    layer_4 = train_classifier('sentences_list.txt','output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
+    #layer_4 = train_classifier('sentences_list.txt','output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
 

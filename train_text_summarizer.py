@@ -303,10 +303,80 @@ def visualize_DNN(file_to_save):
 
 
 
+def save_model(sentences_list,layer_json,dataset_csv,pkl):
+    dataset = pd.read_csv(dataset_csv)
+    bert_dict = get_embeddings(sentences_list, layer_json)
+
+    length = list()
+    sentence_emb = list()
+    previous_emb = list()
+    next_list = list()
+    section_list = list()
+    label = list()
+    errors = 0
+    for row in dataset.iterrows():
+        sentence = row[1][0].strip()
+        previous = row[1][1].strip()
+        nexts = row[1][2].strip()
+        section = row[1][3].strip()
+
+        if sentence in bert_dict:
+            sentence_emb.append(bert_dict[sentence])
+        else:
+            sentence_emb.append(np.zeros(768))
+            print(sentence)
+            errors += 1
+
+        if previous in bert_dict:
+            previous_emb.append(bert_dict[previous])
+        else:
+            previous_emb.append(np.zeros(768))
+
+        if nexts in bert_dict:
+            next_list.append(bert_dict[nexts])
+        else:
+            next_list.append(np.zeros(768))
+
+        if section in bert_dict:
+            section_list.append(bert_dict[section])
+        else:
+            section_list.append(np.zeros(768))
+
+        length.append(row[1][4])
+        label.append(row[1][5])
+
+    sentence_emb = np.asarray(sentence_emb)
+    print(sentence_emb.shape)
+    next_emb = np.asarray(next_list)
+    print(next_emb.shape)
+    previous_emb = np.asarray(previous_emb)
+    print(previous_emb.shape)
+    section_emb = np.asarray(section_list)
+    print(sentence_emb.shape)
+    length = np.asarray(length)
+    print(length.shape)
+    label = np.asarray(label)
+    print(errors)
+    features = np.concatenate([sentence_emb, previous_emb, next_emb, section_emb], axis=1)
+    features = np.column_stack([features, length])
+    print(features.shape)
+
+    log = LogisticRegression(random_state=0, solver='saga', max_iter=1000, C=1)
+    log.fit(features, label)
+
+    _ = joblib.dump(log, pkl, compress=9)
+
+
+
 if __name__ == '__main__':
 
+    save_model('sentences_list.txt','Fudan_output_layer_-1.json','train_sentences1.csv','summarizer1.pkl')
+    #layer_1 = train_classifier('sentences_list.txt', 'new_output_layer_-1.json', 'train_sentences1.csv','fine_tune_BERT_sentence_classification1.pkl')
+    #layer_2 = train_classifier('sentences_list.txt','new_output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification2.pkl')
+    #layer_3 = train_classifier('sentences_list.txt','new_output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification3.pkl')
+    #layer_4 = train_classifier('sentences_list.txt','new_output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification4.pkl')
 
-    tuning = parameter_tuning_LR('sentences_list.txt','output_layer_-3.json','train_sentences1.csv')
+    #tuning = parameter_tuning_LR('sentences_list.txt','new_output_layer_-1.json','train_sentences1.csv')
     #layer_1 = train_classifier('sentences_list.txt','output_layer_-1.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
     #layer_2 = train_classifier('sentences_list.txt','output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')
     #layer_3 = train_classifier('sentences_list.txt','output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification.pkl')

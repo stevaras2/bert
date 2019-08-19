@@ -1,5 +1,4 @@
 from sklearn.externals import joblib
-from tika import parser
 import rouge.rouge_score as r
 import nltk
 nltk.download('punkt')
@@ -12,6 +11,7 @@ import numpy as np
 import json
 from numpy import dot
 from numpy.linalg import norm
+from tika import parser
 
 def create_test_set():
     '''
@@ -169,7 +169,8 @@ def get_embeddings():
 def first_approach():
 
     bert_emb = get_embeddings()
-    loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    loaded_model = joblib.load('summarizer.pkl')
 
     test_set = create_test_set()
     papers = os.listdir("test_papers")
@@ -249,7 +250,8 @@ def first_approach():
 def second_approach():
 
     bert_emb = get_embeddings()
-    loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    loaded_model = joblib.load('summarizer.pkl')
 
     test_set = create_test_set()
     papers = os.listdir("test_papers")
@@ -322,7 +324,7 @@ def second_approach():
         summary_text_80 = ""
         summary_text_90 = ""
 
-        sentence_emb1 = np.asarray(sentence_emb)
+        #sentence_emb1 = np.asarray(sentence_emb)
         next_emb = np.asarray(next_list)
         previous_emb = np.asarray(previous_emb)
         section_emb = np.asarray(section_emb)
@@ -399,7 +401,9 @@ def second_approach():
 def third_approach():
 
     bert_emb = get_embeddings()
-    loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
+    loaded_model = joblib.load('summarizer.pkl')
+
     test_set = create_test_set()
     papers = os.listdir("test_papers")
     summaries = dict()

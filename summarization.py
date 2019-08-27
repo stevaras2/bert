@@ -531,11 +531,15 @@ def evaluate(approach):
         posters.append(poster)
 
     rouge1_log_reg = dict()
+    reference_summaries_list = list()
+    system_summaries_list = list()
     for p in posters:
         poster = parser.from_file("test posters/" + p)
         poster_text = poster['content']
         poster_text = re.sub(r'[^A-Za-z0-9]+', " ", poster_text).lstrip().rstrip().lower()
         paper = p[:-4] + ".tei.xml"
+        reference_summaries_list.append(poster_text)
+        system_summaries_list.append(summaries[paper])
         rouge1_log_reg[paper] = r.rouge_n(summaries[paper], poster_text, 1)
 
     f1_log_reg = list()
@@ -544,6 +548,17 @@ def evaluate(approach):
 
 
     print("average F1 using Rouge1 and Logistic regression as classifier is:", np.mean(f1_log_reg))
+    smd_dataset = pd.DataFrame()
+    smd_dataset['reference'] = reference_summaries_list
+    smd_dataset['system'] = system_summaries_list
+
+    if approach.__eq__('1st'):
+        smd_dataset.to_csv('1st_approach_summaries.tsv',index=False,sep='\t',header=None)
+    elif approach.__eq__('3rd'):
+        smd_dataset.to_csv('3rd_approach_summaries.tsv',index=False,sep='\t',header=None)
+    else:
+        return
+
 
 def evaluate_second_approach():
 
@@ -554,6 +569,15 @@ def evaluate_second_approach():
     summaries_90 = summaries[3]
     posterss = os.listdir("test posters")
     posters = list()
+    reference_summaries_list_60 = list()
+    system_summaries_list_60 = list()
+    reference_summaries_list_70 = list()
+    system_summaries_list_70 = list()
+    reference_summaries_list_80 = list()
+    system_summaries_list_80 = list()
+    reference_summaries_list_90 = list()
+    system_summaries_list_90 = list()
+
     for poster in posterss:
         if poster.__eq__("250.pdf"):
             continue
@@ -571,6 +595,14 @@ def evaluate_second_approach():
         poster_text = poster['content']
         poster_text = re.sub(r'[^A-Za-z0-9]+', " ", poster_text).lstrip().rstrip().lower()
         paper = p[:-4] + ".tei.xml"
+        reference_summaries_list_60.append(poster_text)
+        system_summaries_list_60.append(summaries_60[paper])
+        reference_summaries_list_70.append(poster_text)
+        system_summaries_list_70.append(summaries_70[paper])
+        reference_summaries_list_80.append(poster_text)
+        system_summaries_list_80.append(summaries_80[paper])
+        reference_summaries_list_90.append(poster_text)
+        system_summaries_list_90.append(summaries_90[paper])
         rouge1_log_reg_60[paper] = r.rouge_n(summaries_60[paper], poster_text, 1)
 
         rouge1_log_reg_70[paper] = r.rouge_n(summaries_70[paper], poster_text, 1)
@@ -612,6 +644,30 @@ def evaluate_second_approach():
     print()
     print("average F1 using Rouge1, Logistic regression as classifier and threshold 0.90 is:", np.mean(f1_log_reg_90))
 
+    smd_dataset_60 = pd.DataFrame()
+    smd_dataset_60['reference'] = reference_summaries_list_60
+    smd_dataset_60['system'] = system_summaries_list_60
+
+
+    smd_dataset_60.to_csv('2nd_approach0.6_summaries.tsv', index=False, sep='\t', header=None)
+
+    smd_dataset_70 = pd.DataFrame()
+    smd_dataset_70['reference'] = reference_summaries_list_70
+    smd_dataset_70['system'] = system_summaries_list_70
+
+    smd_dataset_70.to_csv('2nd_approach0.7_summaries.tsv', index=False, sep='\t', header=None)
+
+    smd_dataset_80 = pd.DataFrame()
+    smd_dataset_80['reference'] = reference_summaries_list_80
+    smd_dataset_80['system'] = system_summaries_list_80
+
+    smd_dataset_80.to_csv('2nd_approach0.8_summaries.tsv', index=False, sep='\t', header=None)
+
+    smd_dataset_90 = pd.DataFrame()
+    smd_dataset_90['reference'] = reference_summaries_list_90
+    smd_dataset_90['system'] = system_summaries_list_90
+
+    smd_dataset_90.to_csv('2nd_approach0.9_summaries.tsv', index=False, sep='\t', header=None)
 
 if __name__ == '__main__':
 

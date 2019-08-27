@@ -404,7 +404,7 @@ def save_model(sentences_list,layer_json,dataset_csv,pkl):
 if __name__ == '__main__':
 
     #save_model('fudan_sentences_list.txt','Fudan_output_layer_-1.json','train_sentences2.csv','fudan_summarizer1.pkl')
-    layer_1 = train_classifier('fudan_sentences_list.txt','Fudan_output_layer_-4.json','train_sentences2.csv','fudan_summarizer4.pkl')
+    layer_1 = train_classifier('fudan_sentences_list.txt','new_Fudan_output_layer_-4.json','train_sentences2.csv','new_fudan_summarizer4.pkl')
     #layer_2 = train_classifier('sentences_list.txt','new_output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification2.pkl')
     #layer_3 = train_classifier('sentences_list.txt','new_output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification3.pkl')
     #layer_4 = train_classifier('sentences_list.txt','new_output_layer_-4.json','train_sentences1.csv','fine_tune_BERT_sentence_classification4.pkl')

@@ -100,8 +100,8 @@ def create_dataset(train_papers,dataset_path):
     dataset_for_fine_tune['sentence'] = sentence_list
 
     dataset_for_fine_tune.iloc[:, :].to_csv(os.path.join("Fudan", "full_dataset.tsv"), index=None, sep="\t")
-    dataset_for_fine_tune.iloc[:4000,:].to_csv(os.path.join("Fudan","train.tsv"),index=None,sep="\t")
-    dataset_for_fine_tune.iloc[4001:5500,:].to_csv(os.path.join("Fudan","dev.tsv"),index=None,sep="\t")
+    dataset_for_fine_tune.iloc[:5500, :].to_csv(os.path.join("Fudan", "train.tsv"), index=None, sep="\t")
+    dataset_for_fine_tune.iloc[5501:, :].to_csv(os.path.join("Fudan", "dev.tsv"), index=None, sep="\t")
     dataset_for_fine_tune.iloc[5501:, :].to_csv(os.path.join("Fudan", "test.tsv"), index=None, sep="\t")
 
 
@@ -137,8 +137,8 @@ def create_another_dataset(dataset_path):
     dataset_for_fine_tune['sentence'] = textB_list
 
 
-    dataset_for_fine_tune.iloc[:4000, :].to_csv(os.path.join("Fudan1", "train.tsv"), index=None, sep="\t")
-    dataset_for_fine_tune.iloc[4001:5500, :].to_csv(os.path.join("Fudan1", "dev.tsv"), index=None, sep="\t")
+    dataset_for_fine_tune.iloc[:5500, :].to_csv(os.path.join("Fudan1", "train.tsv"), index=None, sep="\t")
+    dataset_for_fine_tune.iloc[5501:, :].to_csv(os.path.join("Fudan1", "dev.tsv"), index=None, sep="\t")
     dataset_for_fine_tune.iloc[5501:, :].to_csv(os.path.join("Fudan1", "test.tsv"), index=None, sep="\t")
 
     return dataset_for_fine_tune
@@ -146,3 +146,4 @@ def create_another_dataset(dataset_path):
 #dataset = create_another_dataset('train_sentences1.csv')
 #create_dataset('train_papers','train_sentences1.csv')
 create_dataset('C:/Users/user/PycharmProjects/other_dataset/train_papers_xml','C:/Users/user/PycharmProjects/other_dataset/train_sentences1.csv')
+create_another_dataset('C:/Users/user/PycharmProjects/other_dataset/train_sentences1.csv')

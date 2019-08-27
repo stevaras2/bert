@@ -138,7 +138,7 @@ def extract_embeddings():
         for line in test_sentences_list:
             f.write("%s\n"%(line))
 
-    os.system('python extract_features.py --input_file=C:/Users/user/PycharmProjects/bert/test_sentences_list1.txt --output_file=test_Fudan_output_layer_-1.json --vocab_file=D:/cased_L-12_H-768_A-12/vocab.txt --bert_config_file=D:/cased_L-12_H-768_A-12/bert_config.json --init_checkpoint=C:/Users/user/PycharmProjects/bert/my_dataset_output/model.ckpt-3000  --layers=-3  --max_seq_length=128 --batch_size=8')
+    os.system('python extract_features.py --input_file=C:/Users/user/PycharmProjects/bert/test_sentences_list1.txt --output_file=new_test_Fudan_output_layer_-2.json --vocab_file=D:/cased_L-12_H-768_A-12/vocab.txt --bert_config_file=D:/cased_L-12_H-768_A-12/bert_config.json --init_checkpoint=C:/Users/user/PycharmProjects/bert/fudan_output1/model.ckpt-2062  --layers=-2  --max_seq_length=128 --batch_size=8')
 
 
 def get_embeddings():
@@ -150,7 +150,7 @@ def get_embeddings():
 
 
     embeddings = dict()
-    with open('test_Fudan_output_layer_-1.json', 'r',encoding='utf-8') as f:
+    with open('new_test_Fudan_output_layer_-2.json', 'r',encoding='utf-8') as f:
         for line in f:
             embeddings[json.loads(line)['linex_index']] = np.asarray(json.loads(line)['features'])
 
@@ -175,7 +175,6 @@ def first_approach():
     sentences_of_summaries = list()
 
     for paper in papers:
-        print(paper)
         if paper.__eq__("250.tei.xml"):
             continue
         if paper.__eq__("289.tei.xml"):
@@ -242,8 +241,7 @@ def first_approach():
     print("Number of sentences in summary using Logistic Regression as classifier:",
               np.mean(sentences_of_summaries))
 
-    for k,v in summaries.items():
-        print(k,len(word_tokenize(v)))
+
 
     return summaries
 
@@ -276,14 +274,9 @@ def second_approach():
 
 
     for paper in papers:
-        print(paper)
-        if paper.__eq__("250.tei.xml"):
-            continue
-        if paper.__eq__("289.tei.xml"):
-            continue
 
-
-        check_me = test_set[test_set['paper'].__eq__(paper)]
+        true_paper = paper[:-11] + '.tei.xml'
+        check_me = test_set[test_set['paper'].__eq__(true_paper)]
         length = list()
         sentence_emb = list()
         previous_emb = list()
@@ -353,16 +346,16 @@ def second_approach():
                 no_sen_90 += 1
 
         sentences_of_summaries_60.append(no_sen_60)
-        summaries_60[paper] = summary_text_60
+        summaries_60[true_paper] = summary_text_60
 
         sentences_of_summaries_70.append(no_sen_70)
-        summaries_70[paper] = summary_text_70
+        summaries_70[true_paper] = summary_text_70
 
         sentences_of_summaries_80.append(no_sen_80)
-        summaries_80[paper] = summary_text_80
+        summaries_80[true_paper] = summary_text_80
 
         sentences_of_summaries_90.append(no_sen_90)
-        summaries_90[paper] = summary_text_90
+        summaries_90[true_paper] = summary_text_90
 
         words_of_summaries_60.append(len(word_tokenize(summary_text_60)))
 
@@ -411,14 +404,9 @@ def third_approach():
     cosine = list()
 
     for paper in papers:
-        print(paper)
-        if paper.__eq__("250.tei.xml"):
-            continue
-        if paper.__eq__("289.tei.xml"):
-            continue
 
-
-        check_me = test_set[test_set['paper'].__eq__(paper)]
+        true_paper = paper[:-11] + '.tei.xml'
+        check_me = test_set[test_set['paper'].__eq__(true_paper)]
         length = list()
         sentence_emb = list()
         previous_emb = list()
@@ -505,7 +493,7 @@ def third_approach():
                     no_sen += 1
 
         sentences_of_summaries.append(no_sen)
-        summaries[paper] = summary_text
+        summaries[true_paper] = summary_text
         words_of_summaries.append(len(word_tokenize(summary_text)))
 
     print("Number of words in summary using Logistic Regression as classifier:", np.mean(words_of_summaries))
@@ -569,7 +557,7 @@ def evaluate_second_approach():
         poster = parser.from_file("Fudan_test_posters/" + p)
         poster_text = poster['content']
         poster_text = re.sub(r'[^A-Za-z0-9]+', " ", poster_text).lstrip().rstrip().lower()
-        paper = p[:-4] + ".tei.xml"
+        paper = p[:-11] + ".tei.xml"
         rouge1_log_reg_60[paper] = r.rouge_n(summaries_60[paper], poster_text, 1)
 
         rouge1_log_reg_70[paper] = r.rouge_n(summaries_70[paper], poster_text, 1)
@@ -617,6 +605,6 @@ if __name__ == '__main__':
 
     #extract_embeddings()
     evaluate('1st')
-    #evaluate_second_approach()
-    #evaluate('3rd')
+    evaluate_second_approach()
+    evaluate('3rd')
 

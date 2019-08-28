@@ -17,3 +17,10 @@ Layer -4: https://drive.google.com/open?id=1-unAkcIvBYsSMtTo9VkJEhSkh0Sejglk <br
 # Link for the fine-tuned model in our dataset
 
 https://drive.google.com/open?id=1ka-3CFXt5bUbkEqAgzYVomGTPern2XTv
+
+# Command to reproduce results
+
+In order to reproduce the results, you should create the my_dataset_output folder to save the fine-tuned model. The command to fine tune the model is the following:<br>
+
+python run_classifier.py <br>--task_name=MRPC <br>--do_train=true <br>--do_eval=true <br>--data_dir=path\to\dataset <br> --vocab_file=path\to\vocab.txt <br>--bert_config_file=path\to\bert_config.json <br>--init_checkpoint=path\to\bert_model.ckpt <br>--max_seq_length=128 <br>--train_batch_size=8 <br>--learning_rate=2e-5 <br>--num_train_epochs=3.0 <br>--output_dir=my_dataset_output
+

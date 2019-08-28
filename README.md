@@ -24,3 +24,10 @@ In order to reproduce the results, you should create the my_dataset_output folde
 
 python run_classifier.py <br>--task_name=MRPC <br>--do_train=true <br>--do_eval=true <br>--data_dir=path\to\dataset <br> --vocab_file=path\to\vocab.txt <br>--bert_config_file=path\to\bert_config.json <br>--init_checkpoint=path\to\bert_model.ckpt <br>--max_seq_length=128 <br>--train_batch_size=8 <br>--learning_rate=2e-5 <br>--num_train_epochs=3.0 <br>--output_dir=my_dataset_output
 
+<br><br>
+In order to extract the embeddings of the fine-tuned model you should type the following command:<br>
+
+python extract_features.py<br> --input_file=path\to\sentences_list.txt <br>--output_file=output.json <br>--vocab_file=path\to\vocab.txt <br>--bert_config_file=path\to\bert_config.json <br>--init_checkpoint=path\to\bert_model.ckpt  <br>--layers=-1 or -2 or etc  <br>--max_seq_length=128 <br>--batch_size=8
+
+
+

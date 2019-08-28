@@ -1,3 +1,6 @@
+# Link for pre-trained BERT model
+https://drive.google.com/file/d/17aac1zyF8ez7rTqYCUJEVZPslULjtLa6/view?usp=sharing
+
 # Links for sentence embeddings extracted from different layers of the fine-tuned BERT(fine-tune using MRPC dataset).
 
 Layer -1(final hidden layer): https://drive.google.com/open?id=1ZB9FOwD1n25uAByxnOXXYrHTy6YIdW1I <br /> 

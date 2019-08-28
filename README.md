@@ -31,7 +31,10 @@ python extract_features.py<br> --input_file=path\to\sentences_list.txt <br>--out
 
 # Preproccess dataset before fine-tune
 
-The create_dataset_for_fine_tune.py is the script that preproccess the dataset before the fine-tuning. The command to execute this script is <br>
+The create_dataset_for_fine_tune.py is the script that preproccess the dataset before the fine-tuning. The command to execute this script(in Windows) is <br>
 python create_dataset_for_fine_tune.py -ts train_sentences1.csv -tp train_papers
 
+# Train classifier/summarizer
 
+The script train_text_summarizer.py train the summarizer that will be used. In order to execute this script in Windows, type the following command:<br>
+python train_text_summarizer.py -s path\to\sentences_list.txt -o path\to\embedding\file -ts path\to\train_set -sp path\to\save\summarizer

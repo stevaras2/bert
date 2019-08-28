@@ -1,3 +1,4 @@
+import argparse
 import json
 import numpy as np
 import pandas as pd
@@ -370,7 +371,15 @@ def save_model(sentences_list,layer_json,dataset_csv,pkl):
 
 if __name__ == '__main__':
 
-    save_model('sentences_list.txt','Fudan_output_layer_-1.json','train_sentences1.csv','summarizer1.pkl')
+    #save_model('sentences_list.txt','Fudan_output_layer_-1.json','train_sentences1.csv','summarizer1.pkl')
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-s", "--sentences", required=True, help="sentences list")
+    ap.add_argument("-o", "--output", required=True, help="output")
+    ap.add_argument("-ts", "--train set", required=True, help="path to train set")
+    ap.add_argument("-sp", "--summarizer path", required=True, help="path to save summarizer")
+
+    args = vars(ap.parse_args())
+    layer = train_classifier(args['sentences'], args['output'], args['train set'],args['summarizer path'])
     #layer_1 = train_classifier('sentences_list.txt', 'new_output_layer_-1.json', 'train_sentences1.csv','fine_tune_BERT_sentence_classification1.pkl')
     #layer_2 = train_classifier('sentences_list.txt','new_output_layer_-2.json','train_sentences1.csv','fine_tune_BERT_sentence_classification2.pkl')
     #layer_3 = train_classifier('sentences_list.txt','new_output_layer_-3.json','train_sentences1.csv','fine_tune_BERT_sentence_classification3.pkl')

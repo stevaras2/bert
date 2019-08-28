@@ -1,3 +1,4 @@
+import argparse
 from xml.etree import ElementTree
 import os
 from nltk import sent_tokenize,word_tokenize
@@ -5,12 +6,17 @@ import re
 import pandas as pd
 
 def get_text_per_section(train_papers):
+    '''
+    It stores in a more structural form the text of each paper.
+    :param train_papers: path to the folder that train papers reside.
+    :return: a dictionary with key the name of the paper and as value another dictionary with key the section name and as
+    value the text of the section.
+    '''
     xml_files = os.listdir(train_papers)
     dict_of_sections = dict()
     for f in xml_files:
         print(f)
         file = ElementTree.parse(train_papers+"/"+f)
-        #root = file.getroot()
         sections = dict()
 
         for div in file.getiterator(tag="{http://www.tei-c.org/ns/1.0}div"):
@@ -31,14 +37,22 @@ def get_text_per_section(train_papers):
 
 def create_dataset(train_papers,dataset_path):
 
+    '''
+    It creates the dataset that will be fed in the run_classifier.py in order to fine-tune BERT on our dataset(1st
+    fine-tune approach). It splits the dataset into train, dev and test sets. These sets are stored in tsv format and
+     share the same headers as MRPC dataset.
+    :param train_papers:  path of the folder of the train papers.
+    :param dataset_path:  path to train_sentences1.csv
+    :return: None
+    '''
     sections_per_text = get_text_per_section(train_papers)
 
 
     train_dataset = dict()# dictionary that will be use for the fine-tune of the BERT model in our data.
     #Key:The first three sentences of each section. Value: Each sentence of the section
-    clipping_id_list = list()
-    sentence_id_list = list()
-    clip_sections = list()
+    clipping_id_list = list()# id for the clipping section text
+    sentence_id_list = list()# id of each sentence of each section
+    clip_sections = list()#clipping text of each section
     sentence_list = list()
     clipping_id = 0
     sentence_id = 0
@@ -98,7 +112,7 @@ def create_dataset(train_papers,dataset_path):
     dataset_for_fine_tune['id2'] = sentence_id_list
     dataset_for_fine_tune['clipping'] = clip_sections
     dataset_for_fine_tune['sentence'] = sentence_list
-
+    #split the dataset into train, dev and test set
     dataset_for_fine_tune.iloc[:, :].to_csv(os.path.join("PG", "full_dataset.tsv"), index=None, sep="\t")
     dataset_for_fine_tune.iloc[:8000,:].to_csv(os.path.join("PG","train.tsv"),index=None,sep="\t")
     dataset_for_fine_tune.iloc[8001:9500,:].to_csv(os.path.join("PG","dev.tsv"),index=None,sep="\t")
@@ -107,7 +121,14 @@ def create_dataset(train_papers,dataset_path):
 
 
 def create_another_dataset(dataset_path):
-
+    '''
+        It creates the dataset that will be fed in the run_classifier.py in order to fine-tune BERT on our dataset(2nd
+        fine-tune approach). It splits the dataset into train, dev and test sets. These sets are stored in tsv format and
+         share the same headers as MRPC dataset.
+        :param train_papers:  path of the folder of the train papers.
+        :param dataset_path:  path to train_sentences1.csv
+        :return: None
+        '''
 
     dataset = pd.read_csv(dataset_path)
     textA_list = list()
@@ -143,6 +164,15 @@ def create_another_dataset(dataset_path):
 
     return dataset_for_fine_tune
 
-#dataset = create_another_dataset('train_sentences1.csv')
-#create_dataset('train_papers','train_sentences1.csv')
-create_dataset('C:/Users/user/PycharmProjects/other_dataset/train_papers_xml','C:/Users/user/PycharmProjects/other_dataset/train_sentences1.csv')
+if __name__ == '__main__':
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-ts", "--train sentences", required=True, help="path to train sentences")
+    ap.add_argument("-tp", "--train papers", required=True, help="path to train papers")
+
+    args = vars(ap.parse_args())
+    ts = args['train sentences']
+    tp = args['train papers']
+    #create_dataset('train_papers','train_sentences1.csv')
+
+    create_dataset(tp,ts)

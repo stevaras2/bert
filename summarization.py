@@ -1,3 +1,5 @@
+import argparse
+
 from sklearn.externals import joblib
 import rouge.rouge_score as r
 import nltk
@@ -64,8 +66,7 @@ def create_test_set():
             sentences = sent_tokenize(text)
 
             for index, sentence in enumerate(sentences):
-                # if (index + 1) > len(sentences):
-                #   dict_of_all_the_sentences['next'].append("last sentence")
+
                 if sentence in dict_of_all_the_sentences['sentence']:
                     continue
 
@@ -121,7 +122,7 @@ def create_test_set():
     return test_set
 
 
-def extract_embeddings():
+def extract_embeddings(input,output,vocab,config,check,):
     '''
     extract the BERT embedding of the sentences and rhe sections of the test set
     :return:
@@ -142,11 +143,22 @@ def extract_embeddings():
         for line in test_sentences_list:
             f.write("%s\n"%(line))
 
-    os.system('python extract_features.py --input_file=C:/Users/user/PycharmProjects/bert/test_sentences_list.txt --output_file=test_output_layer_-3.json --vocab_file=D:/cased_L-12_H-768_A-12/vocab.txt --bert_config_file=D:/cased_L-12_H-768_A-12/bert_config.json --init_checkpoint=C:/Users/user/PycharmProjects/bert/my_dataset_output/model.ckpt-3000  --layers=-3  --max_seq_length=128 --batch_size=8')
+    #os.system('python extract_features.py --input_file=C:/Users/user/PycharmProjects/bert/test_sentences_list.txt --output_file=test_output_layer_-3.json --vocab_file=D:/cased_L-12_H-768_A-12/vocab.txt --bert_config_file=D:/cased_L-12_H-768_A-12/bert_config.json --init_checkpoint=C:/Users/user/PycharmProjects/bert/my_dataset_output/model.ckpt-3000  --layers=-3  --max_seq_length=128 --batch_size=8')
+
+    os.system('python extract_features.py '+
+              '--input_file='+input+
+              ' --output_file='+output+
+              ' --vocab_file='+vocab+
+              ' --bert_config_file='+config+
+              ' --init_checkpoint='+check+
+              ' --layers=-3  --max_seq_length=128 --batch_size=8')
 
 
-def get_embeddings():
-
+def get_embeddings(embeddings_file):
+    '''
+    Stores the embeddings of each sentence and section of the test set in a dictionary
+    :return: embeddings of each sentence
+    '''
     sentences = dict()
     with open('test_sentences_list.txt','r') as f:
         for index,line in enumerate(f):
@@ -154,7 +166,7 @@ def get_embeddings():
 
 
     embeddings = dict()
-    with open('test_output_layer_-3.json', 'r',encoding='utf-8') as f:
+    with open(embeddings_file, 'r',encoding='utf-8') as f:
         for line in f:
             embeddings[json.loads(line)['linex_index']] = np.asarray(json.loads(line)['features'])
 
@@ -166,9 +178,9 @@ def get_embeddings():
 
     return sentence_emb
 
-def first_approach():
+def first_approach(embeddings_file):
 
-    bert_emb = get_embeddings()
+    bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
 
@@ -247,9 +259,9 @@ def first_approach():
     return summaries
 
 
-def second_approach():
+def second_approach(embeddings_file):
 
-    bert_emb = get_embeddings()
+    bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
 
@@ -398,9 +410,9 @@ def second_approach():
     return (summaries_60,summaries_70,summaries_80,summaries_90)
 
 
-def third_approach():
+def third_approach(embeddings_file):
 
-    bert_emb = get_embeddings()
+    bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
 
@@ -513,12 +525,12 @@ def third_approach():
     print("Number of sentences in summary using Logistic Regression as classifier:", np.mean(sentences_of_summaries))
     return summaries
 
-def evaluate(approach):
+def evaluate(approach,embeddings_file):
 
     if approach.__eq__('1st'):
-        summaries = first_approach()
+        summaries = first_approach(embeddings_file)
     elif approach.__eq__('3rd'):
-        summaries = third_approach()
+        summaries = third_approach(embeddings_file)
     else:
         return
     posterss = os.listdir("test posters")
@@ -560,9 +572,9 @@ def evaluate(approach):
         return
 
 
-def evaluate_second_approach():
+def evaluate_second_approach(embeddings_file):
 
-    summaries = second_approach()
+    summaries = second_approach(embeddings_file)
     summaries_60 = summaries[0]
     summaries_70 = summaries[1]
     summaries_80 = summaries[2]
@@ -670,8 +682,20 @@ def evaluate_second_approach():
     smd_dataset_90.to_csv('2nd_approach0.9_summaries.tsv', index=False, sep='\t', header=None)
 
 if __name__ == '__main__':
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-s", "--sentences", required=True, help="test sentences list")
+    ap.add_argument("-o", "--output", required=True, help="test output")
+    ap.add_argument("-v", "--vocab", required=True, help="path to vocab.txt")
+    ap.add_argument("-c", "--config", required=True, help="path to bert_config.json")
+    ap.add_argument("-m", "--model", required=True, help="path to fine-tuned model")
 
-    evaluate('1st')
-    evaluate_second_approach()
-    evaluate('3rd')
+    args = vars(ap.parse_args())
+    #extract_embeddings('C:/Users/user/PycharmProjects/bert/test_sentences_list.txt','test_output_layer_-31.json',
+     #                  'D:/cased_L-12_H-768_A-12/vocab.txt','D:/cased_L-12_H-768_A-12/bert_config.json'
+      #                 ,'C:/Users/user/PycharmProjects/bert/my_dataset_output/model.ckpt-3000')
+
+    extract_embeddings(args['sentences'],args['output'],args['vocab'],args['config'],args['model'])
+    evaluate('1st',args['output'])
+    evaluate_second_approach(args['output'])
+    evaluate('3rd',args['output'])
 

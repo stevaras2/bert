@@ -179,7 +179,11 @@ def get_embeddings(embeddings_file):
     return sentence_emb
 
 def first_approach(embeddings_file):
-
+    '''
+    predicts if the sentences of a paper could be included in a poster and that is, generate the summary of that paper.
+    :param embeddings_file: path to json file where embeddings are stored
+    :return: a dictionary with key the name of the paper and as value its generated summary
+    '''
     bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
@@ -260,7 +264,12 @@ def first_approach(embeddings_file):
 
 
 def second_approach(embeddings_file):
-
+    '''
+    Predicts the probability of a sentence to be included in a poster and then add it in the summary if and only if the
+    probability of that sentence is higher than a predefined threshold.
+    :param embeddings_file: path to json file where embeddings are stored
+    :return: a list of dictionaries with key the name of the paper and as value its generated summary
+    '''
     bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
@@ -412,6 +421,14 @@ def second_approach(embeddings_file):
 
 def third_approach(embeddings_file):
 
+    '''
+     Here, first predict the probability of a sentence to be into a poster. Then sort the sentences based on that
+     probability and add to the summary the sentence with the highest probability. After that, check if the maximum
+     cosine similarity between the next sentence in the sorted sentences list and the sentences that are already in
+     the summary is higher that 0.85.
+    :param embeddings_file: path to json file where embeddings are stored
+    :return: a dictionary with key the name of the paper and as value its generated summary
+    '''
     bert_emb = get_embeddings(embeddings_file)
     #loaded_model = joblib.load('fine_tune_BERT_sentence_classification.pkl')
     loaded_model = joblib.load('summarizer.pkl')
@@ -526,6 +543,13 @@ def third_approach(embeddings_file):
     return summaries
 
 def evaluate(approach,embeddings_file):
+    '''
+    Evaluates the genarated summaries and stores in the 1st_approach_summaries.tsv or 3rd_approach_summaries.tsv
+    the system and generated summaries fot each file.
+    :param approach: 1st or 3rd
+    :param embeddings_file: path to json file where embeddings are stored
+    :return:
+    '''
 
     if approach.__eq__('1st'):
         summaries = first_approach(embeddings_file)
@@ -573,7 +597,12 @@ def evaluate(approach,embeddings_file):
 
 
 def evaluate_second_approach(embeddings_file):
-
+    '''
+        Evaluates the genarated summaries using the 2nd approach and stores the results in
+        2nd_approach(threshold)_summaries.tsv the system and generated summaries fot each file.
+        :param embeddings_file: path to json file where embeddings are stored
+        :return:
+        '''
     summaries = second_approach(embeddings_file)
     summaries_60 = summaries[0]
     summaries_70 = summaries[1]

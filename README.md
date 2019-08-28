@@ -29,5 +29,9 @@ In order to extract the embeddings of the fine-tuned model you should type the f
 
 python extract_features.py<br> --input_file=path\to\sentences_list.txt <br>--output_file=output.json <br>--vocab_file=path\to\vocab.txt <br>--bert_config_file=path\to\bert_config.json <br>--init_checkpoint=path\to\bert_model.ckpt  <br>--layers=-1 or -2 or etc  <br>--max_seq_length=128 <br>--batch_size=8
 
+# Preproccess dataset before fine-tune
+
+The create_dataset_for_fine_tune.py is the script that preproccess the dataset before the fine-tuning. The command to execute this script is <br>
+python create_dataset_for_fine_tune.py -ts train_sentences1.csv -tp train_papers
 
 

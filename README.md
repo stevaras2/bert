@@ -38,3 +38,9 @@ python create_dataset_for_fine_tune.py -ts train_sentences1.csv -tp train_papers
 
 The script train_text_summarizer.py train the summarizer that will be used. In order to execute this script in Windows, type the following command:<br>
 python train_text_summarizer.py -s path\to\sentences_list.txt -o path\to\embedding\file -ts path\to\train_set -sp path\to\save\summarizer
+
+
+# Evaluation summarization approaches
+
+The script summarization.py produces the summaries of the papers in the test set and evaluate them. To execute this script on Windows type this command:<br>
+python summarization.py -s path/to/test_sentences_list.txt -o path/to/json_file_where_embeddings_will_be_saved -v path/to/vocab.txt -c path/to/bert_config.json -m path/to/fine-tune/model

@@ -47,3 +47,7 @@ python train_text_summarizer.py -s path\to\sentences_list.txt -o path\to\embeddi
 
 The script summarization.py produces the summaries of the papers in the test set and evaluate them. To execute this script on Windows type this command:<br>
 python summarization.py -s path/to/test_sentences_list.txt -o path/to/json_file_where_embeddings_will_be_saved -v path/to/vocab.txt -c path/to/bert_config.json -m path/to/fine-tune/model
+
+# Results files
+
+The results could be found in the tsv files of this repository.
